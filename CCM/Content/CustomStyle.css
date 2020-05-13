@@ -1,0 +1,600 @@
+﻿
+#TicketCreationListView .modal-header, #TicketCreationForEveryOne .modal-header, #AdminSubjectModal .modal-header, #AssigneeTicket .modal-header, #AdminResolutionModal .modal-header {
+    height: 40px;
+    padding: 9px;
+    text-align: center;
+    background-color: darkgray !important;
+}
+
+#TicketCreationListView .modal-body h4, #TicketCreationForEveryOne .modal-body h4, #AssigneeTicket .modal-body h4, #AdminResolutionModal .modal-body h4 {
+    font-weight: 500;
+    text-decoration: underline;
+    text-align: center;
+    font-size: 18px;
+}
+
+#TicketCreationListView .modal-body label, #TicketCreationForEveryOne .modal-body label, #AdminSubjectModal .modal-body label, #AssigneeTicket .modal-body label, #AdminResolutionModal .modal-body label {
+    font-weight: 500;
+}
+
+#TicketCreationListView .form-control.border-input, #TicketCreationForEveryOne .form-control.border-input, #AdminSubjectModal .form-control, #AssigneeTicket .form-control.border-input, #AssigneeTicket .form-control, #AdminResolutionModal .form-control {
+    border: 1px solid #dae2e9 !important;
+    border-radius: 5px;
+    padding: 6px;
+}
+
+
+    #TicketCreationListView .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control, #TicketCreationForEveryOne .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control, #AssigneeTicket .form-control[disabled], .form-control[readonly], fieldset[disabled] {
+        border: 1px solid #dae2e9;
+        border-radius: 5px;
+    }
+
+#TicketCreationListView .imageuploadify-images-list i, #TicketCreationForEveryOne .imageuploadify-images-list i, #AssigneeTicket .imageuploadify-images-list i {
+    color: #dae2e9 !important;
+}
+
+#TicketCreationListView span.imageuploadify-message, #TicketCreationForEveryOne span.imageuploadify-message, #AssigneeTicket span.imageuploadify-message {
+    font-size: 20px !important;
+    color: black !important;
+    border-top: none !important;
+    border-bottom: none !important;
+}
+
+#TicketCreationListView .imageuploadify-images-list button.btn-default, #TicketCreationForEveryOne .imageuploadify-images-list button.btn-default, #AssigneeTicket .imageuploadify-images-list button.btn-default {
+    width: auto !important;
+    color: black !important;
+    background-color: #dae2e9 !important;
+    border: 2px solid #dae2e9 !important;
+}
+
+#TicketCreationListView .btn-group > .btn:first-child, #TicketCreationForEveryOne .btn-group > .btn:first-child, #AssigneeTicket .btn-group > .btn:first-child {
+    border: 1px solid #dae2e9;
+}
+
+#TicketCreationListView .btn, .navbar .navbar-nav > li > a.btn, #TicketCreationForEveryOne .btn, .navbar .navbar-nav > li > a.btn, #AdminSubjectModal .btn, #AssigneeTicket .btn {
+    border-color: #dae2e9 !important;
+    padding: 6px 16px !important;
+}
+
+#TicketCreationListView .form-control, #TicketCreationForEveryOne .form-control, #AssigneeTicket .form-control {
+    color: black !important;
+}
+
+#TicketCreationListView .btn-danger, #TicketCreationForEveryOne .btn-danger {
+    padding: 3px !important;
+}
+
+#TicketCreationListView .imageuploadify-container img, #TicketCreationForEveryOne .imageuploadify-container img, #AssigneeTicket .imageuploadify-container img {
+    max-width: 50px;
+    max-height: 50px;
+}
+
+#creatorNotes {
+    max-height: 65px !important;
+}
+
+.imageuploadify {
+    min-height: 230px !important;
+    overflow-y: auto;
+}
+
+#TicketCreationForEveryOne .imageuploadify-container, #TicketCreationListView .imageuploadify-container, #AssigneeTicket .imageuploadify-container {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    overflow: hidden;
+    float: left;
+    margin: 0 1em 1em 1em !important;
+    border-radius: 12px;
+    box-shadow: 0 0 4px 0 #888;
+}
+
+    #TicketCreationListView .imageuploadify-container .imageuploadify-details, #TicketCreationForEveryOne .imageuploadify-container .imageuploadify-details, #AssigneeTicket .imageuploadify-container .imageuploadify-details {
+        position: absolute;
+        top: 0;
+        padding-top: 20px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        background: rgba(255,255,255,.5);
+        z-index: 2;
+    }
+
+    #TicketCreationForEveryOne .imageuploadify-container button.btn-danger, #TicketCreationListView .imageuploadify-container button.btn-danger, #AssigneeTicket .imageuploadify-container button.btn-danger {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        width: 20px;
+        height: 20px;
+        border-radius: 15px;
+        font-size: 10px;
+        line-height: 1.42;
+        padding: 0;
+        text-align: center;
+        z-index: 3;
+    }
+
+#TicketCreationForEveryOne .imageuploadify-images-list, #TicketCreationListView .imageuploadify-images-list, #AssigneeTicket .imageuploadify-images-list {
+    max-height: 230px;
+}
+
+#ticketCreateButton, #resetticketcreatebutton, .custom-closebutton, #AdminSubjectModal .btn, #AssigneeTicket .btn {
+    height: 30px;
+    padding: 4px 10px !important;
+}
+
+#TicketCreationListView, #TicketCreationForEveryOne, #AdminSubjectModal, #AssigneeTicket {
+    top: 35px;
+    overflow: auto;
+}
+
+.mt-2 {
+    margin-top: 56px;
+}
+
+.CommentPartialView thead tr th {
+    background-color: #e3e3e3;
+    color: black !important;
+    padding: 8px;
+    width: fit-content;
+    min-width: 250px;
+}
+
+.CommentPartialView th, td {
+    width: fit-content;
+    padding: 8px;
+}
+
+.CommentPartialView {
+    max-height: 230px;
+    overflow-y: scroll;
+}
+
+#CommentBoxTextArea {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.submitComment {
+    margin-top: 2px;
+}
+
+#CreatedByMeList thead td {
+    color: white;
+}
+/* Animation for Modal*/
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: top center;
+    font-family: helvetica neue, helvetica, arial, sans-serif;
+    font-weight: 200;
+}
+
+    html.modal-active, body.modal-active {
+        overflow: hidden;
+    }
+
+#modal-container, #AssigneeViewModal, #TicketAssigneeViewModal, #AdminViewTicketAssignee {
+    position: fixed;
+    display: table;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    transform: scale(0);
+    z-index: 10000;
+}
+
+    #modal-container.ButonOpen, #AssigneeViewModal.ViewTicketbtn, #TicketAssigneeViewModal.ViewMyTicketbtn, #AdminViewTicketAssignee.ViewticketModelForrAdmin {
+        transform: scaleY(0.01) scaleX(0);
+        animation: unfoldIn 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+
+        #modal-container.ButonOpen .modal-background .modal, #AssigneeViewModal.ViewTicketbtn .modal-background .modal, #TicketAssigneeViewModal.ViewMyTicketbtn .modal-background .modal, #AdminViewTicketAssignee.ViewticketModelForrAdmin .modal-background .modal {
+            transform: scale(0);
+            animation: zoomIn 0.5s 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        }
+
+        #modal-container.ButonOpen.out, #AssigneeViewModal.ViewTicketbtn.out, #TicketAssigneeViewModal.ViewMyTicketbtn.out, #AdminViewTicketAssignee.ViewticketModelForrAdmin.out {
+            transform: scale(1);
+            animation: unfoldOut 1s 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        }
+
+            #modal-container.ButonOpen.out .modal-background .modal, #AssigneeViewModal.ViewTicketbtn.out .modal-background .modal, #TicketAssigneeViewModal.ViewMyTicketbtn.out .modal-background .modal, #AdminViewTicketAssignee.ViewticketModelForrAdmin.out .modal-background .modal {
+                animation: zoomOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            }
+
+    #modal-container .modal-background, #AssigneeViewModal .modal-background, #AdminViewTicketAssignee .modal-background ,#TicketAssigneeViewModal .modal-background{
+        display: table-cell;
+        background: rgba(0, 0, 0, 0.8)!important;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+        #modal-container .modal-background .modal, #AssigneeViewModal .modal-background .modal, #AdminViewTicketAssignee .modal-background .modal, #TicketAssigneeViewModal .modal-background .modal {
+            display: inline-block;
+        }
+.savebtnsforRes {
+    float: right;
+    margin-right: 60px;
+    margin-top: 10px;
+}
+
+
+@keyframes unfoldIn {
+    0% {
+        transform: scaleY(0.005) scaleX(0);
+    }
+
+    50% {
+        transform: scaleY(0.005) scaleX(1);
+    }
+
+    100% {
+        transform: scaleY(1) scaleX(1);
+    }
+}
+
+@keyframes unfoldOut {
+    0% {
+        transform: scaleY(1) scaleX(1);
+    }
+
+    50% {
+        transform: scaleY(0.005) scaleX(1);
+    }
+
+    100% {
+        transform: scaleY(0.005) scaleX(0);
+    }
+}
+
+@keyframes zoomIn {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes zoomOut {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0);
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        background: rgba(0, 0, 0, 0);
+    }
+
+    100% {
+        background: rgba(0, 0, 0, 0.7);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        background: rgba(0, 0, 0, 0.7);
+    }
+
+    100% {
+        background: rgba(0, 0, 0, 0);
+    }
+}
+
+@keyframes scaleUp {
+    0% {
+        transform: scale(0.8) translateY(1000px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1) translateY(0px);
+        opacity: 1;
+    }
+}
+
+@keyframes scaleDown {
+    0% {
+        transform: scale(1) translateY(0px);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0.8) translateY(1000px);
+        opacity: 0;
+    }
+}
+
+@keyframes scaleBack {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0.85);
+    }
+}
+
+@keyframes scaleForward {
+    0% {
+        transform: scale(0.85);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes quickScaleDown {
+    0% {
+        transform: scale(1);
+    }
+
+    99.9% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0);
+    }
+}
+
+@keyframes slideUpLarge {
+    0% {
+        transform: translateY(0%);
+    }
+
+    100% {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes slideDownLarge {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+@keyframes moveUp {
+    0% {
+        transform: translateY(150px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes moveDown {
+    0% {
+        transform: translateY(0px);
+    }
+
+    100% {
+        transform: translateY(150px);
+    }
+}
+
+@keyframes blowUpContent {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    99.9% {
+        transform: scale(2);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(0);
+    }
+}
+
+@keyframes blowUpContentTwo {
+    0% {
+        transform: scale(2);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes blowUpModal {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes blowUpModalTwo {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes roadRunnerIn {
+    0% {
+        transform: translateX(-1500px) skewX(30deg) scaleX(1.3);
+    }
+
+    70% {
+        transform: translateX(30px) skewX(0deg) scaleX(0.9);
+    }
+
+    100% {
+        transform: translateX(0px) skewX(0deg) scaleX(1);
+    }
+}
+
+@keyframes roadRunnerOut {
+    0% {
+        transform: translateX(0px) skewX(0deg) scaleX(1);
+    }
+
+    30% {
+        transform: translateX(-30px) skewX(-5deg) scaleX(0.9);
+    }
+
+    100% {
+        transform: translateX(1500px) skewX(30deg) scaleX(1.3);
+    }
+}
+
+@keyframes sketchIn {
+    0% {
+        stroke-dashoffset: 778;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes sketchOut {
+    0% {
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dashoffset: 778;
+    }
+}
+
+@keyframes modalFadeIn {
+    0% {
+        background-color: transparent;
+    }
+
+    100% {
+        background-color: white;
+    }
+}
+
+@keyframes modalFadeOut {
+    0% {
+        background-color: white;
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}
+
+@keyframes modalContentFadeIn {
+    0% {
+        opacity: 0;
+        top: -20px;
+    }
+
+    100% {
+        opacity: 1;
+        top: 0;
+    }
+}
+
+@keyframes modalContentFadeOut {
+    0% {
+        opacity: 1;
+        top: 0px;
+    }
+
+    100% {
+        opacity: 0;
+        top: -20px;
+    }
+}
+
+@keyframes bondJamesBond {
+    0% {
+        transform: translateX(1000px);
+    }
+
+    80% {
+        transform: translateX(0px);
+        border-radius: 75px;
+        height: 75px;
+        width: 75px;
+    }
+
+    90% {
+        border-radius: 3px;
+        height: 182px;
+        width: 247px;
+    }
+
+    100% {
+        border-radius: 3px;
+        height: 162px;
+        width: 227px;
+    }
+}
+
+@keyframes killShot {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(300px) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeToRed {
+    0% {
+        box-shadow: inset 0 0 0 rgba(201, 24, 24, 0.8);
+    }
+
+    100% {
+        box-shadow: inset 0 2000px 0 rgba(201, 24, 24, 0.8);
+    }
+}
+
+@keyframes slowFade {
+    0% {
+        opacity: 1;
+    }
+
+    99.9% {
+        opacity: 0;
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0);
+    }
+}

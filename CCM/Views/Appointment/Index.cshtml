@@ -1,0 +1,478 @@
+@{
+    ViewData["Title"] = "Appointment";
+}
+<style>
+    .fc-agenda-slots td div {
+        height: 40px !important;
+    }
+    /*Date Picker**/
+    li .form-control {
+        margin: 0px !important;
+    }
+
+    .form-control {
+        border: 2px solid !important;
+        border-radius: 3px !important;
+        padding: 5px !important;
+    }
+    /*Date Picker **/
+    .search_combo {
+        display: none;
+    }
+
+    .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+        background-color: #dcdcdc !important;
+    }
+
+    .multiselect-container {
+        max-height: 300px;
+        overflow: auto;
+    }
+</style>
+<h2>Appointments</h2>
+
+<div class="col-md-12 pull-left">
+    <div class="form-group">
+        <label>User : </label>
+        @Html.DropDownList("ddAllDoctors1", new SelectList(ViewBag.AllDoctors as List<CCM.Models.LiaisonDropdown>, "SID", "SName"), new { @class = "form-control selectpicker search_combo", role = "menu" })
+    </div>
+    <div class="col-sm-offset-1 col-sm-10  col-lg-offset-2 col-lg-8">
+        <div id="calender"></div>
+    </div>
+</div>
+
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+            </div>
+            <div class="modal-body clearfix">
+                @*<button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                        <span class="glyphicon glyphicon-remove"></span> Remove
+                    </button>
+                    <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                        <span class="glyphicon glyphicon-pencil"></span> Edit
+                    </button>*@
+                <p id="pDetails"></p>
+                <select id="ddlStatus" class="form-control" style="margin-bottom:10px;">
+                    <option value="Closed">Closed</option>
+
+                </select>
+                <button type="button" class="btn btn-default" onclick="updatestautsofapp()">Update</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalSave" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Save Event</h4>
+            </div>
+            <div class="modal-body clearfix">
+                <form class="col-md-12 form-horizontal">
+
+                    <input type="hidden" id="hdEventID" value="0" />
+                    <div class="form-group">
+                        <label>Doctor</label>
+                        @Html.DropDownList("ddlAllDoctors", new SelectList(ViewBag.AllDoctors as List<CCM.Models.LiaisonDropdown>, "SID", "SName"), "Please select", new { @class = "form-control selectpicker", role = "menu" })
+                        <select id="ddhours"><option value="0">--Select Country--</option></select>
+                        <select id="ddmint"><option value="0">--Select Country--</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" id="txtSubject" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Start</label>
+                        <div class="input-group date" id="dtp1">
+                            <input type="text" id="txtStart" class="form-control" style="margin-top: 0;" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                            <div class="checkbox">
+                                <label><input type="checkbox" id="chkIsFullDay" checked="checked" />  Is Full Day event</label>
+                            </div>
+                        </div>*@
+                    <div class="form-group" id="divEndDate">
+                        <label>End</label>
+                        <div class="input-group date" id="dtp2">
+                            <input type="text" id="txtEnd" class="form-control" style="margin-top: 0;" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <button type="button" id="btnSave" class="btn btn-default">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+    <script>
+        function updatestautsofapp() {
+            $.ajax({
+                type: "GET",
+                url: "/Appointment/UpdateAppointmentStatus",
+                data: {
+                    'ID': $('#hdEventID').val(), 'Status': $("#ddlStatus").val()
+                },
+                success: function (data) {
+                    window.location = "/Appointment";
+
+                },
+                error: function (error) {
+                    Showerrormsg1('failed');
+                }
+            })
+        }
+        var DoctorId = '@ViewBag.DoctorId';
+        $(document).ready(function () {
+
+            //Combo Search
+            $('#ddAllDoctors1').multiselect({
+                includeSelectAllOption: false,
+                buttonWidth: 1000,
+                enableCaseInsensitiveFiltering: true,
+                enableFiltering: true
+            });
+
+            var events = [];
+            var selectedEvent = null;
+            FetchEventAndRenderCalendar();
+            function FetchEventAndRenderCalendar() {
+                $(".loader").show();
+                events = [];
+                $.ajax({
+                    type: "POST",
+                    url: "/Appointment/ShowDocotrAppointment/" + $("#ddAllDoctors1").val(),
+                    success: function (data) {
+                        $(".loader").hide();
+
+                        $.each(data, function (i, v) {
+
+                            events.push({
+                                eventID: v.ID,
+                                title: v.Subject,
+                                start: moment(v.StartTime),
+                                end: v.EndTime != null ? moment(v.EndTime) : null,
+                                patientID: v.PatientID,
+                                doctorID: v.LiaisonID,
+                                subject: v.Subject,
+                                aptstatus: v.AptStatus,
+                                isMigrated: v.isMigrated
+                            });
+                        })
+
+                        GenerateCalender(events);
+                    },
+                    error: function (error) {
+                        $(".loader").hide();
+                        Showerrormsg1('failed');
+                    }
+                })
+            }
+
+            function GenerateCalender(events) {
+                $('#calender').fullCalendar('destroy');
+                $('#calender').fullCalendar({
+                    //handleWindowResize: true,
+                    //contentHeight: "auto",
+                    defaultDate: new Date(),
+                    timeFormat: 'h(:mm)a',
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,basicWeek,basicDay'
+                    },
+                    eventLimit: true,
+                    eventColor: '#378006',
+                    events: events,
+                    eventAfterRender: function (event, $el, view) {
+
+                        var formattedTime = event.start.format("hh:mm a") + "-" + event.end.format("hh:mm a");
+                        // If FullCalendar has removed the title div, then add the title to the time div like FullCalendar would do
+                        if ($el.find(".fc-title").length === 0) {
+                            $el.find(".fc-time").text(formattedTime + " - " + event.title);
+                        }
+                        else {
+                            $el.find(".fc-time").text(formattedTime);
+                        }
+                       // $(".fc-time").after("<br />");
+
+                        var date = event.start.format("YYYY-MM-DD");
+                        $('.fc-day[data-date="' + date + '"]').css('background', '#476ae8');
+                        var currdate = new Date();
+                        var eventdate  =new Date(date+ ' 0:00:00') ;
+                       if (event.aptstatus == "Closed") {
+                           $el.css('background', '#07ec6d');
+                        }
+                        else {
+                            if (event.aptstatus == "Pending" && eventdate > currdate && event.isMigrated==false) {
+                                $el.css('background', '#0763ec');
+                            }
+                            else {
+                                if (event.aptstatus == "Pending" && eventdate > currdate && event.isMigrated == true) {
+                                    $el.css('background', '#aebcd1');
+                                    $el.css('color', 'black');
+                                }
+                                else {
+                                    $el.css('background', '#ec0707');
+                                }
+
+                            }
+                        }
+
+                    },
+                    eventClick: function (calEvent, jsEvent, view) {
+                        debugger;
+                        selectedEvent = calEvent;
+                        $('#hdEventID').val(selectedEvent.eventID);
+                        $('#myModal #eventTitle').text(calEvent.title);
+                        var $description = $('<div/>');
+                        //$description.append($('<p/>').html('<b>Start:</b>' + calEvent.title));
+                        //$description.append($('<p/>').html('<b>Order: </b>' + calEvent.subject));
+                        if (calEvent.patientID == null) {
+                            $description.append($('<p/>').html('<b>Subject: </b>' + calEvent.title))
+                        }
+                        else {
+                            $description.append($('<p/>').html('<b>Patient: </b>' + calEvent.title + '<a href="/Patient/Details/' + calEvent.patientID + '" class="btn btn-success" style="margin-left:10px">Details</a>'))
+                        }
+                        
+                        $description.append($('<p/>').html('<b>Start: </b>' + calEvent.start.format("hh:mm a")));
+                        if (calEvent.end != null) {
+                            $description.append($('<p/>').html('<b>End: </b>' + calEvent.end.format("hh:mm a")));
+                        }
+                        $description.append($('<p/>').html('<b>Status: </b>' + calEvent.aptstatus));
+                        $('#myModal #pDetails').empty().html($description);
+
+                        $('#myModal').modal();
+                    },
+                    //selectable: true,
+                    //select: function (start, end) {
+                    //    selectedEvent = {
+                    //        eventID: 0,
+                    //        title: '',
+
+                    //        start: start,
+                    //        end: end
+
+                    //    };
+                    //    openAddEditForm();
+                    //    $('#calendar').fullCalendar('unselect');
+                    //},
+                    ////editable: true,
+                    //eventDrop: function (event) {
+                    //    var data = {
+                    //        EventID: event.eventid,
+                    //        Subject: event.title,
+                    //        StartTime: event.start.format('DD/MM/YYYY HH:mm A'),
+                    //        EndTime: event.end != null ? event.end.format('DD/MM/YYYY HH:mm A') : null
+
+                    //    };
+                    //    SaveEvent(data);
+                    //}
+                })
+            }
+
+            $('#btnEdit').click(function () {
+                //Open modal dialog for edit event
+                openAddEditForm();
+            })
+            $('#btnDelete').click(function () {
+                if (selectedEvent != null && confirm('Are you sure?')) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Appointment/DeletePatientAppointment',
+                        data: { 'eventID': selectedEvent.eventID },
+                        success: function (data) {
+                            if (data==true) {
+                                //Refresh the calender
+                                FetchEventAndRenderCalendar();
+                                $('#myModal').modal('hide');
+                            }
+                        },
+                        error: function () {
+                            Showerrormsg1('Failed');
+                        }
+                    })
+                }
+            })
+
+            $('#dtp1,#dtp2').datetimepicker({
+                format: 'LT'
+                //format: 'DD/MM/YYYY HH:mm A'
+            });
+
+            $('#chkIsFullDay').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#divEndDate').hide();
+                }
+                else {
+                    $('#divEndDate').show();
+                }
+            });
+            var timetable = [];
+            function openAddEditForm() {
+                if (selectedEvent != null) {
+                    $('#hdEventID').val(selectedEvent.eventID);
+                    debugger;
+                    $('#txtSubject').val(selectedEvent.title);
+                    $('#txtStart').val(selectedEvent.start.format('MM/DD/YYYY hh:mm A'));
+                    $('#chkIsFullDay').prop("checked", selectedEvent.allDay || false);
+                    $('#chkIsFullDay').change();
+                    $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.format('DD/MM/YYYY hh:mm A') : '');
+                    $('#txtDescription').val(selectedEvent.description);
+                    $('#ddThemeColor').val(selectedEvent.color);
+                }
+                $('#myModal').modal('hide');
+                $('#myModalSave').modal();
+            }
+            $('#ddlAllDoctors').change(function () {
+
+                $.ajax({
+                    type: "GET",
+                    url: "/Appointment/DoctorTime?DoctorId=" + $(this).val() + "&Date=" + $('#txtStart').val().toString(),
+                    success: function (data) {
+
+                        timetable = [];
+                        timetable = data.timetable;
+                        $.each(data.hours, function () {
+                            $("#ddhours").append($("<option     />").val(this).text(this));
+                        });
+
+
+                        //if (data.ID == undefined) {
+                        //    alert(data)
+                        //}
+                        //
+                        //$("#ddAllClinics").val(data.clinicID);
+                        //$("#txttlldate").val(moment(data.scheduleValidTill).format('MM/DD/YYYY HH:mm A'));
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1('failed');
+                    }
+                })
+
+
+            });
+            $("#ddAllDoctors1").change(function () {
+                FetchEventAndRenderCalendar();
+            })
+            $('#ddhours').change(function () {
+                var mints = [];
+                for (var i = 0; i < timetable.length; i++) {
+                    if (timetable[i].hours == $('#ddhours').val()) {
+                        mints.push(timetable[i].mints);
+                    }
+                }
+                $("#ddmint").empty();
+                $("#ddmint").append($("<option     />").val(0).text('please select'));
+                $.each(mints, function () {
+                    $("#ddmint").append($("<option     />").val(this).text(this));
+                });
+
+            });
+            $('#btnSave').click(function () {
+                //Validation/
+                if ($('#txtSubject').val().trim() == "") {
+                    Showerrormsg1('Subject required');
+                    return;
+                }
+                if ($('#txtStart').val().trim() == "") {
+                    Showerrormsg1('Start date required');
+                    return;
+                }
+                if ($('#chkIsFullDay').is(':checked') == false && $('#txtEnd').val().trim() == "") {
+                    Showerrormsg1('End date required');
+                    return;
+                }
+                else {
+                    var startDate = moment($('#txtStart').val(), "MM/DD/YYYY hh:mm A").toDate();
+                    var endDate = moment($('#txtEnd').val(), "DD/MM/YYYY hh:mm A").toDate();
+                    if (startDate > endDate) {
+                        Showerrormsg1('Invalid end date');
+                        return;
+                    }
+                }
+                ;
+
+                var startDate = $('#txtStart').val().toString();
+                var endDate = $('#txtEnd').val().toString();
+
+                $.ajax({
+                    type: "POST",
+                    url: '/Appointment/SavePatientAppointment',
+                    data: {
+                        "DoctorID": $("#ddlAllDoctors").val(), 'Subject': $('#txtSubject').val().trim(), 'StartTime': startDate, 'EndTime': endDate, 'Date': startDate, 'hour': $('#ddhours').val(), 'mint': $("#ddmint").val()
+                    },
+                    success: function (data) {
+                        if (data==true) {
+                            //Refresh the calender
+                            FetchEventAndRenderCalendar();
+                            $('#myModalSave').modal('hide');
+                        }
+                    },
+                    error: function () {
+                        Showerrormsg1('Failed');
+                    }
+                })
+                //var data = {
+                //    DoctorID: $("#ddlAllDoctors").val(),
+                //    Subject: $('#txtSubject').val().trim(),
+                //    StartTime: startDate,
+                //    EndTime: endDate
+
+
+
+                //}
+              //  SaveEvent(data);
+                // call function for submit data to the server
+            })
+
+            function SaveEvent(data) {
+                $.ajax({
+                    type: "POST",
+                    url: '/Appointment/SavePatientAppointment',
+                    data: {
+                        "DoctorID": $("#ddlAllDoctors").val(), 'Subject': $('#txtSubject').val().trim(), 'StartTime': startDate,'EndTime':endDate},
+                    success: function (data) {
+                        if (data.status) {
+                            //Refresh the calender
+                            FetchEventAndRenderCalendar();
+                            $('#myModalSave').modal('hide');
+                        }
+                    },
+                    error: function () {
+                        Showerrormsg1('Failed');
+                    }
+                })
+            }
+        })
+    </script>
+}

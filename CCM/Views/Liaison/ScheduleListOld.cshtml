@@ -1,0 +1,258 @@
+﻿
+@model IEnumerable<CCM.Models.LiaisonSchedulelist>
+<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet" />
+<div class="tablefixwidth1">
+    <table id="table" class="table table-striped nowrap" style="width:100%">
+        <thead>
+            <tr>
+
+                <th class="liasionname">Liaison</th>
+                <th>08:00 AM - 08:20 AM</th>
+                <th>08:20 AM - 08:40 AM</th>
+                <th>08:40 AM - 09:00 AM</th>
+                <th>09:00 AM - 09:20 AM</th>
+                <th>09:20 AM - 09:40 AM</th>
+                <th>09:40 AM - 10:00 AM</th>
+                <th>10:00 AM - 10:20 AM</th>
+                <th>10:20 AM - 10:40 AM</th>
+                <th>10:40 AM - 11:00 AM</th>
+                <th>11:00 AM - 11:20 AM</th>
+                <th>11:20 AM - 11:40 AM</th>
+                <th>11:40 AM - 12:00 AM</th>
+                <th>12:00 PM - 12:20 PM</th>
+                <th>12:20 PM - 12:40 PM</th>
+                <th>12:40 PM - 01:00 PM</th>
+                <th>01:00 PM - 01:20 PM</th>
+                <th>01:20 PM - 01:40 PM</th>
+                <th>01:40 PM - 02:00 PM</th>
+                <th>02:00 PM - 02:20 PM</th>
+                <th>02:20 PM - 02:40 PM</th>
+                <th>02:40 PM - 03:00 PM</th>
+                <th>03:00 PM - 03:20 PM</th>
+                <th>03:20 PM - 03:40 PM</th>
+                <th>03:40 PM - 04:00 PM</th>
+                <th>04:00 PM - 04:20 PM</th>
+                <th>04:20 PM - 04:40 PM</th>
+                <th>04:40 PM - 05:00 PM</th>
+                <th>05:00 PM - 05:20 PM</th>
+                <th>05:20 PM - 05:40 PM</th>
+                <th>05:40 PM - 06:00 PM</th>
+                <th>06:00 PM - 06:20 PM</th>
+                <th>06:20 PM - 06:40 PM</th>
+                <th>06:40 PM - 07:00 PM</th>
+                <th>07:00 PM - 07:20 PM</th>
+                <th>07:20 PM - 07:40 PM</th>
+                <th>07:40 PM - 08:00 PM</th>
+                <th>08:00 PM - 08:20 PM</th>
+                <th>08:20 PM - 08:40 PM</th>
+                <th>08:40 PM - 09:00 PM</th>
+
+
+
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="notinclude liasionname">
+                        @item.LiaisonName
+                    </td>
+                    <td>
+                        @item.firstslot
+                    </td>
+                    <td>
+                        @item.secondslot
+                    </td>
+                    <td>
+                        @item.secondslot1
+                    </td>
+                    <td>
+                        @item.thirdslot
+                    </td>
+                    <td>
+                        @item.fourthslot
+                    </td>
+                    <td>
+                        @item.fourthslot1
+                    </td>
+                    <td>
+                        @item.fifthslot
+                    </td>
+                    <td>
+                        @item.sixslot
+                    </td>
+                    <td>
+                        @item.sixslot1
+                    </td>
+                    <td>
+                        @item.seventslot
+                    </td>
+                    <td>
+                        @item.eightslot
+                    </td>
+                    <td>
+                        @item.eightslot1
+                    </td>
+                    <td>
+                        @item.ninthslot
+                    </td>
+                    <td>
+                        @item.tenthslot
+                    </td>
+                    <td>
+                        @item.tenthslot1
+                    </td>
+                    <td>
+                        @item.eleventhslot
+                    </td>
+                    <td>
+                        @item.twelvthslot
+                    </td>
+                    <td>
+                        @item.twelvthslot1
+                    </td>
+                    <td>
+                        @item.thirteenthslot
+                    </td>
+                    <td>
+                        @item.fourteenthslot
+                    </td>
+                    <td>
+                        @item.fourteenthslot1
+                    </td>
+                    <td>
+                        @item.fifteenslot
+                    </td>
+                    <td>
+                        @item.sixteenthslot
+                    </td>
+                    <td>
+                        @item.sixteenthslot1
+                    </td>
+                    <td>
+                        @item.seventeenthslot
+                    </td>
+                    <td>
+                        @item.eigtheenthslot
+                    </td>
+                    <td>
+                        @item.eigtheenthslot1
+                    </td>
+                    <td>
+                        @item.ninteenthslot
+                    </td>
+                    <td>
+                        @item.twenteethslot
+                    </td>
+                    <td>
+                        @item.twenteethslot1
+                    </td>
+                    <td>
+                        @item.tweentyoneslot
+                    </td>
+                    <td>
+                        @item.tweentysecondslot
+                    </td>
+                    <td>
+                        @item.tweentysecondslot1
+                    </td>
+                    <td>
+                        @item.tweentythirdslot
+                    </td>
+                    <td>
+                        @item.tweentyfourththslot
+                    </td>
+                    <td>
+                        @item.tweentyfourththslot1
+                    </td>
+                    <td>
+                        @item.tweeentyfifthslot
+                    </td>
+                    <td>
+                        @item.tweentysixslot
+                    </td>
+                    <td>
+                        @item.tweentysixslot1
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+</div>
+<style>
+    table.dataTable thead th, table.dataTable tfoot th {
+        min-width: 60px;
+    }
+
+    .liasionname {
+        min-width: 139px;
+        text-align: left;
+    }
+
+    table.dataTable {
+    }
+
+    #workload {
+        float: left;
+        width: 100%;
+        margin: 10px 0px;
+    }
+
+    .datefield {
+        width: 200px;
+        float: left;
+        margin-left: 0px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#table').DataTable({
+    fixedHeader: {
+                    header: true,
+                    footer: false
+                },
+            pageLength: 50,
+            columnDefs: [
+                { width: 300, targets: 0}
+            ],
+
+            "dom": "Blfrtip",
+
+            buttons: [{
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: ["thead th:not(.noExport)", ':visible']
+                }
+            },
+                , {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                exportOptions: {
+                    columns: ["thead th:not(.noExport)", ':visible']
+                }
+                }, 'colvis'],
+
+        });
+        $("td:not(.notinclude)").filter(function () {
+            debugger;
+            if (this.innerText == "") {
+                this.classList.add("red");
+                this.innerText = "Empty";
+            }
+            else {
+                this.classList.add("green");
+                this.innerText = "Booked with " + this.innerText;
+            }
+
+        })
+    });
+</script>

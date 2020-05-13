@@ -1,0 +1,287 @@
+﻿@model CCM.Models.PatientLifestyle_WorkAndRelationship
+
+@{
+    var otherTextboxDisplay = Model?.Other == true ? "" : "none";
+}
+
+<style>
+    .checkboxLabel {
+        font-weight: lighter;
+        font-size: 1em;
+        float: left;
+        margin: 3px 30px 3px 10px;
+    }
+
+    .checkboxes {
+        width: 25px;
+        height: 22px;
+        float: left;
+    }
+    .form-group {
+        margin-top: 12px;
+    }
+    .light{
+        font-size:1em !important;
+    }
+</style>
+
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model?.PatientId })*@
+
+<div>
+    <div class="custom-title">
+        <h3>WORK & RELATIONSHIP STATUS</h3>
+    </div>
+    @using (Html.BeginForm("_Create", "PatientWorkAndRelationship", FormMethod.Post,
+         new { id = "frmCreatePatientWorkAndRelationship", @class = "frmStyle" }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+
+
+        <div class="form-horizontal">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Employment_StatusId, htmlAttributes: new { @class = "col-md-2" })
+                <div class="col-md-10 addressRadio">
+                    @Html.RadioButtonFor(model => model.Employment_StatusId, 1)
+                    @Html.Label("Full-Time", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.Employment_StatusId, 2)
+                    @Html.Label("Part-Time", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.Employment_StatusId, 3)
+                    @Html.Label("Retired", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.Employment_StatusId, 4)
+                    @Html.Label("Unemployed", new { @class = "lighterLabel" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Occupation, htmlAttributes: new { @class = "col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Occupation, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Occupation, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Workplace", htmlAttributes: new { @class = "col-md-2" })
+                <div class="col-md-10">
+                    @Html.CheckBoxFor(model => model.Home, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Home, htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.CheckBoxFor(model => model.Office, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Office, htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.CheckBoxFor(model => model.Field, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Field, htmlAttributes: new { @class = "checkboxLabel" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.TravelRequirementId, htmlAttributes: new { @class = "col-md-2" })
+                <div class="col-md-10 addressRadio">
+                    @Html.RadioButtonFor(model => model.TravelRequirementId, 1)
+                    @Html.Label("None", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.TravelRequirementId, 2)
+                    @Html.Label("Some", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.TravelRequirementId, 3)
+                    @Html.Label("Frequent", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.TravelRequirementId, 4)
+                    @Html.Label("Constant", new { @class = "lighterLabel" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Relationship_StatusId, htmlAttributes: new { @class = "col-md-2" })
+                <div class="col-md-10 addressRadio">
+                    @Html.RadioButtonFor(model => model.Relationship_StatusId, 1)
+                    @Html.Label("Spouse", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.Relationship_StatusId, 2)
+                    @Html.Label("Partner", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.Relationship_StatusId, 3)
+                    @Html.Label("Single", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.Relationship_StatusId, 4)
+                    @Html.Label("Divorced", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.Relationship_StatusId, 5)
+                    @Html.Label("Widowed", new { @class = "lighterLabel" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Living Situation", htmlAttributes: new { @class = "col-md-2 smallLabel" })
+                <div class="col-md-10">
+                    @Html.CheckBoxFor(model => model.Spouse, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Spouse, htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.CheckBoxFor(model => model.Partner, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Partner, htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.CheckBoxFor(model => model.Alone, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Alone, htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.CheckBoxFor(model => model.Children, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Children, htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.CheckBoxFor(model => model.Parents, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Parents, htmlAttributes: new { @class = "checkboxLabel" })
+                </div>
+            </div>
+
+            @*<div class="form-group">
+                @Html.Label("NCA", htmlAttributes: new { @class = "col-md-2 smallLabel" })
+                <div class="col-md-10">
+                    @Html.CheckBoxFor(model => model.NCA, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.NCA, "Personal Care Aid", htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.EditorFor(model => model.NCAHrsweek, new { htmlAttributes = new { @Type = "number", @class = "border-input" } })
+                    @Html.ValidationMessageFor(model => model.NCAHrsweek, "", new { @class = "text-danger" })
+                    @Html.Label("Hrs/week", new { @class = "lighterLabel light" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("CA", htmlAttributes: new { @class = "col-md-2 smallLabel" })
+                <div class="col-md-10 addressRadio">
+                    @Html.RadioButtonFor(model => model.CAID, 1)
+                    @Html.Label("Certified Nursing Assistant", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.CAID, 2)
+                    @Html.Label("Home Health Aid", new { @class = "lighterLabel" })
+
+                    @Html.EditorFor(model => model.CAHrsweek, new { htmlAttributes = new { @Type = "number", @class = "border-input" } })
+                    @Html.Label("Hrs/week", new { @class = "lighterLabel light" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("N", htmlAttributes: new { @class = "col-md-2 smallLabel" })
+                <div class="col-md-10 addressRadio">
+                    @Html.RadioButtonFor(model => model.NID, 1)
+                    @Html.Label("Licensed Practical (Vocational) Nurse", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.NID, 2)
+                    @Html.Label("Registered Nurses", new { @class = "lighterLabel" })
+
+                    @Html.EditorFor(model => model.NHrsweek, new { htmlAttributes = new { @Type = "number", @class = "border-input" } })
+                    @Html.Label("Hrs/week", new { @class = "lighterLabel light" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("T", htmlAttributes: new { @class = "col-md-2 smallLabel" })
+                <div class="col-md-10 addressRadio">
+                    @Html.RadioButtonFor(model => model.TID, 1)
+                    @Html.Label("Physical Therapist", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.TID, 2)
+                    @Html.Label("Occupational Therapist", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.TID, 3)
+                    @Html.Label("Speech Therapist", new { @class = "lighterLabel" })
+
+
+                    @Html.EditorFor(model => model.THrsweek, new { htmlAttributes = new { @Type = "number", @class = "border-input" } })
+                    @Html.Label("Hrs/week", new { @class = "lighterLabel light" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("SW", htmlAttributes: new { @class = "col-md-2 smallLabel" })
+                <div class="col-md-10 addressRadio">
+                    @Html.RadioButtonFor(model => model.SwID, 1)
+                    @Html.Label("Licensed social worker", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.SwID, 2)
+                    @Html.Label("Medical social worker", new { @class = "lighterLabel" })
+
+
+                    @Html.EditorFor(model => model.SwHrsweek, new { htmlAttributes = new { @Type = "number",@class="border-input" } })
+                    @Html.Label("Hrs/week", new { @class = "lighterLabel light" })
+                </div>
+            </div>*@
+
+            <div class="form-group">
+                @Html.Label("Pets", htmlAttributes: new { @class = "col-md-2" })
+                <div class="col-md-10">
+                    @Html.CheckBoxFor(model => model.Dog, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Dog, htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.CheckBoxFor(model => model.Cat, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Cat, htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.CheckBoxFor(model => model.Fish, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Fish, htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.CheckBoxFor(model => model.Bird, new { @class = "checkboxes" })
+                    @Html.LabelFor(model => model.Bird, htmlAttributes: new { @class = "checkboxLabel" })
+
+                    @Html.CheckBoxFor(model => model.Other, new { @class = "checkboxes", id = "otherCheckbox" })
+                    @Html.Label("Other:", htmlAttributes: new { @class = "checkboxLabel" })
+
+                    <div class="col-md-4" style="display:@otherTextboxDisplay" id="otherTextbox">
+                        @Html.EditorFor(model => model.OtherPet, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    </div>
+                </div>
+
+            </div>
+
+            <br />
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="button" value="Update" class="btn btn-success logdetails" onclick="SubmitForm('frmCreatePatientWorkAndRelationship','Update')" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $(document).on("change", "#otherCheckbox", function () {
+        if (this.checked) {
+            $("#otherTextbox").fadeIn();
+        } else {
+            $("#otherTextbox").fadeOut();
+        }
+    });
+</script>
+@section Scripts {
+    @* Pets: Other Checkbox - check event - Show/Hide Textbox *@
+
+
+    @*@if (User.IsInRole("Liaison"))
+        {
+            <SCRIPT type="text/javascript">
+
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+            </SCRIPT>
+        }*@
+}

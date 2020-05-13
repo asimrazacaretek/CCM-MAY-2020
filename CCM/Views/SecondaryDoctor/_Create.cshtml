@@ -1,0 +1,254 @@
+﻿@model CCM.Models.SecondaryDoctor
+@*<link href='https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/15.1.1/autocomplete-lhc_jQueryUI.min.css' rel="stylesheet">*@
+<div>
+    @using (Html.BeginForm("_Create", "SecondaryDoctor", FormMethod.Post,
+ new { id = "frmAddition", @class = "frmStyle" }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.PatientId)
+
+        <div class="form-horizontal">
+            <div class="custom-title">
+                <h3>ADD NEW ADDITIONAL PROVIDER</h3>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">
+                    Search
+                </label>
+
+
+                <div class="col-md-6">
+                    <input type="text" id="searchnpiAP" class="form-control border-input" placeholder="Search by NPI,Name or Number" />
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.NPI, "NPI", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.NPI, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "Required*", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.NPI, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.FullName, "Doctor's Full Name", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "Required*", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Speciality, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Speciality, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Speciality, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.MainPhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.MainPhoneNumber, new { htmlAttributes = new { @class = "form-control border-input", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.MainPhoneNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.MobilePhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.MobilePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.MobilePhoneNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control border-input", type = "email" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Address1, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Address1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Address1, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Address2, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Address2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Address2, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">Doctor Type</label>
+                <div class="col-md-6">
+                    @Html.DropDownListFor(
+               model => model.DoctorType,
+               new SelectList(
+                   new[]
+                   {
+                       new {Value = "PCP",  Text = "PCP"},
+                       new {Value = "Specialist",  Text = "Specialist"},
+                       new {Value = "Other",  Text = "Other"},
+
+                   },
+                   "Value", "Text", Model.DoctorType), new { @class = "form-control border-input", id = "doctortype" })
+                </div>
+
+            </div>
+            <div class="form-group" style="display:none">
+                @Html.LabelFor(x => x.isCCMProvider, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.CheckBoxFor(x => x.isCCMProvider)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.LastVisit, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.LastVisit, new { htmlAttributes = new { @class = "form-control border-input datetimepicker", placeholder = "Required*" } })
+                    @Html.ValidationMessageFor(model => model.LastVisit, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NextAppointment, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.NextAppointment, new { htmlAttributes = new { @class = "form-control border-input datetimepicker", placeholder = "Required*", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.NextAppointment, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.IsShareCarePlan, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6">
+                    @Html.DropDownListFor(item => item.IsShareCarePlan,
+                        new SelectList(
+                            new[]
+                            {
+                                new {Value = "true",  Text = "Yes"},
+                                new {Value = "false", Text = "No"}
+                            },
+                            "Value", "Text", Model),
+                        "Select One", new { @class = "form-control border-input",  id = "issues",required=true })
+                    @Html.ValidationMessageFor(model => model.IsShareCarePlan, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="button" value="Create" class="btn btn-success logdetails" onclick="SubmitForm('frmAddition','Saved')" />
+                    <a class="btn btn-success logdetails" onclick="AjaxRefresh('SecondaryDoctor','_Index',@Model.PatientId)"> Back to List</a>
+                    @*@Html.ActionLink("Back To List", "Index", "SecondaryDoctor", new { patientId = Model.PatientId }, new { @class = "btn btn-success logdetails" })*@
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
+@Scripts.Render("~/bundles/jqueryval")
+@*<script src='https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/15.1.1/autocomplete-lhc_jQuery.min.js'></script>*@
+<script>
+    new Def.Autocompleter.Search('searchnpiAP', 'https://clinicaltables.nlm.nih.gov/api/npi_idv/v3/search?df=NPI,name.full,addr_practice.full,addr_mailing.full,addr_practice.phone,addr_mailing.phone,provider_type'
+                /*{ tableFormat: true, valueCols: [0], colHeaders: ['NPI', 'Name', 'Gender', 'Type', 'Practice Address', 'Mailing Address', 'Phone1', 'Phone2'] }*/);
+    Def.Autocompleter.Event.observeListSelections('searchnpiAP', function () {
+        if ($("#searchnpiAP").val() != "") {
+
+        
+        var drugField = $('#searchnpiAP')[0];
+        var drugFieldVal = drugField.value;
+        var searchvalues = drugFieldVal.split(' - ');
+        var autocomp = drugField.autocomp;
+        $("#NPI").val(searchvalues[0]);
+
+        $("#FullName").val(searchvalues[1]);
+        $("#Speciality").val(searchvalues[6]);
+
+        $("#Address1").val(searchvalues[2]);
+        $("#Address2").val(searchvalues[3]);
+        $("#MainPhoneNumber").val(searchvalues[4]);
+        $("#MobilePhoneNumber").val(searchvalues[5]);
+        $("#searchnpiAP").val('');
+        }
+
+
+    });
+</script>
+<script>
+    //$("#searchnpiAP").on('input', function () {
+    //    alert("");
+    //    debugger;
+    //    var drugField = $('#searchnpiAP')[0];
+    //    var drugFieldVal = drugField.value;
+    //    var searchvalues = drugFieldVal.split(' - ');
+    //    var autocomp = drugField.autocomp;
+    //    $("#NPI").val(searchvalues[0]);
+
+    //    $("#FullName").val(searchvalues[1]);
+    //    $("#Speciality").val(searchvalues[6]);
+
+    //    $("#Address1").val(searchvalues[2]);
+    //    $("#Address2").val(searchvalues[3]);
+    //    $("#MainPhoneNumber").val(searchvalues[4]);
+    //    $("#MobilePhoneNumber").val(searchvalues[5]);
+    //    $("#searchnpiAP").val('');
+    //});
+    $('.datetimepicker').datepicker({
+
+    });
+    //$("form").submit(function () {
+    //    debugger;
+    //    var form = $(this);
+    //    var formdata = false;
+    //    if (window.FormData) {
+    //        formdata = new FormData(form[0]);
+    //    }
+    //    if (form.valid() == false) {
+    //        return false;
+    //    }
+    //    var urltosend = $("#frmAddition").attr('action');
+    //    //var datatosend = $("#createform").serialize();
+    //    var datatosend = formdata ? formdata : form.serialize();
+    //    $(".loader").show();
+    //    $.ajax({
+    //        type: 'POST',
+    //        url: urltosend,
+    //        data: datatosend,
+    //        cache: false,
+    //        contentType: false,
+    //        processData: false,
+    //        success: function (json) {
+    //            $(".loader").hide();
+    //            if (json == "True") {
+    //                swal({
+    //                    title: "Saved!",
+    //                    text: "Saved Successfully.",
+    //                    icon: "success",
+    //                    button: "Ok",
+    //                    confirmButtonColor: "#1ab394",
+    //                });
+    //                $("input:text").val("");
+    //            }
+    //            else { swal("Error!", "Error Accured :" + json, "error"); }
+    //        },
+    //        error: function (xhr, status, error) {
+    //            $(".loader").hide();
+    //            var err = eval("(" + xhr.responseText + ")");
+    //            //;
+    //            swal("Error!", "Error Accured :" + err.Message, "error");
+    //        }
+    //    });
+
+    //    return false;
+    //});
+
+</script>
+
+@Scripts.Render("~/bundles/jqueryval")
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+
+    </SCRIPT>
+}

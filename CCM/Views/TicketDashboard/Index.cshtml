@@ -1,0 +1,1290 @@
+﻿@using Microsoft.AspNet.Identity
+@using CCM.Models
+
+@model TicketDashboardViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    //List<UserTicketGeneration> OpenTickets =List<UserTicketGeneration> ViewBag.CardOpenTickets;
+    //List<UserTicketGeneration> InprogressTickets = ViewBag.CardInProgressTickets;
+    //List<UserTicketGeneration> ResolvedTickets = ViewBag.CardResolveTickets;
+    List<UserTicketGeneration> nonactive = ViewBag.pendingactive; 
+
+
+}
+
+
+<link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
+<style>
+    .background-forDashboard {
+        background: white;
+        background-size: cover;
+        height: 100%;
+        box-shadow: black -2px -3px 24px 3px;
+        margin: 15px;
+    }
+
+    #donutchart {
+        height: 100%;
+        width: 100%;
+    }
+
+    #LineChatGenrated {
+        border-radius: 10px;
+    }
+
+    .mt-3 {
+        margin-top: 1.5rem;
+    }
+
+    .custom-card {
+        background-color: white;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        border-radius: 4px;
+        overflow-y: auto;
+        height:317px;
+    }
+
+        .custom-card .heading {
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bolder;
+            border-bottom: 1px solid darkgrey;
+            border-bottom-style: dotted;
+            background: #0364bd;
+            color: white;
+        }
+
+        .custom-card .data-list {
+            padding: 10px 10px;
+            border-bottom: 1px solid darkgray;
+            border-bottom-style: dotted;
+        }
+
+         .custom-card .data-list .dummy-image {
+                font-size: 17px;
+                padding: 8px;
+                background-color: lightgray;
+                border-radius: 50%;
+            }
+
+            .custom-card .data-list .person-name ul {
+                font-size: 13px;
+                padding: 0;
+                list-style: none;
+                position: absolute;
+                left: 20%;
+                margin-top: -27px;
+                margin-left: 3px
+            }
+
+            .custom-card .data-list .count ul {
+                list-style: none;
+            }
+
+            .custom-card .data-list .person-name small, .custom-card .data-list .count small {
+                color: gray !important;
+            }
+
+    .canvasjs-chart-canvas {
+        position: relative !important;
+        border-radius: 4px;
+    }
+
+    .canvasjs-chart-container {
+        border-radius: 4px;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    .box-shadow {
+        box-shadow: grey -2px 4px 12px;
+    }
+
+    .TicketGeneral {
+        font-size: 17px;
+        padding: 15px;
+        border-radius: 4px;
+    }
+
+    .color-white {
+        color: white;
+    }
+
+    .filter-icons {
+        position: absolute;
+        top: 20px;
+        background: #909090;
+        color: white;
+        padding: 6px;
+        font-size: 8px;
+    }
+
+    .filter-label, .filter-input {
+        margin-left: 40px;
+    }
+
+    .filter-label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .filter-input input {
+        height: 33px;
+        border: 2px solid #66615b;
+        border-radius: 4px;
+    }
+
+    @@media (min-width: 992px) {
+        .col-md-2 {
+            width: 19.666667%;
+        }
+    }
+
+    .filters-row-custom {
+        padding: 18px;
+        border-radius: 4px;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .Chartslinks {
+        padding: 20px;
+        font-size: 15px;
+        text-decoration: underline;
+        cursor: pointer;
+        color: blue;
+    }
+
+    .select2-choice {
+        height: 34px !important;
+        border-radius: 0px;
+        border-color: black;
+        border: 3px solid thick;
+        padding: 4px 0px 4px 4px;
+    }
+
+    .select2-container {
+        width: 100%;
+    }
+
+        .select2-container .select2-choice > .select2-chosen {
+            padding-top: 4px;
+            min-width: 100%;
+            max-width: 100%;
+        }
+
+    .TicketAssigneeClass .select2-container {
+        width: 155px !important;
+    }
+
+    .TickettypeClass .select2-container {
+        width: 136px !important;
+    }
+
+    .ticketSubjectDashboardClass .select2-container {
+     width:136px !important;
+    } 
+    .borderlesscoloumn{
+        border:none !important;
+    }
+    .ticketsStatus .select2-container {
+        width: 136px !important;
+    }
+    #ticketrows {
+        font-size: 16px;
+        font-weight: bold;
+    }
+    #ticketuser {
+        padding-left: 38px;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+        margin-left: -14px;
+    }
+
+</style>
+<div class="background-forDashboard">
+    <div class="container">
+        @using (Html.BeginForm("Index", "TicketDashboard", FormMethod.Post, new { @id = "TicketAdminDashboard", role = "form", enctype = "multipart/form-data" }))
+        {
+        <div class="row mt-3 filters-row-custom box-shadow">
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-calendar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Start Date
+                    </span>
+                    <div class="filter-input">
+
+                        @Html.TextBoxFor(x => x.StartDate, new { @type = "date", @class = "pickerdate" })
+
+                        @*<input type="date" id="StartDate" class="" />*@
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-calendar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        End Date
+                    </span>
+                    <div class="filter-input">
+                        @Html.TextBoxFor(x => x.EndDate, new { @type = "date", @class = "pickerdate" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-dollar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Ticket Subject
+                    </span>
+
+                    <div class="filter-input ticketSubjectDashboardClass">
+                        @Html.DropDownListFor(x => x.ticketSubjectDashboard, CCM.Helpers.CommonFunctions.GetTicketSubject(), "Ticket Subject", new { @required = "required", @class = "border-input" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-user fa-2x"></i>
+                    </span>
+                    <span class="filter-label ">
+                        Ticket Types
+                    </span>
+                    <div class="filter-input TickettypeClass">
+                        @Html.DropDownListFor(x => x.Tickettype, CCM.Helpers.CommonFunctions.GetTicketType(), "Ticket Types", new { @required = "required", @class = "border-input" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fas fa-user-edit fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Ticket Assignee
+                    </span>
+                    <div class="filter-input TicketAssigneeClass">
+                        @Html.DropDownListFor(x => x.TicketAssignee, CCM.Helpers.CommonFunctions.GetAssigneeUsers(User.Identity.GetUserId()), "Ticket Assignee", new { @required = "required", @class = " border-input" })
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-tasks fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Ticket Status
+                    </span>
+                    <div class="filter-input ticketsStatus">
+                        @Html.DropDownListFor(x => x.status, CCM.Helpers.CommonFunctions.GetTicketStatusAll(), "Ticket Status", new { @class = " border-input" })
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-user-circle fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Created By
+                    </span>
+                    <div class="filter-input TicketAssigneeClass">
+                        @Html.DropDownListFor(x => x.createdBy, CCM.Helpers.CommonFunctions.GetAssigneeUsers(User.Identity.GetUserId()), "Created By", new { @required = "required", @class = " border-input" })
+                    </div>
+
+                </div>
+            </div>
+            @*onclick="getDashboardData('TicketAdminDashboard','Save')"*@
+            <div style="margin-left: 923px;">
+                <button style="margin-top: 17px;" type="submit" class="btn btn-success">Load</button>
+            </div>
+
+        </div>
+        }
+    <div id="dashboarddiv">
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="TicketGeneral text-center box-shadow">
+                    <div class="headforGeneral">
+                        <strong class="text-center"><i class="fa fa-clock"></i>Time to Resolve a Ticket</strong>
+                    </div>
+                    <div class="TimeElbo mt-3">
+                        <div class="row">
+                            <span class=" col-md-6 text-center">Highest</span>
+                            <span class="col-md-6 text-center">Average</span>
+                        </div>
+                    </div>
+                    <div class="time-Actual">
+                        <div class="row">
+                            <strong>
+                                <span class="text-center col-md-6">
+
+                                    @{if (ViewBag.hdays != null)
+                                        {
+                                            @ViewBag.hdays<span>D:</span>
+                                        }
+                                        if (ViewBag.hhours != null)
+                                        {
+                                            @ViewBag.hhours<span>H:</span> }
+
+                                        if (ViewBag.hminutes != null)
+                                        {@ViewBag.hminutes<span>M:</span> }
+                                    if (ViewBag.hseconds != null)
+                                    { @ViewBag.hseconds<span>S</span>}
+
+
+
+                                    }
+
+
+
+
+
+                                </span><span class="col-md-6 text-center">
+                                    @{if (ViewBag.avgdays != null)
+                                        {
+                                            @ViewBag.avgdays<span>D:</span>
+                                        }
+                                        if (ViewBag.avghours != null)
+                                        {
+                                            @ViewBag.avghours<span>H:</span> }
+
+                                        if (ViewBag.avgminutes != null)
+                                        {@ViewBag.avgminutes<span>M:</span> }
+                                    if (ViewBag.avgseconds != null)
+                                    { @ViewBag.avgseconds<span>S</span>}
+
+
+
+                                    }
+                                </span>
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="TicketGeneral text-center box-shadow">
+                    <div class="headforGeneral ">
+                        <strong class="text-center "><i class="fa fa-clock"></i>Wait time a Ticket</strong>
+                    </div>
+                    <div class="TimeElbo mt-3">
+                        <div class="row">
+                            <span class=" col-md-6 text-center">Highest</span>
+                            <span class="col-md-6 text-center">Average</span>
+                        </div>
+                    </div>
+                    <div class="time-Actual">
+                        <div class="row">
+                            <strong>
+                                <span class="text-center col-md-6">
+                                    @{if (ViewBag.waitinghdays != null)
+                                        {
+                                            @ViewBag.waitinghdays<span>D:</span>
+                                        }
+                                        if (ViewBag.waitinghhours != null)
+                                        {
+                                            @ViewBag.waitinghhours<span>H:</span> }
+
+                                        if (ViewBag.waitinghminutes != null)
+                                        {@ViewBag.waitinghminutes<span>M:</span> }
+                                    if (ViewBag.waitinghseconds != null)
+                                    { @ViewBag.waitinghseconds<span>S</span>}
+
+
+
+                                    }
+
+
+                                </span><span class="col-md-6 text-center">
+                                    @{if (ViewBag.waitingavgdays != null)
+                                        {
+                                            @ViewBag.waitingavgdays<span>D:</span>
+                                        }
+                                        if (ViewBag.waitingavghours != null)
+                                        {
+                                            @ViewBag.waitingavghours<span>H:</span> }
+
+                                        if (ViewBag.waitingavgminutes != null)
+                                        {@ViewBag.waitingavgminutes<span>M:</span> }
+                                    if (ViewBag.waitingavgseconds != null)
+                                    { @ViewBag.waitingavgseconds<span>S</span>}
+
+
+
+                                    }
+                                </span>
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        @* CHARTS TICKET *@
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div id="LineChatOpen" class="box-shadow" style="height:300px"></div>
+                <span id="timeToRender"></span>
+            </div>
+            <div class="col-md-6">
+                <div id="LineChatActive" class="box-shadow" style="height:300px"></div>
+            </div>
+
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div id="LineChatResolved" class="box-shadow" style="height:300px"></div>
+                <span id="timeToRender"></span>
+            </div>
+
+            <div class="col-md-6">
+                <div id="LineChatOverdue" class="box-shadow" style="height:300px"></div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="chart-div box-shadow">
+                    <div id="chartContainer" class="" style="height:350px"></div>
+                    <div class="text-center mt-3">
+                        @*<a class="Chartslinks" href="#">Status</a><a class="Chartslinks" href="#">Subject</a><a class="Chartslinks" href="#">Type</a><a class="Chartslinks" href="#">Priotiy</a>*@
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="chart-div box-shadow">
+                    <div id="chartContainer2" class="" style="height:350px"></div>
+                    <div class="text-center mt-3">
+                        @*<a class="Chartslinks" href="#">Status</a><a class="Chartslinks" href="#">Subject</a><a class="Chartslinks" href="#">Type</a><a class="Chartslinks" href="#">Priotiy</a>*@
+                    </div>
+                </div>
+            </div>
+          
+
+        </div>
+        <div class="row mt-3">
+          
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="chart-div box-shadow">
+                    <div id="chartContainer3" class="" style="height:350px"></div>
+                    <div class="text-center mt-3">
+                        @*<a class="Chartslinks" href="#">Status</a><a class="Chartslinks" href="#">Subject</a><a class="Chartslinks" href="#">Type</a><a class="Chartslinks" href="#">Priotiy</a>*@
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-4">
+
+
+
+                <div class="custom-card box-shadow">
+                    <div class="heading"> Open Tickets</div>
+                    <div class="data-list">
+                        <table id="opentickets">
+                            <thead style="display:none">
+                                <tr>
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.CardOpenTickets != null)
+                                {
+
+                                    foreach (var item in ViewBag.CardOpenTickets)
+                                    {
+
+
+                                        <tr>
+                                            <td class="borderlesscoloumn">
+                                                <span class="dummy-image"><i class="fa fa-user"></i></span>
+                                                @if (item.TicketGeneration != null)
+                                                {
+                                                    <span id="ticketrows"> @item.TicketGeneration.subjectName </span>
+                                                }
+                                                <br />
+                                                <span id="ticketuser">User Name:&nbsp; @HelperExtensions.GetUserNamebyID(item.UserId)</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-4">
+                <div class="custom-card box-shadow">
+                    <div class="heading">In  Progress Tickets</div>
+                    <div class="data-list">
+                        <table id="inprogresstickets">
+                            <thead style="display:none">
+                                <tr>
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.CardInProgressTickets != null)
+                                {
+
+                                    foreach (var item in ViewBag.CardInProgressTickets)
+                                    {
+
+
+                                        <tr>
+                                            <td class="borderlesscoloumn">
+                                                <span class="dummy-image"><i class="fa fa-user"></i></span>
+                                                @if (item.TicketGeneration != null)
+                                                {
+                                                    <span id="ticketrows"> @item.TicketGeneration.subjectName </span>
+                                                } <br />
+                                                <span id="ticketuser">User Name:&nbsp; @HelperExtensions.GetUserNamebyID(item.UserId)</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="custom-card box-shadow">
+                    <div class="heading">Resolved Tickets</div>
+                    <div class="data-list">
+                        <table id="resolvedtickets">
+                            <thead style="display:none">
+                                <tr>
+                                    <th>
+                                        Ticket Name
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.CardResolveTickets != null)
+                                {
+
+                                    foreach (var item in ViewBag.CardResolveTickets)
+                                    {
+
+
+                                        <tr>
+                                            <td class="borderlesscoloumn">
+                                                <span class="dummy-image"><i class="fa fa-user"></i></span>
+                                                @if (item.TicketGeneration != null)
+                                                {
+                                                    <span id="ticketrows"> @item.TicketGeneration.subjectName </span>
+                                                }<br />
+                                                <span id="ticketuser">User Name: &nbsp; @HelperExtensions.GetUserNamebyID(item.UserId)</span>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div style="margin-bottom:20px;">
+                <span style="text-align:center;font-size:20px;font-weight:bolder;margin-left: 10px;  ">
+                    Active Tickets
+                </span>
+            </div>
+            <table id="SearchOfTicket">
+                <thead>
+                    <tr class="color-white">
+                        <th>
+                            Ticket ID
+                        </th>
+                        <th>
+                            Ticket Subject
+                        </th>
+                        <th>
+                            Ticket Type
+                        </th>
+                        <th>
+                            Ticket Assignee
+                        </th>
+                        <th>
+                            Ticket Status
+                        </th>
+                        <th>
+                            Open Time
+                        </th>
+                        <th>
+                            Resolve Time
+                        </th>
+                        <th>
+                            In Progress Time
+                        </th>
+                        <th>
+                            Priority
+                        </th>
+                        <th>
+                            Created By
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.ticketGrid != null)
+                    {
+
+                        foreach (var item in ViewBag.ticketGrid)
+                        {
+                            <tr>
+                                <td>@item.ticketId</td>
+                                <td>@item.ticketSubject</td>
+                                <td>@item.ticketType</td>
+                                <td>@item.ticketAssignee</td>
+                                <td>@item.ticketStatus</td>
+                                <td>@item.openTime</td>
+                                <td>@item.resolveTime</td>
+                                <td>@item.inProgressTime</td>
+                                <td>@item.priority</td>
+                                <td>@item.createdBy</td>
+                                @*<td>@item.ticketId</td>*@
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <div class="row mt-3">
+            <div style="margin-bottom:20px;">
+                <span style="text-align:center;font-size:20px;font-weight:bolder;margin-left: 10px;">
+                    Pending Active Tickets
+                </span>
+            </div>
+            <table id="SearchOfTicket2">
+                <thead>
+                    <tr class="color-white">
+                        <th>
+                            Ticket ID
+                        </th>
+                        <th>
+                            Ticket Subject
+                        </th>
+                        <th>
+                            Ticket Type
+                        </th>
+
+                        <th>
+                            Ticket Status
+                        </th>
+
+                        <th>
+                            Priority
+                        </th>
+                        <th>
+                            Created By
+                        </th>
+                        <th>
+                            Created Date
+                        </th>
+                        <th>
+                            Assignee Ticket
+                        </th>
+                        <th>
+                            Patient ID
+                        </th>
+                        <th>
+                            Patient Name
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.pendingactive != null)
+                    {
+
+                        foreach (var item in nonactive)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+
+                                <td>
+                                    @if (item.TicketGeneration != null)
+                                    {
+                                        @item.TicketGeneration.subjectName
+                                    }
+                                </td>
+                                <td>@if (item.Type!=null) {
+                                    @item.Type.typeName
+                                }
+                                </td>
+                                <td>@if (item.Status!=null) {
+                                    @item.Status.statusName
+                                }</td>
+
+                                <td>
+                                    @if (item.Priority != null)
+                                    {
+                                        <p> @item.Priority.priorityLevel- @item.Priority.priorityMinute</p>
+                                    }
+                                    else
+                                    {
+                                        <p>No Priority Set</p>
+                                    }
+                                </td>
+                                <td>@HelperExtensions.GetUserNamebyID(item.createdBy) </td>
+                                <td>@item.createdDate</td>
+                                <td>
+                                    @HelperExtensions.GetUserNamebyID(item.UserId)
+                                </td>
+                                <td>
+                                    @if (item.PatientId != null)
+                                    {@item.PatientId}
+                                else
+                                { <p>0</p>}
+                                </td>
+                                <td>
+                                    @if (item.PatientId != null)
+                                    {
+                                        @item.Patient.FirstName
+                                    }
+                                    else
+                                    {
+                                        <p>No Patient Assigned</p>
+                                    }
+                                </td>
+
+                                @*<td>@item.ticketId</td>*@
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+
+<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$(".pickerdate").datetimepicker({
+        //    format: "mm/dd/yyyy",
+        //});
+        $('#SearchOfTicket').DataTable({
+            pageLength: 5,
+            "bInfo": true,
+            columnDefs: [{ type: 'date', 'targets': [5] }],
+            order: [[5, 'desc']]
+        });
+         $('#SearchOfTicket2').DataTable({
+            pageLength: 5,
+            "bInfo": true,
+            columnDefs: [{ type: 'date', 'targets': [5] }],
+            order: [[5, 'desc']]
+        });
+
+   $("#opentickets").DataTable({
+       "bFilter": false,
+       pageLength: 4,
+      
+       "bLengthChange": false,
+       
+       "bInfo": false,
+       
+       
+            
+        });
+        
+
+       
+        $("#inprogresstickets").DataTable({
+            "bFilter": false,
+            "bLengthChange": false,
+            "bInfo": false,
+            pageLength: 4
+        });
+        $("#resolvedtickets").DataTable({
+            "bFilter": false,
+            "bLengthChange": false,
+            "bInfo": false,
+            pageLength: 4
+        });
+
+        $("#createdBy,#status,#SubjectofTicket,#assigneeofTicket,#Tickettype,#ticketSubjectDashboard,#TicketAssignee").select2({
+            allowClear: true,
+
+        });
+
+        //$('#SubjectofTicket').multiselect({
+        //    includeSelectAllOption: false,
+        //    enableCaseInsensitiveFiltering: true,
+        //    enableFiltering: true,
+        //    buttonWidth: '150px',
+        //    maxHeight: 200,
+        //});
+        //$('#assigneeofTicket').multiselect({
+        //    includeSelectAllOption: false,
+        //    enableCaseInsensitiveFiltering: true,
+        //    enableFiltering: true,
+        //    buttonWidth: '150px',
+        //    maxHeight: 200,
+        //});
+        //$('#TypesofTicket').multiselect({
+        //    includeSelectAllOption: false,
+        //    enableCaseInsensitiveFiltering: true,
+        //    enableFiltering: true,
+        //    buttonWidth: '150px',
+        //    maxHeight: 200,
+        //});
+
+
+    });
+
+    function getDashboardData(form,operation) {
+        var Form = form;
+        var AddUpdate = operation;
+        $("#uploadFiles").val("");
+        var form = $("#" + Form);
+        form.validate();
+        var formdata = false;
+
+
+        if (window.FormData) {
+            formdata = new FormData(form[0]);
+        }
+        if (form.valid() == false) {
+            return false;
+        }
+
+        var urltosend = form.attr('action');
+        var datatosend = formdata ? formdata : form.serialize();
+        $(".loader").show();
+
+        $.ajax({
+            type: 'POST',
+            url: urltosend,
+            data: datatosend,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (json) {
+                $(".loader").hide();
+                if (json == "True") {
+                 
+                    //$("#dashboarddiv").load(window.location + " #dashboarddiv");
+                    var msg = "Saved Successfully";
+                    var titl = "Saved!";
+                    if (AddUpdate == "Update") {
+                        titl = "Updated!";
+                        msg = "Updated Successfully!";
+                    }
+                    else
+                        $('#TicketAdminDashboard').trigger("reset");
+                    //$(".imageuploadify-container").remove();
+
+                    //swal({
+                    //    title: titl,
+                    //    text: msg,
+                    //    icon: "success",
+                    //    button: "Ok",
+                    //    confirmButtonColor: "#1ab394",
+                    //});
+                    //window.location.href = "/Chats/ListViewTicket";
+                    //$("#AssigneeTicket").modal('toggle');
+
+                }
+                else {
+                    swal("Error!", "Error Accured :" + json, "error");
+                }
+            },
+            error: function (xhr, status, error) {
+                $(".loader").hide();
+                var err = eval("(" + xhr.responseText + ")");
+                swal("Error!", "Error Accured :" + err.Message, "error");
+            }
+        });
+
+        return false
+    }
+
+
+
+    // Pie Chart Start
+    window.onload = function () {
+     
+        var options = {
+            animationEnabled: true,
+            title: {
+                text: "Ticket Status",
+                fontSize: 17,
+                fontWeight: "bold",
+                fontFamily: "Calibri"
+            },
+           
+            data: [{
+                type: "doughnut",
+                radius: "90%",
+                indexLabelFormatter: function (e) {
+                   
+                        return "";
+                    
+                },
+                innerRadius: "60%",
+                showInLegend: true,
+                legendText: "{label}:{y}",
+                indexLabel: null,
+                dataPoints: [
+                    { label: "Open" ,y:@ViewBag.OpenTickets},
+                    { label: "In Progress", y: @ViewBag.totalInProgressTickets },
+                    { label: "Resolved", y: @ViewBag.totalResolveTickets },
+                    { label: "UnResolved", y: @ViewBag.totalUnResovleTickets }
+                ]
+            }]
+        };
+        $("#chartContainer").CanvasJSChart(options);
+        var d = [];
+        var data =@Html.Raw(Json.Encode(ViewBag.resolution));
+
+            for ( i = 0; i < data.length; i++) {
+                       d.push({ y: data[i].Count,label:data[i].SubjectName });              
+        }
+        //pie Chart End
+     var options = {
+            animationEnabled: true,
+            title: {
+                text: "Ticket Resolution",
+                fontSize: 17,
+                fontWeight: "bold",
+                fontFamily: "Calibri"
+         },
+           
+            data: [{
+                type: "doughnut",
+                radius: "90%",
+                indexLabelFormatter: function (e) {
+                   
+                        return "";
+                    
+                },
+                innerRadius: "60%",
+                showInLegend: true,
+                legendText: "{label}:{y}",
+                indexLabel: null,
+                dataPoints:d
+            }]
+        };
+        $("#chartContainer2").CanvasJSChart(options);
+        //pie Chart End
+         var d = [];
+        var data =@Html.Raw(Json.Encode(ViewBag.subjects));
+
+            for ( i = 0; i < data.length; i++) {
+                       d.push({ y: data[i].Count,label:data[i].SubjectName });              
+        }
+
+            //$.each(data.s, function (index, value) {
+            //    d.push({ y: value[index].Count });
+            //});
+       
+          var options = {
+            animationEnabled: true,
+            title: {
+                text: "Ticket Subject",
+                fontSize: 17,
+                fontWeight: "bold",
+                fontFamily: "Calibri"
+              },
+                         legend: {
+        horizontalAlign: "right",
+        verticalAlign: "center"
+      },
+            data: [{
+                type: "doughnut",
+                radius: "90%",
+                indexLabelFormatter: function (e) {
+                   
+                        return "";
+                    
+                },
+                innerRadius: "60%",
+                showInLegend: true,
+                legendText: "{label}:{y}",
+      
+                indexLabel: null,
+
+                dataPoints:d
+
+            }]
+        };
+        $("#chartContainer3").CanvasJSChart(options);
+        //pie Chart End
+
+        
+        var datapoint = [];
+        var data=@Html.Raw(Json.Encode(ViewBag.TotalOpenTickets))
+            $.each(data.Tikets, function (index, value) {
+                datapoint.push({ y: value.TotalTicket });
+               // console.log(value);
+         });
+        var options = {
+            animationEnabled: true,
+            zoomEnabled: true,
+            title: {
+                text:@ViewBag.TotalOpenTickets.totalTickets,
+                fontFamily: "Calibri"
+            },
+            subtitles: [{
+                text: "Pending Active Tickets ",
+                fontColor: "#8260b6",
+                fontSize: 14,
+                fontWeight: "",
+                fontFamily: "Calibri"
+            },
+            {
+                text:"@ViewBag.TotalOpenTickets.StartDate                      @ViewBag.TotalOpenTickets.EndDate",
+                fontColor: "#bfbdbd",
+                fontWeight: "",
+                fontFamily: "Calibri"
+            }
+            ],
+            data: [{
+                color: "#8a75aa",
+                type: "line",
+                dataPoints: datapoint
+            }],
+            axisY: {
+                title:"Tickets",
+               maximum: @ViewBag.TotalOpenTickets.totalTickets, // show the maximum number of tickect
+               // minimum: 0, //minimum number of tickets
+               //  interval: 20, // interval for the values
+            },
+            axisX: {
+                title: "Weeks",
+                tickLength: 0,
+                margin: 0,
+                minimum:0,
+                lineThickness: 0,
+                //valueFormatString: "1w"
+            }
+        };
+        //options.dataPoints.push(9);
+        var startTime = new Date();
+        $("#LineChatOpen").CanvasJSChart(options);
+        var endTime = new Date();
+         var datapoint = [];
+        var data=@Html.Raw(Json.Encode(ViewBag.TotalActiveTickets))
+            $.each(data.Tikets, function (index, value) {
+                datapoint.push({ y: value.TotalTicket });
+               // console.log(value);
+         });
+        var options = {
+            animationEnabled: true,
+            zoomEnabled: true,
+            title: {
+                text:@ViewBag.TotalActiveTickets.totalTickets,
+                fontFamily: "Calibri"
+            },
+            subtitles: [{
+                text: "Active Tickets",
+                fontColor: "#8260b6",
+                fontSize: 14,
+                fontWeight: "",
+                fontFamily: "Calibri"
+            },
+            {
+                text:"@ViewBag.TotalActiveTickets.StartDate                      @ViewBag.TotalActiveTickets.EndDate",
+                fontColor: "#bfbdbd",
+                fontWeight: "",
+                fontFamily: "Calibri"
+            }
+            ],
+            data: [{
+                color: "#8a75aa",
+                type: "line",
+                dataPoints: datapoint
+            }],
+            axisY: {
+                title:"Tickets",
+               maximum: @ViewBag.TotalActiveTickets.totalTickets, // show the maximum number of tickect
+               // minimum: 0, //minimum number of tickets
+               //  interval: 20, // interval for the values
+            },
+            axisX: {
+                title: "Weeks",
+                tickLength: 0,
+                margin: 0,
+                minimum:0,
+                lineThickness: 0,
+                //valueFormatString: "1w"
+            }
+        };
+        //options.dataPoints.push(9);
+        var startTime = new Date();
+        $("#LineChatActive").CanvasJSChart(options);
+        var endTime = new Date();
+       
+        //document.getElementById("timeToRender").innerHTML = "Time to Render: " + (endTime - startTime) + "ms";
+        //Line Chart Generated End
+        //Line Chart Reolved
+        var dataPoints = [];
+        var y = 1000;
+        var limit = 50000;
+
+        for (var i = 0; i < limit; i++) {
+            y += Math.round(10 + Math.random() * (-10 - 10));
+            dataPoints.push({ y: y });
+        }
+         var datapoint = [];
+        var data=@Html.Raw(Json.Encode(ViewBag.totalResoloveticketsbyweek))
+            $.each(data.Tikets, function (index, value) {
+                datapoint.push({ y: value.TotalTicket });
+               // console.log(value);
+         });
+        var options = {
+            animationEnabled: true,
+            zoomEnabled: true,
+            title: {
+                text:@ViewBag.totalResoloveticketsbyweek.totalTickets,
+                fontFamily: "Calibri"
+            },
+            subtitles: [{
+                text: "Tickets Resolved",
+                fontColor: "#1e83d3",
+                fontSize: 14,
+                fontWeight: "lighter",
+                fontFamily: "Calibri"
+
+            },
+            {
+                text:"@ViewBag.totalResoloveticketsbyweek.StartDate                      @ViewBag.totalResoloveticketsbyweek.EndDate",
+                 fontColor: "#bfbdbd",
+                fontWeight: "",
+                fontFamily: "Calibri"
+            }
+            ],
+            data: [{
+                color: "#3e93d6",
+                type: "line",
+                 dataPoints: datapoint
+            }],
+            axisY: {
+                 title:"Tickets",
+                 maximum: @ViewBag.totalResoloveticketsbyweek.totalTickets, // show the maximum number of tickect
+             
+            },
+            axisX: {
+                title: "Weeks",
+                tickLength: 0,
+                margin: 0,
+                 minimum:0,
+                lineThickness: 0,
+                //valueFormatString: "1w"
+            }
+        };
+        var startTime = new Date();
+        $("#LineChatResolved").CanvasJSChart(options);
+        var endTime = new Date();
+        // Line Chart Resolved
+        //Line Chart Overdue
+        var dataPoints = [];
+        var y = 1000;
+        var limit = 50000;
+
+        for (var i = 0; i < limit; i++) {
+            y += Math.round(10 + Math.random() * (-10 - 10));
+            dataPoints.push({ y: y });
+        }
+         var datapoint = [];
+        var data=@Html.Raw(Json.Encode(ViewBag.totalOverDueticketsbyweek))
+            $.each(data.Tikets, function (index, value) {
+                datapoint.push({ y: value.TotalTicket });
+               // console.log(value);
+         });
+        var options = {
+            animationEnabled: true,
+            zoomEnabled: true,
+            title: {
+               text:@ViewBag.totalOverDueticketsbyweek.totalTickets,
+                 fontFamily: "Calibri"
+            },
+            subtitles: [{
+                text: "Tickets UnResolved",
+                fontColor: "#178f88",
+                fontSize: 14,
+                fontWeight: "",
+                fontFamily: "Calibri"
+            },
+            {
+                 text:"@ViewBag.totalOverDueticketsbyweek.StartDate                      @ViewBag.totalOverDueticketsbyweek.EndDate",
+                fontColor: "#bfbdbd",
+                fontWeight: "",
+                fontFamily: "Calibri"
+            }
+            ],
+            data: [{
+                color: "LightSeaGreen",
+                type: "line",
+                dataPoints: datapoint
+            }],
+            axisY: {
+                 title:"Tickets",
+                 maximum: @ViewBag.totalOverDueticketsbyweek.totalTickets, // show the maximum number of tickect
+             
+            },
+            axisX: {
+                title: "Weeks",
+                tickLength: 0,
+                margin: 0,
+                 minimum:0,
+                lineThickness: 0,
+               // valueFormatString: "1w"
+            }
+        };
+        var startTime = new Date();
+        $("#LineChatOverdue").CanvasJSChart(options);
+        var endTime = new Date();
+        // Line Chart Overdue
+    }
+
+
+</script>
+
+

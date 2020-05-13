@@ -1,0 +1,241 @@
+﻿@model IEnumerable<CCM.Models.SecondaryDoctor>
+@using CCM.Models
+@{
+    ApplicationdbContect _db = new ApplicationdbContect();
+    var reason = "";
+    var procedure = "";
+    var date = DateTime.Now;
+    var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
+    var c = Model.Where(p => p.CreatedOn >= firstDayOfMonth || p.UpdatedOn >= firstDayOfMonth).Count();
+    int patientid = ViewBag.PatientId;
+    var checkisnotvisited = _db.Patient_NoAdditionalProvider.Where(p => p.PatientId == patientid && (p.CreatedOn >= firstDayOfMonth || p.UpdatedOn >= firstDayOfMonth) && p.Status == true).Count();
+}
+
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = ViewBag.PatientId })*@
+<style>
+    .panel-body {
+        width: 100% !important;
+        overflow-x: scroll;
+    }
+
+    .lblbold1 {
+        text-align: left;
+        font-weight: bold;
+        color: green;
+        font-size: 16px;
+        margin-left: 8px;
+    }
+
+    #PatientSecondaryHospital {
+        display: none;
+    }
+
+        #PatientSecondaryHospital + label {
+            display: inline-block;
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+            #PatientSecondaryHospital + label:last-child {
+                margin-bottom: 0;
+            }
+
+            #PatientSecondaryHospital + label:before {
+                content: '';
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border: 1px solid #0364bd;
+                position: absolute;
+                left: 15px;
+                top: 0;
+                opacity: .6;
+                -webkit-transition: all .12s, border-color .08s;
+                transition: all .12s, border-color .08s;
+            }
+
+        #PatientSecondaryHospital:checked + label:before {
+            width: 10px;
+            top: -5px;
+            left: 15px;
+            border-radius: 0;
+            opacity: 1;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+</style>
+<div class="form-horizontal">
+
+    @*@{
+            if (ViewBag.PrimaryPhysician != "")
+            {
+                <div class="custom-title">
+                    <h3>CCM PROVIDER: @ViewBag.PrimaryPhysician</h3>
+                </div>
+            }
+        }*@
+    <div class="">
+
+        @*<h3 class="inner-heading">ADDITIONAL PROVIDER</h3>*@
+        @if (checkisnotvisited > 0)
+        {
+            <a class="btn btn-success logdetails " id="Addnewprovider" disabled="disabled" onclick="AjaxRefresh('SecondaryDoctor','_Create', '@ViewBag.PatientId') "> Add New Provider</a>
+        }
+        else
+        {
+            <a class="btn btn-success logdetails " id="Addnewprovider" onclick="AjaxRefresh('SecondaryDoctor','_Create', '@ViewBag.PatientId') "> Add New Provider</a>
+
+        }
+
+
+
+
+        @if (c == 0)
+        {
+            if (checkisnotvisited > 0)
+            {
+                <div style="display: contents;" class="PatientSecondaryHospitalDiv">
+                    <input type="checkbox"  value="true" name="PatientSecondaryHospital" onchange="PatientNoSecondaryDoctor()" id="PatientSecondaryHospital" checked="checked" />
+                    <label style="display:inline" for="PatientSecondaryHospital">Patient Does not Visit Hospital last 30 days</label>
+                </div>
+            }
+            else
+            {
+                <div style="display: contents;" class="PatientSecondaryHospitalDiv">
+                    <input type="checkbox"  value="true" name="PatientSecondaryHospital" onchange="PatientNoSecondaryDoctor()" id="PatientSecondaryHospital" />
+                    <label style="display: initial;" for="PatientSecondaryHospital">Patient Does not Visit Hospital last 30 days</label>
+                </div>  
+            }
+
+        }
+        @*@Html.ActionLink("Add New Provider", "Create", new { patientId = ViewBag.PatientId }, new { @class = "btn btn-success logdetails" })*@
+    </div> <br />
+    <div class="tablefixwidth">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table" id="AdditionalProviderTable">
+                    <thead>
+                        <tr>
+                            <th>Doctor's Full Name</th>
+                            <th>@Html.DisplayNameFor(model => model.Speciality)</th>
+                            <th>@Html.DisplayNameFor(model => model.DoctorType)</th>
+
+                            <th>Last Visited</th>
+                            <th>Next Appointment</th>
+                            <th>Phone Number</th>
+                            <th>@Html.DisplayNameFor(model => model.Email)</th>
+                            <th>@Html.DisplayNameFor(model => model.IsShareCarePlan)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Speciality)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DoctorType)</td>
+
+                                <td>@Html.DisplayFor(modelItem => item.LastVisit)</td>
+                                <td>@Html.DisplayFor(modelItem => item.NextAppointment)</td>
+                                <td>@Html.DisplayFor(modelItem => item.MobilePhoneNumber)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                <td>@item.IsShareCarePlan</td>
+                                <td>
+                                    <a class="btn btn-sm btn-danger logdetails" onclick="AjaxActionReturns('SecondaryDoctor','_Delete', @item.Id)">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#AdditionalProviderTable').DataTable({
+        pageLength: 25,
+        "order": []
+    });
+</script>
+<br /><br /><br />
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+        }
+
+
+
+    </SCRIPT>
+}
+
+<script>
+
+
+    $("#btnAddHospital").click(function () {
+        $(".PatientSecondaryHospitalDiv").hide();
+    })
+    $(document).on('click', "#btnCancel", function () {
+        $(".PatientSecondaryHospitalDiv").show();
+    })
+
+    var PatientNoSecondaryDoctor = function ( ) {
+        
+        var pId =@ViewBag.PatientId;
+        var status = $("input[name='PatientSecondaryHospital']:checked").val();
+        if (status == "true") {
+            $("#Addnewprovider").attr("disabled", true);
+            status = true;
+        }
+        else {
+            $("#Addnewprovider").attr("disabled", false);
+            status=false;
+        }
+        valdata = { patientId: pId, status: status }
+        $.ajax({
+            type: "POST",
+            data: valdata,
+            url: "/CcmFlow/PatientNoSecondaryDoctor",
+            success: function (result) {
+                debugger;
+                if (result == "Saved") {
+
+                    swal({
+                        title: "Saved",
+                        text: "Saved Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+
+
+                }
+            }
+
+        });
+    }
+</script>

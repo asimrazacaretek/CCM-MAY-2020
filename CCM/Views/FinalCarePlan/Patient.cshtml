@@ -1,0 +1,245 @@
+﻿@model CCM.Models.FinalCarePlanViewModel
+
+<style>
+    #notesTable td { min-width: 175px; }
+    .noBorder      { border: none; }
+    .answer        { color: navy; }
+    th             { color: black; }
+    td, th {
+        min-width: 125px;
+        vertical-align: top;
+        margin:  5px;
+        padding: 5px;
+        border:  1px solid lightgray;
+    }
+</style>
+
+
+<h2 class="pageTitle">Final Care Plan</h2> &nbsp;
+@if (Model.FinalCarePlanPdf == null)
+{
+    @Html.ActionLink("Generate Final Care Plan PDF", "GenerateFinalCarePdf", "FinalCarePlan", new {patientId = Model.PatientId}, new {@class = "btn btn-success", target = "_blank"})
+}
+else
+{
+    @Html.ActionLink("View Final Care Plan PDF",  "ViewPdf",               "FinalCarePlan", new {patientId = Model.PatientId}, new {@class = "btn btn-success", target = "_blank"})
+    @Html.ActionLink("Update Final Care Plan PDF", "GenerateFinalCarePdf", "FinalCarePlan", new {patientId = Model.PatientId}, new {@class = "btn btn-success", target = "_blank"})
+}
+
+<br /><br/><br/>
+<h4 class="text-center">
+    Chronic Care Management Advisory Services for Physicians and Patients<br />
+    Patient Data Analysis and Treatment Plan Recommendations
+</h4>
+
+<br /><br />
+<table>
+<tr>
+    <th class="text-right">Patient's Full Name:</th>
+    <td class="answer">@Html.DisplayFor(model => model.PatientName)</td>
+    <td colspan="2" class="noBorder"></td>
+    <th class="text-right">Physician:</th>
+    <td class="answer">@Html.DisplayFor(model => model.PhysicianName)</td>
+</tr>
+<tr>
+    <th class="text-right">Home Phone Number:</th>
+    <td class="answer">@Html.DisplayFor(model => model.HomePhoneNumber)</td>
+    <td colspan="2" class="noBorder"></td>
+    <th class="text-right">Counselor:</th>
+    <td class="answer">@Html.DisplayFor(model => model.LiaisonName)</td>
+</tr>
+<tr>
+    <th class="text-right">Mobile Phone Number:</th>
+    <td class="answer">@Html.DisplayFor(model => model.MobilePhoneNumber)</td>
+    <td colspan="2" class="noBorder"></td>
+</tr>
+<tr>
+    <th class="text-right">Address:</th>
+    <td class="answer">@Html.Raw(Html.Encode(Model.Address).Replace("\n", "<br />"))</td>
+    <td colspan="2" class="noBorder"></td>
+</tr>
+<tr>
+    <td colspan="4" class="noBorder">
+        <h4>
+            <br />
+            <u>Consultation Notes & Recommendations</u><br />
+            Brief History:
+        </h4>
+    </td>
+</tr>
+<tr>
+    <th class="text-right">Date of Birth:</th>
+    <td class="answer">
+        @Model.BirthDate.ToShortDateString()
+        @{
+            var age = (
+                int.Parse(DateTime.Today.ToString("yyyyMMdd")) -
+                int.Parse(Model.BirthDate.ToString("yyyyMMdd"))) / 10000;
+        }
+        - (@age Years Old)
+    </td>
+    <th class="text-center" colspan="2">The Patient is experiencing the following symptom(s):</th>
+</tr>
+<tr>
+    <th class="text-right">Gender:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.Gender)*@</td>
+    <td class="text-center answer" colspan="2">@*@Html.DisplayFor(model => model.CcmConditions)*@</td>
+</tr>
+<tr>
+    <th class="text-right">Height:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.Height)*@</td>
+</tr>
+<tr>
+    <th class="text-right">Weight:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.Weight)*@</td>
+</tr>
+<tr>
+    <th class="text-right">BMI:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.Bmi)*@</td>
+</tr>
+
+<tr>
+    <td colspan="6" class="noBorder">
+        <h4>
+            <br />
+            <u>General Conditions:</u>
+        </h4>
+    </td>
+</tr>
+<tr>
+    <th class="text-right">Heart Rate:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.HeartRate)*@</td>
+    <th class="text-right">Blood Pressure:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.BloodPressure)*@</td>
+    <th class="text-right">Glucose:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.Glucose)*@</td>
+</tr>
+<tr>
+    <td colspan="4" class="noBorder">
+        <h4>
+            <br />
+            <u>Family Medical History:</u>
+        </h4>
+    </td>
+</tr>
+<tr>
+    <th class="text-right">Diabetes:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.Diabetes)*@</td>
+    <th class="text-right">Breast Cancer:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.BreastCancer)*@</td>
+</tr>
+<tr>
+    <th class="text-right">Heart Disease:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.HeartRate)*@</td>
+    <th class="text-right">Ovarian Cancer:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.OvarianCancer)*@</td>
+</tr>
+<tr>
+    <th class="text-right">Stroke:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.Stroke)*@</td>
+    <th class="text-right">Cervical Cancer:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.CervicalCancer)*@</td>
+</tr>
+<tr>
+    <th class="text-right">Autoimmune Disorder:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.AutoimmuneDisorder)*@</td>
+    <th class="text-right">Prostrate Cancer:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.ProstrateCancer)*@</td>
+</tr>
+<tr>
+    <th class="text-right">Thyroid Disorder:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.ThyroidDisorder)*@</td>
+    <th class="text-right">Osteoporosis:</th>
+    <td class="answer">@*@Html.DisplayFor(model => model.Osteoporosis)*@</td>
+</tr>
+
+<tr>
+    <td colspan="6" class="noBorder">
+        <table>
+            <tr>
+                <td colspan="6" class="noBorder">
+                    <h4>
+                        <br />
+                        <u>Current Medication(s):</u>
+                    </h4>
+                </td>
+            </tr>
+            <tr>
+                <th>Medication/Strength</th>
+                <th>Daily Dose</th>
+                <th>Date Started</th>
+                <th>Purpose of Use</th>
+                <th>Issues Identified</th>
+                <th>Additional Comments</th>
+                <th>Date Discontinued</th>
+                <th>Reason For Stopping</th>
+            </tr>
+            @if (Model.MedicationRx.Count == 0)
+            {
+                <tr>
+                    <td colspan="8">
+                        <span>Medication Record - Not Found.</span>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var prescription in Model.MedicationRx)
+                {
+                    <tr>
+                        <td class="answer">@Html.DisplayFor(model => prescription.DrugName)</td>
+                        <td class="answer">@Html.DisplayFor(model => prescription.DailyDose)</td>
+                        <td class="answer">@Html.DisplayFor(model => prescription.StartDate)</td>
+                        <td class="answer">@Html.DisplayFor(model => prescription.UseReason)</td>
+
+                        <td class="answer">
+                            @if (prescription?.IssuesIdentified != null)
+                            {
+                                if (prescription.IssuesIdentified == true)
+                                {
+                                    <span>Yes</span>
+                                }
+                                else
+                                {
+                                    <span>No</span>
+                                }
+                            }
+                        </td>
+                        <td class="answer">@Html.DisplayFor(model => prescription.Comments)</td>
+                        <td class="answer">@Html.DisplayFor(model => prescription.EndDate)</td>
+                        <td class="answer">@Html.DisplayFor(model => prescription.StopReason)</td>
+                    </tr>
+                }
+            }
+        </table>
+    </td>
+</tr>
+
+<tr>
+    <td colspan="6" class="noBorder">
+        <table id="notesTable">
+            <tr>
+                <td colspan="6" class="noBorder">
+                    <h4>
+                        <br />
+                        <u>Notes:</u>
+                    </h4>
+                </td>
+            </tr>
+            <tr>
+                <th class="text-right">Current Lab Result(s):</th>
+                <td class="answer">@*@Html.DisplayFor(model => model.LabResults)*@</td>
+            </tr>
+            <tr>
+                <th class="text-right">Medication Note(s):</th>
+                <td class="answer">@*@Html.DisplayFor(model => model.MedicationNotes)*@</td>
+            </tr>
+
+            <tr>
+                <th class="text-right">Note(s) to Physician:</th>
+                <td class="answer">@*@Html.DisplayFor(model => model.NoteToPhysician)*@</td>
+            </tr>
+        </table>
+    </td>
+</tr>
+</table>

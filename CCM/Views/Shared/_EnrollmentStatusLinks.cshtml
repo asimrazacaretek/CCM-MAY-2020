@@ -1,0 +1,212 @@
+﻿@using CCM.Helpers
+@{
+    var allPatients = ViewBag.Status == "Total Patients" ? "currentPage" : "";
+    var notAssigned = ViewBag.Status == "Not Assigned" ? "currentPage" : "";
+
+    var notEnrolled = ViewBag.Status == "Not Enrolled" ? "currentPage" : "";
+    var inProgress = ViewBag.Status == "In Progress" ? "currentPage" : "";
+    var leftMessage = ViewBag.Status == "Left Voice Message" ? "currentPage" : "";
+    var invalidNumber = ViewBag.Status == "Invalid Phone Number" ? "currentPage" : "";
+    var notSeeingMd = ViewBag.Status == "Patient Not Seeing MD" ? "currentPage" : "";
+    var notQualified = ViewBag.Status == "Not Qualified" ? "currentPage" : "";
+    var refused = ViewBag.Status == "Refused" ? "currentPage" : "";
+    var deceased = ViewBag.Status == "Deceased" ? "currentPage" : "";
+
+    var ccmEnrolled = ViewBag.Status == "Enrolled" ? "currentPage" : "";
+    var clinicalSignOff = ViewBag.Status == "Clinical Sign-Off" ? "currentPage" : "";
+    var claimSubmission = ViewBag.Status == "Claims Submission" ? "currentPage" : "";
+
+    var status = ViewBag.Status == "Patient Not Seeing MD" ? "Not Seeing MD" : ViewBag.Status == "Enrolled" ? BillingCodeHelper.ccm.ToUpper() : ViewBag.Status;
+    if (status == "Unknown")
+    {
+        status = ViewBag.SubStatus;
+    }
+}
+
+<style>
+    .card {
+        padding: 0 15px;
+    }
+
+    .linkButtons {
+        margin: 2px;
+        color: white;
+        border-radius: 3px;
+        position: relative;
+        width: 95px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 5px 4px;
+        font-weight: normal;
+        font-size: 12px;
+    }
+
+    .mainlinks {
+        border-color: royalblue;
+        background-color: royalblue;
+    }
+
+        .mainlinks:hover {
+            color: royalblue !important;
+            border-color: royalblue !important;
+        }
+
+    .sublinks {
+        background-color: orangered;
+        border-color: orangered;
+    }
+
+        .sublinks:hover {
+            color: orangered !important;
+            border-color: orangered !important;
+        }
+
+    .callingstatuslinks {
+        background-color: deeppink;
+        border-color: deeppink;
+    }
+
+        .callingstatuslinks:hover {
+            color: deeppink !important;
+            border-color: deeppink !important;
+        }
+    /*.linkButtons:before {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0px;
+            left: -10px;
+            width: 0px;
+            height: 0px;
+            top: -3px;
+            border-style: solid;
+            border-width: 39px 10px 0px 0px;
+            border-color: transparent #7AC29A transparent transparent;
+            -webkit-transition: all 0.2s ease-in-out;
+            -o-transition: all 0.2s ease-in-out;
+            transition: all 0.2s ease-in-out;
+        }
+        .linkButtons:after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: -2px;
+            right: -10px;
+            width: 0px;
+            height: 0px;
+            border-style: solid;
+            border-width: 0px 0px 39px 10px;
+            border-color: transparent transparent transparent #7AC29A;
+            -webkit-transition: all 0.2s ease-in-out;
+            -o-transition: all 0.2s ease-in-out;
+            transition: all 0.2s ease-in-out;
+        }*/
+    .linkButtons:after {
+    }
+
+    .linkButtons:hover {
+        background-color: white !important;
+    }
+
+    #profile1 {
+        border: 1px solid lightgray;
+        padding: 15px;
+        box-shadow: 0 2px 10px 3px rgba(8, 8, 8, 0.85);
+    }
+
+    .clearfilter {
+        background-color: red;
+        color: white;
+    }
+
+        .clearfilter:hover {
+            background-color: red !important;
+            color: white;
+        }
+
+    .statusandsubstatus {
+        margin-top: 10px;
+    }
+
+    .btnuploadpatient {
+        margin-left: 10px;
+    }
+</style>
+
+
+<div id="profile1" class="card">
+    <h4 class="pageTitle">@ViewBag.Owner - @status Queue</h4>
+    @if ((User.IsInRole("Liaison") || User.IsInRole("Admin") || User.IsInRole("Sales")) && string.IsNullOrEmpty(ViewBag.UserId))
+    {
+        <p class="pageTitle">
+            @if (!HelperExtensions.isTranslator(ViewBag.UserIDfortranslator))
+            {
+                @Html.ActionLink("Add Patient", "Create", "Patient", null, new { @class = "btn btn-success" })
+                if (!User.IsInRole("Sales"))
+                {
+                    @Html.ActionLink("Upload Patient", "UploadNewPatient", "Patient", null, new { @class = "btn btn-success btnuploadpatient" })
+                }
+            }
+        </p>
+    }
+
+    @*@if (User.IsInRole("Admin"))
+        {
+            @Html.ActionLink("Clear Filters", "TotalPatients", "Patient", null, new { @class = "btn btn-success linkButtons pull-right clearfilter" })
+        }
+        else
+        {
+            @Html.ActionLink("Clear Filters", "TotalPatients", "Patient", null, new { @class = "btn btn-success linkButtons pull-right clearfilter" })
+        }*@
+    @*@if (User.IsInRole("Admin") && string.IsNullOrEmpty(ViewBag.UserId))
+        {
+            @Html.ActionLink("Not Assigned", "NotAssigned", "EnrollmentStatus", null, new { @class = "btn btn-success", id = notAssigned })
+        }*@
+
+    @if (!string.IsNullOrEmpty(ViewBag.UserId) && (User.IsInRole("PhysiciansGroup") || User.IsInRole("Admin") || User.IsInRole("Sales")))
+    {
+        <p class="pageTitle">
+            @Html.ActionLink("All Patients", "Index", "Patient", new { userId = ViewBag.UserId }, new { @class = "btn btn-success", id = allPatients })
+            @Html.ActionLink("CCM Enrolled", "Index", "CcmStatus", new { userId = ViewBag.UserId, status = "Enrolled" }, new { @class = "btn btn-success", id = ccmEnrolled })
+            @Html.ActionLink("Clinical Sign-Off", "Index", "CcmStatus", new { userId = ViewBag.UserId, status = "Clinical Sign-Off" }, new { @class = "btn btn-success", id = clinicalSignOff })
+            @if (User.IsInRole("Admin"))
+            {
+                @Html.ActionLink("Claims Submission", "Index", "CcmStatus", new { userId = ViewBag.UserId, status = "Claims Submission" }, new { @class = "btn btn-success", id = claimSubmission })
+            }
+        </p>
+    }
+
+    <br />
+    <div class="statusandsubstatus">
+
+        @*@{
+                var enrollmentstatuses = ViewBag.EnrollmentStauses as List<CCM.Models.EnrollmentStatus>;
+                foreach (var item in enrollmentstatuses)
+                {
+                    @Html.ActionLink(item.Name, "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = item.Name }, new { @class = "btn  linkButtons mainlinks", id = ViewBag.Status == item.Name ? "currentPage" : "", @title = item.Name })
+                }
+
+                var enrollmentsubstatuses = ViewBag.EnrollmentSubStatuses as List<CCM.Models.EnrollmentSubStatus>;
+                foreach (var item in enrollmentsubstatuses)
+                {
+                    @Html.ActionLink(item.Name, "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, substatus = item.Name }, new { @class = "btn  linkButtons sublinks", id = ViewBag.SubStatus == item.Name ? "currentPage" : "", @title = item.Name })
+                }
+
+                @Html.ActionLink("Left Message", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Left Voice Message" }, new { @class = "btn  linkButtons callingstatuslinks", id = leftMessage, @title = "Left Message" })
+                @Html.ActionLink("Left Voice Message 1", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Left Voice Message 1" }, new { @class = "btn  linkButtons callingstatuslinks", id = ViewBag.Status == "Left Voice Message 1" ? "currentPage" : "", @title = "Left Voice Message 1" })
+                @Html.ActionLink("Left Voice Message 2", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Left Voice Message 2" }, new { @class = "btn  linkButtons callingstatuslinks", id = ViewBag.Status == "Left Voice Message 2" ? "currentPage" : "", @title = "Left Voice Message 2" })
+                @Html.ActionLink("Left Voice Message 3", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Left Voice Message 3" }, new { @class = "btn  linkButtons callingstatuslinks", id = ViewBag.Status == "Left Voice Message 3" ? "currentPage" : "", @title = "Left Voice Message 3" })
+
+                var callingstatuses = ViewBag.CallingStatuses;
+            }*@
+    </div>
+    @*<br /> <br />
+        @Html.ActionLink("Not Enrolled", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Not Enrolled" }, new { @class = "btn btn-success linkButtons", id = notEnrolled })
+        @Html.ActionLink("Enrolled", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Enrolled" }, new { @class = "btn btn-success linkButtons", id = inProgress })
+        @Html.ActionLink("Left Message", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Left Voice Message" }, new { @class = "btn btn-success linkButtons", id = leftMessage })
+        @Html.ActionLink("Invalid Number", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Invalid Phone Number" }, new { @class = "btn btn-success linkButtons", id = invalidNumber })
+        @Html.ActionLink("Not Seeing MD", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Patient Not Seeing MD" }, new { @class = "btn btn-success linkButtons", id = notSeeingMd })
+        @Html.ActionLink("Not Qualified", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Not Qualified" }, new { @class = "btn btn-success linkButtons", id = notQualified })
+        @Html.ActionLink("Refused", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Refused" }, new { @class = "btn btn-success linkButtons", id = refused })
+        @Html.ActionLink("Deceased", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Deceased" }, new { @class = "btn btn-success linkButtons", id = deceased })*@
+</div>

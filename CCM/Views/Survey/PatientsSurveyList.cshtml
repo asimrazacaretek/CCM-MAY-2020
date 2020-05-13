@@ -1,0 +1,116 @@
+﻿@model List<CCM.Models.PatientSurvey>
+
+<div class="row">
+    <br />
+    <h3 class="greenText"><b>Patient Surveys</b></h3>
+    <hr id="line">
+        <div class="tablefixwidth">
+            <table id="loadAllPatient" class="display nowrap" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Sr. #</th>
+                        <th>Patient ID</th>
+                        <th>Patient Name</th>
+                        <th>Survey</th>
+                        <th>Survey Type</th>
+                        <th>Section</th>
+                        <th>Date created</th>
+                        <th>Taken by</th>
+                        <th>Completed %</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+        @{ int i= 1; }
+        @foreach (var item in Model)
+        {
+                    <tr>
+                        <td>@i</td>
+                        <td>@item.PatientId</td>
+                        <td>@item.PatientName</td>
+                        <td>@item.Survey.SurveyName</td>
+                        <td>@item.SurveyType.TypeName</td>
+                        <td>@item.SurveySection.SectionName</td>
+                        <td>
+                            @Convert.ToDateTime(item.CreatedOn).ToString("g")
+                        </td>
+                        <td>
+                            @HelperExtensions.GetUserNamebyID(item.CreatedBy)
+                        </td>
+                        <td>@item.IsCompleted %</td>
+                        <td>
+                            <a href="@Url.Action("Details","Patient", new { id=item.PatientId , ViewNarrative = true})"  >
+                                <i class="fa fa-eye"></i>
+                                Details
+                            </a>
+                        </td>
+                        @*<td>
+            @if (item.IsCompleted != 100)
+            {
+                <a onclick="loadsurveyForEdit(@item.PatientId,@item.Id,@item.SurveyId,@item.SurveyTypeId,@item.SurveySectionId)">Continue |</a>
+            }
+            <a onclick="loadsurvey(@item.PatientId,@item.Id)">Details</a>
+        </td>*@
+                    </tr>
+            i++;
+        }
+    </tbody>
+            </table>
+        </div>
+    </div>
+<script>
+    $(document).ready(function () {
+
+
+        $('#loadAllPatient').DataTable({
+            pageLength: 10,
+
+            
+            "sScrollX": "100%",
+            "scrollX": true
+        });
+
+        //var table =;
+
+
+        //table = $('#loadAllPatient').on('page.dt', function () {
+        //    $('#example-select-all').prop("checked", false);
+        //}).DataTable({
+        //    fixedHeader: {
+        //        header: true,
+        //        footer:false
+        //    },
+        //    "processing": true,
+        //    "serverSide": true,
+        //    "filter": true,
+        //    "orderMulti": false,
+        //    "stateSave": false,
+        //    "pageLength": 10,
+        //    bDeferRender: true,
+        //    colReorder: true,
+        //    "ajax": {
+        //        "url": "/Survey/PatientsSurveyList",
+        //        "type": "POST",
+        //        "data": {},
+        //    },
+        //    "order": [1, 'asc'],
+        //    "dom": '<"top"i>rt<"bottom"Blfrtip><"clear>"',
+        //    lengthMenu: [
+        //        [10, 25, 50, -1],
+        //        ['10 rows','25 rows','50 rows','show all']
+        //    ],
+        //    "columns": [
+        //        { "data": "PatientId", "autoWidth": true },
+        //        { "data": "PatientId", "autoWidth": true },
+        //        { "data": "PatientId", "autoWidth": true },
+        //        { "data": "PatientId", "autoWidth": true },
+        //        { "data": "PatientId", "autoWidth": true },
+        //        { "data": "PatientId", "autoWidth": true },
+        //        { "data": "PatientId", "autoWidth": true },
+        //        { "data": "PatientId", "autoWidth": true },
+        //        { "data": "PatientId", "autoWidth": true },
+        //        { "data": "PatientId", "autoWidth": true }
+        //    ]
+        //});
+    });
+</script>

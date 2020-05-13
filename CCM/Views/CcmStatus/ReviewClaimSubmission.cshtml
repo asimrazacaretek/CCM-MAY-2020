@@ -1,0 +1,95 @@
+﻿@model CCM.Models.Patient
+
+<style>
+    .border    { border: 1px solid forestgreen; }
+    .reviewImg { width: auto; height: auto; }
+</style>
+
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.Id })
+
+<div class="container">
+    <h3 class="pageTitle text-info">REVIEW CLAIM SUBMISSION</h3>
+    @Html.ActionLink("Submit For Reconciliation", "Reconciliation", "CcmFlow", new { patientId = Model.Id }, new { @class = "btn btn-success" })
+    @Html.ActionLink("Back to Claims Submission", "Index", "CcmStatus", new { userId = ViewBag.UserId, status = "Claims Submission" }, new { @class = "btn btn-success" })
+    
+    <br /><br /><br />
+    <div class="row">
+        <div class="col-md-4 border">
+            <h4 class="text-info">Patient Information:</h4>
+            <div class="row">
+                <div class="col-sm-3 text-right">
+                    <strong>
+                        Name:   <br/>
+                        DoB:    <br/>
+                        Gender: <br/>
+                        Address:
+                    </strong>
+                </div>
+                <div class="col-sm-9">
+                    @Html.DisplayFor(model => model.Prefix)
+                    @Html.DisplayFor(model => model.FirstName)
+                    @Html.DisplayFor(model => model.MiddleName)
+                    @Html.DisplayFor(model => model.LastName) <br/>
+                    @Html.DisplayFor(model => model.BirthDate) <br/>
+                    @Html.DisplayFor(model => model.Gender) <br/>
+                    @Html.DisplayFor(model => model.Address1),
+                    @Html.DisplayFor(model => model.Address2) <br />
+                    @Html.DisplayFor(model => model.City),
+                    @Html.DisplayFor(model => model.State) -
+                    @Html.DisplayFor(model => model.Zipcode)
+                </div>
+            </div><br/>
+        </div>
+
+        <div class="col-md-4 border">
+            <h4 class="text-info">Billing Code(s):</h4>
+            &emsp; 1: @Html.DisplayFor(model => model.CcmBillingCode)<br />
+            &emsp; 2: @Html.DisplayFor(model => model.CcmBillingCode2)
+            <br /><br /><br /><br /><br />
+        </div>
+
+        <div class="col-md-4 border">
+            <h4 class="text-info">Insurance:</h4>
+            <div class="row">
+                <div class="col-sm-3 text-right"><strong>Name:<br /> Plan:<br /> Id:<br /> Group: </strong></div>
+                <div class="col-sm-9">
+                    @Html.DisplayFor(model => model.Insurance.PrimaryName)     <br/>
+                    @Html.DisplayFor(model => model.Insurance.PrimaryPlanName) <br/>
+                    @Html.DisplayFor(model => model.Insurance.PrimaryIdNumber) <br/>
+                    @Html.DisplayFor(model => model.Insurance.PrimaryGroupNumber)
+                </div>
+            </div><br /><br />
+        </div>
+    </div>
+
+    <br />
+    <h3 class="text-info">EMR Images:</h3>
+    @if (Model.PhotoEmrRecords != null)
+    { <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record1" })" alt="" /> }
+
+    @if (Model.PhotoEmrRecords2 != null)
+    { <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record2" })" alt="" /> }
+
+    @if (Model.PhotoEmrRecords3 != null)
+    { <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record3" })" alt="" /> }
+
+    @if (Model.PhotoEmrRecords4 != null)
+    { <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record4" })" alt="" /> }
+
+    @if (Model.PhotoEmrRecords5 != null)
+    { <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record5" })" alt="" /> }
+
+    @if (Model.PhotoEmrRecords6 != null)
+    {
+        <div style="margin: 0 auto; width : 1000px; height: 735px;">
+            <object data="@Url.Action("PhotoEmrRecords6", "Patient", new { patientId = Model.Id })" type="application/pdf" height="100%" width="100%"></object>
+        </div>
+    }
+
+    <br /><br />
+    <p>
+        @Html.ActionLink("Submit For Reconciliation", "Reconciliation", "CcmFlow", new { patientId = Model.Id }, new { @class = "btn btn-success" })
+        @Html.ActionLink("Back to Claims Submission", "Index", "CcmStatus", new { userId = ViewBag.UserId, status = "Claims Submission" }, new { @class = "btn btn-success" })
+    </p>
+</div><br/><br/>

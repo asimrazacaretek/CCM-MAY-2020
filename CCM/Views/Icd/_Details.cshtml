@@ -1,0 +1,76 @@
+﻿@model CCM.Models.Icd10Codes
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div>
+    <div class="custom-title">
+        <h4>Icd10Codes</h4>
+    </div>
+    <h3 class="inner-heading">Details</h3>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Code10)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Code10)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Code9)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Code9)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PatientId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PatientId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateCreated)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id, patientId = Model.PatientId }, new { @class = "logdetails" }) |
+    <a class="logdetails" onclick="AjaxRefreshMulti('Icd','_Edit',@Model.Id,@Model.PatientId)"> Edit</a>
+
+    <a class="logdetails" onclick="AjaxRefresh('Icd','_Index',@Model.PatientId)"> Back to List</a>
+    @*@Html.ActionLink("Back to List", "Index", new { patientId = Model.PatientId }, new { @class = "logdetails" })*@
+    @*@Html.ActionLink("Back to List", "Index", new { patientId = Model.PatientId }, new { @class = "logdetails" })*@
+</p>
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+    </SCRIPT>
+}

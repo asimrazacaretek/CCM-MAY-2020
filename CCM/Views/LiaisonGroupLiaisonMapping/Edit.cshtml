@@ -1,0 +1,312 @@
+﻿@model CCM.Models.LiaisonGroup_Liaison_Mapping
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+     dynamic salaryrate=0;
+}
+<style>
+        input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance:textfield;
+}
+.CptCodes{
+    width:70px;
+}
+</style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" type="text/css" />
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Counselor Manager and Counselor Mapping :: Edit</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label class="control-label">Counselor Manager</label>
+                @*<select class="form-control"></select>*@
+                @Html.DropDownList("ClinicID", new SelectList(ViewBag.PhysiciansGroupId as List<CCM.Models.LiaisonGroup>, "Id", "GroupName"), new { @class = "form-control selectpicker border-input", role = "menu", @autofocus = "true" })
+            </div>
+            <div id="FetchPhysicians" class="clearfix">
+                <div class="col-sm-12">
+                    <label class="control-label">Counselor</label>
+                </div>
+
+                <div id="SelectedCodeListControl" class="col-sm-6" style="        text-align: left;
+        padding-top: 10px;
+">
+                    <input type="text" id="searchInput" placeholder="Search for names.." class="form-control border-input">
+                    <table class="table table-responsive" id="table">
+                        <thead>
+                            <tr>
+                                <th style="display:none"></th>
+                                <th width="50px">
+                                    <input type="checkbox" name="select_all" value="1" id="example-select-all">
+                                </th>
+
+                                <th>
+                                    <label class="control-label">Name</label>
+                                </th>
+                                @*<th><label class="control-label">Last Name</label></th>*@
+                                <th>
+                                    <label class="control-label">Email</label>
+                                </th>
+                                @foreach (var item in ViewBag.codeList)
+                                {
+                                    <th>@item.Name</th>
+                                }
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="PhysiciansSelectedTable">
+                            @{ var physicians = ViewBag.PhysicianId as List<CCM.Models.Liaison>;
+                                var physiciansmapped = ViewBag.physiciansgroupmapped as List<CCM.Models.Liaison>;}
+                            @foreach (var item in physicians)
+                            {
+                                <tr class="row-select">
+                                    <td class="id" hidden>@item.Id</td>
+                                    @{
+                                        var mappedphysician = physiciansmapped.Where(x => x.Id == item.Id).FirstOrDefault();
+                                        if (mappedphysician != null)
+                                        {
+                                            <td class="check">
+                                                <label class="custom-checkbox"><input type="checkbox" checked="checked" class="checkboxselect check-box" /><span></span></label>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="check">
+                                                <label class="custom-checkbox"><input type="checkbox" class="checkboxselect check-box" /><span></span></label>
+                                            </td>
+                                        }
+                                    }
+
+                                    <td>@item.FirstName  @item.LastName</td>
+                                    <td>@item.Email</td>
+                                    @foreach (var items in ViewBag.codeList)
+                                    {   if (item.LiaisonCPTRates.Where(p => p.BillingCodeId == items.Id) != null) { salaryrate = Convert.ToDouble(item.LiaisonCPTRates.Where(p => p.BillingCodeId == items.Id).Select(p => p.SalaryRate).FirstOrDefault()); }
+                                   
+                                       
+                                        <td>
+                                            <input type="number" class="CptCodes" name="@items.Name" id="@(","+items.Id+"-"+item.Id)"value="@(salaryrate==0?"":salaryrate)" />
+                                        </td>
+
+                                    }
+                                    <td>
+                                        <button type="button" class="btn btn-success saveCptCodebtn">Save</button>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <a href="@Url.Action("Index", "LiaisonGroupLiaisonMapping")" id="back-to-list" class="btn btn-default">Back to List</a>
+
+                <input type="button" value="Update" id="btnSubmit" class="btn btn-default" />
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+    </div>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $('#example-select-all').on('click', function () {
+        var ischecked = this.checked;
+        // Check/uncheck all checkboxes in the table
+        $('.checkboxselect').each(function () {
+
+            var display = $(this).closest('tr').css("display");
+            if (display != "none") {
+                $(this).prop('checked', ischecked);
+            }
+        });
+        //$('.checkboxselect').prop('checked', this.checked);
+    });
+    $("#searchInput").on("keyup", function () {
+
+        var value = $(this).val();
+        $("table tr").each(function (index) {
+            if (index !== 0) {
+                var $row = $(this);
+                //Filter down tds that match indexOf check
+                var matches = $row.find('td').filter(function (ix, item) {
+                    return $(item).text().toUpperCase().indexOf(value.toUpperCase()) > -1;
+                });
+
+                //if matches exist then show else hide
+                if (matches.length != 0) {
+                    $row.show();
+                }
+                else {
+                    $row.hide();
+                }
+            }
+        });
+    })
+    $(document).ready(function () {
+        //$('#table').DataTable({
+        //    pageLength: 25,
+        //    scrollY: "50vh",
+        //    order: [[2, "desc"]]
+        //});
+        var Doctors = []
+        $('#btnSubmit').click(function () {
+
+            $('.row-select input:checked').each(function () {
+                var id, name;
+                id = $(this).closest('tr').find('.id').html();
+                Doctors.push(id);
+            })
+            $.ajax({
+                type: "POST",
+                url: '/LiaisonGroupLiaisonMapping/SaveDoctorClinicMapping',
+                data: {
+                    "ClinicID": $("#ClinicID").val(), 'DoctorID': Doctors
+                },
+                success: function (data) {
+                    location.href = '/LiaisonGroupLiaisonMapping/Index'
+                },
+                error: function () {
+                    alert('Failed');
+                }
+            })
+        });
+
+
+                $('.CptCodes').attr("disabled", true);
+        $('.saveCptCodebtn').attr("disabled", true);
+
+         $('.row-select input:checked').each(function () {
+             $(this).closest('td').nextAll().find('input').attr("disabled", false);
+               $(this).closest('td').nextAll().find('button').attr("disabled", false)
+            })
+
+
+
+        $('.check-box').click(function () {
+            if ($(this).is(':checked')) {
+
+                $(this).closest('td').nextAll().find('input').attr("disabled", false);
+
+                $(this).closest('td').nextAll().find('button').attr("disabled", false);
+                //    $(this).closest('td').next().next().next().next().find('input').attr("disabled", false);
+                //    $(this).closest('td').next().next().next().next().next().find('input').attr("disabled", false);
+                //    $(this).closest('td').next().next().next().next().next().next().find('input').attr("disabled", false);
+            }
+            else {
+                $(this).closest('td').nextAll().find('input[type="number"]').attr("disabled", true);
+
+                $(this).closest('td').nextAll().find('button').attr("disabled", true);
+
+            }
+
+
+        })
+        $('#example-select-all').on('click', function () {
+
+            if ($(this).prop("checked") == true) {
+                $('.CptCodes').attr("disabled", false);
+                $('.saveCptCodebtn').attr("disabled", false);
+            } else {
+                $('.CptCodes').attr("disabled", true);
+                $('.saveCptCodebtn').attr("disabled", true);
+            }
+
+
+        });
+         $(".saveCptCodebtn").click(function () {
+            var cptCodeArr = [];
+            var temp = $(this).closest('td').prevAll().find('input[type="number"]');
+
+
+            for (var i = 0; i < temp.length; i++) {
+
+                cptCodeArr.push(temp[i].value + temp[i].id);
+
+            }
+
+
+
+            $.ajax({
+                type: "POST",
+                data: { CptCodes: cptCodeArr },
+                url: "/LiaisonGroupLiaisonMapping/UpdateLiasinCptCodes",
+                success: function (result) {
+                    debugger;
+                    if (result == "Saved") {
+
+                        swal({
+                            title: "Saved",
+                            text: "Saved Successfully",
+                            icon: "success",
+                            button: "Ok",
+                            confirmButtonColor: "#1ab394",
+                        });
+
+
+
+                    }
+                       if (result == "Updated") {
+
+                        swal({
+                            title: "Updated",
+                            text: "Updated Successfully",
+                            icon: "success",
+                            button: "Ok",
+                            confirmButtonColor: "#1ab394",
+                        });
+
+
+
+                    }
+                       if (result == "Error") {
+
+                        swal({
+                            title: "Error",
+                            text: "Something Went Wrong ",
+                            icon: "error",
+                            button: "Ok",
+                            confirmButtonColor: "#1ab394",
+                        });
+
+
+
+                    }
+                }
+            });
+        });
+    })
+
+
+</script>

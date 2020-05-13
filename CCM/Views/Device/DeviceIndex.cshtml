@@ -1,0 +1,750 @@
+﻿@model CCM.Models.ViewModels.DevicesListViewModel
+@using Microsoft.AspNet.Identity
+@using CCM.Models.ENUMS_
+@using CCM.Models
+@{
+    ViewBag.Title = "ListViewDivices";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/imageuploadify.min.js" type="text/javascript"></script>
+<script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+@* Select2 *@
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.js"></script>`
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+
+<link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
+<style>
+    .patientname {
+        color: #1a8cf7 !important;
+    }
+
+    .background-forDashboard {
+        background: white;
+        background-size: cover;
+        height: 100%;
+        box-shadow: black -2px -3px 24px 3px;
+        margin: 15px;
+    }
+
+    #donutchart {
+        height: 100%;
+        width: 100%;
+    }
+
+    #LineChatGenrated {
+        border-radius: 10px;
+    }
+
+    .mt-3 {
+        margin-top: 1.5rem;
+    }
+
+    .custom-card {
+        background-color: white;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        border-radius: 4px;
+        overflow-y: auto;
+    }
+
+        .custom-card .heading {
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bolder;
+            border-bottom: 1px solid darkgrey;
+            border-bottom-style: dotted;
+            background: #0364bd;
+            color: white;
+        }
+
+        .custom-card .data-list {
+            padding: 10px 10px;
+            border-bottom: 1px solid darkgray;
+            border-bottom-style: dotted;
+        }
+
+            .custom-card .data-list .dummy-image {
+                font-size: 17px;
+                padding: 8px;
+                background-color: lightgray;
+                border-radius: 50%;
+            }
+
+            .custom-card .data-list .person-name ul {
+                font-size: 13px;
+                padding: 0;
+                list-style: none;
+                position: absolute;
+                left: 20%;
+                margin-top: -27px;
+                margin-left: 3px
+            }
+
+            .custom-card .data-list .count ul {
+                list-style: none;
+            }
+
+            .custom-card .data-list .person-name small, .custom-card .data-list .count small {
+                color: gray !important;
+            }
+
+    .canvasjs-chart-canvas {
+        position: relative !important;
+        border-radius: 4px;
+    }
+
+    .canvasjs-chart-container {
+        border-radius: 4px;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    .box-shadow {
+        box-shadow: grey -2px 4px 12px;
+    }
+
+    .TicketGeneral {
+        font-size: 17px;
+        padding: 15px;
+        border-radius: 4px;
+    }
+
+    .color-white {
+        color: white;
+    }
+
+    .filter-icons {
+        position: absolute;
+        top: 20px;
+        background: #909090;
+        color: white;
+        padding: 6px;
+        font-size: 8px;
+    }
+
+    .filter-label, .filter-input {
+        margin-left: 40px;
+    }
+
+    .filter-label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .filter-input input {
+        width: 100%;
+        height: 33px;
+        border: 1px solid #000000;
+        border-radius: 1px;
+    }
+
+    @@media (min-width: 992px) {
+        .col-md-2 {
+            width: 19.666667%;
+        }
+    }
+    #TicketCreationListView .modal-body label {
+        text-align: left;
+        font-weight: 500;
+        padding-left: 95px;
+        margin-top: 4px;
+    }
+
+    .filters-row-custom {
+        padding: 18px;
+        border-radius: 4px;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .Chartslinks {
+        padding: 20px;
+        font-size: 15px;
+        text-decoration: underline;
+        cursor: pointer;
+        color: blue;
+    }
+
+    .select2-choice {
+        height: 34px !important;
+        border-radius: 0px;
+        border-color: black;
+        border: 3px solid thick;
+        padding: 4px 0px 4px 4px;
+    }
+
+    .select2-container {
+        width: 100%;
+    }
+
+        .select2-container .select2-choice > .select2-chosen {
+            padding-top: 4px;
+            min-width: 100%;
+            max-width: 100%;
+        }
+
+    .TicketAssigneeClass .select2-container {
+        width: 155px !important;
+    }
+
+    .TickettypeClass .select2-container {
+        width: 153px !important;
+    }
+
+    .ticketSubjectDashboardClass .select2-container {
+        width: 136px !important;
+    }
+
+    .borderlesscoloumn {
+        border: none !important;
+    }
+
+    .ticketsStatus .select2-container {
+        width: 136px !important;
+    }
+
+    #ticketrows {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    #ticketuser {
+        padding-left: 38px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+        margin-left: -14px;
+    }
+</style>
+<style>
+    .imageuploadify-overlay {
+        display: none;
+    }
+
+    .imageuploadify-images-list i {
+        color: #3AA0FF;
+        display: block;
+        font-size: 5em;
+        text-align: center;
+        margin: .5em auto;
+        margin-bottom: 7px;
+        /* padding-bottom: 12px; */
+    }
+
+    span.imageuploadify-message {
+        font-size: 24px;
+        border-top: 1px solid #3AA0FF;
+        border-bottom: 1px solid #3AA0FF;
+        padding: 10px;
+        display: inline-block;
+        color: #3AA0FF;
+    }
+
+    .imageuploadify-images-list button.btn-default {
+        display: block;
+        color: #3AA0FF;
+        border-color: #3AA0FF;
+        border-radius: 1em;
+        margin: 25px auto;
+        width: 100%;
+        max-width: 500px;
+        cursor: pointer;
+    }
+
+    .imageuploadify {
+        border: 2px dashed #d2d2d2;
+        position: relative;
+        min-height: 250px;
+        min-width: 250px;
+        max-width: 100% !important;
+        margin: auto;
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        text-align: center;
+        background-color: #fff;
+        color: #3AA0FF;
+        top: 10px;
+    }
+
+    .imageuploadify-container img {
+        max-width: 100px;
+        max-height: 100px;
+        text-align: left;
+    }
+
+    .error {
+        color: red
+    }
+
+    #TicketCreationListView .modal-dialog {
+        width: 900px;
+    }
+
+    .select2-drop-active, .select2-drop-mask {
+        position: absolute !important;
+        z-index: 1000000000000000000000000000000 !important;
+    }
+
+    .CommentPartialView thead tr th {
+        text-align: center !important;
+    }
+
+    .CommentPartialView {
+        overflow-y: auto !important;
+    }
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.css" />
+
+<link href="~/Content/CardCss.css" rel="stylesheet" />
+
+
+
+
+<div class="container-fluid">
+
+
+    @using (Html.BeginForm("_DeviceListView", "Device", FormMethod.Post, new { @id = "filterTickets", role = "form" }))
+    {
+        <div class="row mt-3 filters-row-custom box-shadow">
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-calendar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Created Start Date
+                    </span>
+                    <div class="filter-input">
+                        @Html.TextBoxFor(model => model.startDate, new { @type = "date", @class = "pickerdate" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-calendar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Created End Date
+                    </span>
+                    <div class="filter-input">
+                        @Html.TextBoxFor(model => model.enddate, new { @type = "date", @class = "pickerdate" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-calendar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Date Purchase
+                    </span>
+                    <div class="filter-input">
+                        @Html.TextBoxFor(model => model.DatepurchaseSearch, new { @type = "date", @class = "pickerdate" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-calendar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Device Name
+                    </span>
+                    <div class="filter-input">
+                        @Html.EditorFor(model => model.DeviceNameSearch, new { htmlAttributes = new { @id = "DeviceNameSearch", @placeholder = "Device name", @class = "form-control" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-calendar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Vendor/Supplier Name
+                    </span>
+                    <div class="filter-input">
+                        @Html.EditorFor(model => model.VendorNameSearch, new { htmlAttributes = new { @id = "VendorNameSearch", @placeholder = "Vendor name", @class = "form-control" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-calendar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Model Number
+                    </span>
+                    <div class="filter-input">
+                        @Html.EditorFor(model => model.ModelNumberSearch, new { htmlAttributes = new { @id = "ModelNumberSearch", @placeholder = "Model Number", @class = "form-control" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-calendar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Serial Number
+                    </span>
+                    <div class="filter-input">
+                        @Html.EditorFor(model => model.SerialNumberSearch, new { htmlAttributes = new { @id = "SerialNumberSearch", @placeholder = "Serial Number", @class = "form-control" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-dollar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Device Type
+                    </span>
+                    <div class="filter-input ticketSubjectDashboardClass">
+                        @Html.DropDownListFor(model => model.DeviceTypeIdSearch, CCM.Helpers.CommonFunctions.GetActiveDevicesTypes(), "Select Device Type", new { @required = "required", @class = "border-input form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-dollar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Device Stataus
+                    </span>
+                    <div class="filter-input ticketSubjectDashboardClass">
+                        @{
+                            List<SelectListItem> listdevicestatus = new List<SelectListItem>();
+                            listdevicestatus.Add(new SelectListItem
+                            {
+                                Text = "--Select Status--",
+                                Value = "0",
+                                Selected = true
+                            });
+                            listdevicestatus.Add(new SelectListItem
+                            {
+                                Text = "No status assign",
+                                Value = "-1"
+                                
+                            });
+                            listdevicestatus.Add(new SelectListItem
+                            {
+                                Text = "Idel",
+                                Value = "1"
+                            });
+                            listdevicestatus.Add(new SelectListItem
+                            {
+                                Text = "Busi",
+                                Value = "2"
+                            });
+                            listdevicestatus.Add(new SelectListItem
+                            {
+                                Text = "Some other reason",
+                                Value = "3"
+                            });
+                            listdevicestatus.Add(new SelectListItem
+                            {
+                                Text = "Some other reason2",
+                                Value = "4"
+                            });
+                            listdevicestatus.Add(new SelectListItem
+                            {
+                                Text = "Other",
+                                Value = "5"
+                            });
+                        }
+
+                        @Html.DropDownListFor(model => model.DeviceStatusIdSearch, listdevicestatus, new { @class = "DeviceStatusId form-control", @id = "DeviceStatusIdSearch" })
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-dollar fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Device Stataus
+                    </span>
+                    <div class="filter-input ticketSubjectDashboardClass">
+
+                        @{
+                            List<SelectListItem> listItems = new List<SelectListItem>();
+                            listItems.Add(new SelectListItem
+                            {
+                                Text = "--Select Status--",
+                                Value = "-1",
+                                 Selected = true
+                            });
+                            listItems.Add(new SelectListItem
+                            {
+                                Text = "Active",
+                                Value = "1",
+                               
+                            });
+                            listItems.Add(new SelectListItem
+                            {
+                                Text = "De-Activate",
+                                Value = "0"
+                            });
+                        }
+
+
+                        @Html.DropDownListFor(model => model.IsActiveSearch, listItems, new { @class = "IsActive form-control", @id = "IsActiveSearch" })
+
+                    </div>
+                </div>
+            </div>
+
+            <div style="float: right; margin-right: 50px;">
+                <button style="margin-top: 17px;" type="button" onclick="loadpartialviewdata()" class="btn btn-success">Load</button>
+            </div>
+
+        </div>
+    }
+
+</div>
+
+<a style="margin-bottom: 15px;margin-left:15px;margin-top:15px" role="button" id="ButonOpen" class=" btn btn-primary createAdminResolutin" data-toggle="modal" data-target="#TicketCreationListView">
+
+    <i class="fas fa-money-bill "></i> Create New Device
+</a>
+
+@*<h4>Tickets</h4>*@
+<div id="ticketpartialview">
+
+    @*@Html.Action("_DeviceListView", "Device", new { obj= Model.devicelistFullBo })*@
+
+    <style>
+        .patientname {
+            color: #1a8cf7 !important;
+        }
+    </style>
+    @{
+
+        
+            var devices = ViewBag.Devices as List<CCM.Models.DataModels.Device>;
+    }
+    <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
+    <div class="mt-4" id="devicePage">
+        @if (devices != null)
+        {
+            <table id="ListViewTicket" class="mt-4">
+                <thead>
+                    <tr>
+                        <td class="hide"></td>
+                        <th>DeviceName</th>
+                        <th>Device Type</th>
+                        <th>Current Status</th>
+                        <th>
+                            Model Number /<br>
+                            Serial Number
+
+                        </th>
+                        <th>
+                            Vendor <br>
+                            Date Purchase
+                        </th>
+
+                        <th>
+                            Is Active
+                        </th>
+                        <th>
+                            Created BY/<br />Date
+                        </th>
+                        <th>
+                            Modified BY/<br />Date
+                        </th>
+                        <th>
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in devices )
+                    {
+                        <tr>
+                            <td class="hide">@item.Id</td>
+                            <td style="">@item.Devices_Brand.Name</td>
+                            <td style="">@item.RPMService.ServiceName</td>
+                            <td style="">@item.DeviceStatusId</td>
+
+                            <td style="">
+                                @item.Device_BrandModel.Name<br>
+                               @item.SerialNumber
+                            </td>
+                            <td style="">
+                                @item.Device_Vendor.Name <br>
+                                @item.DatePurchase
+                            </td>
+
+                            <td style="">
+                                @{if (item.IsActive == 1)
+                                    {
+                                        @Html.Raw("Active")
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("In Active")
+                                    }
+                                }
+                            </td>
+
+                            <td style="">@item.CreatedBy)<br />@item.CreatedDate)</td>
+                            <td style="">@item.ModifiedBy)<br />@item.ModifiedDate)</td>
+
+                            @*<td><button onclick="openAssigneeTicketing('@item.Id','@item.ModelNumber')" data-value="@item.ModelNumber" data-id="@item.Id" id="ViewTicketbtn" style="" class="btn btn-info ViewTicketbtn">Edit</button></td>*@
+                            @*<td data-id="@item.Id">
+                                <span style="font-size: 16px;cursor:pointer" value="@item.RPMService.ServiceName" onclick="EditDevice('@item.RPMService.ServiceName','@item.Id','@item.RPMServiceId','@item.ModelNumber','@item.SerialNumber','@item.VendorId','@item.DatePurchase','@item.DeviceStatusId','@item.IsActive','@item.ReasonForDeactivate')" id="EditResolution" class=" fa fa-edit text-primary"></span> 
+
+                            </td>*@
+
+                        </tr>
+
+                    }
+
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h5 class="jumbotron">No Created Devices Available</h5>
+        }
+    </div>
+    <script>
+        var table;
+        $(document).ready(function () {
+            table = $("#ListViewTicket").dataTable({
+                pageLength: 10,
+
+            });
+
+        })
+
+
+
+        function EditDevice(value, id, DeviceTypeId, ModelNumber, SerialNumber, VendorName, Datepurchase, DeviceStatusId, IsActive, ReasonForDeactivate) {
+            var date = new Date(Datepurchase);
+            var DatePurchasestr = date.getFullYear() + '-' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '-' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate()));
+            $(".createAdminResolutin").click();
+            $("#DeviceName").val(value);
+            $("#HiddenId").val(id);
+            $("#device_RPMServiceId").val(DeviceTypeId);
+            $("#ModelNumber").val(ModelNumber);
+            $("#SerialNumber").val(SerialNumber);
+            $("#VendorName").val(VendorName);
+            $("#device_DatePurchase").val(DatePurchasestr);
+            $("#DeviceStatusId").val(DeviceStatusId);
+            $("#IsActive").val(IsActive);
+            $("#ReasonForDeactivate").val(ReasonForDeactivate);
+            // $("#DeviceName").attr("disabled", true)
+            $("#DiviceTypeButton").attr("disabled", false);
+            $("#check").val("edit");
+        }
+
+    </script>
+
+</div>
+
+
+<div id="modal-container">
+    <div class="modal-background">
+        <div id="TicketCreationListView" data-backdrop="static" class="modal fade" role="dialog" data-keyboard="false">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content slideInLeft animated">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New Device</h5>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+
+
+                        @Html.Partial("_DeviceCreate")
+                        @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="ticketid" value="@ViewBag.TicketId" />
+<input type="hidden" id="ticketstatus" value="@ViewBag.TicketStatus" />
+
+@* Select2 Script Library *@
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.js"></script>
+<script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+<script src="~/signalr/hubs"></script>
+
+@section Scripts {
+
+    <script>
+        var table;
+        $(document).ready(function () {
+            //table = $("#ListViewTicket").dataTable({
+            //    pageLength: 10,
+
+            //});
+           // alert($("#DeviceStatusIdSearch").val());
+           // $("#DeviceStatusIdSearch").val(0);
+           // $("#DeviceStatusIdSearch").val(-1);
+            
+           //// alert("l");
+          
+        })
+
+        function loadpartialviewdata() {
+           
+            var data = $("#filterTickets").serialize()
+            $.ajax({
+                async: false,
+                url: '/Device/_DeviceListView',
+                //data: '{model:' + JSON.stringify(check) + '}',
+                data: data,
+                type: 'POST',
+                success: function (objOperations) {
+                    $("#ticketpartialview").html(objOperations);
+                    // console.log(objOperations);
+                }
+            });
+        }
+
+  
+
+        $('#ButonOpen').click(function () {
+            $('#modal-container').removeAttr('class').addClass("ButonOpen");
+            $('body').addClass('modal-active');
+        });
+        $('.close-custom-button').click(function () {
+            debugger;
+            ClearForm();
+            $('#modal-container').addClass('out');
+            $('body').removeClass('modal-active');
+        });
+
+
+    </script>
+}

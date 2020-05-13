@@ -1,0 +1,163 @@
+﻿@model CCM.Models.DoctorVisit
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })*@
+
+<div>
+    @using (Html.BeginForm("_Create", "DoctorVisit", FormMethod.Post,
+  new { id = "frmId", @class = "frmStyle" }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+
+        <div class="form-horizontal">
+            <div class="custom-title">
+                <h3>ADD NEW DOCTOR VISIT</h3>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.VisitDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-5">
+                    @Html.EditorFor(model => model.VisitDate, new { htmlAttributes = new { @class = "form-control border-input datepicker", placeholder = "Required*",required="required" } })
+                    @Html.ValidationMessageFor(model => model.VisitDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.VisitReason, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-5">
+                    @Html.EditorFor(model => model.VisitReason, new { htmlAttributes = new { @class = "form-control border-input" } })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NextAppointment, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-5">
+                    @Html.EditorFor(model => model.NextAppointment, new { htmlAttributes = new { @class = "form-control border-input datepicker" } })
+                </div>
+            </div>
+
+            @*<div class="form-group">
+                    @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-5">
+                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control border-input", type = "email" } })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>*@
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.AdditionalProviders, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-5">
+                    @Html.DropDownListFor(model => model.AdditionalProviders,
+                            new SelectList(ViewBag.AdditionalProviders, "Value", "Text", Model),
+                            "Select Additional provider", new { @class = "form-control border-input" })
+                    @*@Html.EditorFor(model => model.AdditionalProviders, new { htmlAttributes = new { @class = "form-control border-input", type = "email" } })*@
+                    @Html.ValidationMessageFor(model => model.AdditionalProviders, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="button" value="Create" class="btn btn-success logdetails" onclick="SubmitForm('frmId','Saved')" />
+                    <a class="btn btn-success logdetails" onclick="AjaxRefresh('DoctorVisit','_ListDoctorVisits',@Model.PatientId)"> Back to List</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<br /><br /><br />
+<script>
+    //$("form").submit(function () {
+    //        var form = $(this);
+    //        var formdata = false;
+    //        if (window.FormData) {
+    //            formdata = new FormData(form[0]);
+    //    }
+    //    if (form.valid() == false) {
+    //        return false;
+    //    }
+    //        var urltosend = $("#frmId").attr('action');
+    //        //var datatosend = $("#createform").serialize();
+    //        var datatosend = formdata ? formdata : form.serialize();
+    //        $(".loader").show();
+    //        $.ajax({
+    //            type: 'POST',
+    //            url: urltosend,
+    //            data: datatosend,
+    //            cache: false,
+    //            contentType: false,
+    //            processData: false,
+    //            success: function (json) {
+    //                $(".loader").hide();
+    //                if (json == "True") {
+    //                    swal({
+    //                        title: "Saved!",
+    //                        text: "Saved Successfully!",
+    //                        icon: "success",
+    //                        button: "Ok",
+    //                        confirmButtonColor: "#1ab394",
+    //                    });
+    //                    $("input:text").val("");
+    //                }
+    //                else { swal("Error!", "Error Accured :" + json, "error"); }
+    //            },
+    //            error: function (xhr, status, error) {
+    //                $(".loader").hide();
+    //                var err = eval("(" + xhr.responseText + ")");
+    //                //;
+    //                swal("Error!", "Error Accured :" + err.Message, "error");
+    //            }
+    //        });
+        
+    //    return false;
+    //});
+
+  
+    //$('#btnadd').click(function () {
+    //    debugger;
+    //    if ($(this).valid()) {
+    //        alert("valid");
+    //        return true;
+    //    }
+    //    else 
+    //        alert("validation Error");
+    //});
+</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+
+    <script type="text/javascript">
+      
+        $(document).ready(function () {
+            //$(function () {
+            //    $(".datepicker").datepicker('setDate', '0');
+            //});
+
+            $('.datepicker').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-10:+0"
+            });
+            $(".datepicker").datepicker('setDate', '0');
+        });
+    </script>
+}
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+    </SCRIPT>
+}

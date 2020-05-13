@@ -1,0 +1,233 @@
+﻿@model CCM.Models.PatientMedicalHistory_MedicalCondition
+
+<style>
+    .checkboxes {
+        width: 25px;
+        height: 23px;
+        margin-top: -15px;
+    }
+
+    .form-group { margin: 7px; }
+    .checkboxLabels { margin-top: 3px; }
+    #shiftRight { margin-left: 15px; }
+    .labelleft {
+        margin-left: 10px;
+    }
+</style>
+
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })*@
+
+<div>
+    <div class="custom-title">
+        <h3>MEDICAL CONDITIONS</h3>
+    </div>
+    @using (Html.BeginForm("_Create", "PatientMedicalHistory_MedicalCondition", FormMethod.Post,
+          new { id = "frmCreatePatientMedicalHistoryMedicalCondition", @class = "frmStyle" }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-horizontal">
+            <p class="greenText" style="margin:15px 0; font-size: 1.2em;display:inline"><b>Please, Select If You Have History of Any of The Following:</b></p>
+
+            <br /><br />
+            <div id="shiftRight">
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.HeartDisease, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Heart Disease", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.Colitis, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Colitis", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.Stroke, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Stroke", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.IrritableBowel, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Irritable Bowel", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.HighBP, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("High Blood Pressure", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.Ulcers, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Ulcers", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.BloodClotting, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Blood Clotting Problems", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.GallBladderIssues, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Gallbladder Issues", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.VericoseVeins, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Vericose Veins", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.Fractures, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Fractures", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.Diabetes, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Diabetes or Insulin  Resistance", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.HighCholesterol, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("High cholesterol or Triglycerides", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.Arthritis, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Arthritis", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.Fibromyalgia, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Fibromyalgia", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.Osteoporosis, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Osteoporosis", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.ChronicFatigue, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Chronic Fatigue", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.Epilepsy, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Epilepsy", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.Depression, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Depression", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.KidneyTrouble, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Kidney Trouble", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.Headaches, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Headaches/Migraines", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.EyeDisorder, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Eye Disorder", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.EatingDisorder, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Eating Disorder", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.ThyroidDisorder, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Thyroid Disorder", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.HormoneIssues, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Hormone Issues", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.AdultMumps, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Adult Mumps", new { @class = "col-md-5 checkboxLabels" })
+
+                    @Html.CheckBoxFor(model => model.ImpairedLiver, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Impaired Liver Fuction", new { @class = "col-md-5 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.LungCondition, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Lung Condition", new { @class = "col-md-3 checkboxLabels" })
+                    <br />
+                    <br />
+                    <div class="col-md-12 pull-left">
+                        @Html.Label("Type:", new { @class = "col-md-1 checkboxLabels labelleft" })
+                        @Html.EditorFor(model => model.LungConditionType, new { htmlAttributes = new { @class = "form-control border-input", style = "width:550px" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.Cancer, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Cancer", new { @class = "col-md-3 checkboxLabels" })
+                    <br />
+                    <br />
+                    <div class="col-md-12 pull-left">
+
+
+                        @Html.Label("Type:", new { @class = "col-md-1 checkboxLabels labelleft" })
+                        @Html.EditorFor(model => model.CancerType, new { htmlAttributes = new { @class = "form-control border-input", style = "width:550px" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.AutoimmuneDisorder, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Autoimmune Disorder", new { @class = "col-md-3 checkboxLabels" })
+                    <br />
+                    <br />
+                    <div class="col-md-12 pull-left">
+                        @Html.Label("Type:", new { @class = "col-md-1 checkboxLabels labelleft" })
+                        @Html.EditorFor(model => model.AutoImmuneType, new { htmlAttributes = new { @class = "form-control border-input", style = "width:550px" } })
+                    </div>
+                </div>
+            </div>
+
+            <br /><br />
+            <p class="greenText" style="margin:15px 0; font-size: 1.2em;display:inline"><b>Please, Select If You Have History of Any of The Following:</b></p>
+
+            <br />
+            <div id="shiftRight">
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.Vasectomy, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Vasectomy", new { @class = "col-md-3 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.Orchitis, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Orchitis", new { @class = "col-md-3 checkboxLabels" })
+                </div>
+
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.OtherTesticularProblems, new { @class = "col-md-1 checkboxes" })
+                    @Html.Label("Other Testicular Problems:", new { @class = "col-md-4 checkboxLabels" })
+
+                    @Html.EditorFor(model => model.TesticularProblems, new { htmlAttributes = new { @class = "form-control border-input", style = "width:550px" } })
+                </div>
+            </div>
+
+            <br />
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="button" value="Update" class="btn btn-success logdetails" onclick="SubmitForm('frmCreatePatientMedicalHistoryMedicalCondition','Update')" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+         
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+        </SCRIPT>
+    }
+}

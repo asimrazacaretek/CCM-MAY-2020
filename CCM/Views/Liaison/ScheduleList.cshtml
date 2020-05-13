@@ -1,0 +1,132 @@
+﻿@model IEnumerable<CCM.Models.LiaisonSchedulelist>
+<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet" />
+<div class="tablefixwidth1">
+    <table id="table" class="table table-striped nowrap" style="width:100%">
+        <thead>
+            <tr>
+
+                <th class="liasionname">Liaison</th>
+                <th>Appointments</th>
+              
+
+
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td class="notinclude liasionname">
+                    @item.LiaisonName
+
+                </td>
+                <td>@Html.Raw(item.Appointmentlst)</td>
+               
+                
+            </tr>
+                    }
+               
+            </tbody>
+
+    </table>
+</div>
+<style>
+    table.dataTable thead th, table.dataTable tfoot th{
+        min-width:60px;
+    }
+    .liasionname{
+        min-width:139px;
+        text-align:left;
+    }
+    table.dataTable {
+    }
+    #workload {
+        float: left;
+        width: 100%;
+        margin: 10px 0px;
+    }
+    .datefield {
+        width: 200px;
+        float: left;
+        margin-left: 0px;
+    }
+    .green {
+       
+        background: #03bd1a;
+        background: -moz-linear-gradient(top, #03bd1a 0%, #03bd1a 100%) !important;
+        background: -webkit-linear-gradient(top, #03bd1a 0%,#03bd1a 100%) !important;
+        
+        background: linear-gradient(to bottom, #03bd1a 0%,#03bd1a 100%) !important;
+        white-space: pre !important;
+        font-size: 18px;
+    }
+    .pworkload {
+        display: inline-block;
+        /* float: left; */
+        font-size: 15px;
+        background-color: #0364bd;
+        line-height: 1.4em;
+        padding: 5px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+       
+        $('#table').DataTable({
+    fixedHeader: {
+                    header: true,
+                    footer: false
+                },
+            pageLength: 50,
+            columnDefs: [
+                { width: 300, targets: 0}
+            ],
+           
+            "dom": "Blfrtip",
+            "drawCallback": function (settings) {
+                $("td:not(.notinclude)").filter(function () {
+                    debugger;
+                    if (this.innerText == "" || this.innerText=="Empty" ) {
+                        this.classList.add("red");
+                        this.innerText = "Empty";
+                    }
+                    else {
+                        this.classList.add("green");
+                        //this.innerText = "Booked with " + this.innerText;
+                    }
+
+                })
+            },
+            buttons: [{
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: ["thead th:not(.noExport)", ':visible']
+                }
+            },
+                , {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                exportOptions: {
+                    columns: ["thead th:not(.noExport)", ':visible']
+                }
+                }, 'colvis'],
+
+        });
+        //$("td:not(.notinclude)").filter(function () {
+        //    debugger;
+        //    if (this.innerText == "") {
+        //        this.classList.add("red");
+        //        this.innerText = "Empty";
+        //    }
+        //    else {
+        //        this.classList.add("green");
+        //        //this.innerText = "Booked with " + this.innerText;
+        //    }
+           
+        //})
+    });
+</script>

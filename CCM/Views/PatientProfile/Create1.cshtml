@@ -1,0 +1,224 @@
+﻿@model CCM.Models.PatientProfile
+
+@{
+    var otherLanguageDisplay = Model?.PreferredLanguage == "Other" ? "" : "none";
+}
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model?.PatientId })*@
+
+<div class="container">
+    <h3 class="pageTitle text-info">BASIC INFORMATION PROFILE</h3>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.PatientId)
+
+        <br/><br/>
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(item => item.Prefix, "Prefix", htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                                item => item.Prefix,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "Mr.", Text = "Mr."},
+                                        new {Value = "Ms.", Text = "Ms."},
+                                        new {Value = "Mrs.", Text = "Mrs."}
+                                    },
+                                    "Value", "Text", Model),
+                                "Select Prefix", new {@class = "form-control border-input"})
+                            @Html.ValidationMessageFor(model => model.Prefix, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.FirstName, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.FirstName, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MiddleName, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.MiddleName, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.MiddleName, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LastName, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.LastName, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.FirstName, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Suffix, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Suffix, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.Suffix, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BirthDate, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.BirthDate, new {htmlAttributes = new {@class = "form-control border-input", type = "text"}})
+                            @Html.ValidationMessageFor(model => model.BirthDate, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Gender, "Gender*", htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                                item => item.Gender,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "Male", Text = "Male"},
+                                        new {Value = "Female", Text = "Female"},
+                                    },
+                                    "Value", "Text", Model),
+                                "Select Gender", new {@class = "form-control border-input"})
+                            @Html.ValidationMessageFor(model => model.Gender, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PreferredLanguage, "Preferred Language*", htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                                item => item.PreferredLanguage,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "English", Text = "English"},
+                                        new {Value = "Spanish", Text = "Spanish"},
+                                        new {Value = "Russian", Text = "Russian"},
+                                        new {Value = "French", Text = "French"},
+                                        new {Value = "Japanese", Text = "Japanese"},
+                                        new {Value = "Korean", Text = "Korean"},
+                                        new {Value = "Mandarin", Text = "Mandarin"},
+                                        new {Value = "Hindi", Text = "Hindi"},
+                                        new {Value = "Russian", Text = "Russian"},
+                                        new {Value = "Other", Text = "Other"}
+                                    }, "Value", "Text", Model),
+                                "Select Preferred Language", new {@class = "form-control border-input", id = "preferredLanguage"})
+                            @Html.ValidationMessageFor(model => model.PreferredLanguage, "", new {@class = "text-danger"})
+                        </div>
+                        <div id="error" style="display: none" class="text-danger col-md-12">Please select your preferred language.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <br/>
+                            <input type="submit" value="Update" class="btn btn-success logdetails" id="saveButton"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group" id="otherLanguage" style="display: @otherLanguageDisplay">
+                        @Html.LabelFor(model => model.OtherLanguage, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.OtherLanguage, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.OtherLanguage, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(function () {
+            // Save button onClick - detect if Preferrred Lanuage is selected
+            $("#saveButton").click(function () {
+                if ($("#preferredLanguage").val() == "Select Preferred Language") {
+                    $("#error").fadeIn(500).show();
+                    return false;
+                }
+            });
+
+            // Preferred Language - hide error message on focus
+            $("#preferredLanguage").focusin(function () {
+                $("#error").fadeOut(500).hide();
+            });
+
+            // Hide/Show Other Language Textbox
+            $("#preferredLanguage").change(function () {
+                if ($("#preferredLanguage").val() == "Select Preferred Language") {
+                    $("#error").fadeIn(500).show();
+                } else {
+                    $("#error").fadeOut(500).hide();
+                }
+
+                if ($(this).val() == "Other") {
+                    $("#otherLanguage").show();
+                } else {
+                    $("#otherLanguage").hide();
+                }
+            });
+
+        });
+    </script>
+
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+       
+
+        function reviewTimePost() {
+            $.ajax({
+                url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                type: "POST",
+                async: true,
+                    success: function () {
+
+                        
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+            });
+        }
+        </SCRIPT>
+    }
+}

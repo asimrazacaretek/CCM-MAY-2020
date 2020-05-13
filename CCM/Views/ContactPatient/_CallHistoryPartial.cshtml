@@ -1,0 +1,94 @@
+﻿@model IEnumerable<CCM.Models.CallHistoryViewModel>
+ 
+             <style>
+                 .cross-notif{
+                     float:right;
+                     cursor:pointer;
+                 }
+             </style>
+
+<script type="text/javascript">
+    $(".cross-notif").click(function () {
+        $(".recording-notice").fadeOut("slow");
+        //$(".recording-notice").css("display", "none");
+    });
+</script>
+<div class="alert alert-warning recording-notice">
+    <b>NOTE:</b> If you did not find your last call recording! Please refresh the page.
+    <i class="fa fa-times cross-notif"></i>
+</div> 
+<div class="tablefixwidth">
+
+
+    <table id="callHistoryTable" class="display nowrap" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>PatientID</th>
+                <th>Date Time</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th>Call Type</th>
+                <th>Recording</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr data-DbCallId="@item.Id">
+                    <td>@item.PatientID</td>
+                    <td>
+                        @Convert.ToDateTime(item.StartTime).ToString("g")
+                    </td>
+                    <td>@item.From</td>
+                    <td>@item.To</td>
+                    <td>@item.Duration</td>
+                    <td>@item.Status</td>
+                    @if (item.isVoiceMail == true)
+                    {
+                        <td>Voice Mail</td>
+                    }
+                    else
+                    {
+                        <td>Call</td>
+                    }
+
+                        <td>
+                            @if (item.RecordingURL != null)
+                            {
+                                //var src = item.RecordingURL.Substring(0, item.RecordingURL.IndexOf('.'));
+                                //var fullSource = "https://api.twilio.com" + src + ".mp3?Download=false";
+                                //if (!User.IsInRole("PhysiciansGroup"))
+                                //{
+
+
+
+                                //}
+                                <audio controls controlsList="nodownload" preload="metadata">
+                                    @if (item.isVoiceMail == false)
+                                    {
+                                        <source src="/Recordings/@(item.TwilioCallId).mp3" type='audio/mpeg; codecs="mp3"'>
+                                    }
+                                    else
+                                    {
+                                        <source src="/VoiceMails/@(item.TwilioCallId).mp3" type='audio/mpeg; codecs="mp3"'>
+                                    }
+
+                                </audio>
+                            }
+                        </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $('#callHistoryTable').DataTable({
+        pageLength: 25,
+        scrollY: "50vh",
+        "ordering": false,
+        "sScrollX": "100%",
+        "scrollX": true
+    });
+</script>

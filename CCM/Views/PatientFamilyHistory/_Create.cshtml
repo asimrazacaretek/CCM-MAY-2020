@@ -1,0 +1,140 @@
+﻿@model CCM.Models.PatientMedicalHistory_FamilyHistory
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })*@
+
+<div>
+    <div class="custom-title">
+    <h3>FAMILY HISTORY</h3>
+        </div>
+    @using (Html.BeginForm("_Create", "PatientFamilyHistory", FormMethod.Post,
+          new { id = "frmCreatePatientFamilyHistory", @class = "frmStyle" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-4">
+                    <p style="font-size:1.1em">Medical Condition</p>
+                </div>
+
+                <div class="col-md-6">
+                    <p style="font-size:1.1em">Family Member(s) Diagnosed With This Condition</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Diabetes, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Diabetes, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Diabetes, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.BreastCancer, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.BreastCancer, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.BreastCancer, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.OvarianCancer, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.OvarianCancer, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.OvarianCancer, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CervicalCancer, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.CervicalCancer, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.CervicalCancer, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ProstrateCancer, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.ProstrateCancer, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.ProstrateCancer, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.HeartDisease, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.HeartDisease, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.HeartDisease, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Stroke, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Stroke, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Stroke, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Osteoporosis, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Osteoporosis, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Osteoporosis, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.AutoimmuneDisorder, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.AutoimmuneDisorder, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.AutoimmuneDisorder, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ThyroidDisorder, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.ThyroidDisorder, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.ThyroidDisorder, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="button" value="Update" class="btn btn-success logdetails" onclick="SubmitForm('frmCreatePatientFamilyHistory','Update')" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+          
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+              async: true,
+                    success: function () {
+
+                        
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+        </SCRIPT>
+    }
+}

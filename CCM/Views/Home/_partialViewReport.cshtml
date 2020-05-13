@@ -1,0 +1,386 @@
+﻿@model  IEnumerable<CCM.Models.LiasionCallHistory>
+@{
+
+}
+
+<style>
+    .patientname {
+        width: 10%;
+        float: left;
+        padding: 9px;
+    }
+
+    .allmontnames {
+        width: 90%;
+        float: left;
+    }
+
+    .monthtypedata {
+        width: 8.33%;
+        float: left;
+        text-align: center;
+    }
+
+    .calltypeitem {
+        float: left;
+        width: 25%;
+    }
+
+    .headername {
+        background-color: #0364bd !important;
+        color: white;
+        text-align: center;
+    }
+
+    .call-detail-table td {
+        padding: 5px !important;
+    }
+
+    .call-detail-table, .inner-table {
+        border-collapse: collapse;
+    }
+
+        .inner-table, .inner-table td {
+            border: none !important;
+        }
+
+    .greenclrcal { 
+        color: #0a747d;
+    }
+
+    .redclrcal {
+        color: #a01212;
+    }
+
+    .blueclrcal {
+        color: darkblue;
+    }
+
+    .greenclr {
+        color: white;
+    }
+
+    .redclr {
+        color: white;
+    }
+
+    .blueclr {
+        color: white;
+    }
+
+    .inner-table label {
+        float: left;
+        width: 100%;
+        font-weight: normal;
+        font-size: 1em;
+    }
+
+    .inner-table {
+        text-align: center;
+    }
+
+    .darkblue {
+        color: white;
+    }
+
+    .darkbluecal {
+        color: darkblue;
+    }
+
+    .twentymincolor {
+        color: darkblue;
+    }
+
+    .sixtymincolor {
+        color: darkblue;
+    }
+
+    .nintymincolor {
+        color: darkblue;
+    }
+
+    .legenditem {
+        margin-left: 10px;
+        float: left;
+    }
+
+    .legends {
+        width: 100%;
+        float: left;
+        box-shadow: 0 2px 7px rgb(12, 43, 150);
+        padding: 11px;
+        margin: 10px 0px;
+    }
+
+    .orangeclr {
+    }
+
+    #callhistoryandactivitydetail .modal-dialog {
+        width: 90%;
+    }
+
+    #callhistoryandactivitydetail .modal-footer {
+        display: inline-block;
+        width: 100%;
+    }
+
+    #callhistoryandactivitydetail .modal-header {
+        background-color: #0364bd;
+        color: white;
+        border-radius: 5px 5px 0px 0px;
+    }
+
+    #callhistoryandactivitydetail .modal-body {
+        padding: 0;
+    }
+
+    .orangeclr {
+        color: orange !important;
+    }
+
+    th, td {
+        white-space: nowrap;
+    }
+
+    .iconsheader {
+        text-align: center;
+    }
+</style>
+<div class="mainwrapperdata">
+
+
+    <table id="yearlyhistory" class="table call-detail-table display nowrap stripe row-border order-column" style="width:100%">
+
+
+        <thead>
+            <tr>
+
+                @foreach (var item in Model.Where(x => x.PatientName == "").ToList())
+                {
+                    <th rowspan="2">ID</th>
+                    <th rowspan="2">
+                        Patient Name (Counsler Name)
+                    </th>
+
+
+                    foreach (var monthnames in item.MonthNames)
+                    {
+                        <th colspan="5">
+                            @monthnames.MonthName
+                        </th>
+
+
+
+                    }
+
+
+
+                }
+            </tr>
+            <tr>
+
+                @foreach (var item in Model.Where(x => x.PatientName == "").ToList())
+                {
+
+
+
+                    foreach (var monthnames in item.MonthNames)
+                    {
+                        <th>
+
+                            <i class="fas fa-phone-volume greenclr"></i>
+                        </th>
+
+                        <th class="iconsheader">
+
+                            <i class="fas fa-headset redclr"></i>
+                        </th>
+                        <th class="iconsheader">
+                            <i class="far fa-clock blueclr"></i>
+                        </th>
+                        <th class="iconsheader">
+                            <i class="fas fa-thumbs-up redclr"></i>
+                        </th>
+                        <th class="iconsheader">
+                            <i class="fas fa-calendar-alt redclr"></i>
+                        </th>
+
+                    }
+
+
+
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Where(x => x.PatientName != "").ToList())
+            {
+                <tr>
+                    <td class="headername">
+                        @item.PatientId
+                    </td>
+                    <td class="headername">
+                        @item.PatientName
+                    </td>
+                    @foreach (var monthnames in item.MonthNames.Where(x => x.callDurationandTypes != null).ToList())
+                    {
+                        foreach (var types in monthnames.callDurationandTypes)
+                        {
+                            <td class="iconsheader" onclick="getdetails(@item.PatientId,@monthnames.MonthName,@monthnames.YearName)" style="cursor:pointer">
+                                @if (types.CallType != "Appointment")
+
+                                {
+
+                                    <label>
+                                        @types.CallDuration
+                                    </label>
+                                    <i class="@types.ClassName"></i>
+                                }
+                                else
+                                {
+                                    if (types.CallDuration != null)
+                                    { <i class="@types.ClassName" title="@types.CallDuration"></i>
+                                        <label style="display:none">@types.CallDuration</label>
+                                    }
+
+
+                                }
+
+
+                            </td>
+                        }
+                        @*<td>
+                                <table class="inner-table">
+                                    <tr onclick="getdetails(@item.PatientId,@monthnames.MonthName,@monthnames.YearName)" style="cursor:pointer"></tr>
+                                </table>
+
+
+
+                            </td>*@
+                    }
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    @{
+        int i;
+        int maxPageNumber = Convert.ToInt32(ViewBag.totalPage);
+        for (i = 1; i <= maxPageNumber; i++)
+        {
+            //i++;
+            <ul class="pagination">
+                @*<li>@Html.ActionLink(@i.ToString(), "Index", "Grid", new { page = @i }, null)</li>*@
+                <li><a href="#" id="linkpage">@i</a></li>
+            </ul>
+        }
+    }
+
+</div>
+
+
+<div class="modal fade" id="callhistoryandactivitydetail" tabindex="-1" role="dialog" aria-labelledby="callhistoryandactivitydetail" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">
+                </h4>
+            </div>
+
+            <div class="modal-body">
+                <div id="callhistorybody">
+
+
+                </div>
+
+
+
+
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#callhistoryandactivitydetail').on('shown.bs.modal', function () {
+        $($.fn.dataTable.tables(true)).DataTable()
+            .columns.adjust();
+                                        });
+    function getdetails(id, month,year) {
+        $(".loader").show();
+        $.ajax({
+                                                type: 'GET',
+            cache: false,
+            url: "/Home/TotalCallsandReviewTime?PatientId=" + id + "&Month=" + month + "&Year="+ year,
+
+            success: function (data, textStatus, jqXHR) {
+                $(".loader").hide();
+                $("#callhistorybody").html(data, function () {
+                  //  $("#patientname").val(patientid + " " + patientname);
+                                                    });
+
+                $("#callhistoryandactivitydetail").modal("show");
+                $($.fn.dataTable.tables(true)).DataTable()
+                    .columns.adjust();
+
+
+
+
+                                                },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $(".loader").hide();
+                                                }
+                                            });
+    }
+
+        $('#yearlyhistory').DataTable({
+            defaultLength: 10,
+            searching: false,
+            paging: false,
+            bInfo:false,
+            scrollX: true,
+            scrollCollapse: true,
+            scrollY: "300px",
+            fixedColumns: true,
+            fixedColumns: {
+                leftColumns: 2
+            }
+        });
+
+
+</script>
+@*<div class="col-md-12 nopadding">
+        <div class="patientname headername">
+
+        </div>
+        <div class="allmontnames">
+            @foreach (var monthnames in item.MonthNames.Where(x => x.callDurationandTypes != null).ToList())
+            {
+                <div class="monthtypedata">
+
+
+                    @foreach (var types in monthnames.callDurationandTypes)
+                    {
+                        <div class="calltypeitem">
+                            <i class="fa fa-phone"></i>
+                            @types.CallDuration
+                        </div>
+                    }
+                    <div class="clearfix"></div>
+                </div>
+            }
+        </div>
+
+    </div>
+                <div class="row">
+
+                </div>
+                </div>*@

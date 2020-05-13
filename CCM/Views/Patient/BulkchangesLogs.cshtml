@@ -1,0 +1,80 @@
+﻿@using CCM.Helpers
+@model IEnumerable<CCM.Models.ViewModels.BulkChangesLogViewModel>
+@{
+    Layout = null;
+}
+<style>
+    .count-title {
+        font-size: 15px;
+        font-weight: 700;
+        margin-top: -8px;
+        margin-bottom: 10px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="col-md-12">
+        <h5><b>Operation Performed:</b> @Html.Raw(ViewBag.BulkChangeTitle)</h5>
+    </div>
+    <div class="col-md-4 ">
+        
+        <h5 class="count-title" style="color: blue"> Number of Selected Patients : @Model.Select(x => x.PatientId).Distinct().Count()</h5>
+        <h5 class="count-title" style="color: forestgreen"> Successful : @Model.Where(x=>x.Status==(int)BulkChangesStatus.success).GroupBy(x=>x.PatientId).ToList().Count()</h5>
+        <h5 class="count-title" style="color: orange"> Warning : @Model.Where(x => x.Status == (int)BulkChangesStatus.Warning).GroupBy(x=>x.PatientId).ToList().Count()</h5>
+        <h5 class="count-title" style="color: red;"> Failed : @Model.Where(x => x.Status == (int)BulkChangesStatus.Failed).GroupBy(x=>x.PatientId).ToList().Count()</h5>
+    </div>
+   
+</div>
+<table id="BulkLogTable" @*style="margin-left: 15px;"*@>
+    <thead>
+        <tr>
+            <th>PatientId </th>
+            <th>Message</th>
+            <th>Status</th>
+            <th>Createdby</th>
+            <th>CreatedOn</th>
+        </tr>
+    </thead>
+
+    <tbody id="LogDataDiv">
+
+        @try
+        {
+
+            foreach (var item in Model)
+            {
+                string status = "";
+                string rowcolor = "";
+                if (item.Status == (int)BulkChangesStatus.success) {
+                    status = "Successful";
+                    rowcolor = "#d3ffd3";
+                } else if (item.Status == (int)BulkChangesStatus.Warning) {
+                    status = "Warning";
+                    rowcolor = "#ffdf85";
+                } else if (item.Status == (int)BulkChangesStatus.Failed) {
+                    status = "Failed";
+                    rowcolor = "#ffbfbf";
+                }
+                <tr style="background-color:@rowcolor">
+                    <td>@item.PatientId</td>
+                    <td>@Html.Raw(item.ResultMassage)</td>
+                    <td>@status</td>
+                    <td>@item.Createdby</td>
+                    <td>@item.CreatedOn</td>
+                </tr>
+            }
+        }
+        catch (Exception e) { }
+    </tbody>
+ 
+
+
+</table>
+
+
+
+
+
+
+
+
+

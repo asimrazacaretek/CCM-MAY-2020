@@ -1,0 +1,128 @@
+﻿@model IEnumerable<CCM.Models.ViewModels.TwilioNumberViewModel>
+    @using CCM.Helpers
+
+@{
+    ViewBag.Title = "Index";
+    
+}
+<style>
+    #Isavailable {
+        background-color: green;
+        color: white;
+        height: 25px !important;
+        width: 100%;
+        display: block;
+        padding-top: 5px;
+        font-size: 11px;
+        border-radius: 4px;
+        text-align:center;
+    }
+    #Isnotavailable {
+        background-color: red;
+        color: white;
+        height: 25px !important;
+        width: 100%;
+        display: block;
+        text-align: center;
+        padding-top: 5px;
+        font-size: 11px;
+        border-radius: 4px;
+    }
+    
+</style>
+
+<h2>Twilio Numbers</h2>
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" /><p>
+ 
+</p>
+<table class="table" id="twiliotable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>
+                @Html.DisplayNameFor(model => model.FriendlyPhoneNumer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MobilePhoneNumber)
+            </th>
+            <th style="text-align:center">
+               Status
+            </th>
+            <th>
+                Assigned To
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedOn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedOn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedBy)
+            </th>
+            @*<th></th>*@
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FriendlyPhoneNumer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MobilePhoneNumber)
+                </td>
+                <td>
+                    @if (item.Status == true)
+                    {
+                        <span id="Isnotavailable"> Not Avalaible</span>
+
+                    }
+                    else
+                    {
+                        <span id="Isavailable"> Avalaible</span>
+
+                    }
+                </td>
+                <td>
+                    @item.Assignedto
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedOn)
+                </td>
+                <td>
+                    @HelperExtensions.GetUserNamebyID(item.CreatedBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdatedOn)
+                </td>
+                <td>
+                    @HelperExtensions.GetUserNamebyID(item.UpdatedBy)
+                </td>
+                @*<td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>*@
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $("#twiliotable").DataTable();
+    </script>
+    
+
+}

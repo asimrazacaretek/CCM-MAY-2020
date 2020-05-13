@@ -1,0 +1,216 @@
+﻿
+
+@using CCM.Helpers;
+@{
+    var CurrentBillingName = ViewBag.Message;
+    var CurrentBillingid = BillingCodeHelper.GetBillingCatagoryIdByName(CurrentBillingName);
+    Layout = null;
+
+
+    List<SelectListItem> RpmServices = ViewBag.RpmServices != null ? ViewBag.RpmServices : new List<SelectListItem>();
+
+
+}
+<style>
+    .category-title {
+        font-size: 9px !important;
+        float: left;
+        margin-top: 13px;
+        color: white;
+        font-weight: 500;
+        outline: auto;
+        padding: 5px;
+    }
+
+    #Billingcategory {
+        display: none;
+    }
+
+    .section.section-main {
+        padding-top: 25px;
+    }
+
+    .nav-tabs > li.active > a, .nav-tabs {
+        color: white !important
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row" style="background-color: #0364bd">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <div class="category-title">
+                    <h3>@CurrentBillingName</h3>
+                </div>
+                <div class="timer" style="float:right">
+
+                    Total Time Spent
+
+                    <h3 id="totalReviewTimeRpm" style="margin-top: -3px;" class="time">00:00:00</h3>
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <div class="timer">
+                    Page Review Encounter
+                    <h3 id="RpmRuntimeTimer" style="margin-top: -3px;" class="time">
+                        <Rpmtimer>00:00:00</Rpmtimer>
+                    </h3>
+                </div>
+            </div>
+            <div class="row">
+                <p style="text-align: center;color:white">
+                    <label class="">Total Time will be update once you refresh the page or move to any other page from menu</label>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="section section-main">
+
+
+
+
+
+
+    @if (RpmServices.Any())
+    {
+        <div class="row">
+            <div id="exTab2" class="">
+                <ul class="nav nav-tabs" style="padding-left: 18px;">
+                    @{ int count = 0; string active = "active"; string action = "", controller = "";}
+                    @foreach (var items in RpmServices as List<SelectListItem>)
+                    {
+
+                        if (items.Text.ToLower() == "blood sugar")
+                        {
+                            <li class="@if (count == 1)
+                    {@active}" style="color: white;    margin-left: -2px;">
+                                <a class="@if (count == 1)
+                        {@active}" href="#@count" style="color:white;background-color: #1d63a5;" onclick="LoadRpmParitialViews('BloodSugar', 'Rpm', 'LoadRpmPartialViews', 'Get')" data-toggle="tab">@items.Text</a>
+                    </li>
+                }
+                else
+                {
+                    @*<li class="@if (count == 1)
+        {@active} commingSoonAlert" style="color: white;    margin-left: -2px;">
+            <a class=" @if (count == 1) {@active} commingSoonAlert" href="#@count" style="color:white;background-color: #1d63a5;"  data-toggle="tab">@items.Text</a>
+        </li>*@
+                    <li  style="color: white;    margin-left: -2px;">
+                        <a class=" @if (count == 1) {} commingSoonAlert" href="#@count" style="color:white;background-color: #1d63a5;">@items.Text</a>
+                    </li>
+                }
+                count++;
+
+            }
+                    @*<li style="color: white;    margin-left: -2px;">
+            <a href="" style="color:white;background-color: #1d63a5;" onclick="LoadRpmParitialViews('DeviceMapping','RpmService','LoadRpmPartialViews','Get')" data-toggle="tab">Device Mapping</a>
+        </li>*@
+                </ul>
+
+                <div class="tab-content " style="padding: 6px 0px 0px 0px; box-shadow: none; border: 1px solid #1b8348;">
+              
+                        <div class="tab-pane active">
+                            <div class="tab-pane active" id="LoadRpmPartialViews" style="padding:10px">
+
+                                @Html.Action("BloodSugar", "Rpm", new { PatientId = ViewBag.PatientId })
+
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    }
+
+</div>
+<script src="~/Scripts/RecordActivity.js"></script>
+<input type="hidden"id="currentPatientId" value="@ViewBag.PatientId" />
+<script>
+    $(document).ready(function () {
+        $(".commingSoonAlert").click(function () {
+            swal("info", "Comming Soon", "info");
+        })
+            $('#ReviewId'+@BillingCodeHelper.RPMBillingCatagoryid).val('@ViewBag.BillingReviewId');
+
+            if ($("#OtherBillingCategoryDiv").css("display") == "block") {
+                $("#ControlTimerHidden").val('@BillingCodeHelper.G0506');
+                $("#ControlTimerHidden").data("value", '@BillingCodeHelper.G0506BillingCatagoryid');
+
+                $('#SelectedCategory').data('id', @ViewBag.BillingReviewId);
+                $('#SelectedCategory').data('value',@CurrentBillingid);
+            } else {
+           $("#SelectedCategory").val('@CurrentBillingName');
+
+        $('#SelectedCategory').data('id', @ViewBag.BillingReviewId);
+        $('#SelectedCategory').data('value',@CurrentBillingid);
+        $("#ControlTimerHidden").val('@CurrentBillingName');
+            }
+
+
+            var previousRpmWokingTime = '@ViewBag.CurrentWorkingTimeOnRpm';
+            var totalTime = previousRpmWokingTime.substr(0, previousRpmWokingTime.indexOf('.'));
+            $("#totalReviewTimeRpm").text(totalTime === "" ? previousRpmWokingTime : totalTime);
+        //alert($('#SelectedCategory').data('id'));
+        //alert($('#SelectedCategory').val());
+        //alert($('#SelectedCategory').data('value'));
+
+
+        var h1 = document.getElementsByTagName('Rpmtimer')[0],
+            seconds = 0, minutes = 0, hours = 0, t;
+        function addd() {
+            if ($("#ControlTimerHidden").val().toLowerCase() == "rpm") {
+                seconds++;
+                if (seconds >= 60) {
+                    seconds = 0;
+                    minutes++;
+                    if (minutes >= 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+                }
+
+                h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" +
+                    (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" +
+                    (seconds > 9 ? seconds : "0" + seconds);
+            }
+                timerr();
+
+
+        }
+
+        function timerr() {
+            t = setTimeout(addd, 1000);
+        }
+
+        timerr();
+    })
+
+    
+
+    var LoadRpmParitialViews = (action, contoller, target, type,condition = "") => {
+        var Hitpoint = "/" + contoller + "/" + action;
+        var PatientId = $("#currentPatientId").val();
+        $(".loader").show();
+        $.ajax({
+            type: type,
+            url: Hitpoint,
+            data: { PatientId: PatientId},
+            success: function (ResponsePage) {
+
+                $("#" + target).html(ResponsePage)
+                $(".loader").hide();
+
+            },
+            error: function(){
+                $(".loader").hide();
+
+            }
+        });
+
+    }
+
+
+</script>

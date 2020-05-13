@@ -1,0 +1,48 @@
+﻿@using CCM.Models
+@model ReviewTimeCcm
+
+@if (Model != null)
+{
+    <div class="card">
+
+        <div class="card-header clr">Updated Review Time</div>
+        <div class="card-body">
+            <br />
+            <br />
+            <div class="table-responsive">
+                <table class="table table-bordered table-responsive">
+                    <thead>
+                        <tr>
+                            <th class="col-md-1">Patient Id</th>
+                            <th class="col-md-1">Rollup From</th>
+                            <th class="col-md-1">Date Time</th>
+                            <th class="col-md-1">Page</th>
+                            <th class="col-md-1">Review Time</th>
+                            <th class="col-md-1">Cycle</th>
+                            <th class="col-md-4">Activity</th>
+                            <th class="col-md-1">isLocked</th>
+                            <th class="col-md-1">User</th>
+                            <th class="col-md-1">UserType</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="col-md-1">@Model.PatientId</td>
+                            <td class="col-md-1">@Model.RollupFrom</td>
+                            <td class="col-md-1">@Model.StartTime</td>
+                            <td class="col-md-1">@Model.Page</td>
+                            <td class="col-md-1">@Model.ReviewTime</td>
+                            <td class="col-md-1">@Model.Cycle</td>
+                            <td class="col-md-4">@Model.Activity</td>
+                            <td class="col-md-1">@Model.IsLocked</td>
+                            <td class="col-md-1">@HelperExtensions.GetUserNamebyID(Model.UserId)</td>
+                            <td class="col-md-1">@HelperExtensions.GetUserRolebyID(Model.UserId)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+}

@@ -1,0 +1,155 @@
+﻿@model CCM.Models.TicketResolution
+@{
+    ViewBag.Title = "Resolutions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    #AdminResolutionModal{
+        overflow:auto;
+    }
+    .mt-4{
+        margin-top:15px;
+    }
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" data-toggle="modal" data-target="#AdminResolutionModal"  id="ButonOpen" class="createAdminResolutin btn btn-success"><span class="fas fa-fw fa-floppy-o"></span> Create Ticket Resolution</button>
+    </div>
+</div>
+<div class="mt-4" id="TicketResolutionPage">
+    <table  class="table" style="    width: 700px;margin-left: 15px;">
+        <thead>
+            <tr>
+                <th scope="col">Resolution Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.RsolutionList)
+            {
+                <tr>
+                    <td>@item.resolutionName</td>
+                    <td data-id="@item.id">
+                        <span style="font-size: 16px;cursor:pointer;display:inline" value="@item.resolutionName" onclick="EditReso('@item.resolutionName','@item.id')" id="EditResolution" class=" fa fa-edit text-primary" > Edit</span> 
+                        @*@Html.ActionLink(" ", "DeleteResolution", new { id = item.id }, new { @style = "font-size: 16px;", @class = "fa fa-fw fa-trash text-danger" })*@
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+<div id="modal-container">
+    <div class="modal-background">
+        <div class="modal fade" id="AdminResolutionModal"  role="dialog" data-backdrop="static" data-keyboard="false" style="position:absolute">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Ticket Resolution Form</h4>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            @Html.HiddenFor(x => x.id, new { @id = "HiddenId"})
+                            <div class="form-group">
+                                @Html.Label("Ticket Resolution", htmlAttributes: new { @class = "control-label col-md-3" })
+                                <div class="col-md-8">
+                                    @Html.EditorFor(model => model.resolutionName, new { htmlAttributes = new {@id ="ResoName", @required = "required", @placeholder = "Ticket Resolution", @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.resolutionName, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="savebtnsforRes">
+                                    <input style="margin-left: 5px;" id="ticketCreateResolutinButton" type="button" onclick="" value="Save" class="btn" />
+                                    <button type="button" class=" btn btn-default close-custom-button" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#ButonOpen').click(function () {
+        $('#modal-container').removeAttr('class').addClass("ButonOpen");
+        $('body').addClass('modal-active');
+        $("#HiddenId").val('0');
+        $("#ResoName").val('');
+    });
+    $('.close-custom-button').click(function () {
+        debugger;
+        $('#modal-container').addClass('out');
+        $('body').removeClass('modal-active');
+    });
+    function EditReso(value, id) {
+        debugger;
+        $(".createAdminResolutin").click();
+        $("#ResoName").val(value);
+        $("#HiddenId").val(id);
+
+    }
+    function AddOrEdit(value, id) {
+        $.ajax({
+            type: "POST",
+            data: {
+                sentdata: value,
+                id: id
+            },
+            url: "/Chats/Resolutions",
+            success: function (result) {
+                debugger;
+                if (result == "Added") {
+                    $("#ResoName").val('');
+                    swal({
+                        title: "Saved",
+                        text: "Saved Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    //window.location.reload();
+                    $("#TicketResolutionPage").load(window.location + " #TicketResolutionPage");
+                }                                                                                          
+                else if (result == "Edited") {
+                    $("#ResoName").val('');
+                    swal({
+                        title: "Update",
+                        text: "Updated Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    $("#TicketResolutionPage").load(window.location + " #TicketResolutionPage");
+                }
+                else if (result == "Exist") {
+                    swal("Error!", "Already Exist", "error");
+                }
+                                                                                                                                                                                                                                             else {
+                    $('.close-custom-button').click();
+                    swal("Error!", "Error Accured", "error");
+
+                }
+            }
+        });
+    }
+    $("#ticketCreateResolutinButton").on("click", function () {
+        debugger;
+        if ($("#ResoName").val() != "") {
+            debugger;
+            var sentdata = $("#ResoName").val();
+            var id = $("#HiddenId").val();
+            AddOrEdit(sentdata, id);
+        }
+        else {
+            $('.close-custom-button').click();
+            swal("Error!", "Error Accured", "error");
+        }
+    });
+</script>

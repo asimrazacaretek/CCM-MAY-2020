@@ -1,0 +1,120 @@
+﻿@model CCM.Models.PatientMeidcareMedicaidEligibility
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Delete</title>
+</head>
+<body>
+    <h3>Are you sure you want to delete this?</h3>
+    <div>
+        <h4>PatientMeidcareMedicaidEligibility</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.PatientId)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.PatientId)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.MedicareEligibilty)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.MedicareEligibilty)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.MedicareEligibiltyNotes)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.MedicareEligibiltyNotes)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.MedicareEligibiltySceenshot)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.MedicareEligibiltySceenshot)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.MedicaidEligibilty)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.MedicaidEligibilty)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.MedicaidEligibiltyNotes)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.MedicaidEligibiltyNotes)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.MedicaidEligibiltySceenshot)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.MedicaidEligibiltySceenshot)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.UpdatedOn)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.UpdatedOn)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.UpdatedBy)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.UpdatedBy)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedOn)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.CreatedOn)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.CreatedBy)
+            </dd>
+    
+        </dl>
+    
+        @using (Html.BeginForm()) {
+            @Html.AntiForgeryToken()
+    
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-default" /> |
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+        }
+    </div>
+</body>
+</html>

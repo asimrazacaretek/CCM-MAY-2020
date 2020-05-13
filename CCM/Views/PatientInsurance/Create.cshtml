@@ -1,0 +1,210 @@
+﻿@model CCM.Models.PatientProfile_Insurance
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })
+
+<div class="container">
+    <h3 class="pageTitle text-info">DRUG COVERAGE INSURANCE</h3>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+
+        <br /><br />
+              <div class="form-horizontal">
+                  <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.PrimaryName, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.PrimaryName, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.PrimaryName, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.PrimaryPlanName, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.PrimaryPlanName, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.PrimaryPlanName, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.PrimaryIdNumber, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.PrimaryIdNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.PrimaryIdNumber, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.PrimaryGroupNumber, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.PrimaryGroupNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.PrimaryGroupNumber, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.PrimaryPlanCode, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.PrimaryPlanCode, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.PrimaryPlanCode, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.PrimaryRxBin, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.PrimaryRxBin, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.PrimaryRxBin, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.PrimaryRxPcn, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.PrimaryRxPcn, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.PrimaryRxPcn, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.PrimaryRxGroup, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.PrimaryRxGroup, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.PrimaryRxGroup, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.PrimaryRelation, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.PrimaryRelation, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.PrimaryRelation, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <h3>HMO</h3>
+                  <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.HMOInsuranceName, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.HMOInsuranceName, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.HMOInsuranceName, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              @Html.LabelFor(model => model.HMOInsuranceID, htmlAttributes: new { @class = "col-md-12" })
+                              <div class="col-md-12">
+                                  @Html.EditorFor(model => model.HMOInsuranceID, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                  @Html.ValidationMessageFor(model => model.HMOInsuranceID, "", new { @class = "text-danger" })
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <h3 class="pageTitle text-info">MEDICARE INFO</h3>
+                  <div class="row">
+
+                      <div class="col-md-6">
+
+
+                          <div class="form-group">
+                              <label class="col-md-12">Medicare ID#</label>
+
+                              <div class="col-md-12">
+                                  <input class="form-control border-input text-box single-line" data-val="true" data-val-length="The field MedicareId Number must be a string with a maximum length of 100." data-val-length-max="100" id="MedicareIdNumber" name="MedicareIdNumber" type="text" value="@ViewBag.MedicareID">
+
+                              </div>
+
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="form-group">
+                              <label class="col-md-12">Medicaid ID#</label>
+
+                              <div class="col-md-12">
+                                  <input class="form-control border-input text-box single-line" data-val="true" data-val-length="The field Medicaid ID# must be a string with a maximum length of 100." data-val-length-max="100" id="MedicaidIdNumber" name="MedicaidIdNumber" type="text" value="@ViewBag.MedicaidID">
+
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+
+
+                          <div class="form-group">
+                              <label class="col-md-12">Other Insurance ID#</label>
+
+                              <div class="col-md-12">
+                                  <input class="form-control border-input text-box single-line" data-val="true" data-val-length="The field Other Insurance ID# must be a string with a maximum length of 100." data-val-length-max="100" id="OtherInsuranceIdNumber" name="OtherInsuranceIdNumber" type="text" value="@ViewBag.OtherInsuranceID">
+
+                              </div>
+
+                          </div>
+                      </div>
+                  </div>
+                  <br />
+                  <div class="form-group">
+                      <div class="col-md-10">
+                          <input type="submit" value="Update" class="btn btn-success logdetails" />
+                      </div>
+                  </div>
+              </div>
+    }
+</div>
+
+@section Scripts {
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+             async: true,
+                    success: function () {
+
+                        
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+        </SCRIPT>
+    }
+}

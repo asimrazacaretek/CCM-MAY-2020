@@ -1,0 +1,133 @@
+﻿@using Microsoft.AspNet.Identity
+@using CCM.Models.ENUMS_
+@using CCM.Models
+@model List<CCM.Models.ViewModels.DevicesListFullBo>
+    @{ 
+        var devices = ViewBag.Devices as List<CCM.Models.DataModels.Device>;
+    }
+
+<style>
+    .patientname {
+        color: #1a8cf7 !important;
+    }
+</style>
+@{ 
+    Layout = null;
+}
+<link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
+<div class="mt-4" id="devicePage">
+    @if (devices!=null)
+    {
+        <table id="ListViewTicket" class="mt-4">
+            <thead>
+                <tr>
+                    <td class="hide"></td>
+                    <th>DeviceName</th>
+                    <th>Device Type</th>
+                    <th>Current Status</th>
+                    <th>
+                        Model Number /<br>
+                        Serial Number
+
+                    </th>
+                    <th>
+                        Vendor <br>
+                        Date Purchase
+                    </th>
+                    
+                    <th>
+                        Is Active
+                    </th>
+                    <th>
+                        Created BY/<br/>Date
+                    </th>
+                    <th>
+                        Modified BY/<br />Date
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in devices)
+                {
+                <tr>
+                    <td class="hide">@Html.HiddenFor(modelitem => item.Id)</td>
+                    <td style="">@Html.DisplayFor(modelitem => item.Devices_Brand.Name)</td>
+                    <td style="">@Html.DisplayFor(modelitem => item.RPMService.ServiceName)</td>
+                    <td style="">@Html.DisplayFor(modelitem => item.DeviceStatusId)</td>
+                    
+                    <td style="">
+                        @Html.DisplayFor(modelitem => item.ModelNumber) <br>
+                                        @Html.DisplayFor(modelitem => item.SerialNumber)
+                                    </td>
+                    <td style="">@Html.DisplayFor(modelitem => item.Device_Vendor.Name)<br>
+                    @Html.DisplayFor(modelitem => item.DatePurchase)</td>
+                   
+                    <td style="">
+                        @{if (item.IsActive == 1)
+                            {
+                                @Html.Raw("Active")
+                            }
+                            else
+                            {
+                                @Html.Raw("In Active")
+                            }
+                        }
+                    </td>
+
+                    <td style="">@Html.DisplayFor(modelitem => item.CreatedBy)<br />@Html.DisplayFor(modelitem => item.CreatedDate)</td>
+                    <td style="">@Html.DisplayFor(modelitem => item.ModifiedBy)<br />@Html.DisplayFor(modelitem => item.ModifiedDate)</td>
+
+                    @*<td><button onclick="openAssigneeTicketing('@item.Id','@item.ModelNumber')" data-value="@item.ModelNumber" data-id="@item.Id" id="ViewTicketbtn" style="" class="btn btn-info ViewTicketbtn">Edit</button></td>*@
+                    <td data-id="@item.Id">
+                        <span style="font-size: 16px;cursor:pointer" value="@item.RPMService.ServiceName" onclick="EditDevice('@item.RPMService.ServiceName','@item.Id','@item.RPMServiceId','@item.ModelNumber','@item.SerialNumber','@item.VendorId','@item.DatePurchase','@item.DeviceStatusId','@item.IsActive','@item.ReasonForDeactivate')" id="EditResolution" class=" fa fa-edit text-primary"></span> @*|*@
+
+                    </td>
+
+                </tr>
+
+                }
+
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h5 class="jumbotron">No Created Devices Available</h5>
+    }
+    </div>
+    <script>
+        var table;
+        $(document).ready(function () {
+        table =   $("#ListViewTicket").dataTable({
+                pageLength: 10,
+
+            });
+          
+        })
+
+   
+   
+        function EditDevice(value, id, DeviceTypeId, ModelNumber, SerialNumber, VendorName, Datepurchase, DeviceStatusId, IsActive, ReasonForDeactivate) {
+            var date = new Date(Datepurchase);
+            var DatePurchasestr = date.getFullYear() + '-' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '-' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate()));
+            $(".createAdminResolutin").click();
+            $("#DeviceName").val(value);
+            $("#HiddenId").val(id);
+            $("#device_RPMServiceId").val(DeviceTypeId);
+            $("#ModelNumber").val(ModelNumber);
+            $("#SerialNumber").val(SerialNumber);
+            $("#VendorName").val(VendorName);
+            $("#device_DatePurchase").val(DatePurchasestr);
+            $("#DeviceStatusId").val(DeviceStatusId);
+            $("#IsActive").val(IsActive);
+            $("#ReasonForDeactivate").val(ReasonForDeactivate);
+            // $("#DeviceName").attr("disabled", true)
+            $("#DiviceTypeButton").attr("disabled", false);
+            $("#check").val("edit");
+        }
+
+    </script>

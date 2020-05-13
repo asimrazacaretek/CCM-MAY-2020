@@ -1,0 +1,299 @@
+﻿@model CCM.Models.CCMBILLINGS.BillingCategory
+@using CCM.Models.CCMBILLINGS;
+
+@{
+    ViewBag.Title = "CategoryIndex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    #BillingCategoryModal {
+        overflow: auto;
+    }
+
+    .mt-4 {
+        margin-top: 15px;
+    }
+
+    .savebtnsforBillingCategory {
+        float: right;
+        margin-right: 60px;
+        margin-top: 10px;
+    }
+    .field-validation-error{
+        margin-left: -229px;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" data-toggle="modal" data-target="#BillingCategoryModal" id="ButonOpen" class="createAdminResolutin btn btn-success"><span class="fas fa-fw fa-floppy-o"></span> Create New Billing Category</button>
+    </div>
+</div>
+<div class="mt-4" id="BillingCategoryPage">
+    <table class="table" style=" width: 700px; margin-left: 15px;">
+        <thead>
+            <tr>
+                <th scope="col">Category Name</th>
+                <th>Billing Period</th>
+                <th>Minimum Minutes </th>
+
+                <th>Action</th>
+            </tr>
+        </thead>
+        @{ try
+            {
+                <tbody>
+                    @foreach (var item in ViewBag.Categories as List<BillingCategory>)
+                    {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@if (item.BillingPeriodsId != null)
+                        {@item.BillingPeriods.Name}</td>
+                       
+
+                        <td>@item.MinimunMinutes</td>
+                        <td data-id="@item.BillingCategoryId">
+                            <span style="font-size: 16px;cursor:pointer" value="@item.Name" onclick="EditCategory('@item.Name','@item.BillingCategoryId','@item.MinimunMinutes')" id="EditResolution" class=" fa fa-edit text-primary"></span> @*|*@
+                            @*<i class="fa fa-fw fa-trash text-danger" onclick="deleteCategory(@item.BillingCategoryId)"></i>*@
+                        </td>
+
+                    </tr>
+                    }
+
+                </tbody>
+            }
+            catch (Exception ex){ }
+        }
+
+
+    </table>
+</div>
+<div id="modal-container">
+    <div class="modal-background">
+        <div class="modal fade" id="BillingCategoryModal" role="dialog" data-backdrop="static" data-keyboard="false" style="position:absolute">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Billing Category Form</h4>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form id="categoryForm">
+                                @Html.HiddenFor(x => x.BillingCategoryId, new { @id = "HiddenId" })
+                                <div class="form-group">
+                                    @Html.Label("Billing Category Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(x => x.Name, new { htmlAttributes = new { @id = "CategoryName", @required = "required", @placeholder = "Category Name", @class = "form-control" } })
+                                        @Html.ValidationMessageFor(x => x.Name, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    @Html.Label("Minimun Minutes", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(x => x.MinimunMinutes, new { htmlAttributes = new { @id = "MinimunMinutes", @required = "required", @placeholder = "Minutes", @class = "form-control", @type = "number" } })
+                                    </div>
+                                </div>
+                                <div class="row" id="BillingPeriods">
+                                    @Html.Label("Biling Period", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.DropDownListFor(x => x.BillingPeriodsId, new SelectList(ViewBag.BillingPeriod, "BillingPeriodsId", "Name"), "--Select--", new { @class = "BillingPeriods form-control", @id = "BillingPeriod" })
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="form-group">
+                                <div class="savebtnsforBillingCategory">
+                                    <button style="margin-left: 5px;" id="BillingCategoryButton" type="button" class="btn" >Save</button>
+                                    <button type="button" class=" btn btn-default close-custom-button" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="check" value="0" />
+<script>
+      document.querySelector("#MinimunMinutes").addEventListener("keypress", function (evt) {
+    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57)
+    {
+        evt.preventDefault();
+    }
+});
+    $(document).ready(function () {
+      
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+
+        }); 
+        $("#CategoryName").keyup(function () {
+         
+            if (($("#BillingPeriod").val() != '') && ($("#CategoryName").val().trim() != '') && ($("#MinimunMinutes").val().replace(/^0+/, '') !=''))
+            {
+        
+            $("#BillingCategoryButton").attr("disabled", false);
+            } else {
+                $("#BillingCategoryButton").attr("disabled", true);
+                
+        }
+        })
+        $("#MinimunMinutes").keyup(function () {
+
+            if ($("#check").val() == "edit") {
+                if (($("#CategoryName").val().trim() != '') && ($("#MinimunMinutes").val().replace(/^0+/, '') != '')) {
+                    $("#BillingCategoryButton").attr("disabled", false);
+                } else {
+                    $("#BillingCategoryButton").attr("disabled", true);
+
+                }
+            } else {
+                if (($("#BillingPeriod").val() != '') && ($("#CategoryName").val().trim() != '') && ($("#MinimunMinutes").val().replace(/^0+/, '') != '')) {
+                    $("#BillingCategoryButton").attr("disabled", false);
+                } else {
+                    $("#BillingCategoryButton").attr("disabled", true);
+
+                }
+            }
+        })
+        $("#BillingPeriod").change(function () {
+            
+            if (($("#BillingPeriod").val() != '') && ($("#CategoryName").val().trim() != '') && ($("#MinimunMinutes").val().replace(/^0+/, '') != '')) {
+                $("#BillingCategoryButton").attr("disabled", false);
+        } else {
+                $("#BillingCategoryButton").attr("disabled", true);
+                
+        }
+        })
+     
+});
+    $('#ButonOpen').click(function () {
+        $('#modal-container').removeAttr('class').addClass("ButonOpen");
+        $('body').addClass('modal-active');
+        $("#HiddenId").val('0');
+        $("#CategoryName").val('');
+        $("#BillingPeriod").val('');
+        $("#BillingPeriods").show();
+        $("#MinimunMinutes").val("");
+        $("#check").val("0");
+        $("#CategoryName").attr("disabled",false)
+        $("#BillingCategoryButton").attr("disabled", true);
+    });
+    $('.close-custom-button').click(function () {
+        debugger;
+
+        $('#modal-container').addClass('out');
+        $('body').removeClass('modal-active');
+    });
+    function EditCategory(value, id, MinimunMinutes) {
+
+        debugger;
+        $(".createAdminResolutin").click();
+        $("#CategoryName").val(value);
+        $("#BillingPeriods").hide();
+        $("#HiddenId").val(id);
+        $("#MinimunMinutes").val(MinimunMinutes);
+        $("#CategoryName").attr("disabled", true)
+        $("#BillingCategoryButton").attr("disabled", false);
+        $("#check").val("edit");
+        
+    }
+    function AddOrEdit(valdata) {
+        $.ajax({
+            type: "POST",
+            data: valdata,
+            url: "/Billing/CategoryCreate",
+            success: function (result) {
+                debugger;
+                if (result == "added") {
+                    $("#CategoryName").val('');
+                     $("#MinimunMinutes").val("");
+                    swal({
+                        title: "Saved",
+                        text: "Saved Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    //window.location.reload();
+                    debugger;
+                    $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+                }
+                else if (result == "updated") {
+                    $("#CategoryName").val('');
+                     $("#MinimunMinutes").val("");
+                    swal({
+                        title: "Update",
+                        text: "Updated Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+                }
+                else if (result == "exists") {
+                    var s = $("#CategoryName").val();
+                    swal("Warning!",  s+ " Already exists as a Billing Category", "warning");
+                }
+                else {
+                    $('.close-custom-button').click();
+                    swal("Error!", "Error Accured", "error");
+
+                }
+            }
+        });
+    }
+    $("#BillingCategoryButton").on("click", function () {
+        debugger;
+        if ($("#CategoryName").val().trim()!="") {
+            debugger;
+
+            var valdata = $("#categoryForm").serialize();
+            AddOrEdit(valdata);
+        }
+        //else {
+        //    $('.close-custom-button').click();
+        //    swal("Error!", "Error Accured", "error");
+        //}
+    });
+    // for delete CCM Category
+
+    //var deleteCategory = function (id) {
+    //    $.ajax({
+    //        type: "POST",
+    //        data: { id: id },
+    //        url: "/Billing/Delete",
+    //        success: function (result) {
+
+    //            if (result == "deleted") {
+    //                $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+    
+    //                swal({
+    //                    title: "Deleted",
+    //                    text: "Deleted Successfully",
+    //                    icon: "success",
+    //                    button: "Ok",
+    //                    confirmButtonColor: "#1ab394",
+    //                });
+    //            } else {
+    //                swal("Error!", "Error Accured", "error");
+    //            }
+    //        }
+    //    });
+    //}
+</script>
+

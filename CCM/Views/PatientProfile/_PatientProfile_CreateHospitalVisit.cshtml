@@ -1,0 +1,372 @@
+﻿@model CCM.Models.PatientProfile_Hospitalvisits
+<style>
+    .lblbold {
+        text-align: left;
+        font-weight: bold;
+        color: green;
+        font-size: 16px;
+        border: 1px solid;
+    }
+
+    .autocomp_selected {
+        width: 100% !important;
+    }
+        .autocomp_selected li {
+            white-space: pre-line;
+        }
+</style>
+<link href="~/Content/multiselect/bootstrap-multiselect.css" rel="stylesheet" />
+@using (Html.BeginForm("_PatientProfile_CreateHospitalVisit", "PatientProfile", FormMethod.Post, new { @class = "form-horizontal", id = "form_AddHospital", role = "form", enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.PatientId)
+    <input type="hidden" id="FullName" name="FullName" class="fullname" />
+    <input type="hidden" id="NPI" name="NPI" />
+    <input type="hidden" id="Phone" name="Phone" />
+    <input type="hidden" id="Rate" name="Rate" />
+    <input type="hidden" id="TotalDays" name="TotalDays" />
+    <input type="hidden" id="HNPI" name="HNPI" />
+    <input type="hidden" id="HType" name="HType" />
+    <input type="hidden" id="HAddress" name="HAddress" />
+
+    <div class="form-horizontal">
+        <h4>Add Hospital Visit</h4>
+        <hr />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.HospitalName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-12" style="padding: 0px;">
+
+                        <input type="text" id="HospitalName" name="HospitalName" class="form-control border-input" placeholder="Search by NPI,Name or Number" required="required" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.HNPI, "NPI : ")<span class="HNPI"></span>
+                @Html.ValidationMessageFor(model => model.HNPI, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.HType, "Type : ")<span class="HType"></span>
+                @Html.ValidationMessageFor(model => model.HType, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.HAddress, "Address : ")<span class="HAddress"></span>
+                @Html.ValidationMessageFor(model => model.HAddress, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Doctor</label>
+            <div class="col-md-4"><input type="text" id="searchnpiDoctor" class="form-control border-input" placeholder="Search by NPI,Name or Number" required="required" /></div>
+
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.NPI, "NPI : ")
+                <span class="NPI"></span>
+                @Html.ValidationMessageFor(model => model.NPI, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.FullName, "FullName : ")
+                <span class="FullName"></span>
+
+                @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Phone, "Phone : ")
+                <span class="Phone"></span>
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ICD10Codes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.Editor("ICD10Codes", new { htmlAttributes = new { @class = "form-control border-input validaterefillinfo", id = "ICD10Codes", required = "required" } })
+                @Html.ValidationMessageFor(model => model.ICD10Codes, "", new { @class = "text-danger", })
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            @Html.LabelFor(model => model.Department, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownListFor(x => x.HospitalDepartmentsId, new SelectList(ViewBag.HospitalDepartments, "Id", "Name"), "--Select--", new { @class = " form-control", @id = "HospitalDepartments" })
+
+                @*@Html.ValidationMessageFor(model => model.Department, "", new { @class = "text-danger" })*@
+            </div>
+
+
+            @Html.LabelFor(model => model.StayType, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.DropDownList("StayType", new List<SelectListItem>
+                    { new SelectListItem {Value = "Initial Hospitalization",  Text = "Initial Hospitalization"},
+                    new SelectListItem {Value = "Re-Admission",  Text = "Re-Admission"}
+                    }, "Type Of Stay", new { @class = "form-control border-input" })
+                @Html.ValidationMessageFor(model => model.StayType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @*@Html.LabelFor(model => model.Procedures, htmlAttributes: new { @class = "control-label col-md-2" })*@
+            @Html.Label("Procedures", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownListFor(x => x.HospitalProceduresId, new SelectList(ViewBag.Procedures, "Id", "Name"), "--Select--", new { @class = " form-control", @id = "OtherProcedure" })
+                @*@Html.DropDownList("Procedures", new SelectList(ViewBag.HospitalDepartments, "Id", "Name"), "--Select--", new { @class = " form-control" })*@
+
+                @*@Html.ValidationMessageFor(model => model.Department, "", new { @class = "text-danger" })*@
+            </div>
+
+            @Html.LabelFor(model => model.AdmitDate, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.AdmitDate, new { htmlAttributes = new { @class = "form-control", required = "required", onchange = "totalamount()" } })
+                @Html.ValidationMessageFor(model => model.AdmitDate, "", new { @class = "text-danger", id = "erroradmit" })
+
+            </div>
+
+            @Html.LabelFor(model => model.DischargeDate, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.DischargeDate, new { htmlAttributes = new { @class = "form-control", required = "required",  onchange = "totalamount()" } })
+                @Html.ValidationMessageFor(model => model.DischargeDate, "", new { @class = "text-danger", id = "errordate" })
+            </div>
+        </div>
+        <div class="row" id="otherProcedure">
+            @Html.Label("Other Procedure", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4" style="padding-left:5px;">
+                @Html.TextAreaFor(model => model.OtherProcedure, 3, 80, new { @class = "form-control", @style = "width:100%;", @maxlength = "100" })
+                @Html.ValidationMessageFor(model => model.OtherProcedure, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+        <div class="form-group" style="margin-top:5px">
+            @Html.Label("Reason For Admission", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownListFor(x => x.HospitalReasonsId, new SelectList(ViewBag.HospitalReasons, "Id", "Name"), "--Select--", new { @class = " form-control", @id = "HospitalReasons" })
+
+                @Html.ValidationMessageFor(model => model.Reason, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+        <div class="row" id="otherreason">
+            @Html.Label("Other Reasons", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4" style="padding-left:5px;">
+                @Html.TextAreaFor(model => model.Reason, 3, 80, new { @class = "form-control", @style = "width:100%;", @maxlength = "100" })
+                @Html.ValidationMessageFor(model => model.Reason, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+        @*@Html.Label("Reason For Admission", htmlAttributes: new { @class = "control-label col-md-2" })*@
+
+
+
+        <div class="form-group" style="margin-top:10px;">
+            <div class="col-md-3">
+                @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-8" })
+                <label class="Rate control-label col-md-3 col-md-offset-1 lblbold" style="padding-left: 5px;">$1500</label>
+            </div>
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.TotalDays, htmlAttributes: new { @class = "control-label col-md-6" })
+                <label class="control-label TotalDays col-md-4 lblbold" style="text-align:left;font-weight:bold;">0</label>
+            </div>
+            <div class="col-md-4">
+                <label class="control-label col-md-8" style="margin-top: -9px;">Estimated Amount Paid by insurance for stay in hospital :</label>
+                <label class="control-label col-md-4 lblbold" id="totalAmount">$0.00</label>
+            </div>
+            <div class="col-md-3 text-right">
+                <button type="button" class="btn btn-success" data-dismiss="modal" id="AddBtn" onclick="CheckValidation()"><i class="fa fa-plus-square"></i>Save Visit</button>
+                <button type="button" class="btn btn-danger " data-dismiss="modal" id="btnCancel"><i class="fa fa-window-close"></i>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+}
+    <script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+<script>
+
+    new Def.Autocompleter.Search('searchnpiDoctor', 'https://clinicaltables.nlm.nih.gov/api/npi_idv/v3/search?df=NPI,name.full,addr_practice.full,addr_mailing.full,addr_practice.phone,addr_mailing.phone,provider_type'
+                                                                        /*{ tableFormat: true, valueCols: [0], colHeaders: ['NPI', 'Name', 'Gender', 'Type', 'Practice Address', 'Mailing Address', 'Phone1', 'Phone2'] }*/);
+    Def.Autocompleter.Event.observeListSelections('searchnpiDoctor', function () {
+        if ($("#searchnpiDoctor").val() != "") {
+            var drugField = $('#searchnpiDoctor')[0];
+            var drugFieldVal = drugField.value;
+            var searchval = drugFieldVal.split(' - ');
+            //var autocomp = drugField.autocomp;
+            $("#NPI").val(searchval[0]);
+            $("#FullName").val(searchval[1]);
+            //$("#Speciality").val(searchvalues[6]);
+            //$("#Address1").val(searchvalues[2]);
+            //$("#Address2").val(searchvalues[3]);
+            $("#Phone").val(searchval[4]);
+            //$("#MobilePhoneNumber").val(searchvalues[5]);
+            $(".Phone").text(searchval[4]);
+            $(".NPI").text(searchval[0]);
+            $(".FullName").text(searchval[1]);
+        }
+    });
+
+    new Def.Autocompleter.Search(
+        'HospitalName', 'https://clinicaltables.nlm.nih.gov/api/npi_org/v3/search?df=NPI,name.full,provider_type,addr_practice.full'
+       
+            //tableFormat: true, valueCols: [0, 1], colHeaders: ['Name', 'NPI', 'Type', 'Practice Address']
+        //    colHeaders: ['Name', 'NPI', 'Type', 'Practice Address']
+        
+    );
+    Def.Autocompleter.Event.observeListSelections('HospitalName', function () {
+        if ($("#HospitalName").val() != "") {
+            var Hospitalfield = $('#HospitalName')[0];
+            var HospitalFieldVal = Hospitalfield.value;
+            var searchvalues = HospitalFieldVal.split(' - ');
+            $(".HNPI").text(searchvalues[0]);
+            $(".HType").text(searchvalues[2]);
+            $(".HAddress").text(searchvalues[3]);
+
+            $("#HNPI").val(searchvalues[0]);
+            $("#HType").val(searchvalues[2]);
+            $("#HAddress").val(searchvalues[3]);
+        }
+    });
+    new Def.Autocompleter.Search('ICD10Codes', 'https://clinicaltables.nlm.nih.gov/api/icd10cm/v3/search?sf=code,name',
+        { tableFormat: true, valueCols: [0, 1], colHeaders: ['Code', 'Name'], maxSelect: '*' });
+
+ 
+
+    //$("#ICD10Codes").focusout(function () {
+    //    debugger;
+    //    var ICDsLst = "";
+    //    var Multi = $("#ICD10Codes")[0].autocomp.selectedItemData_;
+    //    var arraylength = Multi.length;
+    //    for (var i = 0; i < arraylength; i++) {
+    //        if (Multi[i].text.length > 15) {
+    //            Multi.RemoveAt(i);
+    //        }
+    //    }
+    //});
+
+    function hospitaldetails() {
+        debugger;
+        var hospitalid = $("#HospitalsId").val();
+        URL = "/PatientProfile/HospitalDetails?hospitalId=" + hospitalid;
+        $.ajax({
+            url: URL,
+            type: "GET",
+
+            success: function (result) {
+                $(".loader").hide();
+                var res = result.split("/");
+                $(".City").text(res[0]); $(".Country").text(res[1]); $(".State").text(res[2]);
+                $("#City").val(res[0]); $("#Country").val(res[1]); $("#State").val(res[2]);
+            }
+        });
+    }
+    function NewHospital() {
+        var name = $("#txthospitalName").val();
+        var city = $("#txtCityName").val();
+        var country = $("#txtCountryName").val();
+        var state = $("#txtStateName").val();
+        URL = "/PatientProfile/HospitalDetails?hospitalId=" + hospitalid;
+        $.ajax({
+            url: URL,
+            type: "GET",
+
+            success: function (result) {
+                $(".loader").hide();
+                var res = result.split("/");
+                $(".City").text(res[0]); $(".Country").text(res[1]); $(".State").text(res[2]);
+                $("#City").val(res[0]); $("#Country").val(res[1]); $("#State").val(res[2]);
+            }
+        });
+    }
+
+    $("#btnCancel").on("click", function () {
+        $("#divAddHospital").css("display", "none");
+        $("#btnAddHospital").show();
+        $("#btnAddHospital").css("display", "block");
+    });
+    function totalamount() {
+        debugger;
+        var admitdate = Date.parse($("#AdmitDate").val());
+        var dischardate = Date.parse($("#DischargeDate").val());
+        if (admitdate == dischardate) {
+            $("#errordate").text("Admit and discharge date Cannot be Same.!")
+            $("#DischargeDate").focus();
+        }
+        else if (admitdate > dischardate)
+        {
+            $("#erroradmit").text("Admit Date cannot be greater than discharge date.!")
+            $("#admitdate").focus();
+        }
+        else {
+            $("#errordate").text("");
+            $("#erroradmit").text("");
+        }
+        var difference = (dischardate - admitdate);
+        var diffDays = Math.ceil(difference / (1000 * 3600 * 24));
+
+        if (isNaN(diffDays))
+            diffDays = 0;
+
+        $(".TotalDays").text(diffDays);
+
+        var rate = $(".Rate").text().replace("$", "").trim();
+        var days = $(".TotalDays").text();
+
+        $("#Rate").val(rate); $("#TotalDays").val(diffDays);
+        var total = 0;
+        if (rate != undefined && days != undefined) {
+            total = parseInt(rate) * parseInt(days);
+        }
+        $("#totalAmount").text("$"+total + ".00");
+    }
+
+    function CheckValidation() {
+        if ($("#errordate").text() == "" && $("#erroradmit").text() == "")
+        {
+            debugger;
+            var Multi = $("#ICD10Codes")[0].autocomp.selectedItemData_;
+            var ICDsLst = "";
+            Multi.forEach(function (MultiICDs) {
+                ICDsLst += MultiICDs.text + "|";
+            });
+            ICDsLst = ICDsLst.slice(0, -1);
+            $("#ICD10Codes").val(ICDsLst);
+            if (ICDsLst.length > 0)
+                $("#ICD10Codes").removeAttr("required");
+            SubmitForm('form_AddHospital', 'Saved');
+        }
+        else
+            return false;
+    }
+    $("#HospitalReasons").change(function () {
+        var val = $("#HospitalReasons :selected").val();
+        var val2 = $("#HospitalReasons :selected").text();
+        if (val2 == "Others") {
+            $("#otherreason").show();
+        }
+        else {
+            $("#otherreason").hide();
+        }
+    })
+    $("#OtherProcedure").change(function () {
+       
+        var val = $("#OtherProcedure :selected").val();
+        var val2 = $("#OtherProcedure :selected").text();
+        if (val2 == "Other")
+        {
+        
+            $("#otherProcedure").show();
+        }
+        else {
+          
+            $("#otherProcedure").hide();
+        }
+    })
+    $(document).ready(function () {
+        $("#otherreason").hide();
+        $("#otherProcedure").hide();
+    })
+</script>
+

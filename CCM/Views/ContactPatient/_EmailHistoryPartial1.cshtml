@@ -1,0 +1,45 @@
+﻿@model IEnumerable<CCM.Models.EmailHistory>
+
+<table id="emailHistoryTable1" class="display nowrap" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Date_Time</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Message</th>
+            <th>Attachments</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Convert.ToDateTime(item.DateTime).ToString("g")
+                </td>
+                <td>
+                    @HelperExtensions.GetUserNamebyID(item.FromUser)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ToEmail)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Message)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AttachmentsCount)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<script>
+    $('#emailHistoryTable1').DataTable({
+        pageLength: 25,
+        scrollY: "50vh",
+        order: [[0, "desc"]]
+    });
+</script>

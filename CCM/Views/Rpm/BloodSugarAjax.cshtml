@@ -1,0 +1,378 @@
+﻿@model CCM.Models.ViewModels.PatientBloodSugarReadingViewModel
+
+@{
+    Layout = null;
+}
+
+
+<table id="ReadingDataTable" class="mt-4" style="width:100%">
+
+    <thead>
+        <tr style="color:white">
+            <td hidden></td>
+            <td style="width:12% ; text-align:center"> Date Recorded</td>
+            <td style="width:22%; text-align:center">
+                Morning 12 AM To 10 AM <br />
+                <hr style="display: block; height: 1px;border: 0; border-top: 1px solid #ccc;margin: 1em 0; padding: 0;" />
+                <table class="Tablewithoutborder">
+                    <thead>
+                        <tr class="TableTrwithoutborder">
+                            <td class="Tabletdwithoutborder" style="float:left;width: 74%;">Before Meal</td>
+                            <td class="vl"><div></div></td>
+                            <td class="Tabletdwithoutborder" style="float:right;width: 81%;">After Meal</td>
+                        </tr>
+                    </thead>
+                </table>
+            </td>
+            <td style="width:22% ; text-align:center">
+                Afternoon 10 AM To 3 PM <br />
+                <hr style="display: block; height: 1px;border: 0; border-top: 1px solid #ccc;margin: 1em 0; padding: 0;" />
+                <table class="Tablewithoutborder">
+                    <thead>
+
+                        <tr class="TableTrwithoutborder">
+                            <td class="Tabletdwithoutborder" style="float:left;width: 74%;">Before Meal</td>
+                            <td class="vl"><div></div></td>
+                            <td class="Tabletdwithoutborder" style="float:right;width: 81%;">After Meal</td>
+                        </tr>
+                    </thead>
+                </table>
+            </td>
+            <td style="width:22% ; text-align:center">
+                Evening  3 PM To 9 PM <br />
+                <hr style="display: block; height: 1px;border: 0; border-top: 1px solid #ccc;margin: 1em 0; padding: 0;" />
+                <table class="Tablewithoutborder">
+                    <thead>
+
+                        <tr class="TableTrwithoutborder">
+                            <td class="Tabletdwithoutborder" style="float:left;width: 74%;">Before Meal</td>
+                            <td class="vl"><div></div></td>
+                            <td class="Tabletdwithoutborder" style="float:right;width: 81%;">After Meal</td>
+                        </tr>
+                    </thead>
+                </table>
+            </td>
+            <td style="width:22%; text-align:center">
+                Night  9 PM To 12 AM <br />
+                <hr style="display: block; height: 1px;border: 0; border-top: 1px solid #ccc;margin: 1em 0; padding: 0;" />
+                <table class="Tablewithoutborder">
+                    <thead>
+                        <tr class="TableTrwithoutborder">
+                            <td class="Tabletdwithoutborder" style="float:left;width: 74%;">Before Meal</td>
+                            <td class="vl"><div></div></td>
+                            <td class="Tabletdwithoutborder" style="float:right;width: 81%;">After Meal</td>
+                        </tr>
+                    </thead>
+                </table>
+            </td>
+
+
+        </tr>
+    </thead>
+    <tbody id="BloodSugarLogsbody">
+        @if (Model != null)
+        {
+            if (Model.PatientLogBookList != null)
+            {
+                if (Model.PatientLogBookList.Count > 0)
+                {
+
+
+
+                    for (int i = 0; i < Model.PatientLogBookList.Count; i++)
+                    {
+                        //Date_recorded = Model.PatientLogBookList[i].Date_recorded;
+                        //string Date_recordedStr = if(Date_recorded.Value.h)
+
+                        <tr>
+
+                            @*@if (i == 0)
+                                {
+                                    <td>
+
+                                        @Model.PatientLogBookList[i].Date_recorded
+                                    </td>
+                                }
+                                @if (i > 0)
+                                {
+                                    DateTime Nextdate = new DateTime();
+                                    if (i < Model.PatientLogBookList.Count - 1)
+                                    {
+
+                                        Nextdate = Model.PatientLogBookList[i + 1].Date_recorded.Value.Date;
+                                        if (Nextdate == Model.PatientLogBookList[i].Date_recorded.Value.Date)
+                                        {
+                                            <td></td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                @Model.PatientLogBookList[i].Date_recorded
+                                            </td>
+
+                                        }
+                                    }
+                                    else {
+                                            <td>
+                                                @Model.PatientLogBookList[i].Date_recorded
+                                            </td>}
+
+                                }*@
+                            @*@{
+                                    var current = Model.PatientLogBookList[i].Date_recorded;
+                                    int rowspan = Model.PatientLogBookList.Where(x => x.Date_recorded.Value.Date == current.Value.Date).Count();
+                                }*@
+                            <td hidden>
+                                @Model.PatientLogBookList[i].Date_recorded
+                            </td>
+
+                            <td>
+                                @Model.PatientLogBookList[i].Date_recorded.Value.DayOfWeek
+                                <br />
+                                @GetDate(Model.PatientLogBookList[i].Date_recorded)
+                            </td>
+
+
+
+                            <td>
+                                @if (Model.PatientLogBookList[i].Morning_12_to_10_AM != 0)
+                                {
+                                    if (Model.PatientLogBookList[i].Before_meal == true)
+                                    {
+                                        <table style="width:100%">
+                                            <tr style="width:100%">
+                                                <td style="width:50%; background-color:@getStatus(Model.PatientLogBookList[i].Morning_12_to_10_AM,Model.PatientLogBookList[i].Before_meal)">
+                                                    <span class="Reading-value">
+                                                        @Model.PatientLogBookList[i].Morning_12_to_10_AM mg/dl
+                                                    </span>
+                                                    <br />
+                                                    @{
+                                                        var time = Convert.ToDateTime(Model.PatientLogBookList[i].Date_recorded);
+                                                        <text>@time.ToShortTimeString()</text>
+                                                    }
+
+                                                </td>
+                                                <td style="width:50%"></td>
+                                            </tr>
+                                        </table>
+                                    }
+                                    else
+                                    {
+                                        <table style="width:100%">
+                                            <tr style="width:100%">
+                                                <td style="width:50%"></td>
+                                                <td style="width:50%;background-color:@getStatus(Model.PatientLogBookList[i].Morning_12_to_10_AM,Model.PatientLogBookList[i].Before_meal)">
+
+                                                    <span class="Reading-value">
+                                                        @Model.PatientLogBookList[i].Morning_12_to_10_AM mg/dl
+                                                    </span>
+                                                    <br />
+                                                    @{
+                                                        var time = Convert.ToDateTime(Model.PatientLogBookList[i].Date_recorded);
+                                                        <text>@time.ToShortTimeString()</text>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    }
+                                }
+
+
+
+                            </td>
+                            <td>
+                                @if (Model.PatientLogBookList[i].Morning_10_to_3_PM != 0)
+                                {
+                                    if (Model.PatientLogBookList[i].Before_meal == true)
+                                    {
+                                        <table style="width:100%">
+                                            <tr style="width:100%">
+                                                <td style="width:50%;background-color:@getStatus(Model.PatientLogBookList[i].Morning_10_to_3_PM,Model.PatientLogBookList[i].Before_meal)">
+                                                    <span class="Reading-value">
+                                                        @Model.PatientLogBookList[i].Morning_10_to_3_PM mg/dl
+                                                    </span>
+                                                    <br />
+                                                    @{
+                                                        var time = Convert.ToDateTime(Model.PatientLogBookList[i].Date_recorded);
+                                                        <text>@time.ToShortTimeString()</text>
+                                                    }
+                                                </td>
+                                                <td style="width:50%"></td>
+                                            </tr>
+                                        </table>
+                                    }
+                                    else
+                                    {
+                                        <table style="width:100%">
+                                            <tr style="width:100%">
+                                                <td style="width:50%"></td>
+                                                <td style="width:50%;background-color:@getStatus(Model.PatientLogBookList[i].Morning_10_to_3_PM,Model.PatientLogBookList[i].Before_meal)">
+
+                                                    <span class="Reading-value">
+                                                        @Model.PatientLogBookList[i].Morning_10_to_3_PM mg/dl
+                                                    </span>
+                                                    <br />
+                                                    @{
+                                                        var time = Convert.ToDateTime(Model.PatientLogBookList[i].Date_recorded);
+                                                        <text>@time.ToShortTimeString()</text>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @if (Model.PatientLogBookList[i].Morning_3_to_9_PM != 0)
+                                {
+                                    if (Model.PatientLogBookList[i].Before_meal == true)
+                                    {
+                                        <table style="width:100%">
+                                            <tr style="width:100%">
+                                                <td style="width:50%;background-color:@getStatus(Model.PatientLogBookList[i].Morning_3_to_9_PM,Model.PatientLogBookList[i].Before_meal)">
+                                                    <span class="Reading-value">
+                                                        @Model.PatientLogBookList[i].Morning_3_to_9_PM mg/dl
+                                                    </span>
+                                                    <br />
+                                                    @{
+                                                        var time = Convert.ToDateTime(Model.PatientLogBookList[i].Date_recorded);
+                                                        <text>@time.ToShortTimeString()</text>
+                                                    }
+                                                </td>
+                                                <td style="width:50%"></td>
+                                            </tr>
+                                        </table>
+                                    }
+                                    else
+                                    {
+                                        <table style="width:100%">
+                                            <tr style="width:100%">
+                                                <td style="width:50%"></td>
+                                                <td style="width:50%;background-color:@getStatus(Model.PatientLogBookList[i].Morning_3_to_9_PM,Model.PatientLogBookList[i].Before_meal)">
+                                                    <span class="Reading-value">
+                                                        @Model.PatientLogBookList[i].Morning_3_to_9_PM mg/dl
+                                                    </span>                                                                        <br />
+                                                    @{
+                                                        var time = Convert.ToDateTime(Model.PatientLogBookList[i].Date_recorded);
+                                                        <text>@time.ToShortTimeString()</text>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    }
+                                }
+
+                            </td>
+                            <td>
+                                @if (Model.PatientLogBookList[i].Morning_9_to_12_AM != 0)
+                                {
+                                    if (Model.PatientLogBookList[i].Before_meal == true)
+                                    {
+                                        <table style="width:100%">
+                                            <tr style="width:100%">
+                                                <td style="width:50% ;background-color:@getStatus(Model.PatientLogBookList[i].Morning_9_to_12_AM,Model.PatientLogBookList[i].Before_meal)">
+                                                    <span class="Reading-value">
+                                                        @Model.PatientLogBookList[i].Morning_9_to_12_AM mg/dl
+                                                    </span>
+                                                    <br />
+                                                    @{
+                                                        var time = Convert.ToDateTime(Model.PatientLogBookList[i].Date_recorded);
+                                                        <text>@time.ToShortTimeString()</text>
+                                                    }
+                                                </td>
+                                                <td style="width:50%"></td>
+                                            </tr>
+                                        </table>
+                                    }
+                                    else
+                                    {
+                                        <table style="width:100%">
+                                            <tr style="width:100%">
+                                                <td style="width:50%"></td>
+                                                <td style="width:50% ;background-color:@getStatus(Model.PatientLogBookList[i].Morning_9_to_12_AM,Model.PatientLogBookList[i].Before_meal)">
+                                                    <span class="Reading-value">
+                                                        @Model.PatientLogBookList[i].Morning_9_to_12_AM mg/dl
+                                                    </span>
+                                                    <br />
+                                                    @{
+                                                        var time = Convert.ToDateTime(Model.PatientLogBookList[i].Date_recorded);
+                                                        <text>@time.ToShortTimeString()</text>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    }
+                                }
+
+                            </td>
+
+
+                        </tr>
+                    }
+
+
+                }
+            }
+        }
+    <tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        table = $("#ReadingDataTable").dataTable({
+            //"order": [[0, "desc"]],
+            pageLength: 10
+
+        });
+    })
+
+</script>
+@functions {
+    string GetDate(DateTime? Date)
+    {
+        var date = Convert.ToDateTime(Date);
+        var day = date.Day;
+        var month = date.Month;
+        var year = date.Year;
+        string datestr = date.ToString("mm/dd/yyyy");
+        if (datestr == "00/01/0001")
+        {
+            return "";
+        }
+        datestr = month + "/" + day + "/" + year;
+        return datestr;
+    }
+    string getStatus(double? value, bool BeforeMeal)
+    {
+        if (BeforeMeal == true)
+        {
+            if (value < 70)
+            {
+                return "#fff2d9";
+            }
+            else if (value >= 70 && value <= 100)
+            {
+                return "#d9ffd9";
+            }
+            else
+            {
+                return "#ffd9d9";
+            }
+        }
+        else
+        {
+            if (value < 70)
+            {
+                return "#fff2d9";
+            }
+            else if (value >= 100 && value <= 140)
+            {
+                return "#d9ffd9";
+            }
+            else
+            {
+                return "#ffd9d9";
+            }
+        }
+
+    }
+}

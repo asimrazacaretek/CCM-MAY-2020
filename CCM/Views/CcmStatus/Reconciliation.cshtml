@@ -1,0 +1,95 @@
+﻿@model IEnumerable<CCM.Models.Patient>
+
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+
+<h4 class="pageTitle">Reconciliation</h4>
+- Patients who are ready to be Reconciled.
+
+<br /><br />
+<table id="table" class="display">
+    <thead>
+        <tr>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>
+                    Counselor
+                </th>
+            }
+            <th>
+                Patient Name
+            </th>
+            <th>
+                Gender
+            </th>
+            <th>
+                Age
+            </th>
+            <th>
+                Claims Submission Date
+            </th>
+            <th>
+                Physician
+            </th>
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Liaison.FirstName)
+                        @Html.DisplayFor(modelItem => item.Liaison.LastName)
+                    </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName),
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @{
+                        var age = (int.Parse(DateTime.Today.ToString("yyyyMMdd")) - int.Parse(item.BirthDate.ToString("yyyyMMdd"))) / 10000;
+                    }
+                    @age
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CcmClaimSubmissionDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Physician.FirstName)
+                    @Html.DisplayFor(modelItem => item.Physician.LastName)
+                </td>
+                <td>
+                    @if (item.EnrollmentStatus == "Enrolled")
+                    {
+                        @Html.ActionLink("Generate Invoice", "GenerateInvoice", "Patients", new { patientId = item.Id }, null)
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#table').DataTable(
+                {
+                    responsive: true,
+                    pageLength: 100,
+                    "scrollY": "65vh"
+                });
+        });
+    </script>
+}

@@ -1,0 +1,78 @@
+﻿@model IEnumerable<CCM.Models.PatientProfile_UrgencyContact>
+
+<style>
+    #UrgencyDatatable {
+        width: 100%;
+        overflow-x: scroll;
+    }
+</style>
+<div class="custom-title">
+    <h4>
+        MEDICAL URGENCY CONTACTS
+    </h4>
+</div>
+
+<p>
+ <a class="btn btn-success logdetails" onclick="GetAjaxView('/PatientUrgencyContact/_Create', '@ViewBag.PatientId','medical-urg')"> Create New</a>
+</p>
+<div id="UrgencyDatatable">
+    <table class="table" id="UrgencyTable">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.PrimaryProfesionalCareProvider)</th>
+                <th>@Html.DisplayNameFor(model => model.PrimaryRelationship)</th>
+                <th>@Html.DisplayNameFor(model => model.PrimaryName)</th>
+                <th>@Html.DisplayNameFor(model => model.PrimaryMobilePhoneNumber)</th>
+                <th>@Html.DisplayNameFor(model => model.PrimaryMobilePhoneNumber1)</th>
+                <th>@Html.DisplayNameFor(model => model.PrimaryHomePhoneNumber)</th>
+                <th>@Html.DisplayNameFor(model => model.PrimaryHomePhoneNumber1)</th>
+                <th>@Html.DisplayNameFor(model => model.PrimaryExpertise)</th>
+                <th>@Html.DisplayNameFor(model => model.PrimaryHealthProxyAndCarplane)</th>
+                <th>@Html.DisplayNameFor(model => model.PrimaryEmail)</th>
+                <th>@Html.DisplayNameFor(model => model.PrimaryIsShareCarePlan)</th>
+                <th>Contact Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.PrimaryProfesionalCareProvider)</td>
+                <td>@Html.DisplayFor(modelItem => item.PrimaryRelationship)</td>
+                <td>@Html.DisplayFor(modelItem => item.PrimaryName)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.PrimaryMobilePhoneNumber)</td>
+                <td>@Html.DisplayFor(modelItem => item.PrimaryMobilePhoneNumber1)</td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrimaryHomePhoneNumber)
+
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.PrimaryHomePhoneNumber1)</td>
+
+
+                <td>@Html.DisplayFor(modelItem => item.PrimaryExpertise)</td>
+                <td>@item.PrimaryHealthProxyAndCarplane</td>
+
+                <td>@Html.DisplayFor(modelItem => item.PrimaryEmail)</td>
+                <td>@item.PrimaryIsShareCarePlan@*@Html.DisplayFor(modelItem => item.PrimaryIsShareCarePlan)*@</td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ContactType)
+                            </td>
+                <td>
+                    <a onclick="AjaxRefreshMulti('PatientUrgencyContact','_Edit',@item.Id,@item.PatientId)" class="logdetails">Edit</a>
+                    |
+                    <a onclick="AjaxActionReturns('PatientUrgencyContact','_Delete',@item.Id)" class="logdetails">Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody> 
+    </table>
+</div>
+<script>
+    $('#UrgencyTable').DataTable({
+        pageLength: 25,
+        "order": []
+    });
+</script>

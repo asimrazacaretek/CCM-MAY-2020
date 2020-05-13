@@ -1,0 +1,100 @@
+﻿@using CCM.Models
+@model AlertModel
+
+ 
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Unexpected Error</title>
+    <link href="https://fonts.googleapis.com/css?family=Encode+Sans+Semi+Condensed:100,200,300,400" rel="stylesheet">
+ 
+    <link href="~/Content/Error/Error.css" rel="stylesheet" />
+    <style>
+        .gear:after {
+            position: absolute;
+            left: 25px;
+            top: 25px;
+            z-index: 3;
+            content: "";
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 5px solid #0364bd;
+            box-sizing: border-box;
+            background: WHITE;
+        }
+        .gear:before {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    z-index: 2;
+    content: "";
+    border-radius: 50%;
+    background: WHITE;
+}
+        :root {
+            --main-color: #0364bd;
+            --stroke-color: #0364bd;
+            --link-color: #29abe2;
+        }
+            /*:root {
+            --main-color: white;
+            --stroke-color: #0364bd;
+            --link-color: #29abe2;
+        }*/
+        .copyright {
+            margin-top: 400px;
+        }
+        a:hover {
+            color: #0364bd;
+            text-decoration: none;
+        }
+    </style>
+
+
+</head>
+
+<body class="loading" >
+  
+    <div class="error-502__container" style="margin-top:100px;">
+        <div class="error-502">
+            <div class="error-502__text">
+                <h1>UNEXPECTED ERROR <b>:(</b></h1>
+                <h2>You can go back to our <a href="/">Homepage</a></h2>
+            </div>
+        </div>
+    </div>
+    <div class="gears" style="margin-top:50px;">
+        <div class="gear one">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="gear two">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="gear three">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+ 
+    <script>
+        $(function () {
+            setTimeout(function () {
+                $('body').removeClass('loading');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
+

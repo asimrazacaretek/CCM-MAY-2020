@@ -1,0 +1,304 @@
+﻿@model CCM.Models.CCMBILLINGS.BillingCodes
+@{
+    ViewBag.Title = "BilingCodes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<style>
+    #BillingCodesModal {
+        overflow: auto;
+    }
+
+    .mt-4 {
+        margin-top: 15px;
+    }
+
+    .savebtnsforBillingCodes {
+        float: right;
+        margin-right: 60px;
+        margin-top: 10px;
+    }
+    select{
+        min-width: 100%;
+    min-height: 34px;
+    }
+    input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" data-toggle="modal" data-target="#BillingCodesModal" id="ButonOpen" class="createAdminResolutin btn btn-success"><span class="fas fa-fw fa-floppy-o"></span>Create New CPT Code</button>
+    </div>
+</div>
+<div class="mt-4" id="BillingCategoryPage">
+    <table class="table" style=" width: 700px; margin-left: 15px;">
+        <thead>
+            <tr>
+                <th scope="col">CPT Codes</th>
+                <th>Category</th>
+                
+                <th>Minimun Minutes</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        @{ try
+            {
+                <tbody>
+                    @foreach (var item in ViewBag.BilingCodes)
+                    {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.BillingCategory.Name</td>
+                        <td>@item.MinimunMinutes</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <span style="font-size: 20px;cursor:pointer" value="@item.Name" onclick="EditCategory('@item.Name','@item.Id','@item.MinimunMinutes','@item.BillingCategoryId','@item.Description')" id="EditResolution" class=" fa fa-edit text-primary"></span> 
+                           @* <i class="fa fa-fw fa-trash text-danger" style="font-size: 16px;cursor:pointer" onclick="deleteBillingCode(@item.Id)"></i>*@
+                        </td>
+
+                    </tr>
+                    }
+
+                </tbody>
+            }
+            catch { }
+        }
+
+
+    </table>
+</div>
+<div id="modal-container">
+    <div class="modal-background">
+        <div class="modal fade" id="BillingCodesModal" role="dialog" data-backdrop="static" data-keyboard="false" style="position:absolute">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create New CPT Code</h4>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form id="bilingCodesForm">
+                                @Html.HiddenFor(x => x.Id, new { @id = "HiddenId" })
+                                <div class="form-group">
+                                    <div class="row">
+                                        @Html.Label("CPT Code", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.EditorFor(x => x.Name, new { htmlAttributes = new { @id = "bilingCode", @required = "required", @placeholder = "Code", @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        @Html.Label("Billing Category", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.DropDownListFor(x => x.BillingCategoryId, new SelectList(ViewBag.BillingCategories, "BillingCategoryId", "Name"), "--Select--", new { @id = "BillingCategory", @class = "BillingCategory" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        @Html.Label("Minimun Minutes", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.EditorFor(x => x.MinimunMinutes, new { htmlAttributes = new { @id = "MinimunMinutes", @required = "required", @placeholder = "Minutes", @class = "form-control", @type = "number" } })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("Description", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(x => x.Description, new { htmlAttributes = new { @id = "Description", @placeholder = "Code Description", @class = "form-control" } })
+                                        @Html.ValidationMessageFor(x => x.Description, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="form-group">
+                                <div class="savebtnsforBillingCodes">
+                                    <input style="margin-left: 5px;" id="BillingCategoryButton" type="button" onclick="" value="Save" class="btn" />
+                                    <button type="button" class=" btn btn-default close-custom-button" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+      
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+
+  });
+        $("#bilingCode").keyup(function () { 
+         
+            if (($("#BillingCategory").val() != '') && ($("#bilingCode").val().trim() != '') && ($("#MinimunMinutes").val().trim() != ''))
+            {
+        
+            $("#BillingCategoryButton").attr("disabled", false);
+            } else {
+                $("#BillingCategoryButton").attr("disabled", true);
+                
+        }
+        })
+        $("#BillingCategory").change(function () {
+            if (($("#BillingCategory").val() != '') && ($("#bilingCode").val().trim() != '') && ($("#MinimunMinutes").val().trim() != '')) {
+                $("#BillingCategoryButton").attr("disabled", false);
+        } else {
+                $("#BillingCategoryButton").attr("disabled", true);
+                
+        }
+        })
+
+         $("#MinimunMinutes").keyup(function () { 
+         
+            if (($("#BillingCategory").val() != '') && ($("#bilingCode").val().trim() != '') && ($("#MinimunMinutes").val().trim() != '' && $("#MinimunMinutes").val().trim() != '0'))
+            {
+        
+            $("#BillingCategoryButton").attr("disabled", false);
+            } else {
+                $("#BillingCategoryButton").attr("disabled", true);
+                
+        }
+        })
+     
+});
+    document.querySelector("#MinimunMinutes").addEventListener("keypress", function (evt) {
+    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57)
+    {
+        evt.preventDefault();
+    }
+});
+    $('#ButonOpen').click(function () {
+        $('#modal-container').removeAttr('class').addClass("ButonOpen");
+        $('body').addClass('modal-active');
+        $("#HiddenId").val('0');
+        $("#bilingCode").val("");
+        $("#MinimunMinutes").val("");
+        $("#BillingCategory").val("");
+        $("#Description").val("");
+         $("#BillingCategoryButton").attr("disabled", true);
+       
+    });
+    $('.close-custom-button').click(function () {
+        debugger;
+        $('#modal-container').addClass('out');
+        $('body').removeClass('modal-active');
+    });
+    function EditCategory(value, id,MinimunMinutes,BillingCategoryId,Description) {
+        debugger;
+       
+        $(".createAdminResolutin").click();
+        $("#BillingCategoryButton").attr("disabled", false);
+        $("#bilingCode").val(value);
+        $("#MinimunMinutes").val(MinimunMinutes);
+        $("#BillingCategory").val(BillingCategoryId);
+           $("#Description").val(Description);
+        $("#HiddenId").val(id);
+        
+
+    }
+    function AddOrEdit(valdata) {
+        $.ajax({
+            type: "POST",
+            data: valdata,
+            url: "/Billing/AddUpdateBillingCode",
+            success: function (result) {
+                debugger;
+                if (result == "added") {
+          $("#HiddenId").val('0');
+        $("#bilingCode").val("");
+        $("#MinimunMinutes").val("");
+        $("#BillingCategory").val("");
+        $("#BillingPeriods").val("");
+                    swal({
+                        title: "Saved",
+                        text: "Saved Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    //window.location.reload();
+                    debugger;
+                    $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+                }
+                else if (result == "updated") {
+            $("#HiddenId").val('0');
+        $("#bilingCode").val("");
+        $("#MinimunMinutes").val("");
+        $("#BillingCategory").val("");
+        $("#BillingPeriods").val("");
+                    swal({
+                        title: "Update",
+                        text: "Updated Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+                }
+                else if (result == "exists") {
+                    swal("warning!", $("#bilingCode").val()+ " Already Exist as a Billing Code", "warning");
+                }
+                else {
+                    $('.close-custom-button').click();
+                    swal("Error!", "Error Accured", "error");
+
+                }
+            }
+        });
+    }
+    $("#BillingCategoryButton").on("click", function () {
+        debugger;
+        if ($("#bilingCode").val() != "") {
+            debugger;
+
+            var valdata = $("#bilingCodesForm").serialize();
+            AddOrEdit(valdata);
+        }
+        else {
+            $('.close-custom-button').click();
+            swal("Error!", "Error Accured", "error");
+        }
+    });
+       //Delete Button For Deleting BillingCodes
+    //var deleteBillingCode = function (id) {
+    //    $.ajax({
+    //        type: "POST",
+    //        data: { id: id },
+    //        url: "/Billing/DeleteBilingCode",
+    //        success: function (result) {
+
+    //            if (result == "deleted") {
+    //                $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+
+    //                swal({
+    //                    title: "Update",
+    //                    text: "deleted Successfully",
+    //                    icon: "success",
+    //                    button: "Ok",
+    //                    confirmButtonColor: "#1ab394",
+    //                });
+    //            } else {
+    //                swal("Error!", "Error Accured", "error");
+    //            }
+    //        }
+    //    });
+    //}
+</script>
+
+

@@ -1,0 +1,210 @@
+﻿@model CCM.Models.CallHistoryandReviewTimes
+@functions {
+    private static string TrimTimeSpan(TimeSpan reviewTime)
+    {
+        try
+        {
+            return reviewTime > TimeSpan.Zero ? reviewTime.ToString().Substring(0, reviewTime.ToString().IndexOf('.')) : reviewTime.ToString();
+        }
+        catch (Exception ex)
+        {
+            return "00:00:00";
+
+        }
+
+    }
+}
+<style>
+    .contentdiv {
+        background: #cacaca61;
+        float: left;
+        width: 60%;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 5px 3px;
+    }
+    .contentdiv1 {
+        background: #cacaca61;
+        float: left;
+        width: 38%;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 5px 3px;
+    }
+    .itemsdef{
+
+    }
+    .patientnameid{
+
+    }
+    .patientid{
+        float:left;
+        padding:5px;
+    }
+    .patientnameid {
+        float: left;
+        width:100%;
+    }
+        .totalcallminandattempts {
+            float: left;
+            margin-right: 13px;
+        }
+    .itemsdef {
+        float: left;
+        width:100%;
+    }
+    .counlsername {
+        float: right;
+    }
+</style>
+<div class="col-md-12" style="float:left;width:100%;">
+    <div class="contentdiv">
+        <div class="tablefixwidth">
+            <div class="itemsdef">
+                <div class="patientnameid headername">
+
+
+                    <div class="patientid">
+                        <label>@Model.PatientID</label>
+                    </div>
+                    <div class="patientid">
+                        <label id="patientname">@Model.patientIdandname</label>
+                    </div>
+                    <div class="patientid counlsername">
+                        <label id="patientname">@Model.CounslerName</label>
+                    </div>
+                </div>
+                <div class="totalcallminandattempts">
+                    <i class="fas fa-phone-volume greenclrcal">
+
+                    </i>
+                    <label>@Model.TotalCallMinutes min</label>
+                </div>
+                <div class="totalcallminandattempts">
+                    <i class="fas fa-headset redclrcal">
+
+                    </i>
+                    <label>@Model.TotalCallAttempts </label>
+                </div>
+            </div>
+            <h3>Calls History</h3>
+            <table id="callHistoryTable" class="display nowrap" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                       
+                        <th>Date Time</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+
+                        <th>Recording</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.callHistories)
+                    {
+                        <tr>
+                          
+                            <td>
+                                @Convert.ToDateTime(item.StartTime).ToString("g")
+                            </td>
+                            <td>@item.From</td>
+                            <td>@item.To</td>
+                            <td>@item.Duration</td>
+                            <td>@item.Status</td>
+
+
+                            <td>
+                                @if (item.RecordingURL != null)
+                                {
+                                    //var src = item.RecordingURL.Substring(0, item.RecordingURL.IndexOf('.'));
+                                    //var fullSource = "https://api.twilio.com" + src + ".mp3?Download=false";
+
+                                    <audio controls controlsList="nodownload" preload="metadata">
+                                        <source src="/Recordings/@(item.TwilioCallId).mp3" type='audio/mpeg; codecs="mp3"'>
+
+
+                                    </audio>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="contentdiv1">
+        <div class="tablefixwidth">
+            <div class="itemsdef">
+                <div class="patientnameid headername">
+
+
+                    <div class="patientid">
+                        <label>Total Minutes & Care plan status</label>
+                    </div>
+
+                </div>
+                <div class="totalcallminandattempts">
+                    <i class="far fa-clock blueclrcal">
+
+                    </i>
+                    <label>@Model.TotalActivityTime min</label>
+                </div>
+                <div class="totalcallminandattempts">
+                    <i class="@Model.CarePlanClass">
+
+                    </i>
+                    <label>@Model.CarePlanSubmittedMin min</label>
+                </div>
+                <div class="totalcallminandattempts">
+                    <i class="@Model.AppointmentClass">
+
+                    </i>
+                    <label>@Model.AppointmentDate</label>
+                </div>
+            </div>
+            <h3>Activity History</h3>
+            <table id="reviewtimetbl" class="display nowrap" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+
+                        <th>Date Time</th>
+                        <th>Page</th>
+                        <th>Activity</th>
+                        <th>Time</th>
+
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.reviewTimeCcms)
+                    {
+                        <tr>
+
+                            <td>
+                                @Convert.ToDateTime(item.StartTime).ToString("g")
+                            </td>
+                            <td>@item.Page</td>
+                            <td style="white-space:pre-line">@item.Activity</td>
+                            <td>@item.ReviewTime.ToString(@"hh\:mm\:ss")</td>
+
+
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#callHistoryTable, #reviewtimetbl').DataTable({
+        pageLength: 25,
+        scrollY: "50vh",
+        "ordering": false,
+        "sScrollX": "100%",
+        "scrollX": true
+    });
+</script>

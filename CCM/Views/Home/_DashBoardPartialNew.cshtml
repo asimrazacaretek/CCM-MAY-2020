@@ -1,0 +1,370 @@
+﻿@model IEnumerable<CCM.Models.DashBoardViewModel>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+<style>
+    a:focus, a:hover {
+        color: green;
+    }
+
+    .statsreasons {
+        margin-left: 0px;
+    }
+
+    .totcount {
+    }
+
+    .card {
+        box-shadow: 0 2px 13px rgba(44, 49, 66, 0.85);
+        height: 250px;
+        background-color: #fff;
+        border: 0px;
+        border-radius: 5px;
+    }
+
+        .card a {
+            float: left;
+            width: 100%;
+        }
+
+    .totalpatients {
+        float: left;
+        margin-bottom: 20px;
+    }
+
+    .itemname {
+        width: 40%;
+        float: left;
+        text-align: left;
+        margin-bottom: 0px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 19px;
+    }
+
+    p {
+        font-size: 14px;
+        line-height: 1.4em;
+    }
+
+    .greensign {
+        color: darkgreen;
+    }
+
+    .redsign {
+        color: red;
+    }
+
+    .itemcount {
+        width: 20%;
+        float: left;
+        text-align: right;
+        margin-bottom: 0px;
+    }
+
+    .card .stats {
+        float: left;
+        width: 100%;
+        font-weight: normal;
+    }
+
+    .card .numbers {
+        font-size: 2em;
+        text-align: right;
+        border-bottom: 1px solid #ccc;
+        float: left;
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+        .card .numbers p {
+            margin: 0;
+            font-size: 18px;
+            height: 35px;
+        }
+    .datestr {
+        width: 100%;
+        text-align: center;
+        font-size: 20px;
+        font-family:Calibri;
+    }
+   li .form-control{
+        margin:5px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12 pull-left">
+        <label class="datestr">@Model.FirstOrDefault().Datestr </label>
+    </div>
+    @foreach (var item1 in Model)
+    {
+        <div class="col-md-12 pull-left bydatediv">
+
+            <div class="col-lg-6 col-sm-6">
+                <div class="card">
+                    <div class="content">
+                        <div class="row">
+
+                            @if (1==1)
+                            {
+
+                            <div class="col-xs-12">
+                                <div class="numbers">
+                                    <p class="itemname"></p>
+                                    <p class="itemcount">Historic</p>
+
+                                    <p class="itemcount">Change %</p>
+                                    <p class="itemcount">Current</p>
+
+                                </div>
+                                <a href="@Url.Action("TotalPatients", "Patient", new { userId = item1.UserId })">
+                                    <div class="numbers">
+                                        <p class="itemname">Total Patients</p>
+                                        <p class="itemcount"> @item1.TotalPatients</p>
+
+                                        @{
+                                            string sign = "plus";
+                                            try
+                                            {
+                                                decimal increase = Convert.ToDecimal(item1.TotalPatients1) - Convert.ToDecimal(item1.TotalPatients);
+
+                                                decimal newvalue = increase / Convert.ToDecimal(item1.TotalPatients);
+                                                decimal percentage = newvalue * 100;
+                                                if (percentage >= 0)
+                                                {
+                                                    <p class="itemcount greensign">@percentage.ToString("F2") %</p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="itemcount redsign">@percentage.ToString("F2") %</p>
+                                                }
+
+                                            }
+                                            catch (Exception ex)
+                                            {
+
+                                                <p class="itemcount greensign">0.00 %</p>
+
+                                            }
+
+
+                                        }
+                                        <p class="itemcount"> @item1.TotalPatients1</p>
+
+                                    </div>
+                                </a>
+                            </div>
+                            }
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            @foreach (var item in item1.newDashBoardViewModels)
+            {
+                <div class="col-lg-6 col-sm-6">
+                    <div class="card">
+                        <div class="content">
+                            <div class="row">
+                                @if (item.SubStatuses != null && item.SubStatuses.Count > 0)
+                                {<div class="col-xs-12">
+                                        <div class="numbers">
+                                            <p class="itemname"></p>
+                                            <p class="itemcount">Historic</p>
+
+                                            <p class="itemcount">Change %</p>
+                                            <p class="itemcount">Current</p>
+
+                                        </div>
+                                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.ElementAt(0).UserId, status = item.StatusName })">
+                                            <div class="numbers">
+                                                <p class="itemname mainstatus">@item.StatusName</p>
+                                                <p class="itemcount">@item.Totalcount</p>
+                                                @{
+                                                    string sign = "plus";
+                                                    try
+                                                    {
+                                                        decimal increase = Convert.ToDecimal(item.Totalcount1) - Convert.ToDecimal(item.Totalcount);
+
+                                                        decimal newvalue = increase / Convert.ToDecimal(item.Totalcount);
+                                                        decimal percentage = newvalue * 100;
+                                                        if (percentage >= 0)
+                                                        {
+                                                            <p class="itemcount greensign">@percentage.ToString("F2") %</p>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="itemcount redsign">@percentage.ToString("F2") %</p>
+                                                        }
+
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        <p class="itemcount greensign">0.00 %</p>
+
+                                                    }
+
+
+                                                }
+                                                <p class="itemcount">@item.Totalcount1</p>
+
+
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        @if (1 == 1)
+                                        {
+                                            <div class="stats">
+                                                @foreach (var substatus in item.SubStatuses)
+                                                {
+
+                                                    <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.ElementAt(0).UserId, substatus = substatus.StatusName })">
+                                                        <p class="itemname">  @substatus.StatusName </p>
+                                                        <p class="itemcount">@substatus.Totalcount</p>
+                                                        @{
+
+                                                            try
+                                                            {
+                                                                decimal increase = Convert.ToDecimal(substatus.Totalcount1) - Convert.ToDecimal(substatus.Totalcount);
+
+                                                                decimal newvalue = increase / Convert.ToDecimal(substatus.Totalcount);
+                                                                decimal percentage = newvalue * 100;
+                                                                if (percentage >= 0)
+                                                                {
+                                                                    <p class="itemcount greensign">@percentage.ToString("F2") %</p>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <p class="itemcount redsign">@percentage.ToString("F2") %</p>
+                                                                }
+
+                                                            }
+                                                            catch (Exception ex)
+                                                            {
+
+                                                                <p class="itemcount greensign">0.00 %</p>
+                                                            }
+
+
+                                                        }
+                                                        <p class="itemcount">@substatus.Totalcount1</p>
+
+                                                    </a>
+                                                    if (substatus.SubStatuses != null)
+                                                    {
+                                                        <div class="statsreasons">
+
+
+                                                            @foreach (var substatusthird in substatus.SubStatuses)
+                                                            {
+                                                                <p class="itemname">
+                                                                    @substatusthird.StatusName.Trim()
+                                                                </p>
+                                                                <p class="itemcount">@substatusthird.Totalcount</p>
+                                                                {
+
+                                                                    try
+                                                                    {
+                                                                        decimal increase = Convert.ToDecimal(substatusthird.Totalcount1) - Convert.ToDecimal(substatusthird.Totalcount);
+
+                                                                        decimal newvalue = increase / Convert.ToDecimal(substatusthird.Totalcount);
+                                                                        decimal percentage = newvalue * 100;
+                                                                        if (percentage >= 0)
+                                                                        {
+                                                                            <p class="itemcount greensign">@percentage.ToString("F2") %</p>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <p class="itemcount redsign">@percentage.ToString("F2") %</p>
+                                                                        }
+
+                                                                    }
+                                                                    catch (Exception ex)
+                                                                    {
+                                                                        <p class="itemcount greensign">0.00 %</p>
+
+                                                                    }
+
+
+                                                                }
+                                                                <p class="itemcount">@substatusthird.Totalcount1</p>
+
+                                                            }
+                                                        </div>
+                                                    }
+                                                }
+
+
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="icon-big icon-danger text-center">
+                                                <i class="ti-pulse"></i>
+                                            </div>
+                                        }
+                                    </div>
+
+                                }
+                                else
+                                { <div class="numbers">
+                                        <p class="itemname"></p>
+                                        <p class="itemcount">Historic</p>
+
+                                        <p class="itemcount">Change %</p>
+                                        <p class="itemcount">Current</p>
+
+                                    </div>
+                                    <div class="col-md-12 col-lg-12 col-sm-12">
+                                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.ElementAt(0).UserId, status = item.StatusName })">
+                                            <div class="numbers">
+                                                <p class="itemname mainstatus">@item.StatusName</p>
+                                                <p class="itemcount">@item.Totalcount</p>
+                                                @{
+
+                                                    try
+                                                    {
+                                                        decimal increase = Convert.ToDecimal(item.Totalcount1) - Convert.ToDecimal(item.Totalcount);
+
+                                                        decimal newvalue = increase / Convert.ToDecimal(item.Totalcount);
+                                                        decimal percentage = newvalue * 100;
+                                                        if (percentage >= 0)
+                                                        {
+                                                            <p class="itemcount greensign">@percentage.ToString("F2") %</p>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="itemcount redsign">@percentage.ToString("F2") %</p>
+                                                        }
+
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+
+                                                        <p class="itemcount greensign">0.00 %</p>
+                                                    }
+
+
+                                                }
+                                                <p class="itemcount">@item.Totalcount1</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                }
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+
+</div>

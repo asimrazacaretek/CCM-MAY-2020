@@ -1,0 +1,55 @@
+﻿@model CCM.Models.PatientProfile_Consent
+@using CCM.Helpers;
+
+@using CCM.Models;
+
+@{
+    Layout = null;
+}
+
+@{
+    var PatientConsentHistory = new List<PatientProfile_Consent>(ViewBag.PatientConsetHistory);
+}
+
+<div class="card-body" id="PatientConsentHistoryPartialDiv">
+    <div class="tablefixwidth1">
+        <div id="tablescroll">
+            <table id="example" class="table table-striped nowrap " style="width:100%">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Patient Id</th>
+                        <th>Consent</th>
+                        <th>Created By</th>
+                        <th>Created On</th>
+                        <th>Updated By</th>
+                        <th>Updated On</th>
+                        <th style="width:98px!important;">Signature</th>
+                        <th>Note</th>
+                        <th>Billing Category Id</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ph in PatientConsentHistory)
+                    {
+                        <tr>
+                            <td>@ph.Id</td>
+                            <td>@ph.PatientId</td>
+                            <td>@ph.Consent</td>
+                            <td>@HelperExtensions.GetUserNamebyID(@ph.CreatedBy)</td>
+                            <td>@ph.CreatedOn</td>
+                            <td>@HelperExtensions.GetUserNamebyID(@ph.UpdatedBy)</td>
+                            <td>@ph.UpdatedOn</td>
+                            <td style="text-align:center;">
+                                <img src="data: image; base64,@System.Convert.ToBase64String(ph.Signature)" width="120" height="60" style="border:1px solid #d2d2d2;" />
+                            </td>
+                            <td>@ph.Note</td>
+                            <td>@ph.BillingCategoryId</td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

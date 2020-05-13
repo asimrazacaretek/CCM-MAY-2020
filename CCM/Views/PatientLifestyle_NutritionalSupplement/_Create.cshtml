@@ -1,0 +1,256 @@
+﻿@model CCM.Models.PatientLifestyle_NutritionalSupplement
+
+<style>
+    .greenLabel {
+        color: #59A618;
+        font-size: 1.1em;
+    }
+</style>
+
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })*@
+
+<div>
+    <div class="custom-title">
+        <h3>NUTRITIONAL SUPPLEMENTS</h3>
+    </div>
+    @using (Html.BeginForm("_Create", "PatientLifestyle_NutritionalSupplement", FormMethod.Post,
+ new { id = "frmCreatePatientLifestyleNutritionalSupplement", @class = "frmStyle" }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-horizontal">
+            <div class="row">
+                @Html.LabelFor(model => model.Vitamins, htmlAttributes: new { @class = "col-md-12 greenLabel" })<br />
+                <span class="col-md-12">Multiple or Single Vitamins Such As B Complex, E, C, Beta-Carotene, etc.</span><br />
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Vitamins, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Vitamins, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VitaminsStartDate, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.VitaminsStartDate, new { htmlAttributes = new { @class = "form-control border-input StartedDate" } })
+                            @Html.ValidationMessageFor(model => model.VitaminsStartDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VitaminsDailyDosage, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.VitaminsDailyDosage, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.VitaminsDailyDosage, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                @Html.LabelFor(model => model.Minerals, htmlAttributes: new { @class = "col-md-12 greenLabel" })<br />
+                <span class="col-md-12">Calcium, Magnesium, Chromium, Colloidal Minerals, etc.</span><br />
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Minerals, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Minerals, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MineralsStartDate, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.MineralsStartDate, new { htmlAttributes = new { @class = "form-control border-input StartedDate" } })
+                            @Html.ValidationMessageFor(model => model.MineralsStartDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MineralsDailyDosage, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.MineralsDailyDosage, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.MineralsDailyDosage, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                @Html.LabelFor(model => model.Herbs, htmlAttributes: new { @class = "col-md-12 greenLabel" })<br />
+                <span class="col-md-12">Ginseng, Ginkgo Bilboa, Enchinacea, Other Herbal Medicinal Teas, etc.</span><br />
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Herbs, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Herbs, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.HerbsStartDate, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.HerbsStartDate, new { htmlAttributes = new { @class = "form-control border-input StartedDate" } })
+                            @Html.ValidationMessageFor(model => model.HerbsStartDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.HerbsDailyDosage, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.HerbsDailyDosage, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.HerbsDailyDosage, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                @Html.LabelFor(model => model.Enzymes, htmlAttributes: new { @class = "col-md-12 greenLabel" })<br />
+                <span class="col-md-12">Digestive Formulas, Papaya, Bromelain, CoEnzyme Q10, etc.</span><br />
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Enzymes, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Enzymes, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.EnzymesStartDate, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.EnzymesStartDate, new { htmlAttributes = new { @class = "form-control border-input StartedDate" } })
+                            @Html.ValidationMessageFor(model => model.EnzymesStartDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.EnzymesDailyDosage, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.EnzymesDailyDosage, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.EnzymesDailyDosage, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                @Html.LabelFor(model => model.Supplements, htmlAttributes: new { @class = "col-md-12 greenLabel" })<br />
+                <span class="col-md-12">Shark Cartilage, protein Powders, Amino Acids, Fish Oils, etc.</span><br />
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Supplements, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Supplements, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SupplementsStartDate, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SupplementsStartDate, new { htmlAttributes = new { @class = "form-control border-input StartedDate" } })
+                            @Html.ValidationMessageFor(model => model.SupplementsStartDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SupplementsDailyDosage, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SupplementsDailyDosage, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.SupplementsDailyDosage, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                @Html.LabelFor(model => model.Others, htmlAttributes: new { @class = "col-md-12 greenLabel" })<br />
+                <span class="col-md-12">Glucosamine, etc.</span><br />
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Others, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Others, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.OthersStartDate, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.OthersStartDate, new { htmlAttributes = new { @class = "form-control border-input StartedDate" } })
+                            @Html.ValidationMessageFor(model => model.OthersStartDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.OthersDailyDosage, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.OthersDailyDosage, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.OthersDailyDosage, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="button" value="Update" class="btn btn-success logdetails" onclick="SubmitForm('frmCreatePatientLifestyleNutritionalSupplement','Update')" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('.StartedDate').datepicker({
+        });
+    });
+  
+</script>
+
+@section Scripts {
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+          
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+        </SCRIPT>
+    }
+}

@@ -1,0 +1,616 @@
+﻿@model CCM.Models.FinalCarePlanNotes
+<style>
+    input[type="submit"] {
+        margin-left: 15px;
+    }
+   
+</style>
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })
+<h3 class="pageTitle text-info">FINAL CARE PLAN NOTES</h3>
+<div class="row">
+    <div class="fixedpostitiondivmessage">
+        <label>Data auto saved</label>
+    </div>
+    <div id="divMedicationsList">
+
+    </div>
+    <div id="previouscareplan">
+        @Html.Action("PreviousCarePlan", "FinalCarePlanNotes", new { patientId = Model.PatientId, isNew = true, cycle = Model.Cycle })
+    </div>
+    @using (Html.BeginForm(new { id = "finalcareplane", role = "form", enctype = "multipart/form-data" }))
+    {
+
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Cycle)
+        <input type="hidden" value="@Model.Id" name="Id" />
+        @*if(ViewBag.Errors != null)
+        {
+            <div class="col-md-12">
+                <h4>ViewBag.Errors</h4>
+            </div>
+        }*@
+
+        <div class="form-horizontal col-md-6">
+
+            <h3>New Care Plan ( @DateTime.Now.Date.ToString("MMM") @DateTime.Now.Date.ToString("yy") )</h3>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Patient Summary</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.PatientSummary, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.PatientSummary, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Medical History</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.HealthConcerns, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Drug Utilization Review</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.DrugUtillizationReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+
+
+                        <label class="col-md-12">Hospitalization in Last 30 Days</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.HospitalizationLast30Days, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+
+
+                        <br>
+                        <label class="col-md-12">Current Blood Pressure and Glucose Reading</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.BloodPressureGlucoseReading, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+
+                        <br>
+                        <label class="col-md-12">Diabetic screening: Retinal Eye Exam, Podiatry Exam and last A1C result </label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.DiabeticScreening, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Critical Medical Complaints:</label>
+                        <div class="col-md-12">
+
+                            &nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.CriticalChestPain, true) @Html.LabelFor(model => model.CriticalChestPain, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.CriticalBreathShortness, true) @Html.LabelFor(model => model.CriticalBreathShortness, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.NewWound, true) @Html.LabelFor(model => model.NewWound, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.Bleedinggums, true) @Html.LabelFor(model => model.Bleedinggums, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.Nosebleed, true) @Html.LabelFor(model => model.Nosebleed, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.Bloodinurine, true) @Html.LabelFor(model => model.Bloodinurine, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.Isurinemalodorous, true) @Html.LabelFor(model => model.Isurinemalodorous, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.Suddenincreasedswelling, true) @Html.LabelFor(model => model.Suddenincreasedswelling, new { @style = "font-weight: normal" })
+
+
+
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.CriticalSeverePain, true) @Html.LabelFor(model => model.CriticalSeverePain, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.CriticalMoodChange, true) @Html.LabelFor(model => model.CriticalMoodChange, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.CriticalSpeechChange, true) @Html.LabelFor(model => model.CriticalSpeechChange, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.CriticalHeadache, true) @Html.LabelFor(model => model.CriticalHeadache, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.CriticalBloodSugar, true) @Html.LabelFor(model => model.CriticalBloodSugar, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => model.CriticalBloodPressure, true) @Html.LabelFor(model => model.CriticalBloodPressure, new { @style = "font-weight: normal" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12"><br>Skin assessment: Do you check 2-3 times a week?</label>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                            item => item.SkinAssesment,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "Yes", Text = "Yes"},
+                                    new {Value = "No", Text = "No"}
+
+                                }, "Value", "Text", Model),
+                            "Skin assessment", new { @class = "form-control border-input" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12"><br>Diaper change: Do you change it every 2 hours?</label>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                            item => item.Diaperchange,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "Yes", Text = "Yes"},
+                                    new {Value = "No", Text = "No"}
+
+                                }, "Value", "Text", Model),
+                            "Diaperchange", new { @class = "form-control border-input" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12"><br>DME supply</label>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                            item => item.DMEsupply,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "Wedge pillow", Text = "Wedge pillow"},
+                                    new {Value = "Gel mattress", Text = "Gel mattress"},
+                                    new {Value = "Bootie/heel protector", Text = "Bootie/heel protector"},
+                                    new {Value = "O2 saturation monitor", Text = "O2 saturation monitor"},
+                                    new {Value = "Glucometer", Text = "Glucometer"}
+
+
+                                }, "Value", "Text", Model),
+                             new { @class = "form-control border-input" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12"><br>Is the patient bed bound?</label>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                            item => item.isPatientBedbound,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "Yes", Text = "Yes"},
+                                    new {Value = "No", Text = "No"}
+
+                                }, "Value", "Text", Model),
+                            "Patient Bed Bound", new { @class = "form-control border-input" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Ability to perform IADL and ADL</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.AbilityPerformIADL, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Sensory assessment on vision, hearing and speech</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.AssessmentVisionHearingSpeech, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Fall and Ambulation Assessment</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.FallAmbulationAssessment, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12"><br>How Would You Describe Your Health?</label>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                            item => item.HealthRating,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "1", Text = "1 - Worst"},
+                                    new {Value = "2", Text = "2"},
+                                    new {Value = "3", Text = "3"},
+                                    new {Value = "4", Text = "4"},
+                                    new {Value = "5", Text = "5"},
+                                    new {Value = "6", Text = "6"},
+                                    new {Value = "7", Text = "7"},
+                                    new {Value = "8", Text = "8"},
+                                    new {Value = "9", Text = "9"},
+                                    new {Value = "10", Text = "10 - Best"}
+                                }, "Value", "Text", Model),
+                            "Quality of Life at the Moment", new { @class = "form-control border-input" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Able to Accomplish Your Daily Chores, Tasks and Responsibilities?</label>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                            item => item.PerformTasksRating,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "1", Text = "1 - Worst"},
+                                    new {Value = "2", Text = "2"},
+                                    new {Value = "3", Text = "3"},
+                                    new {Value = "4", Text = "4"},
+                                    new {Value = "5", Text = "5"},
+                                    new {Value = "6", Text = "6"},
+                                    new {Value = "7", Text = "7"},
+                                    new {Value = "8", Text = "8"},
+                                    new {Value = "9", Text = "9"},
+                                    new {Value = "10", Text = "10 - Best"}
+                                }, "Value", "Text", Model),
+                            "Quality of Life at the Moment", new { @class = "form-control border-input" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12"><br>Hospitalization in Last 30 Days</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.HospitalizationLast30Days, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Colon Cancer Screen: Date</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.ColonCancerScreenDate, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Mammogram Screen: Date</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.MammogramScreenDate, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Urinary Incontinence</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.UrinaryIncontinence, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Immunization</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.Immunization, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Tobacco and Alcohol Screening</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.TobaccoAlcoholScreening, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Allergies/Side Effects To Medication</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.Allergies, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Medication Management Intervention</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.ManagingMedicationInterventions, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Managing Medication Monitoring</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.ManagingMedicationReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Medication Management Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.ManagingMedicationGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Mental Resilience Interventions</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.MentalResilienceInterventions, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Mental Resilience Monitoring</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.MentalResilienceReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Mental Resilience Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.MentalResilienceGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Nutrition Interventions</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.NutritionInterventions, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Nutrition Monitoring</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.NutritionReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Nutrition Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.NutritionGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+
+                        <label class="col-md-12">Physical Activity Interventions</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.PhysicalActivityInterventions, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Physical Activity Monitoring</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.PhysicalActivityReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+
+                        <label class="col-md-12">Physical Activity Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.PhysicalActivityGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Sleep Interventions</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.SleepInterventions, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Sleep Monitoring</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.SleepReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Sleep Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.SleepGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Patient Compliance Management</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.PatientComplianceManagement, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Pharmacy Treatment Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.PharmacyTreatmentGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Final Care Plan Notes" class="btn btn-success logdetails" />
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+<script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+              
+            }
+        </SCRIPT>
+    }
+   <script type="text/javascript">
+       function autosavedata() {
+           var data = $('#finalcareplane').serialize();
+           
+           $.ajax({
+               type: 'POST',
+               cache: false,
+               url: '/FinalCarePlanNotes/InsertFinalCarePlan',
+               data: data,
+               success: function (data, textStatus, jqXHR) {
+                   $(".fixedpostitiondivmessage").fadeIn(500).delay(2000).fadeOut(1000);
+               },
+               error: function (jqXHR, textStatus, errorThrown) {
+               }
+           });
+       }
+       $(document).ready(function () {
+            var error = '@ViewBag.Errors';
+            if (error != "") {
+                swal(error);
+            }
+           $("#divMedicationsList").load('/CurrentMedication/MedicationListPartialNew', { patientId: @Model.PatientId }, function(){
+               $('#medicationsTable').DataTable({
+                   responsive: true,
+                   pageLength: 100,
+                  
+               });
+
+           });
+       });
+       //setInterval(function () {
+       //   autosavedata();
+          
+       //}, 120000);
+    </script>
+}

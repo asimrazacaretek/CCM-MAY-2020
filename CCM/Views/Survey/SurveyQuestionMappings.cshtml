@@ -1,0 +1,383 @@
+﻿@model CCM.Models.SurveyQuestionMappingAdminViewmodel
+
+<style>
+    .surveyquestionswrapper {
+        padding: 0;
+        float: left;
+        width: 100%;
+        box-shadow: 0 2px 13px rgb(7, 22, 74);
+        background-color: #fff;
+        border: 1px solid #0a1b2b;
+        border-radius: 0px;
+        margin-top: 15px;
+    }
+
+    .surveyquestion {
+        background-color: #0364bd;
+        border-bottom: 0px solid #d3d7dc;
+        box-shadow: 0 2px 6px 0px #02498a;
+        padding: 10px 15px;
+        color: white;
+        -webkit-box-shadow: 0px 10px 14px -7px #0363bd;
+        box-shadow: 0px 4px 13px -6px #0363bd;
+      
+     
+    }
+
+    .surveyanswers {
+        padding: 15px;
+    }
+
+    .questions {
+        font-size: 17px;
+    }
+
+    .anslabel {
+        display: block;
+        padding-left: 15px;
+        text-indent: -15px;
+        font-size: 16px;
+    }
+
+    .anslabelradio {
+        font-size: 16px;
+        font-weight: bold;
+        color: black !important
+    }
+    .anslabelradio1 {
+        font-size: 16px;
+        font-weight: bold;
+        color: black !important
+    }
+
+    .surveyquestionanswer {
+        float: left;
+        width: 100%;
+        margin-bottom:5px;
+    }
+
+    .chkanswers {
+        width: 21px;
+        height: 21px;
+        padding: 0;
+        margin: 0;
+        vertical-align: bottom;
+        position: relative;
+        top: -1px;
+        *overflow: hidden;
+    }
+
+    .radioanswers {
+        margin: 0 !important;
+    }
+
+    .nextandpreviousbuttons {
+        padding: 0px 10px 10px 10px;
+        display: none;
+    }
+
+    .btnques {
+        padding: 8px 16px;
+        margin-right: 6px;
+    }
+
+    .answercombo {
+        float: left;
+        width: 50%;
+    }
+
+    .childquestion {
+        float: left;
+        width: 50%;
+    }
+
+    .manidivwrapper {
+        float: left;
+        width: 100%;
+        border: 1px solid;
+        margin: 5px;
+        padding: 5px;
+    }
+
+    .answertxt {
+        width: 49% !important;
+        margin-right: 10px;
+    }
+    .answersandnextquestion{
+        display:none;
+    }
+</style>
+
+<div class="col-md-12 surveyquestionswrapper">
+    <input type="hidden" id="MappingID" />
+    @{ int i = 0;}
+    <h3 style="width:85%;float:left">Click on the question to load the answers</h3>
+    <input type="button" value="Expand/Collapse All" onclick="toggleallanswers()" class="pull-right btn btn-success" />
+    @foreach (var question in Model.surveyQuestions)
+    {
+        <div class="surveyquestionanswer" id="surveyquestion@(question.Id)" data-questype="@question.SurveyQuestionType.QuestionType" data-id="@question.Id">
+            <div class="surveyquestion" onclick="toggleanswers(@question.Id)" style="cursor:pointer">
+                <label id="question@(question.Id)" class="control-label questions" name="questions" data-id="@question.Id" style="cursor:pointer">Question no. @question.OrderBy: @question.QuestionText</label>
+            </div>
+            <div class="answersandnextquestion" id="answersforthisquestion@(question.Id)">
+                <div class="surveyanswers">
+                    <label class="answerdefaulttext">Answer(s):</label>
+                    <label class="rdoLastQ pull-right"><input type="radio" id="rdoLast" value="@question.Id" name="isLast" class="radioIslast">IsLast Question</label>
+                    <label class="rdoFirsQ pull-right"><input type="radio" id="rdoFirst" value="@question.Id" name="IsFirst" class="radioIsFirst">IsFirst Question</label>
+                    <label class="pull-right"><input type="checkbox" id="chkSelectAllAnswers@(question.Id)" value="@question.Id" class="" onchange="selectallquestionsindropdowns(@question.Id)">Select All <span style="color:red">(it will change all the questions selected on behaf of first)</span></label>
+                    <br />
+                    @if (question.SurveyQuestionType.QuestionType == "Checkbox")
+                    {
+
+
+
+                        foreach (var answer in question.surveyAnswers)
+                        {
+
+                            var answerid = answer.Id.ToString();
+                            var selectedquestionid = Model.surveyQuestionSequenceMappings.Where(x => x.AnswerIds == answerid).FirstOrDefault()?.ChildQuestionID;
+                            <div class="manidivwrapper" data-answerids="@answer.Id">
+
+                                <div class="answercombo">
+
+                                   
+                                    <label class="anslabel"><input type="checkbox" id="answer@(answer.Id)" value="@answer.Id" class="answers chkanswers" /> @answer.AnswerText</label>
+                                </div>
+                                @*@{
+                                    var answerids = String.Join("_", lstanswercombo.Select(x => x.Id).ToList());
+                                }*@
+                                <div class="childquestion">
+                                    @Html.DropDownList("Childquestion" +answer.Id,
+              new SelectList(Model.surveyQuestions.Where(x=>x.Id !=question.Id).Select(x=> new { Id=x.Id,QuestionText="Q"+x.OrderBy.ToString()+": " +x.QuestionText }).ToList(), "Id", "QuestionText" , selectedquestionid==null? 0:selectedquestionid), "Question to be Load",
+              new {@class = "form-control border-input anslabelradio", id = "ddlquestion"+answer.Id })
+                                </div>
+                            </div>
+                        }
+
+                    }
+                    else if (question.SurveyQuestionType.QuestionType == "Radio")
+                    {
+                        foreach (var answer in question.surveyAnswers)
+                        {
+                            var answerid = answer.Id.ToString();
+                            var selectedquestionid = Model.surveyQuestionSequenceMappings.Where(x => x.AnswerIds == answerid).FirstOrDefault()?.ChildQuestionID;
+                            <div class="manidivwrapper" data-answerids="@answer.Id">
+
+
+                                <div class="surveyanswer answercombo">
+                                    <label class="anslabelradio1"><input type="radio" id="answer@(answer.Id)" value="@answer.Id" name="questionnumber@(question.Id)" class="radioanswers chkanswers" />@answer.AnswerText</label>
+                                </div>
+
+                                <div class="childquestion">
+                                    @Html.DropDownList("Childquestion" +answer.Id,
+              new SelectList(Model.surveyQuestions.Where(x => x.Id != question.Id).Select(x => new { Id = x.Id, QuestionText = "Q" + x.OrderBy.ToString() + ": " + x.QuestionText }).ToList(), "Id", "QuestionText", selectedquestionid==null?0:selectedquestionid), "Question to be Load",
+              new {@class = "form-control border-input anslabelradio", id = "ddlquestion"+answer.Id })
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        var selectedquestionid = Model.surveyQuestionSequenceMappings.Where(x => x.AnswerIds == "" && x.ParentQuestionID == question.Id).FirstOrDefault()?.ChildQuestionID;
+
+                        <div class="manidivwrapper" data-answerids="empty">
+                            <input type="text" id="Qanswer@(question.Id)" value="" name="question@(question.Id)" class="answertxt form-control col-md-6 border-input" />
+                            <div class="childquestion">
+                                @Html.DropDownList("Childquestion" +question.Id,
+                        new SelectList(Model.surveyQuestions.Where(x => x.Id != question.Id).Select(x => new { Id = x.Id, QuestionText = "Q" + x.OrderBy.ToString() + ": " + x.QuestionText }).ToList(), "Id", "QuestionText", selectedquestionid==null?0:selectedquestionid)
+                       ,"Question to be Load", new {@class = "form-control border-input anslabelradio", id = "ddlquestion"+question.Id })
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+            <div class="nextandpreviousbuttons">
+                @if (i > 0)
+                {
+                    <input type="button" id="previousbtn@(question.Id)" value="Previous" class="btn btn-success btnques" onclick="loadpreviousquestion()" />
+                }
+
+                <input type="button" id="skipbtn@(question.Id)" value="Skip" class="btn btn-danger btnques" />
+                <input type="button" id="nextbtn@(question.Id)" value="Next" class="btn btn-success btnques " onclick="laodnextquestion(@question.Id)" />
+
+            </div>
+        </div>
+
+        i += 1;
+    }
+    <input type="button" id="btnSubmitMapping" value="Submit" class="btn btn-success btnques " style="margin: 20px;float:left" onclick="SubmitMapping()" />
+</div>
+<script type="text/javascript">
+    var sequencemappings = [];
+    function toggleallanswers() {
+        $(".answersandnextquestion").toggle();
+    }
+    function toggleanswers(qid) {
+        $("#answersforthisquestion" + qid).toggle();
+    }
+    function selectallquestionsindropdowns(qid) {
+        debugger;
+        if ($("#chkSelectAllAnswers" + qid).prop("checked") == true ) {
+            var selctedval = $("#surveyquestion" + qid + " .anslabelradio").first().val();
+            $("#surveyquestion" + qid + " .anslabelradio").val(selctedval);
+        }
+      
+    }
+    $(document).ready(function () {
+        @{
+            var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+            serializer.MaxJsonLength = Int32.MaxValue;
+            var jsonModel = serializer.Serialize(Model.surveyQuestionSequenceMappings);
+         
+
+}
+      
+           sequencemappings = @Html.Raw(jsonModel);
+        $(".manidivwrapper input").prop("disabled", true);
+        $(".childquestion select").each(function () {
+            if ($(this).val() == "") {
+                var ChkIsLastQ = $(this).parent().parent().parent().find('.rdoLastQ').find('input:radio');
+                ChkIsLastQ.prop("checked", true);
+            }
+        });
+        var val = @Html.Raw(Json.Encode(ViewBag.FirstOrDefaultQuestion)) ;
+       $("input[name=IsFirst][value=" + val+ "]").attr('checked', 'checked');
+      
+        //$("#MappingID").val())
+        $(".surveyquestionanswer").first().fadeIn(1000);
+    });
+
+    $(".radioIslast").change(function () {
+        $(".anslabelradio").prop("disabled", false);
+        var isChecked = $(this).prop('checked');
+        var nextCheck = $(this).parent().parent().find('.rdoFirsQ').find(':radio').prop('checked');
+        if (isChecked == true && nextCheck == true) {
+            $(this).parent().parent().find('.rdoFirsQ').find(':radio').prop("checked", false);
+        }
+        var questionid = $(this).val();
+        $("#surveyquestion" + questionid + " .anslabelradio").prop("disabled", true);
+
+
+    });
+    $(".radioIsFirst").change(function () {
+        debugger;
+        var questionid = $(this).val();
+        $("#surveyquestion" + questionid + " .anslabelradio").prop("disabled", false);
+        var isChecked = $(this).prop('checked');
+        var PreCheck = $(this).parent().parent().find('.rdoLastQ').find(':radio').prop('checked');
+        if (isChecked == true && PreCheck == true)
+            $(this).parent().parent().find('.rdoLastQ').find(':radio').prop("checked", false);
+    });
+    function SubmitMapping() {
+        $(".loader").show();
+        var ParentQuestionArray = []; var selectedanswers = []; var ChildQuestions = []; var isDefaulOrLast=[]; var isvalid = true;
+        $(".surveyquestionswrapper").each(function () {
+            $(".surveyquestionanswer").each(function () {
+                var PatentQID = $(this).attr("data-id");
+                var questype = $(this).attr("data-questype");
+                $("#surveyquestion" + PatentQID + " .manidivwrapper").each(function () {
+                    var answerids = $(this).attr("data-answerids");
+                    if (answerids == "empty") {
+                        selectedanswers.push("");
+                    }
+                    else {
+                        selectedanswers.push(answerids);
+                    }
+                    ParentQuestionArray.push(PatentQID);
+                    var questiontobeloadedid = $(this).children().children('select').val();
+                    var ChkIsLastQ = $(this).parent().find('.rdoLastQ').find('input:radio').prop("checked");
+                    var ChkIsFirstQ = $(this).parent().find('.rdoFirsQ').find('input:radio').prop("checked");
+                    if (questiontobeloadedid == "" && !ChkIsLastQ) {
+                        isvalid = false;
+                        $(this).children().children('select').focus();
+                        swal("Alert", "Please Select Question To be Loaded for this Answer.!", "info");
+                        return false;
+                    }
+                    if (ChkIsLastQ) {
+                        questiontobeloadedid = 0;
+                        isDefaulOrLast.push('3');
+                    }
+                    else if (ChkIsFirstQ) {
+                        isDefaulOrLast.push('1');
+                    }
+                    else {
+                        isDefaulOrLast.push('2');
+                    }
+                    ChildQuestions.push(questiontobeloadedid);
+                });
+            });
+        });
+
+        var Lastradio = $("input[name='isLast']:checked").val();
+        var Firstradio = $("input[name='IsFirst']:checked").val();
+        if (Firstradio == undefined) {
+            swal("Alert", "Check 1st/Default Question for Survey Sequence mapping.!", "info");
+            $(".loader").hide();
+            return false;
+        }
+        if (Lastradio == undefined) {
+            swal("Alert", "Check Last Question for Survey Sequence mapping.!", "info"); $(".loader").hide();
+            return false;
+        }
+
+        if (isvalid == false) {
+            swal("Alert", "Please Select Question To be Loaded for this Answer.!", "info");
+            $(".loader").hide();
+            return false;
+        }
+        if (isvalid == true) {
+               ///////for Delete Survey Mapping
+            var MappingId = [];
+            sequencemappings.forEach(function (_data) {
+                MappingId.push(_data.Id);
+            });
+            if (MappingId.length > 0)
+            {
+                $.ajax({
+                    type: "POST",
+                    url: "/Survey/DeleteSurveyQuestionMappings",
+                    data: { ids: MappingId },
+                    success: function (data) {
+                        debugger;
+                        if (data == "True") {
+                           
+
+                        }
+                    }
+                });
+            }
+            ///////for Submit Survey Mapping
+            $.ajax({
+                type: "POST",
+                url: "/Survey/SubmitSurveyQuestionMappings",
+                data: {
+                    Survey: $("#ddlSurveryName").val(),
+                    ParentQ: ParentQuestionArray,
+                    Answers: selectedanswers,
+                    ChildQ: ChildQuestions,
+                    FirstOrLast: isDefaulOrLast
+                },
+                success: function (data) {
+                    debugger;
+                    if (data == "True") {
+                        $(".loader").hide();
+                        swal("Submit", "Survey Sequence Mapping Submited Successfully.!", "success");
+                        //  $("#surveyquestionsmapping").empty();
+                    }
+                    else {
+                        $(".loader").hide();
+                        swal("Error", "Request Cannot Processed!");
+                    }
+                       
+                },
+                failure: function () { $(".loader").hide(); alert("not working..."); }
+            });
+
+           
+           
+        }
+    }
+</script>
+

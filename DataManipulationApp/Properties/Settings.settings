@@ -1,0 +1,26 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DataManipulationApp.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=192.168.128.26;Initial Catalog=CCMHealth_Sandbox;User ID=sa;Password=ccm&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=192.168.128.26;Initial Catalog=CCMHealth_Sandbox;User ID=sa;Password=ccm</Value>
+    </Setting>
+    <Setting Name="TwilioAccountSid" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">AC53cea10daf932ef5b28f8af963c2af4c</Value>
+    </Setting>
+    <Setting Name="TwilioAuthToken" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">12cbfa596725894e10f50f32d1fe45cb</Value>
+    </Setting>
+    <Setting Name="TwilioTwimlAppSid" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">AP2df582ccf4290f44f5c5988734c24413</Value>
+    </Setting>
+    <Setting Name="TwilioAreaCodeForNumbers" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">929</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

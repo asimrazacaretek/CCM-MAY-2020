@@ -1,0 +1,200 @@
+﻿
+
+
+<style>
+    
+
+    .callernum {
+        text-align: center;
+        width: 100%;
+        font-size: 20px;
+        border-bottom: 1px solid;
+        margin-bottom: 10px;
+    }
+
+    .acceptcall {
+        margin-left: 15px;
+        background-image: url('../../images/acceptcall1.gif');
+        background-size: 266px;
+        box-sizing: border-box;
+        background-color: transparent;
+        height: 228px;
+        width: 210px;
+        padding: 7px 18px;
+        color: #66615B;
+        -webkit-transition: all 150ms linear;
+        -moz-transition: all 150ms linear;
+        -o-transition: all 150ms linear;
+        -ms-transition: all 150ms linear;
+        transition: all 150ms linear;
+        border: 0px;
+    }
+
+    .rejectcall {
+        background-image: url('../../images/rejectcall1.gif');
+        background-size: 200px;
+        background-repeat: no-repeat;
+        box-sizing: border-box;
+        background-color: transparent;
+        padding: 7px 18px;
+        color: #66615B;
+        -webkit-transition: all 150ms linear;
+        -moz-transition: all 150ms linear;
+        -o-transition: all 150ms linear;
+        -ms-transition: all 150ms linear;
+        transition: all 150ms linear;
+        height: 181px;
+        width: 210px;
+        border: 0px;
+    }
+
+    .timerdiv {
+        float: left;
+        width: 100%;
+        text-align: center;
+    }
+
+    .maincontentdiv {
+        width: 100%;
+        text-align: center;
+    }
+
+    .modal-footer {
+        border-top: 0px solid white;
+    }
+</style>
+
+
+<div class="modal fade" id="TwilioCallModalR" tabindex="-1" role="dialog" aria-labelledby="TwilioCallModalR" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+
+
+
+            <div class="modal-body">
+                <div id="twilliomodalbodyR">
+                    <div class="col-md-12 pull-left maincontentdiv" style="width:100%;">
+                        <label class="msg" style="display:none">Please wait for page refresh after the call or clicking on hangup.</label>
+                        <label class="callernum"></label><br />
+                        <div class="timerdiv">
+                            <h3 id="time1Receive">00:00:00</h3>
+                        </div>
+
+                        <input type="button" class="acceptcall" value="" style="display:none" />
+                        <input type="button" class="hangupincomming btn btn-danger" value="Hangup Call" style="display:none" />
+                        <input type="button" class="rejectcall" value="" style="display:none" />
+                        <input type="button" class="closedialog btn btn-danger" value="Close" style="display:none" />
+                        <input type="button" class="reopenwindow btn btn-danger" value="Reopen Patient Window" style="display:none" />
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                @*<input type="button" value="Close" class="btn btn-danger btnclosetwilio" onclick="closecalldialogandreload()" data-dismiss="modal" />*@
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var h1123 = $("#time1Receive").html(),
+        seconds123 = 0, minutes123 = 0, hours123 = 0, t;
+
+    function add123() {
+
+        seconds123++;
+        if (seconds123 >= 60) {
+            seconds123 = 0;
+            minutes123++;
+            if (minutes123 >= 60) {
+                minutes123 = 0;
+                hours123++;
+            }
+        }
+
+        $("#time1Receive").html( (hours123 ? (hours123 > 9 ? hours123 : "0" + hours123) : "00") + ":" +
+            (minutes123 ? (minutes123 > 9 ? minutes123 : "0" + minutes123) : "00") + ":" +
+            (seconds123 > 9 ? seconds123 : "0" + seconds123));
+        timer123();
+
+
+    }
+
+    function timer123() {
+        timerinterval = setTimeout(add123, 1000);
+    }
+    var ideltimeoutforreceivecall = 0;
+    var receiveinterval;
+    var timerinterval;
+    function checktime() {
+        ideltimeoutforreceivecall += 1;
+        if (ideltimeoutforreceivecall >= 40) {
+
+            ideltimeoutforreceivecall = 0;
+            clearInterval(receiveinterval);
+            $(".callernum").text("You missed a call from " + callername);
+            $(".acceptcall").hide();
+            $(".rejectcall").hide();
+            $(".closedialog").show();
+            $(".reopenwindow").hide();
+            clearInterval(timerinterval);
+            seconds123 = 0; minutes123 = 0; hours123 = 0;
+            Twilio.Device.disconnectAll();
+            //setTimeout(function () {
+
+            //    location.reload(true);
+            //}, 2000);
+
+        }
+    }
+    function closecalldialogandreload() {
+        $("#TwilioCallModal").modal("hide");
+        //Twilio.Device.disconnectAll();
+        //location.reload();
+    }
+
+    
+    var callername = "";
+    var callerpatientid = "";
+    function getnamefromnumber(callsid) {
+        var w = 600;
+        var h = 400;
+        var left = Number((screen.width) - (w));
+        var tops = 0;
+        $.ajax({
+            url: "/ContactPatient/GetNamefromNumberNew",
+            type: "POST",
+            data: { 'CallSid': callsid },
+            success: function (result) {
+                debugger;
+                if (result.indexOf("||") >= 0) {
+                    var res = result.split("||");
+                    callername = res[0];
+                    callerpatientid = res[1];
+                    
+                   
+                }
+                else {
+
+                    callername = result;
+                    
+                }
+               // callername = result;
+                $(".callernum").text("Incoming call from " + callername);
+  },
+            error: function (result) {
+
+            }
+        });
+    }
+</script>

@@ -1,0 +1,189 @@
+﻿@model List<CCM.Models.PatientMedicalHistory_MedicationRxViewModel>
+
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<style>
+    .panel-body {
+        width: 100%;
+        overflow-x: scroll;
+        padding: 0px !important;
+    }
+    .close-btn {
+        color: #3c4e5e;
+        font-size: 20px;
+        position: absolute;
+        bottom: 30px;
+    }
+
+    #hide-Drug:hover {
+        cursor: pointer;
+        color: #0b64b5;
+    }
+</style>
+<div id="divDrugInteraction" style="max-height: 650px; overflow-y: auto"></div>
+@if (Model.Any())
+{
+    <button id="btnGetDrugInteraction" class="btn btn-success logdetails">Get Drug Interaction</button>
+}
+<span id="btnCloseDrugInteraction" style="display:none;position:relative"><i class="fas fa-window-close close-btn" id="hide-Drug"></i></span>
+@*<button id="btnCloseDrugInteraction" class="btn btn-success logdetails" style="display: none">Close Drug Interaction</button>*@
+<button id="btnAddMedication" class="btn btn-success logdetails"><i class="fa fa-plus-square"></i>Add Medications</button>
+<br /><br />
+<div class="panel-body">
+    <table class="display table-responsive" id="medicationsTable">
+        <thead>
+            <tr>
+                <th align="left">Medication</th>
+                <th align="left">Strength</th>
+                <th align="left">RxCUIS</th>
+                <th align="left">Direction</th>
+                <th align="left">Route</th>
+                <th align="left">Notes</th>
+                <th align="left">Date Started</th>
+
+                <th align="left">Dose Repetition Time</th>
+                <th align="left">Issues Identified</th>
+                <th align="left">Prescribe by</th>
+                <th align="left">Additional Comments</th>
+                <th align="left">For How Long</th>
+                <th align="left">Are you taking medicine properly?</th>
+                <th align="left">How many time medicine used?</th>
+                <th align="left">Is Permanent Medicine</th>
+                <th align="left">Is Medicine Discontinued</th>
+
+                <th align="left">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DrugName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DailyDose)
+                    </td>
+                    <td class="rxcuis" id="@item.RxCuis">
+                        @Html.DisplayFor(modelItem => item.RxCuis)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RateQuantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Route)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UseReason)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DoseRepetitionTime)
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => item.IssuesIdentified)*@
+                        @Html.DisplayTextFor(modelItem => item.IssuesIdentified)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrescribeBy)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comments)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ForHowLong)
+                    </td>
+                    <td>
+                        @Html.DisplayTextFor(modelItem => item.IsTakenMedicineProperly)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TakenMedicineProperly)
+                    </td>
+                    <td>
+                        @Html.DisplayTextFor(modelItem => item.IsPermanentMedicine)
+                    </td>
+                    <td>
+                        @Html.DisplayTextFor(modelItem => item.IsMedicineDiscontinued)
+                    </td>
+
+                    <td nowrap>
+                        <a class="btn btn-sm btn-success logdetails btnMedicationEdit"  style="margin: 0px !important;" onclick="EditAjaxActionReturns('CurrentMedication','_EditMedicationPartial', @item.Id)">Edit</a>
+                        <a class="btn btn-sm btn-danger logdetails" onclick="AjaxActionReturns('CurrentMedication','_DeleteRx', @item.Id)">Delete</a>
+
+                        @*@Html.ActionLink("Delete", "DeleteRx", new { id = item.Id }, new { @class = "btn btn-sm btn-danger", onclick = "return confirm('Are you sure you want to delete this medication?');" })*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        debugger;
+        //Combine RxCUIs into one string
+        var rxcuis = '';
+        $('#medicationsTable .rxcuis').each(function () {
+            if (typeof $(this).attr('id') != 'undefined') {
+                rxcuis += $(this).attr('id') + '+';
+                $('#ListRxCuis').val(rxcuis);
+            }
+            else return;
+        });
+
+        // DataTable
+        $('#medicationsTable').DataTable({
+            responsive: true
+        });
+
+
+        // Close Drug Interaction
+        $("#btnCloseDrugInteraction").click(function () {
+            $("#divDrugInteraction").text('').hide();
+            $(this).hide();
+        });
+        $(".btnMedicationEdit").click(function () {
+            debugger;
+            $("#divAddMedication").css("display", "block");
+            $("#btnAddMedication").hide();
+        });
+        $("#btnAddMedication").click(function () {
+            $(this).hide();
+            var patientid = $("#patientidh").val();
+            $("#divAddMedication").load('/CurrentMedication/_AddMedicationPartial', { patientId: patientid });
+            $("#divAddMedication").css("display", "block"); 
+        });
+
+        // Get Drug Interaction
+        $("#btnGetDrugInteraction").click(function () {
+            $("#divDrugInteraction").show().text('');
+
+            $.getJSON("https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=" + rxcuis.substring(0, rxcuis.length - 1), function (result) {
+
+                $("#divDrugInteraction").css("padding", "15px").css("color", "navy").css("margin-bottom", "15px")
+                    .css("background", "lightgreen").css("border-radius", "15px");
+
+                if (result.fullInteractionTypeGroup != null) {
+                    for (var i = 0; i < result.fullInteractionTypeGroup.length; i++) {
+                        for (var j = 0; j < result.fullInteractionTypeGroup[i].fullInteractionType.length; j++) {
+                            var counter = 0;
+                            for (var k = 0; k < result.fullInteractionTypeGroup[i].fullInteractionType[j].minConcept.length; k++)
+                                $("#divDrugInteraction").append("<b>Drug " + ++counter + ":</b> " + result.fullInteractionTypeGroup[i].fullInteractionType[j].minConcept[k].name + "<br />");
+
+                            $("#divDrugInteraction").append("<b>Severity:</b>    " + result.fullInteractionTypeGroup[i].fullInteractionType[j].interactionPair[0].severity + "<br />");
+                            $("#divDrugInteraction").append("<b>Description:</b> " + result.fullInteractionTypeGroup[i].fullInteractionType[j].interactionPair[0].description);
+
+                            if (j !== result.fullInteractionTypeGroup[i].fullInteractionType.length - 1)
+                                $("#divDrugInteraction").append("<hr />");
+                        }
+                    }
+                } else {
+                    $("#divDrugInteraction").append("- No Drug Interaction.");
+                }
+                $("#btnCloseDrugInteraction").show();
+            });
+        });
+    });
+</script>

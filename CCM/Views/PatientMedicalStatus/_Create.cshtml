@@ -1,0 +1,229 @@
+﻿@model CCM.Models.PatientMedicalHistory_MedicalStatus
+
+@{
+    var weight = Model?.Weight == 0 ? "" : Model?.Weight.ToString();
+    var height = Model?.Height == 0 ? "" : Model?.Height.ToString();
+    var waist = Model?.WaistSize == 0 ? "" : Model?.WaistSize.ToString();
+}
+
+<style>
+    .lighterLabel {
+        font-weight: lighter;
+    }
+</style>
+
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })*@
+
+<div>
+    <div class="custom-title">
+        <h3>GENERAL MEDICAL STATUS</h3>
+    </div>
+    @using (Html.BeginForm("_Create", "PatientMedicalStatus", FormMethod.Post,
+         new { id = "frmCreatePatientMedicalStatus", @class = "frmStyle" }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+    <div class="form-horizontal">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Age, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Age, new { htmlAttributes = new { @class = "form-control border-input", disabled = "disabled" } })
+                        @Html.ValidationMessageFor(model => model.Age, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            @*<div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Weight, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control border-input", Value = weight, placeholder = "in lbs", required = "required" } })
+                        @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Height, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Height, new { htmlAttributes = new { @class = "form-control border-input", Value = height, placeholder = "in feet (Ex: 5.11)", required = "required" } })
+                        @Html.ValidationMessageFor(model => model.Height, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>*@
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.WaistSize, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.WaistSize, new { htmlAttributes = new { @class = "form-control border-input", Value = waist } })
+                        @Html.ValidationMessageFor(model => model.WaistSize, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BloodType, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.BloodType, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "A+ A- B+ B- O+ O- AB+ AB-" } })
+                        @Html.ValidationMessageFor(model => model.BloodType, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*<div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BMI, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.BMI, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.BMI, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BloodType, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.BloodType, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "A+ A- B+ B- O+ O- AB+ AB-" } })
+                        @Html.ValidationMessageFor(model => model.BloodType, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GeneralHealth, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.GeneralHealth, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "Ex: Good, Bad, Okay, etc." } })
+                        @Html.ValidationMessageFor(model => model.GeneralHealth, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EnergyLevel, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.EnergyLevel, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "Ex: High, Low, Okay, etc." } })
+                        @Html.ValidationMessageFor(model => model.EnergyLevel, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            @Html.LabelFor(model => model.IsUsingHormones, htmlAttributes: new { @class = "col-md-4", id = "radioLabel" })
+            <div class="col-md-8 addressRadio">
+                @Html.RadioButtonFor(model => model.IsUsingHormones, true)
+                @Html.Label("Yes", new { @class = "lighterLabel" })
+
+                @Html.RadioButtonFor(model => model.IsUsingHormones, false)
+                @Html.Label("No", new { @class = "lighterLabel" })
+            </div>
+            @Html.ValidationMessageFor(model => model.IsUsingHormones, "", new { @class = "text-danger" })
+        </div>
+
+        <br />
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PrimaryPhysician, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.PrimaryPhysician, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.PrimaryPhysician, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            @*//Hide Physcian Number from Interface*@
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PhysicianPhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.PhysicianPhoneNumber, new { htmlAttributes = new { @class = "form-control border-input numbers-only" } })
+                        @Html.ValidationMessageFor(model => model.PhysicianPhoneNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="=row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OtherPhysician, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-6">
+                        @Html.EditorFor(model => model.OtherPhysician, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.OtherPhysician, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <input type="button" value="Update" class="btn btn-success logdetails" onclick="SubmitForm('frmCreatePatientMedicalStatus','Update')" />
+            </div>
+        </div>
+    </div>
+    }
+</div>
+<script>
+    var text = $("#PhysicianPhoneNumber").val();
+    $("#PhysicianPhoneNumber").val(text.replace(/[- )(]/g, ''));
+
+
+    $("#PhysicianPhoneNumber").focusout(function () {
+        var text = $("#PhysicianPhoneNumber").val();
+        $("#PhysicianPhoneNumber").val(text.replace(/[- )(]/g, ''));
+    });
+
+
+    $(".numbers-only").keypress(function (e) {
+        if (e.which == 46) {
+            if ($(this).val().indexOf('.') != -1) {
+                return false;
+            }
+        }
+
+        if (e.which != 8 && e.which != 0 && e.which != 46 && (e.which < 48 || e.which > 57)) {
+            return false;
+        }
+    });
+</script>
+
+@*@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+               async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+        </SCRIPT>
+    }
+}*@

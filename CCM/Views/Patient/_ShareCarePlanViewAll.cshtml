@@ -1,0 +1,413 @@
+﻿@*@model List<CCM.Models.ShareCarePlanViewAll>
+        @if (Model.Count > 0)
+        {
+    <style>
+        .tablefixwidth{
+            margin-top:10px;
+        }
+        .selectedbtn {
+            background: #0364bd;
+            color: #fff;
+            border-color: #0364bd;
+        }
+    </style>
+
+    <div class="sharecareplanwrapper">
+        <div class="billedcycles">
+            @foreach (var btnitem in ViewBag.Cycles)
+            {
+                var cycletoshow = "Cycle " + btnitem.Cycle.ToString() + " (" + btnitem.CreatedMonth?.Date.ToString("MMM") + "-" + btnitem.CreatedMonth?.Date.ToString("yy") + ") ";
+
+                if (btnitem.Cycle == Model.FirstOrDefault().Cycle)
+                {
+                    <input type="button" id="btn@(btnitem.Cycle)" value="@cycletoshow" class="btn btn-success cyclebtnsharecareplan" onclick="LoadShareCarePlanview('Patient','_ShareCarePlanView',@Model.FirstOrDefault().PatientId,@btnitem.Cycle)" />
+                }
+                else
+                {
+                    <input type="button" id="btn@(btnitem.Cycle)" value="@cycletoshow" class="btn btn-success cyclebtnsharecareplan" onclick="LoadShareCarePlanview('Patient','_ShareCarePlanView',@Model.FirstOrDefault().PatientId,@btnitem.Cycle)" />
+                }
+
+            }
+            <input type="button" id="btnallcycles" value="All Cycles History" class="btn btn-success cyclebtnsharecareplan selectedbtn" onclick="LoadShareCarePlanviewAllCyclesHistory('Patient','_ShareCarePlanViewAll',@Model.FirstOrDefault().PatientId)" />
+        </div>
+        <div class="tablefixwidth">
+            <table id="tblsharecareplanhistory" class="table">
+                <thead>
+                    <tr>
+                        <th>Reciever Name</th>
+                        <th>Email Address</th>
+                        <th>Cycle</th>
+                        <th>Shared By</th>
+                        <th>Shared Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.EmailAddress</td>
+                            <td>@item.Cycle</td>
+                            <td>@HelperExtensions.GetUserNamebyID(item.sharedby)</td>
+                            <td>@item.shareddate.Value.ToString("g")</td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#tblsharecareplanhistory').DataTable({
+                    pageLength: 10,
+                    "order": [],
+                    "dom": "Blfrtip",
+
+                    buttons: [{
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ["thead th:not(.noExport)", ':visible']
+                        }
+                    },
+                        , {
+                        extend: 'pdfHtml5',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL',
+                        exportOptions: {
+                            columns: ["thead th:not(.noExport)", ':visible']
+                        }
+                    }],
+
+                });
+            });
+        </script>
+        }*@
+
+
+@model List<CCM.Models.ShareCarePlanView>
+<style>
+    .sectionname {
+        float: left;
+        width: 100%;
+        border: 1px solid #a5a5a5;
+        margin-bottom: 5px;
+    }
+
+    .sectionwrapper {
+        display: none;
+    }
+
+    .border-colorwhite {
+        border: 1px solid
+    }
+
+    .sectionheader {
+    }
+
+    .sectionname h4 {
+        background-color: #0364bd;
+        color: white;
+        padding: 10px;
+        margin-bottom: 0px;
+    }
+
+    .emailaddressitem {
+        float: left;
+        width: 20%;
+        padding: 0px 5px;
+        border-right: 1px solid #908d8d;
+        overflow: hidden;
+    }
+
+    .emailitem {
+        float: left;
+        width: 100%;
+        padding: 0px 0px;
+        border-bottom: 1px solid #908d8d;
+        display: flex;
+    }
+
+    .emailitemname {
+        float: left;
+        width: 20%;
+        border-right: 1px solid #908d8d;
+        padding: 0px 5px;
+        overflow: hidden;
+    }
+
+    .shareitem {
+        float: left;
+        width: 10%;
+        padding: 5px;
+    }
+
+    .sharecareplanwrapper {
+        background-color: white;
+        float: left;
+        width: 100%;
+        padding: 11px;
+    }
+
+    .relationship {
+        float: left;
+        width: 25%;
+    }
+
+    .selectedbtn {
+        background: #0364bd;
+        color: #fff;
+        border-color: #0364bd;
+    }
+
+    .emailaddressitem label, .emailitemname label, .emailitem label {
+        margin-top: 8px;
+        font-weight: normal;
+    }
+
+    .emailitemname label {
+    }
+
+    .emailsharedhitory {
+        float: left;
+        width: 50%;
+        padding: 5px;
+        margin-right: 0px;
+        border-right: 1px solid;
+    }
+
+    .shareddate {
+        float: left;
+        width: 33.3%;
+        padding: 3px;
+        border: 1px solid #908d8d;
+    }
+
+    .sharedby {
+        float: left;
+        width: 23.3%;
+        padding: 3px;
+        border: 1px solid #908d8d;
+        overflow: hidden;
+    }
+
+    .cycleheading {
+        margin-top: 12px;
+        margin-bottom: 0px;
+        cursor: pointer;
+        float: left;
+        width: 100%;
+        background-color: #0364bd;
+        color: white;
+        padding: 7px;
+    }
+
+    .sharedemail {
+        float: left;
+        width: 43.3%;
+        padding: 3px;
+        border: 1px solid #908d8d;
+        overflow: hidden;
+    }
+</style>
+@if (Model.Count > 0)
+{
+    <div class="sharecareplanwrapper">
+        <div class="billedcycles">
+            @foreach (var btnitem in ViewBag.Cycles)
+            {
+                var cycletoshow = "Cycle " + btnitem.Cycle.ToString() + " (" + btnitem.CreatedMonth?.Date.ToString("MMM") + "-" + btnitem.CreatedMonth?.Date.ToString("yy") + ") ";
+
+                if (btnitem.Cycle == Model.FirstOrDefault().Cycle)
+                {
+                    <input type="button" id="btn@(btnitem.Cycle)" value="@cycletoshow" class="btn btn-success cyclebtnsharecareplan logdetails" onclick="LoadShareCarePlanview('Patient','_ShareCarePlanView',@Model.FirstOrDefault().PatientId,@btnitem.Cycle)" />
+                }
+                else
+                {
+                    <input type="button" id="btn@(btnitem.Cycle)" value="@cycletoshow" class="btn btn-success cyclebtnsharecareplan logdetails" onclick="LoadShareCarePlanview('Patient','_ShareCarePlanView',@Model.FirstOrDefault().PatientId,@btnitem.Cycle)" />
+                }
+
+            }
+            <input type="button" id="btnallcycles" value="All Cycles History" class="btn btn-success cyclebtnsharecareplan selectedbtn logdetails" onclick="LoadShareCarePlanview('Patient','_ShareCarePlanView',@Model.FirstOrDefault().PatientId,0)" />
+        </div>
+        @*<ul class="nav nav-tabs">
+                @{ int i = 0;}
+                @foreach (var btnitem in ViewBag.Cycles)
+                {
+                    if (i == 0)
+                    {
+                        <li class="active"><a href="#sectionwrapper@(btnitem.Cycle)">Cycle @btnitem.Cycle</a></li>
+                    }
+                    else
+                    {
+                        <li class=""><a href="#sectionwrapper@(btnitem.Cycle)">Cycle @btnitem.Cycle</a></li>
+                    }
+                    i += 1;
+
+                }
+            </ul>*@
+        @{
+            int ii = 0;
+            foreach (var btnitem in ViewBag.Cycles)
+            {
+                int Cycleitem = Convert.ToInt32(btnitem.Cycle);
+                var lstsharecareplans = Model.Where(x => x.Cycle == Cycleitem).ToList();
+                var sections = lstsharecareplans.Select(x => x.SectionName).Distinct().ToList();
+                //var classname = "tab-pane fade in active";
+                //if (ii > 0)
+                //{
+                //    classname = "tab-pane fade";
+                //}
+                <div class="cyclewrapperforshareplan">
+
+                    <h4 style="" class="cycleheading" data-id="sectionwrapper@(Cycleitem)" onclick="togglecycleshistory(@Cycleitem)">Cycle: @Cycleitem <i class="fa fa-toggle-on pull-right" title="Show/Hide"></i></h4>
+                    <div class="sectionwrapper" id="sectionwrapper@(Cycleitem)">
+                        @foreach (var sectionitem in sections)
+                        {
+                            var lstitems = lstsharecareplans.Where(x => x.SectionName == sectionitem).ToList();
+                            <div class="sectionname">
+                                <div class="emailitem">
+                                    <div class="emailitemname selectedbtn border-colorwhite">
+                                        <label>@sectionitem</label>
+                                    </div>
+
+
+                                    <div class="emailaddressitem selectedbtn border-colorwhite">
+                                        <label>Email Address</label>
+                                    </div>
+                                    <div class="emailsharedhitory selectedbtn border-colorwhite">
+                                        <label> Shared Details</label>
+
+                                    </div>
+
+                                    <div class="shareitem selectedbtn border-colorwhite">
+
+
+                                        <label>Share</label>
+                                    </div>
+                                </div>
+
+                                @foreach (var item in lstitems)
+                                {
+                                    <div class="emailitem">
+                                        <div class="emailitemname">
+                                            <label>@item.Name</label>
+                                        </div>
+
+
+                                        <div class="emailaddressitem">
+                                            <label>@item.EmailAddress</label>
+                                        </div>
+                                        <div class="emailsharedhitory">
+                                            <div class="sharedby selectedbtn">
+                                                Shared By
+                                            </div>
+                                            <div class="sharedemail selectedbtn">
+                                                Email
+                                            </div>
+                                            <div class="shareddate selectedbtn">
+                                                Shared Date
+                                            </div>
+                                            @foreach (var shareditem in item.sharingHistories)
+                                            {
+                                                <div class="sharedby">
+                                                    @HelperExtensions.GetUserNamebyID(shareditem.sharedby)
+                                                </div>
+                                                <div class="sharedemail">
+                                                    @shareditem.EmailAddress
+                                                </div>
+                                                <div class="shareddate">
+                                                    @shareditem.shareddate.Value.ToString("g")
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <div class="shareitem">
+
+
+                                            @if (item.AlreadySentEmail == false)
+                                            {
+                                                <input type="button" id="patientemailbtn@(item.PatientId)@(item.Cycle)" class="btn btn-success logdetails sendemailbtn" value="Share" data-Email="@item.EmailAddress" data-Name="@item.Name" data-PatientID="@item.PatientId" data-Cycle="@item.Cycle" data-ReceiverID="@item.ReceiverId" data-ReceiverType="@item.ReceiverType" />
+                                            }
+                                            else
+                                            {
+                                                <input type="button" id="patientemailbtn@(item.PatientId)@(item.Cycle)" class="btn btn-success logdetails sendemailbtn" value="Share" data-Email="@item.EmailAddress" data-Name="@item.Name" data-PatientID="@item.PatientId" data-Cycle="@item.Cycle" data-ReceiverID="@item.ReceiverId" data-ReceiverType="@item.ReceiverType" />
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                </div>
+                ii += 1;
+            }
+        }
+
+
+    </div>
+            }
+            else
+            {
+                <h2>Final care plan is not generated for this cycle.</h2>
+            }
+
+<script type="text/javascript">
+    function togglecycleshistory(id) {
+        $("#sectionwrapper" + id).toggle();
+    }
+    $(document).ready(function () {
+
+        $(".sendemailbtn").unbind().click(function () {
+            debugger;
+            var patientid = $(this).attr("data-PatientID");
+            var cycle = $(this).attr("data-Cycle");
+            var emailaddress = $(this).attr("data-Email");
+            var receivername = $(this).attr("data-Name");
+            var reciverid = $(this).attr("data-ReceiverID");
+            var recivertype = $(this).attr("data-ReceiverType");
+            $(".loader1").show();
+            setTimeout(function () {
+                $(".loader1").hide();
+                $(".loader").show();
+                $.ajax({
+                    type: "POST",
+
+                    url: "/FinalCarePlan/EmailCarePlanInd",
+                    data: {
+                        'PatientID': patientid, 'Cycle': cycle, 'EmailAddress': emailaddress, 'ReceiverName': receivername, 'ReceiverID': reciverid, 'ReceiverType': recivertype
+                    },
+                    success: function (result) {
+                        debugger;
+                        $(".loader").hide();
+                        if (result == "True") {
+                            swal({
+                                title: "Email Sent",
+                                text: "Email sent successfully to " + receivername + " on this address " + emailaddress,
+                                icon: "success",
+                                button: "Ok",
+                                confirmButtonColor: "#1ab394",
+                            });
+                            LoadShareCarePlanview('Patient', '_ShareCarePlanView', patientid, 0);
+                        }
+                        else {
+                            $(".loader").hide();
+                            swal("Error!", "Error Accured :" + result, "error");
+                        }
+
+                    }, error: function (result) {
+                        $(".loader").hide();
+                    }
+                });
+
+            }, 15000);
+
+        });
+        function sendemailindividually(patientid, cycle) {
+            debugger;
+
+
+        }
+    });
+</script>

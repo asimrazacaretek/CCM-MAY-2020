@@ -1,0 +1,133 @@
+﻿@using CCM.Models
+@model ReviewTimeCcm
+@{
+    Layout = "~/Views/Shared/_UpdateReviewTime.cshtml";
+
+}
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    
+</style>
+
+<div style="clear:both"></div>
+<div class="container" style="margin-left:-6px;">
+    <div class="card">
+        <div class="card-header clr ">
+            Old Review Time
+        </div>
+        <div class="card-body cd">
+            <div class="row">
+
+                @using (Html.BeginForm("Index", "UpdateReviewTime", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Enter Review Row Id</label>
+                            @Html.TextBox("id", null, new { @class = "form-control", @type="number"})
+
+                        </div>
+                    </div>
+                    <div class="col-md-2" style="margin-top:21px;margin-left:10px;">
+                        <input type="submit" name="submit" class="btn btn-primary" value="Get" />
+                    </div>
+                }
+
+
+            </div>
+
+            @if (Model != null)
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-responsive">
+                        <thead>
+                            <tr>
+                                <th class="col-md-1">Patient Id</th>
+                                <th class="col-md-1">Rollup From</th>
+                                <th class="col-md-1">Date Time</th>
+                                <th class="col-md-1">Page</th>
+                                <th class="col-md-1">Review Time</th>
+                                <th class="col-md-1">Cycle</th>
+                                <th class="col-md-4">Activity</th>
+                                <th class="col-md-1">isLocked</th>
+                                <th class="col-md-1">User</th>
+                                <th class="col-md-1">UserType</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-md-1">@Model.PatientId</td>
+                                <td class="col-md-1">@Model.RollupFrom</td>
+                                <td class="col-md-1">@Model.StartTime</td>
+                                <td class="col-md-1">@Model.Page</td>
+                                <td class="col-md-1">@Model.ReviewTime</td>
+                                <td class="col-md-1">@Model.Cycle</td>
+                                <td class="col-md-4">@Model.Activity</td>
+                                <td class="col-md-1">@Model.IsLocked</td>
+                                <td class="col-md-1">@HelperExtensions.GetUserNamebyID(Model.UserId)</td>
+                                <td class="col-md-1">@HelperExtensions.GetUserRolebyID(Model.UserId)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+
+                    @using (Html.BeginForm("UpdateReviewTime", "UpdateReviewTime", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        <div class="col-md-4">
+                            @Html.Hidden("id", Model.Id, new { id = "id" })
+                            <div class="form-group">
+                                <label>Enter Time In Minute</label>
+                                @*@Html.Editor("Time", null, new { id = "time", @class = "form-control",@type="Number", @maxlength = "4" })*@
+                                <input id="time" class="form-control" name="Time"  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+    type = "number"
+    maxlength = "6"
+ />
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-2" style="margin-top:21px;margin-left:10px;">
+                            <input type="submit" name="submit" id="pre" class="btn btn-primary" value="Update Time" />
+                        </div>
+                    }
+                </div>
+
+
+
+            }
+
+
+        </div>
+    </div>
+   
+            <div class="dd"></div>
+        </div>
+  
+
+<script>
+    $("#pre").click(function (event) {
+        event.preventDefault();
+        var id = $("#id").val();
+        var time = $("#time").val();
+
+
+
+        debugger
+        $.ajax
+            ({
+                url: "/UpdateReviewTime/UpdateReviewT",
+                type: "post",
+                data: { id, time },
+
+            }).done(function (res) {
+
+                $(".dd").html(res);
+            });
+    });
+</script>

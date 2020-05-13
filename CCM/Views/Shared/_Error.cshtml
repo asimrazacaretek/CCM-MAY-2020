@@ -1,0 +1,10 @@
+﻿@{ 
+    var message = string.IsNullOrEmpty(ViewBag.Message)
+                ? "An error occurred while processing your request."
+                : ViewBag.Message; 
+}
+
+<div class="container">
+    <h2 class="text-danger">Error:</h2>
+    <h3 class="text-warning">@message</h3>
+</div><br /><br /><br />

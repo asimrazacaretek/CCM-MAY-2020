@@ -1,0 +1,103 @@
+﻿@model CCM.Models.ViewModels.RpmQueFilterViewModel
+@{
+    Layout = null;
+}
+
+
+@using (Html.BeginForm("_DeviceListView", "Device", FormMethod.Post, new { @id = "filterTickets", role = "form" }))
+{
+<div class="row mt-3 filters-row-custom box-shadow">
+
+    <div class="col-md-2">
+        <div class="filters">
+            <span class="filter-icons">
+                <i class="fa fa-calendar fa-2x"></i>
+            </span>
+            <span class="filter-label">
+                Brand Name
+            </span>
+            <div class="filter-input">
+                @Html.DropDownListFor(model => model.BrandId, new SelectList(ViewBag.Device_brands, "Value", "Text"), "--Select--", new { @id = "Filter_BrandId", @class = "form-control ResetFilter  FilterElement" })
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="filters">
+            <span class="filter-icons">
+                <i class="fa fa-calendar fa-2x"></i>
+            </span>
+            <span class="filter-label">
+                Vendor/Supplier Name
+            </span>
+            <div class="filter-input">
+                @Html.DropDownListFor(model => model.VendorId, new SelectList(ViewBag.Vendors, "Value", "Text"), "--Select--", new { @id = "Filter_VendorId", @class = "form-control ResetFilter FilterElement" })
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="filters">
+            <span class="filter-icons">
+                <i class="fa fa-calendar fa-2x"></i>
+            </span>
+            <span class="filter-label">
+                Model Number
+            </span>
+            <div class="filter-input">
+                @Html.DropDownListFor(model => model.ModelId, new SelectList(ViewBag.ModelNumber, "Value", "Text"), "--Select--", new { @id = "Filter_ModelId", @class = "form-control ResetFilter FilterElement" })
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="filters">
+            <span class="filter-icons">
+                <i class="fa fa-dollar fa-2x"></i>
+            </span>
+            <span class="filter-label">
+                Device Type
+            </span>
+            <div class="filter-input ticketSubjectDashboardClass">
+                @Html.DropDownListFor(model => model.RpmServiceId, CCM.Helpers.CommonFunctions.GetActiveDevicesTypes(), "Select Device Type", new { @id = "Filter_RpmServiceId", @required = "required", @class = "border-input form-control ResetFilter FilterElement" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="filters">
+            <span class="filter-icons">
+                <i class="fa fa-dollar fa-2x"></i>
+            </span>
+            <span class="filter-label">
+                Device Stataus
+            </span>
+            <div class="filter-input ticketSubjectDashboardClass">
+
+                @Html.DropDownListFor(model => model.DeviceCurrentStatus, new SelectList(ViewBag.DeviceStatus, "Value", "Text"), "--Select--", new { @id = "Filter_DeviceCurrentStatus", @class = "DeviceStatusId form-control  ResetFilter FilterElement" })
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="filters">
+            <span class="filter-icons">
+                <i class="fa fa-calendar fa-2x"></i>
+            </span>
+            <span class="filter-label">
+                Serial Number
+            </span>
+            <div class="filter-input">
+                @Html.EditorFor(model => model.SerialNumber, new { htmlAttributes = new { @id = "Filter_SerialNumber", @placeholder = "Serial Number", @class = "form-control ResetFilter" } })
+            </div>
+        </div>
+    </div>
+
+
+    <div style="float: right; margin-right: 50px;">
+        <button style="margin-top: 17px;" type="button" onclick="loadpartialviewdata()" class="btn btn-success">Load</button>
+    </div>
+
+</div>
+}

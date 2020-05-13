@@ -1,0 +1,501 @@
+﻿@model List<CCM.Models.PatientProfile_Hospitalvisits>
+@using CCM.Models
+@{
+    ApplicationdbContect _db = new ApplicationdbContect();
+    var reason = "";
+    var procedure = "";
+    var date = DateTime.Now;
+    var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
+    var c = Model.Where(p => p.CreatedOn >= firstDayOfMonth || p.UpdatedOn >= firstDayOfMonth).Count();
+    int patientid = ViewBag.PatientId;
+    var checkisnotvisited = _db.Patient_HospitalVisit_NotAdmitted.Where(p => p.PatientId == patientid && (p.CreatedOn >= firstDayOfMonth || p.UpdatedOn >= firstDayOfMonth) && p.Status == true).Count();
+}
+<style>
+    .panel-body {
+        width: 100% !important;
+        overflow-x: scroll;
+    }
+
+    .lblbold1 {
+        text-align: left;
+        font-weight: bold;
+        color: green;
+        font-size: 16px;
+        margin-left: 8px;
+    }
+
+    #Patientnotadmitted {
+        display: none;
+    }
+
+        #Patientnotadmitted+ label {
+            display: inline-block;
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+            #Patientnotadmitted + label:last-child {
+                margin-bottom: 0;
+            }
+
+            #Patientnotadmitted + label:before {
+                content: '';
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border: 1px solid #0364bd;
+                position: absolute;
+                left: 15px;
+                top: 0;
+                opacity: .6;
+                -webkit-transition: all .12s, border-color .08s;
+                transition: all .12s, border-color .08s;
+            }
+
+        #Patientnotadmitted:checked + label:before {
+            width: 10px;
+            top: -5px;
+            left: 15px;
+            border-radius: 0;
+            opacity: 1;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+</style>
+<div id="divAddHospital" style="display:none;"></div>
+<div class="panel-body" id="divhospitalvisitdetails">
+
+    @if (User.IsInRole("QAQC"))
+    {
+        <div class="row">
+            @if (checkisnotvisited > 0)
+            {
+                <button id="btnAddHospital" style="display:inline-block;float:left" class="btn btn-success logdetails" disabled="disabled"><i class="fa fa-plus-square"></i>Add Visit</button>
+            }
+            else
+            {
+                <button id="btnAddHospital" style="display:inline-block;float:left" class="btn btn-success logdetails" disabled="disabled" ><i class="fa fa-plus-square"></i>Add Visit</button>
+
+            }
+
+            @if (c == 0)
+            {
+                if (checkisnotvisited > 0)
+                {
+                    <div style="display: flex;" class="PatientnotadmittedDiv">
+                        <input type="checkbox" disabled="disabled" value="true" name="Patientnotadmitted" onchange="PatientNotadmitted()" id="Patientnotadmitted" checked="checked" />
+                        <label style="display:inline" for="Patientnotadmitted">Patient Does not Visit Hospital last 30 days</label>
+                    </div>
+                }
+                else
+                {
+                    <div style="display: flex;" class="PatientnotadmittedDiv">
+                        <input type="checkbox" disabled="disabled" value="true" name="Patientnotadmitted" onchange="PatientNotadmitted()" id="Patientnotadmitted" />
+                        <label style="display: initial;" for="Patientnotadmitted">Patient Does not Visit Hospital last 30 days</label>
+                    </div>
+                }
+
+            }
+        </div>
+    }
+    else
+    {
+
+        <div class="row">
+            @if (checkisnotvisited > 0)
+            {
+                <button id="btnAddHospital" style="display:inline-block;float:left" class="btn btn-success logdetails" disabled="disabled"><i class="fa fa-plus-square"></i>Add Visit</button>
+            }
+            else
+            {
+                <button id="btnAddHospital" style="display:inline-block;float:left" class="btn btn-success logdetails"><i class="fa fa-plus-square"></i>Add Visit</button>
+
+            }
+
+            @if (c == 0)
+            {
+                if (checkisnotvisited > 0)
+                {
+                    <div style="display: flex;" class="PatientnotadmittedDiv">
+                        <input type="checkbox" value="true" name="Patientnotadmitted" onchange="PatientNotadmitted()" id="Patientnotadmitted" checked="checked" />
+                        <label style="display:inline" for="Patientnotadmitted">Patient Does not Visit Hospital last 30 days</label>
+                    </div>
+                }
+                else
+                {
+                    <div style="display: flex;" class="PatientnotadmittedDiv">
+                        <input type="checkbox" value="true" name="Patientnotadmitted" onchange="PatientNotadmitted()" id="Patientnotadmitted" />
+                        <label style="display: initial;" for="Patientnotadmitted">Patient Does not Visit Hospital last 30 days</label>
+                    </div>
+                }
+
+            }
+        </div>
+    }
+
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <label>Last 365 Days Cost: </label>
+            <span class="lblbold1">
+                @{
+                    var OneYearCost = Convert.ToInt32(ViewBag.yearlCost) * Convert.ToInt32(1500);
+                    OneYearCost = "$" + OneYearCost + ".00";
+                }
+                @OneYearCost
+            </span>
+        </div>
+        <div class="col-md-4">
+            <label>January 1st to Now Cost: </label>
+            <span class="lblbold1">
+                @{
+                    var FirstjantoNow = Convert.ToInt32(ViewBag.JanToNow) * Convert.ToInt32(1500);
+                    FirstjantoNow = "$" + FirstjantoNow + ".00";
+                } @FirstjantoNow
+            </span>
+        </div>
+        <div class="col-md-4">
+            <label>Total Admissions of Last 365 Days: </label>
+            <span class="lblbold1"> @ViewBag.TotalAdmofYear </span>
+        </div>
+    </div>
+    <hr />
+    <table class="table" id="patientHospitals">
+        <thead>
+            <tr>
+                @*
+                    <th>
+                        @Html.DisplayNameFor(model => model.PatientId)
+                    </th>*@
+                <th>
+                    Hospital Name
+                </th>
+                <th>
+                    Department
+                </th>
+                <th>
+                    Doctors
+                </th>
+
+                <th>
+                    ICD10Codes
+                </th>
+                <th>
+                    Stay Type
+                </th>
+
+                <th>
+                    Date Of Admission
+                </th>
+                <th>
+                    Discharge Date
+                </th>
+
+                <th>
+                    Reason
+                </th>
+                <th>
+                    Procedures
+                </th>
+                <th>
+                    Rate
+                </th>
+                <th>
+                    Days
+                </th>
+                <th>Total Cost</th>
+                <th>
+                    CreatedOn
+                </th>
+                <th>
+                    UpdatedOn
+                </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @*
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PatientId)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HospitalName)
+                    </td>
+                    <td>
+                        @if (item.HospitalDepartments != null)
+                        {
+                            <p> @item.HospitalDepartments.Name</p>
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FullName)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ICD10Codes)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StayType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AdmitDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DischargeDate)
+                    </td>
+
+                    <td>
+                        @{reason = item.HospitalReasonsId != null ? item.HospitalReasons.Name != "Others" ? item.HospitalReasons.Name : item.Reason : item.Reason;
+                        }
+                        @reason
+                    </td>
+                    <td>
+                        @{
+                            procedure = item.HospitalProceduresId != null ? item.HospitalProcedures.Name != "Other" ? item.HospitalProcedures.Name : item.OtherProcedure : item.OtherProcedure;
+                        }
+                        @procedure
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Rate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalDays)
+                    </td>
+                    <td>
+                        @{
+                            var totalcost = Convert.ToInt32(item.Rate) * Convert.ToInt32(item.TotalDays);
+
+                        }
+                        @totalcost.ToString(".00 $")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedOn)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UpdatedOn)
+                    </td>
+                    <td nowrap>
+                        <a class="btn btn-sm btn-success logdetails btnHospitalEdit" style="margin: 0px !important;" onclick="EditAjaxAction('PatientProfile','_PatientProfile_EditHospitalVisit', @item.Id)"><i class="fa fa-edit"></i>Edit</a>
+                        <a class="btn btn-sm btn-danger logdetails" onclick="AjaxActionReturns('PatientProfile','_DeleteHospitalDetails', @item.Id)"><i class="fa fa-remove"></i>Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#patientHospitals').DataTable({
+            responsive: true,
+            "aaSorting": []
+        });
+        $("#btnAddHospital").click(function () {
+            debugger;
+            var patientid = $("#patientidh").val();
+            //GetAjaxView("/PatientProfile/_PatientProfile_AddHospitalDetails", patientid, "divAddHospital");
+            $("#divAddHospital").load('/PatientProfile/_PatientProfile_CreateHospitalVisit?patientId=' + patientid);
+            $("#divAddHospital").css("display", "block");
+            $("#btnAddHospital").css("display", "None");
+        });
+    });
+
+    $("#btnAddHospital").click(function () {
+        $(".PatientnotadmittedDiv").hide();
+    })
+    $(document).on('click', "#btnCancel", function () {
+        $(".PatientnotadmittedDiv").show();
+    })
+    @*var PatientNotadmitted = function ( ) {
+
+        var pId =@ViewBag.PatientId;
+        var status = $("input[name='Patientnotadmitted']:checked").val();
+        if (status == "true") {
+          
+            $("#btnAddHospital").attr("disabled", true);
+            $("#Patientnotadmitted").prop("checked", false)
+         
+            status = true;
+
+        }
+        else {
+
+            $("#btnAddHospital").attr("disabled", false);
+            $("#Patientnotadmitted").prop("checked", true);
+            status=false;
+        }
+        valdata = { patientId: pId, status: status }
+        var check = false;
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure Patient Does Not Visit Hospital in last 30 days?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#749030e6",
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        })
+            .then((willDelete) => {
+            
+                if (willDelete) {
+                    if (status == true) {
+
+                        $("#Patientnotadmitted").prop("checked", true);
+
+                    }
+                    else {
+                        $("#Patientnotadmitted").prop("checked", false);
+                    }
+                    $.ajax({
+                        type: "POST",
+                        data: valdata,
+                        url: "/CcmFlow/PatientNotVisited",
+                        success: function (result) {
+                            debugger;
+                            if (result == "Saved") {
+
+                                swal({
+                                    title: "Saved",
+                                    text: "Saved Successfully",
+                                    icon: "success",
+                                    button: "Ok",
+                                    confirmButtonColor: "#1ab394",
+                                });
+
+
+                            }
+                        }
+
+                    });
+                }
+
+              
+            });
+
+      
+
+
+
+
+    }*@
+
+
+        var PatientNotadmitted = function ( ) {
+
+        var pId =@ViewBag.PatientId;
+            var status = $("input[name='Patientnotadmitted']:checked").val();
+
+            var oldStatus;
+            if (status == "true") {
+                oldStatus = "false";
+            } else {
+                oldStatus = "true";
+            }
+
+            if (oldStatus == "true") {
+
+                //$("#btnAddHospital").attr("disabled", true);
+                $("#Patientnotadmitted").prop("checked", true)
+
+                //status = true;
+
+            }
+            else {
+
+                //$("#btnAddHospital").attr("disabled", true);
+                $("#Patientnotadmitted").prop("checked", false);
+                //status = false;
+            }
+
+
+      
+        var check = false;
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure Patient Does Not Visit Hospital in last 30 days?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#749030e6",
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        })
+            .then((willDelete) => {
+            
+                if (willDelete) {
+                    if (status == "true") {
+
+                        $("#btnAddHospital").attr("disabled", true);
+                        $("#Patientnotadmitted").prop("checked", false)
+
+                        status = true;
+
+                    }
+                    else {
+
+                        $("#btnAddHospital").attr("disabled", false);
+                        $("#Patientnotadmitted").prop("checked", true);
+                        status = false;
+                    }
+
+                    if (status == true) {
+
+                        $("#Patientnotadmitted").prop("checked", true);
+
+                    }
+                    else {
+                        $("#Patientnotadmitted").prop("checked", false);
+                    }
+                    valdata = { patientId: pId, status: status }
+
+              
+                    $.ajax({
+                        type: "POST",
+                        data: valdata,
+                        url: "/CcmFlow/PatientNotVisited",
+                        success: function (result) {
+                            debugger;
+                            if (result == "Saved") {
+                                
+                                swal({
+                                    title: "Saved",
+                                    text: "Saved Successfully",
+                                    icon: "success",
+                                    button: "Ok",
+                                    confirmButtonColor: "#1ab394",
+                                });
+
+
+                            }
+                        }
+
+                    });
+                } else {
+                    alert("NO");
+                }
+
+              
+            });
+
+      
+
+
+
+
+    }
+
+
+</script>

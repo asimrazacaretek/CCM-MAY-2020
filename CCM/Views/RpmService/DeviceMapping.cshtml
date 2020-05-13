@@ -1,0 +1,90 @@
+﻿@model IEnumerable<CCM.Models.DataModels.RPMService>
+    @{ 
+        Layout = null;
+    }
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-1">
+            <label style="float:left">Select</label>
+            </div>
+            <div class="col-md-6">
+
+                <label>
+                    <input type="radio" class="MappingPurpose" name="MappingPurpose" value="1" />
+                    Assign Device
+                </label>
+
+
+                <label>
+                    <input type="radio" class="MappingPurpose" name="MappingPurpose" value="0" />
+                    Un-Assign Device
+                </label>
+
+
+            </div>
+        </div>
+    </div>
+<div class="container-fluid">
+    <div id="LoadConditionalMapping">
+
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <span style="float:left">Select Services</span>
+        <div class="col-md-3">
+            @Html.DropDownList("DeviceMappingServiceDD",
+                                        new SelectList(Model, "Id", "ServiceName", Model),"Select Service",
+                                        new { @class = "form-control  border-input", @id = "DeviceMappingServiceDD" ,@disabled="disabled" })
+
+        </div>
+        <input type="button" style="float:right" onclick="laodDeviceMappingPartial()" class="btn btn-success" value="Laod" />
+
+    </div>
+</div>
+
+<script>
+
+    $(".MappingPurpose").change(function () {
+        $("#DeviceMappingServiceDD").attr("disabled", false);
+    })
+    
+    var laodDeviceMappingPartial = function () {
+        var Purpose = $('input[name ="MappingPurpose"]:checked').val()
+        var Service = $('#DeviceMappingServiceDD :checked').val();
+
+        if (Purpose == null) {
+            swal("Warning", "Please Select Mapping Purpose", "warning");
+            return false;
+        }
+        if (Service == '') {
+            swal("Warning", "Please Select Service for Device Mapping", "warning");
+            return false;
+        }
+        var Hitpoint;
+        var PatientId = $("#currentPatientId").val();
+        if (Purpose == "1") {
+            Hitpoint = "/RpmService/AssignDevice";
+        }
+        else if (Purpose == "0") {
+
+        }
+            $.ajax({
+                type: "Get",
+                url: Hitpoint,
+                data: { PatientId: PatientId, ServiceId: Service},
+                success: function (ResponsePage) {
+
+                    $("#LoadConditionalMapping").html(ResponsePage)
+                    $(".loader").hide();
+
+                },
+                error: function () {
+                    $(".loader").hide();
+
+                }
+            });
+
+        
+    }
+</script>

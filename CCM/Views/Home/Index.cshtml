@@ -1,0 +1,596 @@
+﻿@model CCM.Models.DashBoardViewModel
+@{
+    var Pt10 = "padding-top: 10px !important;";
+}
+
+
+
+
+@if (User.IsInRole("PhysiciansGroup") || User.IsInRole("Admin") || User.IsInRole("LiaisonGroup") || User.IsInRole("Sales"))
+{
+    <ul class="nav nav-tabs">
+        @if (User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup") || User.IsInRole("LiaisonGroup") || User.IsInRole("Sales"))
+        {
+            if (User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup") || User.IsInRole("LiaisonGroup") || User.IsInRole("Sales"))
+            {
+                <li class="dropdown">
+
+                    @Html.DropDownListFor(liaison => Model.UserId,
+                        new SelectList(ViewBag.Liaisons, "Value", "Text", Model),
+                        "---Pre-Counselor---", new { @class = "form-control border-input search_combo", id = "ddlLiaisons1" })
+                </li>
+                <li class="dropdown">
+
+                    @Html.DropDownListFor(liaison => Model.UserId,
+                        new SelectList(ViewBag.Liaisons, "Value", "Text", Model),
+                        "---Post-Counselor---", new { @class = "form-control border-input search_combo", id = "ddlPostLiaisons1" })
+                </li>
+                <li class="dropdown">
+                    @Html.DropDownList("TranslatorFilter",
+                               new SelectList(ViewBag.Tranlators, "Value", "Text", Model),
+                               "---Pre-Translator---", new { @class = "form-control border-input select2 search_combo", id = "ddlTranslatorFilter" })
+                </li>
+                <li class="dropdown">
+                    @Html.DropDownList("TranslatorFilter",
+                               new SelectList(ViewBag.Tranlators, "Value", "Text", Model),
+                               "---Post-Translator---", new { @class = "form-control border-input select2 search_combo", id = "ddlPostTranslatorFilter" })
+                </li>
+            }
+            if (User.IsInRole("Admin"))
+            {
+                <li class="dropdown">
+                    @Html.DropDownListFor(physiciansGroup => Model.UserId,
+                        new SelectList(ViewBag.physiciansGroups, "Value", "Text", Model),
+                        "---Physicians Groups---", new { @class = "form-control border-input search_combo", id = "ddlPhysiciansGroups1" })
+                </li>
+            }
+
+        }
+
+        <li class="dropdown pt-8">
+            @Html.DropDownListFor(physician => Model.UserId,
+                new SelectList(ViewBag.Physicians, "Value", "Text", Model),
+                "---Physicians---", new { @class = "form-control border-input search_combo", id = "ddlPhysicians1" })
+        </li>
+
+        <li class="dropdown pt-10">
+            @Html.DropDownListFor(
+            item => item.PreferredLanguage,
+            new SelectList(
+                new[]
+                {
+                            new { Value = "English",  Text = "English" },
+                            new { Value = "French",   Text = "French" },
+                            new { Value = "Hindi",    Text = "Hindi" },
+                            new { Value = "Japanese", Text = "Japanese" },
+                            new { Value = "Korean",   Text = "Korean" },
+                            new { Value = "Mandarin", Text = "Mandarin" },
+                            new { Value = "Other",    Text = "Other" },
+                            new { Value = "Russian",  Text = "Russian" },
+                            new { Value = "Spanish",  Text = "Spanish" }
+                        },
+                "Value", "Text", Model),
+            "---Preferred Language---", new { @class = "form-control border-input search_combo", id = "ddlLanguages1" })
+            @Html.ValidationMessageFor(model => model.PreferredLanguage, "", new { @class = "text-danger" })
+        </li>
+    </ul>
+}
+<style>
+    .form-control {
+        background-color: #eaeaea;
+    }
+
+    .nav-tabs > li {
+        float: left;
+        margin-bottom: -1px;
+        margin-right: 10px;
+    }
+
+    .nav-tabs {
+        border-bottom: 0px solid #ddd;
+        margin-left: 29px;
+    }
+    /*Date Picker**/
+    li .form-control {
+        margin: 0px !important;
+    }
+
+    .form-control {
+        border: 2px solid !important;
+        border-radius: 3px !important;
+        padding: 5px !important;
+    }
+    /*Date Picker **/
+    .search_combo {
+        display: none;
+    }
+
+    .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+        background-color: #dcdcdc !important;
+    }
+
+    .multiselect-container {
+        max-height: 300px;
+        overflow: auto;
+    }
+
+    .pt-10 {
+        @if (User.IsInRole("Admin"))
+        {
+            @Pt10
+        }
+
+    }
+</style>
+
+<br />
+<div id="dashboardPartialView1">
+    <p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>
+</div>
+<br /><br /><br />
+
+
+
+
+@*@if (User.IsInRole("PhysiciansGroup") || User.IsInRole("Admin"))
+    {
+        <ul class="nav nav-tabs">
+            @if (User.IsInRole("Admin"))
+            {
+                <li class="dropdown">
+                    @Html.DropDownListFor(liaison => Model.UserId,
+                        new SelectList(ViewBag.Liaisons, "Value", "Text", Model),
+                        "Liaisons", new {@class = "form-control border-input", id = "ddlLiaisons" })
+                </li>
+                <li class="dropdown">
+                    @Html.DropDownListFor(physiciansGroup => Model.UserId,
+                        new SelectList(ViewBag.physiciansGroups, "Value", "Text", Model),
+                        "Physicians Groups", new { @class = "form-control border-input", id = "ddlPhysiciansGroups" })
+                </li>
+            }
+
+            <li class="dropdown">
+                @Html.DropDownListFor(physician => Model.UserId,
+                    new SelectList(ViewBag.Physicians, "Value", "Text", Model),
+                    "Physicians", new { @class = "form-control border-input", id = "ddlPhysicians" })
+            </li>
+        </ul>
+    }
+
+    <br />
+    <div id="dashboardPartialView">
+        <p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>
+    </div>
+    <br /><br /><br />*@
+
+
+@section Scripts {
+    @*<script src="~/dashboard/assets/js/chartist.min.js"></script>
+        <script src="~/dashboard/assets/js/demo.js"></script>*@
+    <script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            //Combo Search
+            $('#ddlLiaisons1, #ddlTranslatorFilter,#ddlPostLiaisons1, #ddlPostTranslatorFilter, #ddlPhysiciansGroups1, #ddlPhysicians1, #ddlLanguages1').multiselect({
+                includeSelectAllOption: false,
+                buttonWidth: 200,
+                enableCaseInsensitiveFiltering: true,
+                enableFiltering: true
+            });
+
+            //demo.initChartist();
+            //NewStatus
+            $('#dashboardPartialView1').load("/Home/_DashBoardPartial1");
+            $('#ddlLiaisons1, #ddlPhysicians1, #ddlPhysiciansGroups1, #ddlLanguages1').val("");
+
+            $("#ddlLiaisons1").change(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardPartial1?userId=" + $(this).val() + "&UserType=Pre");
+                $('#ddlPhysicians1,#ddlPostLiaisons1, #ddlPostTranslatorFilter, #ddlPhysiciansGroups1,#ddlTranslatorFilter,#ddlLanguages1').val("");
+            });
+            $("#ddlTranslatorFilter").change(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardPartial1?userId=" + $(this).val() + "&UserType=Pre");
+                $('#ddlPhysicians1,#ddlPostLiaisons1, #ddlPostTranslatorFilter, #ddlPhysiciansGroups1,#ddlLiaisons1,#ddlLanguages1').val("");
+            });
+
+            $("#ddlPhysicians1").change(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardPartial1?userId=" + $(this).val());
+                $('#ddlLiaisons1,#ddlPostLiaisons1, #ddlPostTranslatorFilter, #ddlPhysiciansGroups1,#ddlTranslatorFilter,#ddlLanguages1').val("");
+            });
+
+            $("#ddlPhysiciansGroups1").change(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardPartial1?userId=" + $(this).val());
+                $('#ddlLiaisons1,#ddlPostLiaisons1, #ddlPostTranslatorFilter, #ddlPhysicians1,#ddlTranslatorFilter,#ddlLanguages1').val("");
+            });
+            $("#ddlLanguages1").change(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardPartial1?language=" + $(this).val());
+                $('#ddlLiaisons1,#ddlPostLiaisons1, #ddlPostTranslatorFilter, #ddlPhysicians1,#ddlTranslatorFilter,#ddlPhysiciansGroups1').val("");
+            });
+            $("#ddlPostLiaisons1").change(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardPartial1?userId=" + $(this).val() + "&UserType=Post");
+                $('#ddlLiaisons1, #ddlPostTranslatorFilter, #ddlPhysicians1,#ddlTranslatorFilter,#ddlPhysiciansGroups1').val("");
+
+            });
+            $("#ddlPostTranslatorFilter").change(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardPartial1?userId=" + $(this).val() + "&UserType=Post");
+                $('#ddlLiaisons1,#ddlPostLiaisons1, #ddlPhysicians1,#ddlTranslatorFilter,#ddlPhysiciansGroups1').val("");
+            });
+            //
+            //$('#dashboardPartialView').load("/Home/_DashBoardPartial");
+            //$('#ddlLiaisons, #ddlPhysicians, #ddlPhysiciansGroups').val("");
+
+            //$("#ddlLiaisons").change(function () {
+            //    $('#dashboardPartialView').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+            //    $('#dashboardPartialView').load("/Home/_DashBoardPartial?userId=" + $(this).val());
+            //    $('#ddlPhysicians, #ddlPhysiciansGroups').val("");
+            //});
+
+            //$("#ddlPhysicians").change(function () {
+            //    $('#dashboardPartialView').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+            //    $('#dashboardPartialView').load("/Home/_DashBoardPartial?userId=" + $(this).val());
+            //    $('#ddlLiaisons, #ddlPhysiciansGroups').val("");
+            //});
+
+            //$("#ddlPhysiciansGroups").change(function () {
+            //    $('#dashboardPartialView').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+            //    $('#dashboardPartialView').load("/Home/_DashBoardPartial?userId=" + $(this).val());
+            //    $('#ddlLiaisons, #ddlPhysicians').val("");
+            //});
+        });
+    </script>
+}
+
+
+
+
+
+@*<br /><br /><br />
+    <h3 class="pageTitle">Clinical Data</h3>
+
+    <br /><br/>
+    <div class="row">
+        <div class="col-lg-3 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <img src="~/images/manypatients.jpg" width="60" height="60" alt="" />
+                        </div>
+                        <div class="col-xs-7">
+                            @{
+                                var link = User.IsInRole("Physician")
+                                         ? Url.Action("Details", "PhysicianPortal", new { physicianId = ViewBag.PhysicianId })
+                                         : "#";
+                            }
+                            <a href="@link">
+                                <div class="numbers">
+                                    <p>Patients Detail</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-reload"></i> Updated now
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <img src="~/images/tools.png" width="60" height="60" alt="" />
+                        </div>
+                        <div class="col-xs-7">
+                            <a href="@Url.Action("MDLookup","Home")">
+                                <div class="numbers">
+                                    <p>Tools</p>
+                                    6
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-reload"></i> Updated now
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <img src="~/images/drugs.jpg" width="75" height="75" alt="" />
+                        </div>
+                        <div class="col-xs-7">
+                            <a href="@Url.Action("LeftVoiceMessage","EnrollmentStatus")">
+                                <div class="numbers">
+                                    <p>Drug-Drug InterAction</p>
+                                    0
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-reload"></i> Updated now
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <img src="~/images/adverse..png" width="75" height="75" alt="" />
+                        </div>
+                        <div class="col-xs-7">
+                            <a href="@Url.Action("NotEnrolled","EnrollmentStatus")">
+
+                                <div class="numbers">
+                                    <p>Adverse Drug Reaction</p>
+                                    0
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-calendar"></i> Last day
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <img src="~/images/TDD.jpg" width="75" height="75" alt="" />
+                        </div>
+                        <div class="col-xs-7">
+                            <div class="numbers">
+                                <p>Therapeutic Duplication</p>
+                                0
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-timer"></i> In the last hour
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <img src="~/images/allergies.jpg" width="75" height="75" alt="" />
+                        </div>
+                        <div class="col-xs-7">
+                            <a href="@Url.Action("Index","Drugs")">
+                                <div class="numbers">
+                                    <p>Drug Alleries</p>
+                                    0
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-reload"></i> Updated now
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <img src="~/images/sideeffect.jpg" width="75" height="75" alt="" />
+                        </div>
+                        <div class="col-xs-7">
+                            <a href="@Url.Action("CCM_Patients","CcmStatus")">
+
+                                <div class="numbers">
+                                    <p>Drug Side-Effects</p>
+                                    0
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-timer"></i> In the last hour
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <img src="~/images/chronic.png" width="75" height="75" alt="" />
+                        </div>
+                        <div class="col-xs-7">
+                            <a href="@Url.Action("InProgress","EnrollmentStatus")">
+                                <div class="numbers">
+                                    <p>Chronic Conditions</p>
+                                    0
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-reload"></i> Updated now
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <img src="~/images/hosptail.jpg" width="75" height="75" alt="" />
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="numbers">
+                                <p>Hospitalization</p>
+                                0
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-reload"></i> Updated now
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <img src="~/images/meds.jpg" width="75" height="75" alt="" />
+                        </div>
+                        <div class="col-xs-7">
+                            <a href="@Url.Action("Index","Drugs")">
+                                <div class="numbers">
+                                    <p>Medication Profile</p>
+                                    0
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-reload"></i> Updated now
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <br /><br /><br />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="header">
+                    <h4 class="title">Calls Made</h4>
+                    <p class="category">24 Hours performance</p>
+                </div>
+                <div class="content">
+                    <div id="chartHours" class="ct-chart"></div>
+                    <div class="footer">
+                        <div class="chart-legend">
+                            <i class="fa fa-circle text-info"></i> Open
+                            <i class="fa fa-circle text-danger"></i> Click
+                            <i class="fa fa-circle text-warning"></i> Click Second Time
+                        </div>
+                        <hr>
+                        <div class="stats">
+                            <i class="ti-reload"></i> Updated 3 minutes ago
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="header">
+                    <h4 class="title">CCM Email Statistics</h4>
+                    <p class="category">Chronic Care Plan Sent</p>
+                </div>
+                <div class="content">
+                    <div id="chartPreferences" class="ct-chart ct-perfect-fourth"></div>
+
+                    <div class="footer">
+                        <div class="chart-legend">
+                            <i class="fa fa-circle text-info"></i> Open
+                            <i class="fa fa-circle text-danger"></i> Bounce
+                            <i class="fa fa-circle text-warning"></i> Unsubscribe
+                        </div>
+                        <hr>
+                        <div class="stats">
+                            <i class="ti-timer"></i> Campaign sent 2 days ago
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card ">
+                <div class="header">
+                    <h4 class="title">Total Sales</h4>
+                    <p class="category">CCM Billing Codes</p>
+                </div>
+                <div class="content">
+                    <div id="chartActivity" class="ct-chart"></div>
+
+                    <div class="footer">
+                        <a href="@Url.Action("Index","PhysicianPortal")">
+
+                            <div class="chart-legend">
+                                <i class="fa fa-circle text-info"></i> CCM -20 minutes
+                                <i class="fa fa-circle text-warning"></i> CCM - 90 Minutes
+                            </div>
+                            <hr>
+                            <div class="stats">
+                                <i class="ti-check"></i> Data information certified
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@

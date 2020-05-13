@@ -1,0 +1,852 @@
+﻿@model CCM.Models.AssigneeTicketViewModel
+@using CCM.Models;
+@using CCM.Models.ENUMS_;
+<style>
+    .custom-imagebox {
+        overflow: auto;
+        max-height: 225px;
+        margin-bottom: 10px;
+    }
+
+
+
+    #CommentGeneration {
+        margin-right: 15px;
+    }
+</style>
+@using (Html.BeginForm("SubmitAssigneeTicket", "Chats", FormMethod.Post, new { @id = "AssigneeTicketGenerationForm", role = "form", enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(x => x.id)
+    if (Model.ticketStatus == ETicketStatus.UNRESOLVED || Model.ticketStatus == ETicketStatus.RESOLVED || Model.ticketStatus == ETicketStatus.JustWatching)
+    {
+        @Html.HiddenFor(x => x.ticketStatus)
+
+
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                @Html.HiddenFor(x => x.UserTicketGenerationId, new { @id = "HiddenTicketId" })
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Subject", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextAreaFor(x => x.ticketSubject, new { @readonly = "readonly", @required = "required", @placeholder = "Ticket Subject", @class = "form-control", TextMode = "MultiLine" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Type", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(
+                            item => item.ticketType, CCM.Helpers.CommonFunctions.GetTicketType(), new { @required = "required", @class = " border-input form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Prority", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(
+                            item => item.ticketPriority, CCM.Helpers.CommonFunctions.GetTicketPriority(), new { @required = "required", @class = "border-input form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                @if (Model.ticketStatus == ETicketStatus.UNRESOLVED || Model.ticketStatus == ETicketStatus.RESOLVED)
+                {
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.Label("Ticket Resolution", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                            </div>
+                            <div class="col-md-8">
+                                @Html.DropDownListFor(item => item.TicketResolutionId, CCM.Helpers.CommonFunctions.GetTicketResolution(), "Select Ticket Resolution", new { @class = "form-control border-input", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+
+                }
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Status", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(item => item.StatusId, CCM.Helpers.CommonFunctions.GetTicketStatusWithOutInProgress(), null, new { @required = "required", @class = "form-control border-input", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket TAT", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(x => x.ticketTat, new { @required = "required", @id = "TAT", @placeholder = "H=20-M=40-L=60", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Patient Id", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(x => x.patientId, new { @id = "patientId", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div>
+                    <div class="row">
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row custom-imagebox">
+                    @if (Model.TicketAttachmentList != null)
+                    {
+                        foreach (var item in Model.TicketAttachmentList)
+                        {
+                            <div style="margin-left:70px">
+                                <img style="height:100px;width:100px" src=@item.filePath alt="Alternate Text" />
+                            </div>
+                            <br />
+                        }
+                    }
+                    else
+                    {
+                        <h5 class="jumbotron">User do not have any attachment's</h5>
+                    }
+                </div>
+            </div>
+        </div>
+        @*<div class="form-group">
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.Label("Creator Note", htmlAttributes: new { @class = "control-label", @style = "margin-left: 16px;float: left" })
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(x => x.CreatorNotes, 2, 15, new { @id = "CreatorNote", @class = "form-control"})
+                    </div>
+                </div>
+            </div>*@
+        <div class="row">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.Label("Add Note", htmlAttributes: new { @class = "control-label", @style = "float: left;margin-left: 16px;" })
+                    </div>
+                    <div class="col-md-10">
+                        <textarea id="CommentBoxTextArea"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="submitComment pull-right">
+                            <button type="button" id="CommentGeneration" class="btn btn-default CommentGenerationUserByUser">Add Comment</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @*<div class="form-group">
+                    <input type="hidden" class="form-control" name="uploadFiles" id="uploadFiles" />
+                </div>*@
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                @*<div class="form-group">
+                        @Html.Label("Upload Files", htmlAttributes: new { @class = "control-label" })
+                        <input type="file" id="AssigneeUpload" accept="image/*" multiple />
+                    </div>*@
+            </div>
+            <div class="col-md-12">
+                <label>Comments</label>
+                <div class="CommentPartialView">
+
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px;">
+            <div class="form-group">
+                <div class="col-md-3 pull-right">
+                    @*<input id="buttonAssigneeTicketGenerationForm" type="button" value="Save" class="btn btn-primary" />
+                        <input id="resetAssigneeTicketGenerationForm" type="button" value="Reset" class="btn btn-default" />*@
+                    <a style="float: right;" role="button" data-dismiss="modal" class="btn btn-default close-custom-button-view-ticket">Close</a>
+                </div>
+            </div>
+        </div>
+
+    }
+    else if (Model.ticketStatus == ETicketStatus.OPEN)
+    {
+        @*@Html.HiddenFor(x => x.ticketStatus)*@
+        <input type="hidden" id="ticketStatus" name="ticketStatus" value="In Progress">
+
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                @Html.HiddenFor(x => x.UserTicketGenerationId, new { @id = "HiddenTicketId" })
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Subject", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextAreaFor(x => x.ticketSubject, new { @readonly = "readonly", @required = "required", @placeholder = "Ticket Subject", @class = "form-control", TextMode = "MultiLine" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Type", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(
+                            item => item.ticketType, CCM.Helpers.CommonFunctions.GetTicketType(), new { @required = "required", @class = "form-control border-input , ", @readonly = "readonly" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Prority", htmlAttributes: new { @class = "control-label", @style = "float: left", @readonly = "readonly" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(
+                            item => item.ticketPriority, CCM.Helpers.CommonFunctions.GetTicketPriority(), new { @required = "required", @class = "form-control border-input ", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Resolution", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(item => item.TicketResolutionId, CCM.Helpers.CommonFunctions.GetTicketResolution(), "Select Ticket Resolution", new { @class = "form-control border-input", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Status", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(item => item.StatusId, CCM.Helpers.CommonFunctions.GetTicketStatusWithOutInProgress(), null, new { @required = "required", @class = "form-control border-input", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket TAT", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(x => x.ticketTat, new { @required = "required", @id = "TAT", @placeholder = "H=20-M=40-L=60", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Patient Id", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(x => x.patientId, new { @id = "patientId", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div>
+                    <div class="row">
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row custom-imagebox">
+                    @if (Model.TicketAttachmentList.Any())
+                    {
+                        foreach (var item in Model.TicketAttachmentList)
+                        {
+                            <div class="col-md-6">
+                                <img style="height:100px;width:100px" src=@item.filePath alt="Alternate Text" />
+                            </div>
+                            <br />
+                        }
+                    }
+                    else
+                    {
+                        <h5 class="jumbotron">User do not have any attachment's</h5>
+                    }
+                </div>
+            </div>
+        </div>
+        @*<div class="form-group">
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.Label("Creator Note", htmlAttributes: new { @class = "control-label", @style = "margin-left: 16px;float: left" })
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(x => x.CreatorNotes, 2, 15, new { @id = "CreatorNote", @class = "form-control" })
+                    </div>
+                </div>
+            </div>*@
+        <div class="row">
+            <div class="form-group">
+                @{Html.RenderPartial("_CommentBox");}
+            </div>
+            @*<div class="form-group">
+                    <div class="col-md-2">
+                        @Html.Label("Creator Notes", htmlAttributes: new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(item => item.CreatorNotes, new { @required = "required", @readonly = "readonly", @class = "form-control border-input" })
+                    </div>
+                </div>
+                <div class="form-group mt-2">
+                    <div class="col-md-2">
+                        @Html.Label("Assignee Notes", htmlAttributes: new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(item => item.AssigneeNotes, new { @required = "required", @class = "form-control border-input" })
+                    </div>
+                </div>*@
+        </div>
+        <div class="row">
+            @*<div class="form-group">
+                    <input type="hidden" class="form-control" name="uploadFiles" id="uploadFiles" />
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.Label("Upload Files", htmlAttributes: new { @class = "control-label" })
+                        <input type="file" id="AssigneeUpload" accept="image/*" multiple />
+                    </div>
+                </div>*@
+            <div class="col-md-12">
+                <label>Comments</label>
+                <div class="CommentPartialView">
+
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px;">
+            <div class="form-group">
+                <div class="col-md-3 pull-right">
+                    <a style="float: right;" data-dismiss="modal" role="button" class="btn btn-default close-custom-button-view-ticket">Close</a>
+                    @*<a style="float: right;" data-dismiss="modal" role="button" class="btn btn-default close-custom-button-view-ticket">Close</a>*@
+                    @*<input style="float: right;" id="buttonAssigneeTicketGenerationForm" type="button" value="Save" class="btn btn-primary" />*@
+
+                    @*<button type="button" class="btn btn-danger" data-dismiss="modal"></button>*@
+
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.ticketStatus == ETicketStatus.PENDING)
+    {
+        @Html.HiddenFor(x => x.ticketStatus)
+
+
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                @Html.HiddenFor(x => x.UserTicketGenerationId, new { @id = "HiddenTicketId" })
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Subject", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(item => item.ticketSubject, CCM.Helpers.CommonFunctions.GetTicketSubject(), new { @required = "required", @class = "form-control border-input ", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Type", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(
+                            item => item.ticketType, CCM.Helpers.CommonFunctions.GetTicketType(), new { @required = "required", @class = "form-control  border-input  ", @readonly = "readonly" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Prority", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(
+                            item => item.ticketPriority, CCM.Helpers.CommonFunctions.GetTicketPriority(), new { @required = "required", @class = "form-control border-input ", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-5">
+                            @Html.Label("Ticket Resolution", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-7" style="margin-left:-33px">
+                            @Html.DropDownListFor(item => item.TicketResolutionId, CCM.Helpers.CommonFunctions.GetTicketResolution(), "Select Ticket Resolution", new { @class = "form-control border-input", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Status", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(item => item.StatusId, CCM.Helpers.CommonFunctions.GetTicketStatusWithOutInProgress(), null, new { @required = "required", @class = "form-control border-input", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket TAT", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(x => x.ticketTat, new { @required = "required", @id = "TAT", @placeholder = "H=20-M=40-L=60", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Patient Id", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(x => x.patientId, new { @id = "patientId", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div>
+                    <div class="row">
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row custom-imagebox">
+                    @if (Model.TicketAttachmentList.Any())
+                    {
+                        foreach (var item in Model.TicketAttachmentList)
+                        {
+                            <div class="col-md-6">
+                                <img style="height:100px;width:100px" src=@item.filePath alt="Alternate Text" />
+                            </div>
+                            <br />
+                        }
+                    }
+                    else
+                    {
+                        <h5 class="jumbotron">User do not have any attachment's</h5>
+                    }
+                </div>
+            </div>
+        </div>
+        @*<div class="form-group">
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.Label("Creator Note", htmlAttributes: new { @class = "control-label", @style = "margin-left: 16px;float: left" })
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(x => x.CreatorNotes, 2, 15, new { @id = "CreatorNote", @class = "form-control" })
+                    </div>
+                </div>
+            </div>*@
+        <div class="row">
+            <div class="form-group">
+                @{Html.RenderPartial("_CommentBox");}
+            </div>
+        </div>
+        <div class="row">
+            @*<div class="form-group">
+                    <input type="hidden" class="form-control" name="uploadFiles" id="uploadFiles" />
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.Label("Upload Files", htmlAttributes: new { @class = "control-label" })
+                        <input type="file" id="AssigneeUpload" accept="image/*" multiple />
+                    </div>
+                </div>*@
+            <div class="col-md-12">
+                @*<label>Comments</label>*@
+                <div class="CommentPartialView">
+
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px;">
+            <div class="form-group">
+                <div class="col-md-3 pull-right">
+                    <a style="float: right;" data-dismiss="modal" class="btn btn-default close-custom-button-view-ticket">Close</a>
+                    @*<input style="float: right;" id="buttonAssigneeTicketGenerationForm" type="button" value="Save" class="btn btn-primary" />*@
+
+                    @*<button type="button" class="btn btn-danger" data-dismiss="modal"></button>*@
+                </div>
+            </div>
+        </div>
+
+    }
+    else if (Model.ticketStatus == ETicketStatus.IN_PROGRESS)
+    {
+        @Html.HiddenFor(x => x.ticketStatus)
+
+
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                @Html.HiddenFor(x => x.UserTicketGenerationId, new { @id = "HiddenTicketId" })
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Subject", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextAreaFor(x => x.ticketSubject, new { @readonly = "readonly", @required = "required", @placeholder = "Ticket Subject", @class = "form-control", TextMode = "MultiLine" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Type", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(
+                            item => item.ticketType, CCM.Helpers.CommonFunctions.GetTicketType(), new { @required = "required", @class = "form-control  border-input ", @readonly = "readonly" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Prority", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(
+                            item => item.ticketPriority, CCM.Helpers.CommonFunctions.GetTicketPriority(), new { @required = "required", @class = "form-control border-input ", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Resolution", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(item => item.TicketResolutionId, CCM.Helpers.CommonFunctions.GetTicketResolution(), "Select Ticket Resolution", new { @class = "form-control border-input", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket Status", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(item => item.StatusId, CCM.Helpers.CommonFunctions.GetTicketStatusWithOutInProgressOrignal(), null, new { @required = "required", @class = "form-control border-input", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Ticket TAT", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(x => x.ticketTat, new { @required = "required", @id = "TAT", @placeholder = "H=20-M=40-L=60", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.Label("Patient Id", htmlAttributes: new { @class = "control-label", @style = "float: left" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(x => x.patientId, new { @id = "patientId", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div>
+                    <div class="row">
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row custom-imagebox">
+                    @if (Model.TicketAttachmentList.Any())
+                    {
+                        foreach (var item in Model.TicketAttachmentList)
+                        {
+                            <div class="col-md-6">
+                                <img style="height:100px;width:100px" src=@item.filePath alt="Alternate Text" />
+                            </div>
+                            <br />
+                        }
+                    }
+                    else
+                    {
+                        <h5 class="jumbotron">User do not have any attachment's</h5>
+                    }
+                </div>
+
+            </div>
+        </div>
+        @*<div class="form-group">
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.Label("Creator Note", htmlAttributes: new { @class = "control-label", @style = "margin-left: 16px;float: left" })
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(x => x.CreatorNotes, 2, 15, new { @id = "CreatorNote", @class = "form-control" })
+                    </div>
+                </div>
+            </div>*@
+        <div class="row">
+            <div class="form-group">
+                @{Html.RenderPartial("_CommentBox");}
+            </div>
+        </div>
+        <div class="row">
+            @*<div class="form-group">
+                    <input type="hidden" class="form-control" name="uploadFiles" id="uploadFiles" />
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.Label("Upload Files", htmlAttributes: new { @class = "control-label" })
+                        <input type="file" id="AssigneeUpload" accept="image/*" multiple />
+                    </div>
+                </div>*@
+            <div class="col-md-12">
+                <label>Comments</label>
+                <div class="CommentPartialView">
+
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px;">
+            <div class="form-group">
+                <div class="col-md-3 pull-right">
+                    <a style="float: right;" data-dismiss="modal" class="btn btn-default close-custom-button-view-ticket">Close</a>
+                    @*<input style="float: right;" id="buttonAssigneeTicketGenerationForm" type="button" value="Save" class="btn btn-primary" />*@
+
+                    @*<button type="button" class="btn btn-danger" data-dismiss="modal"></button>*@
+                </div>
+            </div>
+        </div>
+
+    }
+
+    <div class="row" style="margin-top:20px">
+        <div class="col-md-12 ">
+            @if (Model.TicketAttachmentList != null)
+            {
+                foreach (var item in Model.TicketAttachmentList)
+                {
+                    <div class="col-md-12 modal-img">
+                        <img style="width:100%" src=@item.filePath alt="Alternate Text" />
+                    </div>
+                    <br />
+                }
+            }
+            else
+            {
+                <h5 class="jumbotron">User do not have any attachment's</h5>
+            }
+        </div>
+    </div>
+}
+<script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+<script src="~/signalr/hubs"></script>
+<script>
+    $(document).ready(function () {
+        debugger;
+        $('.close-custom-button-view-ticket').click(function (e) {
+            debugger;
+            $('#AdminViewTicketAssignee').addClass('out');
+            $('body').removeClass('modal-active');
+        });
+        var sub = "@Model.ticketSubject";
+        $('#ticketSubject option:contains("@Model.ticketSubject")').prop('selected', true);
+        $('#ticketType option:contains("@Model.ticketType")').prop('selected', true);
+        $('#ticketPriority option:contains("@Model.ticketPriority")').prop('selected', true);
+        // $('#AssigneeUpload').imageuploadify();
+        LoadCommentData();
+        //var pid = $("#patientId").val();
+        //$.ajax({
+        //    url: "/Chats/getPatientNameById/?id" + pid, success: function (result) {
+        //        $("#patientId").val(result);
+        //    }
+        //});
+        @*$('#patientId').select2({
+            data: mockData(),
+
+            //multiple: true,
+            dropdownParent: $("#TicketCreationListView"),
+            // query with pagination
+            query: function (q) {
+                debugger;
+                var pageSize,
+                    results,
+                    that = this;
+                pageSize = 20; // or whatever pagesize
+                results = [];
+                if (q.term && q.term !== '') {
+                    // HEADS UP; for the _.filter function i use underscore (actually lo-dash) here
+                    results = _.filter(that.data, function (e) {
+                        return e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0;
+                    });
+                } else if (q.term === '') {
+                    results = that.data;
+                }
+                q.callback({
+                    results: results.slice((q.page - 1) * pageSize, q.page * pageSize),
+                    more: results.length >= q.page * pageSize,
+                });
+            },
+        });
+        function mockData(val) {
+            var arr = [];
+
+            $.ajax({
+                url: "/Chats/getPatient?val=" + val,
+                type: "get"
+
+            }).done(function (res) {
+
+                //for (var i = 0; i < 20000; i++) {
+                //    arr.push({
+                //        id: i,
+                //        text: 'te ststr ing to shuffle' + ' ' + i,
+                //    });
+                //}
+
+                $.each(res, function (i, obj) {
+                    arr.push({
+                        id: obj.Value,
+                        text: obj.Text,
+                    });
+                });
+
+            });
+
+            return arr;
+
+        }
+        //$("#patientId").select2("val", '@Model.patientId');
+        $("#patientId").val('@Model.patientId');*@
+
+    });
+
+    $('#CommentGeneration').on("click", function () {
+        var Form = "CommentSubmissionForm";
+        var form = $("#CommentBoxTextArea").val();
+        if ($('#CommentBoxTextArea').val() != "") {
+            var CommentUrl = $("#CommentSubmissionForm").attr('action');
+            var data = new FormData();
+            data.append("noteText", $("#CommentBoxTextArea").val());
+            data.append("UserTicketGenerationId", $("#HiddenTicketId").val());
+            $.ajax({
+                type: 'POST',
+                url: "/Chats/SubmitCommentTicket",
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (json) {
+                    $(".loader").hide();
+                    if (json != "") {
+                        //alert(json);
+                        $('#CommentBoxTextArea').val("");
+                        LoadCommentData();
+                        var ticket = $.connection.ticketHub;
+                        $.connection.hub.start().done(function () {
+                            ticket.server.ticketnotify(json, '',"Comment");
+                        })
+
+                    }
+                    else {
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $(".loader").hide();
+                    var err = eval("(" + xhr.responseText + ")");
+                    swal("Error!", "Error Accured :" + err.Message, "error");
+                }
+            });
+        }
+    });
+
+    function LoadCommentData() {
+        debugger;
+        var id = $("#HiddenTicketId").val();
+        $.ajax({
+            type: 'GET',
+            url: "/Chats/AllAssociatedComments?userId=" + id,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    $(".CommentPartialView").html(data);
+                }
+            }
+        });
+    }
+</script>

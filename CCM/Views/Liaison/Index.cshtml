@@ -1,0 +1,164 @@
+﻿@model IEnumerable<CCM.Models.LiaisonViewModel>
+
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+
+
+<h4 class="pageTitle">Counselors/Translators</h4> 
+@Html.ActionLink("Add New Counselor/Translator", "Create", null, new { @class = "btn btn-success" })
+    
+
+<br/><br/><br />
+     <div class="row">
+         <div class="col-md-1">Active</div>
+         <div class="col-md-1"><div style="background-color:#d5f7d6;margin-left:-30px; width:50px; height:20px;"></div></div>
+         <div class="col-md-1"> Not Active</div>
+         <div class="col-md-1"><div style="background-color:#ecd6d6; margin-left:-30px; width:50px; height:20px;"></div></div>
+     </div>
+<br/>
+
+<table class="display" id="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Liaison.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Liaison.LastName)
+            </th>
+            <th>User Type</th>
+            <th>
+                Last Login
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Liaison.MobilePhoneNumber)
+            </th>
+            <th>
+                Twilio Number
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Liaison.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Liaison.Gender)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            if (item.Liaison.isActive)
+            {
+
+
+        <tr style="background-color:#d5f7d6;">
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.LastName)
+            </td>
+            <td>
+                @{ 
+                    var usertype = item.Liaison.IsTranslator == true ? "Translator" : "Counselor";
+
+                }
+                @usertype
+            </td>
+            <td>
+                @if (item.LastLogin != null)
+                {
+                    @Convert.ToDateTime(item?.LastLogin).ToString("g")
+                }
+                else
+                {
+
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.MobilePhoneNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.TwilioCallerId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.Gender)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Edit", new { userId = item.Liaison.UserId }) 
+                @*@Html.ActionLink("Delete", "Delete", new { id = item.Liaison.Id })*@
+            </td>
+        </tr>
+                        }
+                        else
+                        {
+        <tr style="background-color:#ecd6d6;">
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.LastName)
+            </td>
+            <td>
+                @{
+                    var usertype = item.Liaison.IsTranslator == true ? "Translator" : "Counselor";
+
+                }
+                @usertype
+            </td>
+            <td>
+                @if (item.LastLogin != null)
+                {
+                    @Convert.ToDateTime(item?.LastLogin).ToString("g")
+                }
+                else
+                {
+
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.MobilePhoneNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.TwilioCallerId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Liaison.Gender)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Edit", new { userId = item.Liaison.UserId })
+                @*@Html.ActionLink("Delete", "Delete", new { id = item.Liaison.Id })*@
+            </td>
+        </tr>
+                        }
+                    }
+    </tbody>
+</table>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#table').DataTable(
+            {
+                responsive: true,
+                pageLength: 25,
+                    "scrollY": "63vh",
+                    "columnDefs": [{
+                        "targets": 8,
+                        "orderable": false
+                    }]
+            });
+        });
+    </script>
+}

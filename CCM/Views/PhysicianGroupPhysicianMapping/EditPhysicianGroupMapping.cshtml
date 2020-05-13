@@ -1,0 +1,87 @@
+﻿@model ClientMVC.Models.MapDoctorClinicViewModel
+@{
+    ViewData["Title"] = "Map Doctors";
+}
+
+<h2>MapDoctors</h2>
+
+<div class="wrapper wrapper-content animated fadeIn">
+    <div class="row">
+        <div class="col-lg-10 col-sm-offset-1 gen-form-bg">
+            <form>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label class="control-label">Clinic</label>
+                        @*<select class="form-control"></select>*@
+                        @Html.DropDownList("ClinicID", new SelectList(ViewBag.AllClinics as List<Clinic>, "ID", "Name"), new { @class = "form-control selectpicker", role = "menu", @autofocus = "true" })
+                    </div>
+                    <div id="FetchPhysicians" class="clearfix">
+                        <div class="col-sm-12"><label class="control-label">Physician</label></div>
+
+                        <div id="SelectedCodeListControl" class="col-sm-6" style="text-align:left;padding-top:10px;">
+                            <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th width="50px"></th>
+                                        <th><label class="control-label">Name</label></th>
+                                        @*<th><label class="control-label">Last Name</label></th>*@
+                                        <th><label class="control-label">NPI</label></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="PhysiciansSelectedTable">
+
+                                    @foreach (var item in Model.Doctors)
+                                    {
+                                        <tr class="row-select">
+                                            <td class="id" hidden>@item.ID</td>
+                                            <td class="check"><label class="custom-checkbox"><input type="checkbox" asp-for="@item.ID" /><span></span></label></td>
+                                            <td>@item.FirstName &nbsp; @item.LastName</td>
+                                            <td>@item.NPI</td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <a asp-action="ViewDoctorMapping" id="back-to-list" class="btn btn-default">Back to List</a>
+
+                        <input type="button" value="Create" id="btnSubmit" class="btn btn-default" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script>
+        $(document).ready(function () {
+            var Doctors = []
+            $('#btnSubmit').click(function () {
+
+                $('.row-select input:checked').each(function () {
+                    var id, name;
+                    id = $(this).closest('tr').find('.id').html();
+                    Doctors.push(id);
+                })
+                $.ajax({
+                    type: "POST",
+                    url: '/DoctorClinicMapping/SaveDoctorClinicMapping',
+                    data: {
+                        "ClinicID": $("#ClinicID").val(), 'DoctorID': Doctors
+                    },
+                    success: function (data) {
+                        location.href = '/DoctorClinicMapping/ViewDoctorMapping'
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            });
+        });
+    </script>
+}

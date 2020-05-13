@@ -1,0 +1,45 @@
+﻿@model IEnumerable<CCM.Models.TextHistory>
+
+
+<table id="textHistoryTable1" class="display nowrap" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Date_Time</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Message</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Convert.ToDateTime(item.DateTime).ToString("g")
+                </td>
+                <td>
+                    @HelperExtensions.GetUserNamebyID(item.FromUser)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ToPhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Message)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TwilioStatus)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $('#textHistoryTable1').DataTable({
+        pageLength: 25,
+        scrollY: "50vh",
+        order: [[0, "desc"]]
+    });
+</script>

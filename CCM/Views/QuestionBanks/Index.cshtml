@@ -1,0 +1,225 @@
+﻿@using CCM.Models.DataModels
+@model CCM.Models.DataModels.QuestionBank
+
+@{
+    ViewBag.Title = "Question Bank";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<string> val = new List<string>();
+
+    val.Add("--Select Option--");
+    val.Add("Yes");
+    val.Add("No");
+
+}
+<style>
+    #QuestionModal {
+        overflow: auto;
+    }
+
+    .mt-4 {
+        margin-top: 15px;
+    }
+
+    .savebtnsforquestion {
+        float: right;
+        margin-right: 60px;
+        margin-top: 30px!important;
+    }
+
+    .field-validation-error {
+        margin-left: -229px;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" data-toggle="modal" data-target="#questionModal1" id="ButonOpen" class="createAdminResolutin btn btn-success"><span class="fas fa-fw fa-floppy-o"></span> Create New Question</button>
+    </div>
+</div>
+<div class="mt-4" id="QestionPage">
+    <table class="table" style=" width: 700px; margin-left: 15px;">
+        <thead>
+            <tr>
+                <th class="col-lg-1 col-md-1">Sr #</th>
+                <th scope="col" class="col-lg-9 col-md-8">Question</th>
+                <th class="col-lg-2 col-md-8">Status</th>
+                <th class="col-lg-2 col-md-8">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.Question as List<QuestionBank>)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Question</td>
+                    @if (item.Status != true)
+                    {
+                        <td>
+                            <button class="btn btn-danger">Disable</button>
+                        </td>
+
+                    }
+                    else
+                    {
+                        <td>
+                            <button class="btn btn-success">Enable</button>
+                        </td>
+                    }
+                    <td data-id="@item.Id">
+                        <span style="font-size: 16px;cursor:pointer" value="@item.Question" onclick="EditCategory('@item.Question','@item.Id','@item.Question')" id="EditResolution" class=" fa fa-edit text-primary"></span>
+
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+
+
+
+    </table>
+</div>
+<div id="modal-container">
+    <div class="modal-background">
+        <div class="modal fade" id="questionModal1" role="dialog" data-backdrop="static" data-keyboard="false" style="position:absolute">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create New Question</h4>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <form id="questionForm">
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(x => x.Id, new { @id = "HiddenId" })
+                                <div class="form-group">
+                                    @if (Model.Question != null)
+                                    {
+                                        @Html.Label("Old Question", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    }
+                                    
+                        
+
+                                    @Html.Label("Question Description", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        
+                                        @Html.EditorFor(x => x.Question, new { htmlAttributes = new { @id = "Question", @required = "required", @placeholder = "Question", @class = "form-control" } })
+                                        @Html.ValidationMessageFor(x => x.Question, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                        <br />
+                                        <label style="margin-left:-180px;">
+                                            <input type="radio" name="status" value="false"> Not active
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="status" value="true" checked> Is active
+                                        </label>
+                                        @*@Html.DropDownListFor(x => x.Status, new SelectList(val,0,"1"), new {@id="con", @class = "form-control" })*@
+                                    </div>
+                                    <br />
+
+
+
+                                </div>
+
+                            </form>
+                            <br/>
+                            <br/>
+                            <div class="form-group">
+                                <div class="savebtnsforQuestion" style="float: right;">
+                                    <button style="margin-left: 5px;" id="QuestionButton" type="button" class="btn">Save</button>
+                                    <button type="button" class=" btn btn-default close-custom-button" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="check" value="0" />
+
+<script>
+    $(document).ready(function () {
+
+        $(window).keydown(function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+
+        }); 
+        }); 
+
+    $('#ButonOpen').click(function () {
+        $('#modal-container').removeAttr('class').addClass("ButonOpen");
+        $('body').addClass('modal-active');
+        $("#HiddenId").val('0');
+        $("#Question").attr("disabled", false)
+        //$("#Question").removeClass("input-validation-error");
+        $("#Question").val("");
+        $("#QuestionButton").attr("disabled", true);
+        $("#subjectvalidation span").text("");
+
+    });
+    $('.close-custom-button').click(function () {
+
+
+        $('#modal-container').addClass('out');
+        $('body').removeClass('modal-active');
+    });
+    $('#Question').keyup(function () {
+        
+        if ($("#Question").val().trim() != "") {
+            $("#QuestionButton").attr("disabled", false);
+        } else {
+            $("#QuestionButton").attr("disabled", true);
+        }
+    });
+    function EditCategory(value, id) {
+
+        debugger;
+        $(".createAdminResolutin").click();
+
+        $("#Question").val(value);
+        $("#HiddenId").val(id);
+        $("#QuestionButton").attr("disabled", false);
+        $("#check").val("edit");
+
+    }
+    debugger
+    function AddOrEdit(valdata) {
+
+        $.ajax({
+            type: 'Post',
+            data: valdata,
+            url: '/QuestionBanks/Create',
+
+        }).done(function (res) {
+
+
+            $('.close-custom-button').click();
+            $("#QestionPage").load(window.location + " #QestionPage");
+
+        });
+    }
+
+    $('#QuestionButton').click(function () {
+        var question = $('#Question').val();
+        if (question.trim() != "") {
+            debugger
+            var valdata = $('#questionForm').serialize();
+            AddOrEdit(valdata);
+        }
+
+    });
+
+</script>

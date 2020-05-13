@@ -1,0 +1,75 @@
+﻿@using CCM.Helpers
+@{
+    var allPatients = ViewBag.Status == "Total Patients" ? "currentPage" : "";
+    var notAssigned = ViewBag.Status == "Not Assigned" ? "currentPage" : "";
+
+    var notEnrolled = ViewBag.Status == "Not Enrolled" ? "currentPage" : "";
+    var inProgress = ViewBag.Status == "In Progress" ? "currentPage" : "";
+    var leftMessage = ViewBag.Status == "Left Voice Message" ? "currentPage" : "";
+    var invalidNumber = ViewBag.Status == "Invalid Phone Number" ? "currentPage" : "";
+    var notSeeingMd = ViewBag.Status == "Patient Not Seeing MD" ? "currentPage" : "";
+    var notQualified = ViewBag.Status == "Not Qualified" ? "currentPage" : "";
+    var refused = ViewBag.Status == "Refused" ? "currentPage" : "";
+    var deceased = ViewBag.Status == "Deceased" ? "currentPage" : "";
+
+    var ccmEnrolled = ViewBag.Status == "Enrolled" ? "currentPage" : "";
+    var clinicalSignOff = ViewBag.Status == "Clinical Sign-Off" ? "currentPage" : "";
+    var claimSubmission = ViewBag.Status == "Claims Submission" ? "currentPage" : "";
+
+    var status = ViewBag.Status == "Patient Not Seeing MD" ? "Not Seeing MD" : ViewBag.Status == "Enrolled" ? BillingCodeHelper.ccm.ToUpper() : ViewBag.Status;
+}
+
+<style>
+    .card {
+        padding: 0 15px;
+    }
+
+    .linkButtons {
+        margin-top: 5px;
+    }
+
+    #profile {
+        border: 1px solid lightgray;
+        padding: 5px;
+    }
+</style>
+
+
+<div id="profile" class="card">
+    <h4 class="pageTitle">@ViewBag.Owner - @status Queue</h4>
+    @if ((User.IsInRole("Liaison") || User.IsInRole("Admin")) && string.IsNullOrEmpty(ViewBag.UserId))
+    {
+        <p class="pageTitle">
+            @Html.ActionLink("Add Patient", "Create", "Patient", new { rda = "true" }, new { @class = "btn btn-success" })
+            @Html.ActionLink("Upload Patient", "UploadNewPatient", "Patient", null, new { @class = "btn btn-success" })
+        </p>
+    }
+
+    @if (User.IsInRole("Admin") && string.IsNullOrEmpty(ViewBag.UserId))
+    {
+        @Html.ActionLink("Not Assigned", "NotAssigned", "EnrollmentStatus", null, new { @class = "btn btn-success", id = notAssigned })
+    }
+
+    @if (!string.IsNullOrEmpty(ViewBag.UserId) && (User.IsInRole("PhysiciansGroup") || User.IsInRole("Admin")))
+    {
+        <p class="pageTitle">
+            @Html.ActionLink("All Patients", "Index", "Patient", new { userId = ViewBag.UserId }, new { @class = "btn btn-success", id = allPatients })
+            @Html.ActionLink("CCM Enrolled", "Index", "CcmStatus", new { userId = ViewBag.UserId, status = "Enrolled" }, new { @class = "btn btn-success", id = ccmEnrolled })
+            @Html.ActionLink("Clinical Sign-Off", "Index", "CcmStatus", new { userId = ViewBag.UserId, status = "Clinical Sign-Off" }, new { @class = "btn btn-success", id = clinicalSignOff })
+            @if (User.IsInRole("Admin"))
+            {
+                @Html.ActionLink("Claims Submission", "Index", "CcmStatus", new { userId = ViewBag.UserId, status = "Claims Submission" }, new { @class = "btn btn-success", id = claimSubmission })
+            }
+        </p>
+    }
+
+    <br />
+    @Html.ActionLink("Not Enrolled", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Not Enrolled" }, new { @class = "btn btn-success linkButtons", id = notEnrolled })
+    @Html.ActionLink("In Progress", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "In Progress" }, new { @class = "btn btn-success linkButtons", id = inProgress })
+    @Html.ActionLink("Left Message", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Left Voice Message" }, new { @class = "btn btn-success linkButtons", id = leftMessage })
+    @Html.ActionLink("Invalid Number", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Invalid Phone Number" }, new { @class = "btn btn-success linkButtons", id = invalidNumber })
+    @Html.ActionLink("Not Seeing MD", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Patient Not Seeing MD" }, new { @class = "btn btn-success linkButtons", id = notSeeingMd })
+    @Html.ActionLink("Not Qualified", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Not Qualified" }, new { @class = "btn btn-success linkButtons", id = notQualified })
+    @Html.ActionLink("Refused", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Refused" }, new { @class = "btn btn-success linkButtons", id = refused })
+    @Html.ActionLink("Deceased", "Index", "EnrollmentStatus", new { userId = ViewBag.UserId, status = "Deceased" }, new { @class = "btn btn-success linkButtons", id = deceased })
+</div>

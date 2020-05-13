@@ -1,0 +1,128 @@
+﻿@model CCM.Models.PatientMedicalHistory_GeneralCondition
+<style>
+    .mp-0 {
+        margin-left: 0;
+        padding-left: 0;
+    }
+</style>
+@using (Html.BeginForm("_GeneralConditions", "CurrentMedication", FormMethod.Post, new { id = "form_GeneralMedicalConditionupdate" }))
+{
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.BMI)
+    @Html.HiddenFor(model => model.PatientId)
+    <div class="custom-title">
+        <h4>
+            Remote Patient Monitoring
+        </h4>
+    </div>
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(model => model.BloodPressure, "Blood Pressure", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.BloodPressure, new { htmlAttributes = new { @class = "form-control border-input shortTextBox" } })
+                @Html.ValidationMessageFor(model => model.BloodPressure, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Glucose, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Glucose, new { htmlAttributes = new { @class = "form-control border-input shortTextBox" } })
+                @Html.ValidationMessageFor(model => model.Glucose, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.HeartRate, "Heart Rate", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.HeartRate, new { htmlAttributes = new { @class = "form-control border-input shortTextBox" } })
+                @Html.ValidationMessageFor(model => model.HeartRate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Body mass index(BMI)</label>
+
+            <div class="col-md-10">
+                @*<div class="col-md-3  mp-0">
+                        <select id="bmiFormula" class="form-control" name="BMIType" disabled="true">
+                            <option value="kgm">Weight (Kg) / Height (m)</option>
+                            <option value="lbin" selected="selected">Weight (lb) / Height (ft.)</option>
+                        </select>
+                    </div>*@
+                <div class="col-md-2 mp-0">
+                    <span>Weight</span>
+                    @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @type = "number", @id = "bmiWeight", @class = "form-control", placeholder = "Weight", @min = "0", @maxlength = "5", @onchange = "calculateBMI()", @required = "required" } }) @*@step = "0.01",@value = "0"*@
+                    @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-2 mp-0">
+                    <span>(Height)</span>
+                    @Html.EditorFor(model => model.Height, new { htmlAttributes = new { @type = "number", @id = "bmiHeight", @class = "form-control", placeholder = "Height", @min = "0", @maxlength = "5", @onchange = "calculateBMI()", @required = "required" } }) @*@step = "0.01",@value = "0"*@
+                    @Html.ValidationMessageFor(model => model.Height, "", new { @class = "text-danger" })
+                </div>
+                @*<div class="col-md-2 mp-0">
+                        <input id="bmiFormulaBTN" type="button" value="Calculate BMI" class="btn btn-default" />
+                    </div>*@
+                <div class="col-md-3 mp-0">
+                    <label>Your Body Mass Index is <u class="greenText"><b id="spnbmi">__</b></u>. This is considered <u class="greenText"><b id="spnstate"> ___</b></u>.</label>
+                 </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="button" value="Update Medical Conditions" id="btnUpdate" class="btn btn-success logdetails" onclick="SubmitForm('form_GeneralMedicalConditionupdate','Update')" />
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    function calculateBMI() {
+        debugger;
+        var height = $('#bmiHeight').val();
+        height = height * 12;
+        var weight = $('#bmiWeight').val();
+        var _bmi = 0;
+        //For dropdownval
+        //if ($('#bmiFormula').val() == 'kgm') {
+        //    _bmi = weight / (height * height);
+        //}
+        //else if ($('#bmiFormula').val() == 'lbin') {
+        //    _bmi = (703 * weight) / (height * height);
+        //}
+        //else { _bmi = 0;}
+
+        _bmi = (703 * weight) / (height * height);
+        _bmi = parseFloat(_bmi).toFixed(2);
+
+        if (_bmi != "Infinity" && _bmi != "NaN")
+            $('#spnbmi').text(_bmi);
+        else
+            $('#spnbmi').text("___");
+
+        //for passing to Model value
+        $("#BMI").val(_bmi);
+
+        var state = "";
+        _bmi = parseFloat(_bmi).toFixed(1);
+
+        if (_bmi < 18.5)
+            state = "Underweight";
+        else if (_bmi >= 18.5 && _bmi <= 24.9)
+            state = "Normal weight";
+        else if (_bmi >= 25 && _bmi <= 29.9)
+            state = "Overweight";
+        else if (_bmi >= 30 && _bmi <= 34.9)
+            state = "class I obese";
+        else if (_bmi >= 35 && _bmi <= 39.9)
+            state = "class II obese";
+        else if (_bmi >= 40)
+            state = "Obesity"
+        else
+            state = "___";
+
+        $('#spnstate').text(state);
+    }
+</script>

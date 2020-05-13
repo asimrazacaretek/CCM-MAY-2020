@@ -1,0 +1,195 @@
+﻿@model  IEnumerable<CCM.Models.ActiveWorkQueTotals>
+<style>
+    .pageitemactivity {
+        margin: 14px;
+        box-shadow: 0 2px 13px rgba(44, 49, 66, 0.85);
+        height: 90px;
+        border: 0px;
+        border-radius: 5px;
+        width: 12%;
+        float: left;
+    }
+
+    .pagename {
+        white-space: nowrap;
+        width: 100%;
+        text-align: center;
+        color: white;
+        background-color: #0364bd;
+        padding: 10px 7px;
+        font-size: 13px;
+        height: 35px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .pageTime {
+        width: 100%;
+        text-align: center;
+        font-size: 20px !important;
+    }
+
+    .jqplot-table-legend {
+        top: 16px !important;
+        right: 42px !important;
+    }
+
+        .jqplot-table-legend td {
+            border: 0px solid !important;
+        }
+
+    .nav-tabsnew {
+        margin-left: 0px !important;
+    }
+
+    .tab-content {
+        border: 1px solid #ddd;
+        float: left;
+        width: 100%;
+        background-color: white;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+    .nopadding {
+        padding: 0px !important
+    }
+
+    .nav-tabsnew a {
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .hourname {
+        width: 220px;
+        text-align: center;
+        padding: 8px 3px;
+        outline: 1px solid #ddd;
+    }
+
+    .numbercol {
+        width: 8.3%;
+        outline: 1px solid #ddd;
+        text-align: center;
+        padding-top: 6px;
+    }
+
+    .maincontainer {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .Red {
+        background: rgba(255, 4, 0, 0.9);
+        color: white;
+    }
+
+    .Yellow {
+        background: #ffff00;
+    }
+
+    .Orange {
+        background-color: orange;
+    }
+
+    .DarkGreen {
+        background: rgba(25, 148, 117, 0.9);
+    }
+
+    .Green {
+        background: rgba(170, 202, 91, 0.9);
+    }
+
+    .Blue {
+        background: rgba(0, 43, 255, 0.9);
+        color: white;
+    }
+
+    .numberhead {
+        background: #0364bd;
+        color: white;
+    }
+
+    .colordefination {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .colordef {
+        padding: 5px 10px;
+        text-align: center;
+        width: 20%;
+        font-weight: bold;
+        font-size: 16px;
+        color: black;
+        text-shadow: 0px 0px 20px white;
+    }
+
+    .typedef {
+    }
+
+    .status-parent {
+        display: flex;
+        flex-direction: row;
+    }
+
+        .status-parent .typedef {
+            width: 52px;
+            text-align: center;
+            outline: 1px solid #ccc;
+            padding-top: 5px;
+            font-size: 11px;
+            text-align: center;
+            outline: 1px solid #ccc;
+            padding-top: 6px;
+        }
+
+    .datestr {
+        width: 100%;
+        font-size: 20px;
+        font-family: Calibri;
+    }
+</style>
+@foreach (var item in Model.Where(x => x.CycleType == "").ToList())
+{
+    <div class="maincontainer">
+        <div class="hourname"></div>
+        @foreach (var item2 in item.MonthNames)
+        {
+            <div class="numbercol" >
+                @item2.Type
+
+            </div>
+        }
+        <div class="numbercol">
+           
+
+        </div>
+
+    </div>
+
+}
+
+@foreach (var item in Model.Where(x => x.CycleType != "").ToList())
+{
+  
+    <div class="maincontainer @item.colorname">
+        <div class="hourname">@item.CycleType</div>
+        @{ int i = 0;}
+        @foreach (var item2 in item.MonthNames)
+        {
+            var monthcur = (i+1).ToString() + "searchsplit" + item.CycleType;
+            <div class="numbercol" onclick="setsearchvalue('@monthcur')" style="cursor:pointer">
+                @item2.Minute
+
+            </div>
+            i=i+ 1;
+        }
+        <div class="numbercol">
+            @item.TotalCounts
+
+        </div>
+
+    </div>
+
+}

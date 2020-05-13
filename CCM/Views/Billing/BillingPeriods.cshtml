@@ -1,0 +1,221 @@
+﻿@model CCM.Models.CCMBILLINGS.BillingPeriods
+
+
+@{
+    ViewBag.Title = "BillingPeriods";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    #BillingCategoryModal {
+        overflow: auto;
+    }
+
+    .mt-4 {
+        margin-top: 15px;
+    }
+
+    .savebtnsforBillingCategory {
+        float: right;
+        margin-right: 60px;
+        margin-top: 10px;
+    }
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" data-toggle="modal" data-target="#BillingCategoryModal" id="ButonOpen" class="createAdminResolutin btn btn-success"><span class="fas fa-fw fa-floppy-o"></span> Create New Billing Period</button>
+    </div>
+</div>
+<div class="mt-4" id="BillingCategoryPage">
+    <table class="table" style=" width: 700px; margin-left: 15px;">
+        <thead>
+            <tr>
+                <th scope="col">Billing Period Name</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+         
+                <tbody>
+                    @foreach (var item in   ViewBag.BillingPeriods)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Description</td>
+                            <td>
+                                <span style="font-size: 16px;cursor:pointer" value="@item.Name" onclick="EditCategory('@item.Name','@item.BillingPeriodsId','@item.Description')" id="EditResolution" class=" fa fa-edit text-primary"></span>
+                                @*<i class="fa fa-fw fa-trash text-danger" onclick="deleteCategory(@item.BillingPeriodsId)"></i>*@
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+         
+    
+
+
+    </table>
+</div>
+<div id="modal-container">
+    <div class="modal-background">
+        <div class="modal fade" id="BillingCategoryModal" role="dialog" data-backdrop="static" data-keyboard="false" style="position:absolute">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Billing Period Form</h4>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form id="BillingPeriodsForm">
+                                @Html.HiddenFor(x => x.BillingPeriodsId, new { @id = "HiddenId" })
+                                <div class="form-group">
+                                    @Html.Label("Billing Periods Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(x => x.Name, new { htmlAttributes = new { @id = "CategoryName", @required = "required", @placeholder = "Period Name", @class = "form-control" } })
+                                        @Html.ValidationMessageFor(x => x.Name, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("Description", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(x => x.Description, new { htmlAttributes = new { @id = "Description", @placeholder = "Period Description", @class = "form-control" } })
+                                        @Html.ValidationMessageFor(x => x.Description, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="savebtnsforBillingCategory">
+                                        <input style="margin-left: 5px;" id="BillingCategoryButton" type="button" onclick="" value="Save" class="btn" />
+                                        <button type="button" class=" btn btn-default close-custom-button" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+        $(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
+    $('#ButonOpen').click(function () {
+        $('#modal-container').removeAttr('class').addClass("ButonOpen");
+        $('body').addClass('modal-active');
+        $("#HiddenId").val('0');
+        $("#CategoryName").val('');
+        $("#Description").val('');
+    });
+    $('.close-custom-button').click(function () {
+        debugger;
+        $('#modal-container').addClass('out');
+        $('body').removeClass('modal-active');
+    });
+    function EditCategory(value, id,Description) {
+        debugger;
+        $(".createAdminResolutin").click();
+        $("#CategoryName").val(value);
+        $("#Description").val(Description);
+        $("#HiddenId").val(id);
+
+    }
+    function AddOrEdit(valdata) {
+         
+        $.ajax({
+            type: "POST",
+            data:valdata ,
+            url: "/Billing/BillingPeriodsCreate",
+            success: function (result) {
+                debugger;
+                if (result == "added") {
+                    $("#CategoryName").val('');
+                    $("#Description").val('');
+                    swal({
+                        title: "Saved",
+                        text: "Saved Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    //window.location.reload();
+                    $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+                }
+                else if (result == "updated") {
+                    $("#CategoryName").val('');
+                     $("#Description").val('');
+                    swal({
+                        title: "updated",
+                        text: "Updated Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+                }
+                else if (result == "Exist") {
+                    swal("Warning!","'"+ $("#CategoryName").val()+"'"+" Already Exist as a Billing Period", "warning");
+                }
+                       else if (result == "Description Exist") {
+                    swal("Warning!","'"+ $("#Description").val()+"'"+" Already Exist as a Billing Period", "warning");
+                }
+                else {
+                    $('.close-custom-button').click();
+                    swal("Error!", "Error Accured", "error");
+
+                }
+            }
+        });
+    }
+    $("#BillingCategoryButton").on("click", function () {
+        debugger;
+        if ($("#CategoryName").val().trim() != "") {
+            debugger;
+           
+         var valdata = $("#BillingPeriodsForm").serialize();  
+            AddOrEdit(valdata);
+        }
+        //else {
+        //    $('.close-custom-button').click();
+        //    swal("Error!", "Error Accured", "error");
+        //}
+    });
+    // delete btn for deleteing billing period
+    //var deleteCategory = function (id) {
+    //    $.ajax({
+    //        type: "POST",
+    //        data: { id: id },
+    //        url: "/Billing/BillingPeriodsDeleteConfirmed",
+    //        success: function (result) {
+
+    //            if (result == "deleted") {
+    //                $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+    
+    //                swal({
+    //                    title: "Update",
+    //                    text: "deleted Successfully",
+    //                    icon: "success",
+    //                    button: "Ok",
+    //                    confirmButtonColor: "#1ab394",
+    //                });
+    //            } else {
+    //                swal("Error!", "Error Accured", "error");
+    //            }
+    //        }
+    //    });
+    //}
+</script>
+

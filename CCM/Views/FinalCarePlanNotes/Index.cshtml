@@ -1,0 +1,111 @@
+﻿@using Microsoft.AspNet.Identity;
+@model IEnumerable<CCM.Models.FinalCarePlanNotes>
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = ViewBag.PatientId })
+<link href="~/Content/BookCarePlan.css" rel="stylesheet" />
+@Html.ActionLink("Create", "Create", "FinalCarePlanNotes", new { patientId = ViewBag.PatientId }, new { @class = "btn btn-success btn-lg logdetails" })
+<link href="~/Content/newbooks.css" rel="stylesheet" />
+
+
+<div class="col-md-12">
+    <div>
+        <div class="col-md-12 text-center">
+            <h1 class="heading">Patient Care Plan History</h1>
+            <ul class="align">
+
+
+                @foreach (var item in Model)
+                {
+                <li>
+                    <a href="@Url.Action("IndividualCarePlan", new {version = item.Version,patientId = item.PatientId})">
+                        <figure class="book">
+
+                            <!-- Front -->
+
+                            <ul class="hardcover_front">
+                                <li>
+                                    <div class="coverDesign blue">
+                                        <span class="ribbon">Cycle: @item.Cycle</span>
+
+                                       
+
+                                        <h1>Patient: @ViewBag.PatientName</h1>
+                                        <p>By: @item.CarePlanCreatedBy</p>
+                                        <p>Created On: @Convert.ToDateTime(item.CarePlanCreatedOn).ToString("MM/dd/yyyy")</p>
+                                        <h1>Cycle: @item.Cycle</h1>
+                                    </div>
+                                </li>
+                                <li></li>
+                            </ul>
+
+                            <!-- Pages -->
+
+                            <ul class="page">
+                                <li></li>
+                                <li>
+                                    <figure class="book-page-logo">
+                                        <p>Version: @item.Version</p>
+                                        <p>Created: @item.CarePlanCreatedOn</p>
+                                       
+                                    </figure>
+                                    <!-- <a class="btn" href="#">Description</a> -->
+                                </li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+
+                            <!-- Back -->
+
+                            <ul class="hardcover_back">
+                                <li></li>
+                                <li></li>
+                            </ul>
+                            <ul class="book_spine">
+                                <li></li>
+                                <li></li>
+                            </ul>
+
+                        </figure>
+                        </a>
+                </li>
+                    @*@Html.ActionLink("Create", "Create", "FinalCarePlanNotes", new {patientId = item.PatientId}, new { @class = "btn btn-success btn-lg" })<hr />*@
+
+                    @*<div class="book-holder">
+                        <div class="book-container">
+                            <a href="@Url.Action("IndividualCarePlan", new {version = item.Version,patientId = item.PatientId})">
+                                <div class="book">
+                                    <div class="book-cover">
+                                        <div class="cover">
+                                            <small><span class="book-title">Patient: @ViewBag.PatientName</span></small>
+                                            <small><span class="book-title">Status:&nbsp; @HelperExtensions.GetCCMCycleStatus(item.PatientId, item.Cycle, User.Identity.GetUserId())</span></small><br />
+                                            <small><span class="book-title">Cycle:&nbsp; @item.Cycle</span></small>
+                                            <small><span class="book-writer">By:&nbsp; @item.CarePlanCreatedBy</span></small>
+                                            <small><span class="book-writer">Created On:&nbsp; @Convert.ToDateTime(item.CarePlanCreatedOn).ToShortDateString()</span></small><hr />
+                                            <small><span class="version">Version: @item.Version</span></small>
+                                        </div>
+                                    </div>
+                                    <div class="book-spine">
+                                        <h1>&nbsp; &nbsp;&nbsp; Created: @item.CarePlanCreatedOn</h1>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>*@
+                }
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+          
+
+            function reviewTimePost() {
+                
+            }
+    </SCRIPT>
+}

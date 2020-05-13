@@ -1,0 +1,216 @@
+﻿
+    body{
+    
+     height: 100%;
+     /*background: rgb(242,243,244);
+     background: -moz-radial-gradient(center, ellipse cover,  rgba(242,243,244,1) 0%, rgba(212,213,214,1) 79%, rgba(193,193,193,1) 100%);
+     background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(242,243,244,1)), color-stop(79%,rgba(212,213,214,1)), color-stop(100%,rgba(193,193,193,1)));
+     background: -webkit-radial-gradient(center, ellipse cover,  rgba(242,243,244,1) 0%,rgba(212,213,214,1) 79%,rgba(193,193,193,1) 100%);
+     background: -o-radial-gradient(center, ellipse cover,  rgba(242,243,244,1) 0%,rgba(212,213,214,1) 79%,rgba(193,193,193,1) 100%);
+     background: -ms-radial-gradient(center, ellipse cover,  rgba(242,243,244,1) 0%,rgba(212,213,214,1) 79%,rgba(193,193,193,1) 100%);
+     background: radial-gradient(ellipse at center,  rgba(242,243,244,1) 0%,rgba(212,213,214,1) 79%,rgba(193,193,193,1) 100%);
+     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f3f4', endColorstr='#c1c1c1',GradientType=1 );*/
+ }
+.heading{
+    color:black;
+    
+    padding-top:0;
+    margin-bottom:0;
+}
+.bookshelf{
+    background: #ccc;
+    -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    margin-top:10px;
+    padding-bottom:20px;
+    background-image: url(http://static.anobii.com/anobii/static/image/shelfnew_dark_frame.jpg)!important;
+    /*background-size: 100% 100%;*/
+   
+}
+
+.book-holder {
+    width: 160px;
+    display:inline-block;
+    margin-left:5%;
+    background-image: url(http://static.anobii.com/anobii/static/image/shelfnew_dark_shelf.jpg)!important;
+}
+.book-container {
+    -webkit-perspective: 1300px;
+    -moz-perspective: 1300px;
+    perspective: 1300px;
+    -webkit-transition: 0.75s;
+    -o-transition: 0.75s;
+    -ms-transition: 0.75s;
+    -moz-transition: 0.75s;
+    transition: 0.75s;
+}
+.book {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    -webkit-transition: 0.75s;
+    -o-transition: 0.75s;
+    -ms-transition: 0.75s;
+    -moz-transition: 0.75s;
+    transition: 0.75s;
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-transform-origin: 125px 0;
+    -moz-transform-origin: 125px 0;
+    -o-transform-origin: 125px 0;
+    -ms-transform-origin: 125px 0;
+    transform-origin: 125px 0;
+    border-radius: 0 10px 10px 0;
+}
+.book:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 3px;
+    width: 7px;
+    background: rgb(0, 0, 0, 0.4);
+    z-index: 20;
+    transform: translateZ(1px);
+    -webkit-transform: translateZ(1px);
+    -moz-transform: translateZ(1px);
+    -o-transform: translateZ(1px);
+    -ms-transform: translateZ(1px);
+}
+.book:hover {
+    -webkit-transform: translateX(-10px) translateZ(40px) translateX(40px) rotateY(50deg);
+    -moz-transform: translateX(-10px) translateZ(40px) translateX(40px) rotateY(50deg);
+    -o-transform: translateX(-10px) translateZ(40px) translateX(40px) rotateY(50deg);
+    -ms-transform: translateX(-10px) translateZ(40px) translateX(40px) rotateY(50deg);
+    transform: translateX(-10px) translateZ(40px) translateX(40px) rotateY(50deg);
+}
+.book-cover {
+    position: relative;
+    z-index: 10;
+}
+.book-cover .cover {
+    vertical-align: bottom;
+    width: 200px;
+    height: 300px;
+    background-color: #FFC107;
+    background: #FFC107;
+    background: -moz-linear-gradient(top, #FF5722 0%, #FF9800 45%, #FFEB3B 100%);
+    background: -webkit-linear-gradient(top, #FF5722 0%, #FF9800 45%, #FFEB3B 100%);
+    background: linear-gradient(to bottom, #FF5722 0%, #FF9800 45%, #FFEB3B 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#FF5722', endColorstr='#FFEB3B', GradientType=0);
+    /* padding-left: 0px; */
+    padding-top: 20px;
+    font-size: 22px;
+    position: relative;
+    border-radius: 0 10px 10px 0;
+}
+.cover:after {
+    content: "";
+    position: absolute;
+    height: 100px;
+    width: 100px;
+    /*background: url('../../admin/uploads/logo.png') no-repeat;*/
+    background-size: 100px;
+    z-index: 9999;
+    left: 50px;
+    top: 30px;
+}
+.book-title{
+    color:#fff;
+    text-shadow: 1px 0px 5px #000;
+    font-size: 15px;
+
+}
+.version {
+    color: White;
+    text-shadow: 1px 0px 5px black;
+    display:block;
+    font-size:12px;
+    /*text-align:right;*/
+    /*padding-right:10px;*/
+    /*margin-top:20%;*/
+
+}
+.book-writer{
+    color:#fff; 
+    text-shadow: 1px 0px 5px #000;
+    display:block;
+    font-size:12px;
+    text-align:right;
+    padding-right:10px;
+    margin-top:20%;
+}
+.book-spine {
+    position: absolute;
+    color: #fff;
+    bottom: 0;
+    top: 0;
+    width: 50px;
+    z-index: 5;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background: #a3380e;
+    background-size: auto 100%;
+    -webkit-transform: rotateY(-90deg) translateX(-49px);
+    -moz-transform: rotateY(-90deg) translateX(-49px);
+    -o-transform: rotateY(-90deg) translateX(-49px);
+    -ms-transform: rotateY(-90deg) translateX(-49px);
+    transform: rotateY(-90deg) translateX(-49px);
+    -webkit-transform-origin: 0 0;
+    -moz-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform-origin: 0 0;
+}
+.book-spine h1 {
+    display: block;
+    width: 300px;
+    text-align: center;
+    color: #fff;
+    position: absolute;
+    top: -55px;
+    left: 34px;
+    text-indent: -40px;
+    text-transform: uppercase;
+    font-family: monospace;
+    font-size: 15px;
+    opacity: 0.7;
+    font-weight: normal;
+    -webkit-font-smoothing: antialiased;
+    -webkit-transform: rotateZ(90deg);
+    -moz-transform: rotateZ(90deg);
+    -o-transform: rotateZ(90deg);
+    -ms-transform: rotateZ(90deg);
+    transform: rotateZ(90deg);
+    -webkit-transform-origin: 0 0;
+    -moz-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform-origin: 0 0;
+}
+    .book-spine:before {
+        position: absolute;
+        content: "";
+        width: 100%;
+        height: 100%;
+        background: rgb(0, 0, 0, 0.3);
+    }
+    /*.bookshelf {
+        display: block;
+        margin: 30px auto;
+        width: 590px;
+        height: 308px; 
+        padding: 8px;
+        background: #ccc;
+        background-image: url(http://static.anobii.com/anobii/static/image/shelfnew_dark_frame.jpg);
+                  }
+
+    .book-holder {
+        width: 100%;
+        height: 100%;
+        padding: 5px;
+        background: #ddd;
+        background-image: url(http://static.anobii.com/anobii/static/image/shelfnew_dark_shelf.jpg);
+    }*/
+
+

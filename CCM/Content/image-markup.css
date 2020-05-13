@@ -1,0 +1,17 @@
+﻿body {
+}
+
+.img-container {
+    position: relative;
+}
+
+.image-markup-canvas {
+    cursor: url(../img/red-pen.png) 14 50, auto;
+}
+
+.context-menu-item.icon-text { background-image: url(../images/text.png); }
+.context-menu-item.icon-blackpen { background-image: url(../images/blackpen.png); }
+.context-menu-item.icon-redpen { background-image: url(../images/redpen.png); }
+.context-menu-item.icon-greenpen { background-image: url(../images/greenpen.png); }
+.context-menu-item.icon-bluepen { background-image: url(../images/bluepen.png); }
+.context-menu-item.icon-yellowpen { background-image: url(../images/yellowpen.png); }

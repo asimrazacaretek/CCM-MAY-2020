@@ -1,0 +1,279 @@
+﻿@model CCM.Models.Patient
+
+
+<h3 class="pageTitle">Patient Details</h3>
+@if (Model.EnrollmentStatus == "Enrolled")
+{
+    @Html.ActionLink("CMM-Review", "ReviewTimeV1", "CcmStatus", new { patientId = Model.Id }, new { @class="btn btn-success" })
+}
+
+<hr />
+<dl class="dl-horizontal">
+
+    <dt>
+        @Html.DisplayNameFor(model => model.PatientChronicCondition1.ChronicCondition1Type)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.PatientChronicCondition1.ChronicCondition1Type)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.PatientChronicCondition2.ChronicCondition2Type)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.PatientChronicCondition2.ChronicCondition2Type)
+    </dd>
+
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Gender)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Gender)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.PreferredLanguage)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.PreferredLanguage)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.OtherLanguage)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.OtherLanguage)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.FirstName)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.FirstName)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.LastName)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.LastName)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.BirthDate)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.BirthDate)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Address1)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Address1)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Address2)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Address2)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.City)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.City)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Zipcode)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Zipcode)
+    </dd>
+
+    <dt>
+        CCM Enrolled On
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.CCMEnrolledOn)
+    </dd>
+
+    <dt>
+        CCM Enrolled By
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Liaison.FirstName) @Html.DisplayFor(model => model.Liaison.LastName)
+    </dd>
+
+    <dt>
+        Last Updated On
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.UpdatedOn)
+    </dd>
+
+    <dt>
+        Physician
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Physician.FirstName) @Html.DisplayFor(model => model.Physician.LastName)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.BestContactTime)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.BestContactTime)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.MobilePhoneNumber)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.MobilePhoneNumber)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.AllowText)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.AllowText)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.WorkPhoneNumber)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.WorkPhoneNumber)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.HomePhoneNumber)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.HomePhoneNumber)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Email)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Email)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.AllowEmail)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.AllowEmail)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.MedicareIdNumber)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.MedicareIdNumber)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.MedicaidIdNumber)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.MedicaidIdNumber)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.OtherInsuranceIdNumber)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.OtherInsuranceIdNumber)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Notes)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Notes)
+    </dd>
+
+
+    <dt>
+        @*@Html.DisplayNameFor(model => model.PhoneAttempt)*@
+    </dt>
+
+    <dd>
+        @*@Html.DisplayFor(model => model.PhoneAttempt)*@
+    </dd>
+
+
+
+    <dt>
+        @Html.DisplayNameFor(model => model.AppointmentDate)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.AppointmentDate)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.CcmBillingCode)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.CcmBillingCode)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.CcmBillingCode2)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.CcmBillingCode2)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.CcmStatus)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.CcmStatus)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.EnrollmentStatus)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.EnrollmentStatus)
+    </dd>
+</dl>

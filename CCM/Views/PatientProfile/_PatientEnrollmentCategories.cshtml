@@ -1,0 +1,137 @@
+﻿    
+@using CCM.Helpers;
+@{
+    var CurrentBillingName = ViewBag.Message;
+    var CurrentBillingid = BillingCodeHelper.GetBillingCatagoryIdByName(CurrentBillingName);
+
+}
+<style>
+    .category-title     {
+        font-size: 9px!important;
+        float: left;
+        margin-top: 13px;
+        color: white;
+        font-weight: 500;
+        outline: auto;
+        padding: 5px;
+    }
+</style>
+@if (CurrentBillingName == "G0506 INITIAL VISIT")
+{
+    @*<button class="@("BillingCategoryactivityRecord"+CurrentBillingid) btn btn-success">Save in G0506 INITIAL VISIT</button>*@
+
+    <div class="container-fluid">
+        <div class="row" style="background-color: #0364bd">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <div class="category-title">
+                        <h3>@CurrentBillingName</h3>
+                    </div>
+                    <div class="timer" style="float:right">
+
+                        Total Time Spent
+
+                        <h3 id="totalReviewTime" style="margin-top: -3px;" class="time">00:00:00</h3>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="timer">
+                        Page Review Encounter
+                        <h3 id="time" style="margin-top: -3px;" class="time"><timee>00:00:00</timee></h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <p style="text-align: center;color:white">
+                        <label class="">Total Time will be update once you refresh the page or move to any other page from menu</label>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}
+
+@if (CurrentBillingName == "RPM")
+{
+    @*<button class="@("BillingCategoryactivityRecord"+CurrentBillingid) btn btn-success">Save in RPM</button>*@
+    @*<input type="text" name="aaaaa" id="aaaaa" class="aaaaa" data-categery-value="@CurrentBillingid" value="asw" />*@
+
+  <div class="container-fluid">
+        <div class="row" style="background-color: #0364bd">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <div class="category-title">
+                        <h3>@CurrentBillingName</h3>
+                    </div>
+                    <div class="timer" style="float:right">
+
+                        Total Time Spent
+
+                        <h3 id="totalReviewTime" style="margin-top: -3px;" class="time">00:00:00</h3>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="timer">
+                        Page Review Encounter
+                        <h3 id="time" style="margin-top: -3px;" class="time"><timee>00:00:00</timee></h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <p style="text-align: center;color:white">
+                        <label class="">Total Time will be update once you refresh the page or move to any other page from menu</label>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+<script>
+
+
+
+    $(document).ready(function () {
+        $("#SelectedCategory").val('@CurrentBillingName');
+
+        $('#SelectedCategory').data('id', @ViewBag.BillingReviewId);
+        $('#SelectedCategory').data('value',@CurrentBillingid);
+
+        //alert($('#SelectedCategory').data('id'));
+        //alert($('#SelectedCategory').val());
+        //alert($('#SelectedCategory').data('value'));
+
+
+        var h1 = document.getElementsByTagName('timee')[0],
+            seconds = 0, minutes = 0, hours = 0, t;
+        function addd() {
+            seconds++;
+            if (seconds >= 60) {
+                seconds = 0;
+                minutes++;
+                if (minutes >= 60) {
+                    minutes = 0;
+                    hours++;
+                }
+            }
+
+            h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" +
+                (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" +
+                (seconds > 9 ? seconds : "0" + seconds);
+            timerr();
+
+
+        }
+
+        function timerr() {
+            t = setTimeout(addd, 1000);
+        }
+
+        timerr();
+    })
+
+
+
+</script>

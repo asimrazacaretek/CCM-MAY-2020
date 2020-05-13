@@ -1,0 +1,549 @@
+﻿@model CCM.Models.FinalCarePlanViewModel
+
+@{
+    Layout = null;
+
+    @functions {
+        private static string DateValue(DateTime? date)
+        {
+            return date == null || Convert.ToDateTime(date).ToShortDateString() == "1/1/0001" || Convert.ToDateTime(date).ToShortDateString() == "1/1/1900"
+                         ? "N/A"
+                         : Convert.ToDateTime(date).ToShortDateString();
+        }
+
+        private static string StringValue(string value)
+        {
+            return value ?? "N/A";
+        }
+
+        private static string BooleanValue(bool? value)
+        {
+            return value == null ? "N/A" : value == true ? "Yes" : "No";
+        }
+    }
+}
+
+<title>CCM Health | Final Care Plan | @Model.PatientName</title>
+
+<style>
+    .header {
+        background-color: forestgreen;
+        color: white;
+    }
+
+    .border {
+        border: 1px solid black;
+    }
+
+    .blueBG {
+        background-color: #28AFFF;
+        color: white;
+    }
+
+        .blueBG td {
+            color: white;
+        }
+
+    td {
+        vertical-align: top;
+        padding: 10px;
+    }
+
+    .th {
+        height: 35px;
+    }
+
+    .patientInfo {
+        padding: 0 !important;
+    }
+
+    .answer {
+        padding-left: 10px !important;
+    }
+
+    .textArea {
+        white-space: pre-wrap;
+    }
+
+    .alignRight {
+        text-align: right;
+        font-weight: bold;
+    }
+
+    .curvyImageBorder img {
+        border: 15px solid white;
+        border-top-left-radius: 40px;
+        border-bottom-right-radius: 40px;
+    }
+
+    #pcpImg {
+        border: 35px solid green;
+        border-top-left-radius: 50px;
+        border-bottom-right-radius: 50px;
+    }
+    .tblWidth {
+        width:1150px;
+    }
+</style>
+
+@* Page 1 - Header *@
+<table class="header tblWidth">
+    <tr>
+        <td style="width: 1150px; text-align: center; vertical-align: middle; font-size: 1.5em">
+            <strong>CCM Health<sup>&reg;</sup></strong>
+        </td>
+    </tr>
+</table>
+
+@* Patient Info *@
+<table class="tblWidth">
+    <tr>
+        @* Patient Photo *@
+        <td style="width: 225px" class="patientInfo border">
+            @if (Model.PatientPhoto != null)
+            {
+                var base64 = Convert.ToBase64String(Model.PatientPhoto);
+                var imgSrc = $"data:image/gif;base64,{base64}";
+
+                <img src="@imgSrc" style="width: 225px; height: 150px; margin: auto" alt="" />
+            }
+            else
+            {
+
+                <img src="@Server.MapPath("~/dashboard/assets/img/faces/patient.jpg")" style="width: 225px; height: 150px; margin: auto" alt="" />
+            }
+        </td>
+
+        @* Patient Details *@
+        <td style="width: 925px" class="patientInfo border blueBG">
+            <table>
+                <tr>
+                    <td class="patientInfo alignRight">Patient's Full Name:</td>
+                    <td class="patientInfo answer">@Html.DisplayFor(model => model.PatientName)</td>
+                </tr>
+                <tr>
+                    <td class="patientInfo alignRight">DOB:</td>
+                    <td class="patientInfo answer">@Model.BirthDate.ToShortDateString()</td>
+                </tr>
+                <tr>
+                    <td class="patientInfo alignRight">Address:</td>
+                    <td class="patientInfo answer">@Html.Raw(Html.Encode(Model.Address).Replace("\n", " "))</td>
+                </tr>
+                <tr>
+                    <td class="patientInfo alignRight">Home Phone Number:</td>
+                    <td class="patientInfo answer">@StringValue(Model.HomePhoneNumber)</td>
+                </tr>
+                <tr>
+                    <td class="patientInfo alignRight">Mobile Phone Number:</td>
+                    <td class="patientInfo answer">@StringValue(Model.MobilePhoneNumber)</td>
+                </tr>
+                <tr>
+                    <td class="patientInfo alignRight">Email:</td>
+                    <td class="patientInfo answer">@StringValue(Model.Email)</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<br />
+<table style="height:1095px" class="tblWidth">
+    <tr>
+        @* Left Column - Physicians *@
+        <td style="width: 200px; text-align: center; vertical-align: top;" class="blueBG curvyImageBorder">
+            <b>Physicians</b>
+
+            <br /><br /><br />
+            @if (Model.PhysicianPhoto != null)
+            {
+                <img src="data:image;base64,@System.Convert.ToBase64String(Model.PhysicianPhoto)" style="width: 100px; height: 115px; margin: auto" id="pcpImg" alt="" />
+            }
+            else
+            {
+                if (Model.Gender == "Male" || Model.Gender == "")
+                {
+                    <img src="@Server.MapPath("~/dashboard/assets/img/faces/patient.jpg")" style="width: 100px; height: 115px; margin: auto" id="pcpImg" alt="" />
+
+                }
+                else
+                {
+                    <img src="@Server.MapPath("~/dashboard/assets/img/faces/patientfemale.png")" style="width: 100px; height: 115px; margin: auto" id="pcpImg" alt="" />
+                }
+
+            }
+
+            <br /><br />
+            Chronic Care Provider
+            <br /><br />
+            <b>Additional Provider</b>
+            <br />
+            @if (Model.SecondaryDoctors.Any())
+            {
+                foreach (var item in Model.SecondaryDoctors)
+                {
+                    <br />
+                    <img src="@Server.MapPath("~/dashboard/assets/img/faces/patient.jpg")" style="width: 100px; height: 105px; margin: auto" alt="" />
+                    <br />@item.Speciality 
+                }
+            }
+        </td>
+
+        @* Center Column *@
+        <td style="width: 950px; padding: 5px; text-align: center; vertical-align: top" class="border">
+            <br />
+            <b>Attending Physicians</b>
+            <table>
+                <tr>
+                    <td style="width: 930px; text-align: center" class="border">
+                        <u>Chronic Care Provider: Dr. @Html.DisplayFor(model => model.PhysicianName)</u><br />
+                        <b>Last Visited: @DateValue(Model.LastVisited)</b><br />
+                        <b>Next Appointment: @DateValue(Model.NextAppointment)</b><br />
+
+                        @foreach (var item in Model.SecondaryDoctors)
+                        {
+                            <u>@item.Speciality: @item.FullName</u><br />
+                            <b>Last Visited:     @StringValue(item.LastVisit)</b><br />
+                            <b>Next Appointment: @StringValue(item.NextAppointment)</b><br />
+                        }
+                    </td>
+
+                </tr>
+            </table>
+
+            <br />
+            <b>Emergency Contact</b>
+            <table>
+                <tr>
+                    <th class="patientInfo border">Name</th>
+                    <th class="patientInfo border">Relationship</th>
+                    <th class="patientInfo border">Telephone</th>
+                </tr>
+                <tr>
+                    <td style="width: 930px; text-align: center" class="border">
+                        @StringValue(Model?.UrgencyContact?.PrimaryName)
+                    </td>
+                    <td style="width: 930px; text-align: center" class="border">
+                        @StringValue(Model?.UrgencyContact?.PrimaryRelationship)
+                    </td>
+                    <td style="width: 930px; text-align: center" class="border">
+                        @StringValue(Model?.UrgencyContact?.PrimaryMobilePhoneNumber)
+                    </td>
+                </tr>
+            </table>
+
+            <br />
+            <b>Chronic Care Disease States</b>
+            <table>
+
+                <tr>
+                    <th style="width: 930px;" class="border">Diagnosis</th>
+                    <th style="width: 930px;" class="border">ICD-9 Codes</th>
+                    <th style="width: 930px;" class="border">Disease State</th>
+                    <th style="width: 930px;" class="border">Disease Type</th>
+                    <th style="width: 930px;" class="border">Disease History</th>
+                    <th style="width: 930px;" class="border">DateCreated</th>
+
+                </tr>
+
+
+
+
+
+
+
+                @if (Model?.Icd10Codes == null)
+                {
+                    <tr>
+                        <td colspan="6" class="border">
+                            <span>N/A</span>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var Icd10Codes_item in Model?.Icd10Codes)
+                    {
+
+                        <tr>
+                            <td style="width: 930px;" class="border">@Icd10Codes_item.Code10</td>
+                            <td style="width: 930px;" class="border">@Icd10Codes_item.Code9</td>
+                            <td style="width: 930px;" class="border">@Icd10Codes_item.DiseaseState</td>
+                            <td style="width: 930px;" class="border">@Icd10Codes_item.DiseaseType</td>
+                            <td style="width: 930px;" class="border">@Icd10Codes_item.DiseaseHistory</td>
+                            <td style="width: 930px;" class="border">@Icd10Codes_item.DateCreated</td>
+
+                        </tr>
+                    }
+                }
+
+
+
+                @*<tr>
+                    <td style="width: 930px;" class="border" colspan="6">
+                        <p class="textArea">@StringValue(Model?.FinalCarePlan?.HealthConcerns)</p>
+                    </td>
+                </tr>*@
+            </table>
+
+            <br />
+            <b>Current Medication</b>
+            <table style="width: 930px">
+                <tr>
+                    <th class="patientInfo border">Medication</th>
+                    <th class="patientInfo border">Daily Dose</th>
+                    <th class="patientInfo border">DUR</th>
+                    <th class="patientInfo border">Compliance</th>
+                </tr>
+                @if (Model?.MedicationRx.Count == 0)
+                {
+                    <tr>
+                        <td colspan="4" class="border">
+                            <span>N/A</span>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var prescription in Model?.MedicationRx)
+                    {
+                        <tr>
+                            <td class="patientInfo border">@prescription.DrugName</td>
+                            <td class="patientInfo border">@prescription.DailyDose</td>
+                            <td class="patientInfo border">@BooleanValue(prescription.IssuesIdentified)</td>
+                            <td class="patientInfo border"></td>
+                        </tr>
+                    }
+                }
+            </table>
+
+            <br />
+            <b>Drug Utilization Review</b>
+            <table>
+                <tr>
+                    <td style="width: 930px" class="border">
+                        <span class="textArea">@StringValue(Model?.FinalCarePlan?.DrugUtillizationReview)</span>
+                    </td>
+                </tr>
+            </table>
+        </td>
+
+        @* Right Column - Clinical Team hide*@
+        @*<td style="width: 200px; text-align: center; vertical-align: top; font-size: 1em" class="blueBG curvyImageBorder">
+                <b>Clinical Team</b>
+
+                <br /><br/><br/>
+                <img src="@Server.MapPath("~/dashboard/assets/img/faces/patient.jpg")" style="width: 100px; height: 115px; margin: auto" alt=""/>
+                <br />Judith:<br/>Clinical Pharmacist
+
+                <br/><br/><br/><br /><br />
+                <img src="@Server.MapPath("~/dashboard/assets/img/faces/patient.jpg")" style="width: 100px; height: 105px; margin: auto" alt="" />
+                <br />Stephanie:<br/>Pharmacy Intern
+
+                <br /><br /><br /><br /><br />
+                @if (Model?.LiaisonPhoto != null)
+                {
+                    var base64 = Convert.ToBase64String(Model.LiaisonPhoto);
+                    var imgSrc = $"data:image/gif;base64,{base64}";
+
+                    <img src="@imgSrc" style="width: 100px; height: 105px; margin: auto" alt="" />
+                }
+                else
+                {
+                    <img src="@Server.MapPath("~/dashboard/assets/img/faces/patient.jpg")" style="width: 100px; height: 105px; margin: auto" alt="" />
+                }
+                <br />@Model.LiaisonName:<br/>Staff Pharmacist
+            </td>*@
+    </tr>
+</table>
+
+
+@* Page 2 - Hospitalization in last 30 days *@
+<table class="border tblWidth">
+    <tr><td nowrap>Hospitalization in last 30 days:</td>                  <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.HospitalizationLast30Days)</td> </tr>
+    <tr><td nowrap>Skin assessment: Do you check 2-3 times a week:</td>                  <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.SkinAssesment)</td> </tr>
+    <tr><td nowrap>Diaper change: Do you change it every 2 hours? :</td>                  <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.Diaperchange)</td> </tr>
+    <tr><td nowrap>DME supply:</td>                  <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.DMEsupply)</td> </tr>
+    <tr><td nowrap>Is the patient bed bound:</td>                  <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.isPatientBedbound)</td> </tr>
+
+    <tr><td nowrap>Ability to perform IADL's and ADL's:</td>              <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.AbilityPerformIADL)</td></tr>
+    <tr><td nowrap>Sensory assessment on vision, hearing and speech:</td> <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.AssessmentVisionHearingSpeech)</td></tr>
+    <tr><td nowrap>Blood Pressure and Glucose Reading:</td>               <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.BloodPressureGlucoseReading)</td> </tr>
+    <tr><td nowrap>Fall and Ambulation Assessment:</td>                   <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.FallAmbulationAssessment)</td></tr>
+    <tr><td nowrap>Diabetic screening: </td>                              <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.DiabeticScreening)</td></tr>
+    <tr><td nowrap>Tobacco and Alcohol Screening:</td>                    <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.TobaccoAlcoholScreening)</td></tr>
+    <tr><td nowrap>Colon Cancer Screen: Date:</td>                        <td style="width: 500px;">@DateValue(Model?.FinalCarePlan?.ColonCancerScreenDate)</td> </tr>
+    <tr><td nowrap>Mammogram Screen: Date:</td>                           <td style="width: 500px;">@DateValue(Model?.FinalCarePlan?.MammogramScreenDate)</td></tr>
+    <tr><td nowrap>Urinary Incontinence:</td>                             <td style="width: 500px;">@StringValue(Model?.FinalCarePlan?.UrinaryIncontinence)</td></tr>
+    <tr>
+        <td>
+            Critical Medical Complaints:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Chest Pain: @BooleanValue(Model?.FinalCarePlan?.CriticalChestPain) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Shortness of Breath: @BooleanValue(Model?.FinalCarePlan?.CriticalBreathShortness) <br>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;New wound: @BooleanValue(Model?.FinalCarePlan?.NewWound) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Bleeding gums: @BooleanValue(Model?.FinalCarePlan?.Bleedinggums) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Nose bleed: @BooleanValue(Model?.FinalCarePlan?.Nosebleed) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Blood in urine: @BooleanValue(Model?.FinalCarePlan?.Bloodinurine) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Is urine malodorous: @BooleanValue(Model?.FinalCarePlan?.Isurinemalodorous) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Sudden increased swelling : @BooleanValue(Model?.FinalCarePlan?.Suddenincreasedswelling)<br />
+
+
+            &nbsp;&nbsp;&nbsp;&nbsp;Severe Pain: @BooleanValue(Model?.FinalCarePlan?.CriticalSeverePain) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Change in Awareness or Mood: @BooleanValue(Model?.FinalCarePlan?.CriticalMoodChange) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Change in Speech: @BooleanValue(Model?.FinalCarePlan?.CriticalSpeechChange) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Sudden and Severe Headache: @BooleanValue(Model?.FinalCarePlan?.CriticalHeadache) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Blood Sugar > 300: @BooleanValue(Model?.FinalCarePlan?.CriticalBloodSugar) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Blood Pressure > 180/90: @BooleanValue(Model?.FinalCarePlan?.CriticalBloodPressure)
+        </td>
+        <td></td>
+    </tr>
+
+</table>
+@*------------------ Page 2 - Header ------------*@
+
+
+@* Page 2 - Header *@
+@*<table class="header">
+        <tr>
+            <td style="width: 1150px; text-align: center; vertical-align: middle; font-size: 1.5em">
+                <strong>CCM Health<sup>&reg;</sup></strong>
+            </td>
+        </tr>
+    </table>*@
+
+
+<table style="height: 175px;"class="tblWidth">
+    <tr>
+        @* Health Concerns *@
+        <td class="border" style="width: 650px">
+            <u>Medical History:</u>
+            <p class="textArea">@StringValue(Model?.FinalCarePlan?.HealthConcerns)</p>
+        </td>
+
+        @* Care Team *@
+        <td class="border" style="width: 300px">
+            <u>Care Team:</u><br /><br />
+            - PCP & Clinical Pharmacist<br />
+            - @StringValue(Model?.UrgencyContact?.PrimaryRelationship)<br />
+            - @StringValue(Model?.UrgencyContact?.SecondaryRelationship)
+        </td>
+    </tr>
+</table>
+
+<br />
+@* Goals / Interventions / Reviews *@
+<table style="height:928px" class="tblWidth">
+    <tr>
+        <th></th>
+        <th class="border th">Interventions</th>
+        <th class="border th">Review</th>
+        <th class="border th">Goals</th>
+    </tr>
+    <tr>
+        <th class="border" style="width:50px">Medication<br />Management</th>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.ManagingMedicationInterventions)</td>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.ManagingMedicationReview)</td>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.ManagingMedicationGoals)</td>
+    </tr>
+    <tr>
+        <th class="border" style="width:50px">Mental<br />Resilience</th>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.MentalResilienceInterventions)</td>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.MentalResilienceReview)</td>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.MentalResilienceGoals)</td>
+    </tr>
+    <tr>
+        <th class="border" style="width:50px">Nutrition</th>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.NutritionInterventions)</td>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.NutritionReview)</td>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.NutritionGoals)</td>
+    </tr>
+    <tr>
+        <th class="border" style="width:50px">Physical<br />Activity</th>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.PhysicalActivityInterventions)</td>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.PhysicalActivityReview)</td>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.PhysicalActivityGoals)</td>
+    </tr>
+    <tr>
+        <th class="border" style="width:50px">Sleep</th>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.SleepInterventions)</td>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.SleepReview)</td>
+        <td class="border textArea" style="width:300px">@StringValue(Model?.FinalCarePlan?.SleepGoals)</td>
+    </tr>
+
+</table>
+
+
+@* Page 3 - Header *@
+@*<table class="header">
+        <tr>
+            <td style="width: 1150px; text-align: center; vertical-align: middle; font-size: 1.5em">
+                <strong>CCM Health<sup>&reg;</sup></strong>
+            </td>
+        </tr>
+    </table>*@
+
+<br />
+<table style="height: 150px;" class="tblWidth">
+    <tr>
+        @* Allergies *@
+        <td class="border">
+            <u>Allergies to Medication, Food and Others:</u>
+            <p class="textArea">@StringValue(Model?.FinalCarePlan?.Allergies)</p>
+        </td>
+    </tr>
+</table>
+
+
+@* Quality of Life *@
+<table class="tblWidth">
+    <tr>
+        <td class="border">
+            <u>Quality of Life at the Moment:</u><br /><br />
+            1. How would you describe your health? 1 being the worst and 10 the best: <u>@StringValue(Model?.FinalCarePlan?.HealthRating)</u><br />
+            2. Are you able to accomplish your daily chores, tasks and responsibilities? 1 being the least and 10 the best: <u>@StringValue(Model?.FinalCarePlan?.PerformTasksRating)</u>
+        </td>
+    </tr>
+</table>
+
+
+
+@* Compliance Management *@
+<table class="tblWidth">
+    <tr>
+        <td class="border">
+            <u>Patient Compliance Management:</u>
+            <p class="textArea">@StringValue(Model?.FinalCarePlan?.PatientComplianceManagement)</p>
+        </td>
+    </tr>
+</table>
+
+@* Pharmacy Treatment Goals *@
+<table class="tblWidth">
+    <tr>
+        <td class="border">
+            <u>Pharmacy Treatment Goals:</u>
+            <p class="textArea">@StringValue(Model?.FinalCarePlan?.PharmacyTreatmentGoals)</p>
+        </td>
+    </tr>
+</table>
+
+@* Patient Summary *@
+<table style="height: 150px;" class="tblWidth">
+    <tr>
+        <td class="border">
+            <u>Historical Summary:</u>
+            @*<u>@Model.PatientName:</u>*@
+            <p class="textArea">@StringValue(Model?.FinalCarePlan?.PatientSummary)</p>
+        </td>
+    </tr>
+</table>
+
+
+
+@* Signature *@
+<table class="border tblWidth">
+    <tr>
+        <td style="width: 700px">Pharmacist Reviewed: <u></u></td>
+        <td style="width: 250px">Date: <u>@DateTime.Now.Date.ToShortDateString()</u></td>
+    </tr>
+</table>

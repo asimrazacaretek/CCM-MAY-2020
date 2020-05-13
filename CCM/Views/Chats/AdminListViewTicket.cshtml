@@ -1,0 +1,440 @@
+﻿@model List<CCM.Models.ListViewTicket>
+@using CCM.Models
+
+@{
+    ViewBag.Title = "ListViewTicket";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" type="text/css" rel="stylesheet" />
+
+@* Select2 CSS Library *@
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.css" />
+
+
+
+
+<style>
+    .imageuploadify-overlay {
+        display: none;
+    }
+
+    .imageuploadify-images-list i {
+        color: #3AA0FF;
+        display: block;
+        font-size: 5em;
+        text-align: center;
+        margin: .5em auto;
+        margin-bottom: 7px;
+        /* padding-bottom: 12px; */
+    }
+
+    span.imageuploadify-message {
+        font-size: 24px;
+        border-top: 1px solid #3AA0FF;
+        border-bottom: 1px solid #3AA0FF;
+        padding: 10px;
+        display: inline-block;
+        color: #3AA0FF;
+    }
+
+    .imageuploadify-images-list button.btn-default {
+        display: block;
+        color: #3AA0FF;
+        border-color: #3AA0FF;
+        border-radius: 1em;
+        margin: 25px auto;
+        width: 100%;
+        max-width: 500px;
+        cursor: pointer;
+    }
+
+    .imageuploadify {
+        border: 2px dashed #d2d2d2;
+        position: relative;
+        min-height: 250px;
+        min-width: 250px;
+        max-width: 100% !important;
+        margin: auto;
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        text-align: center;
+        background-color: #fff;
+        color: #3AA0FF;
+        top: 10px;
+    }
+
+    .imageuploadify-container img {
+        max-width: 100px;
+        max-height: 100px;
+        text-align: left;
+    }
+
+    .error {
+        color: red
+    }
+
+    #TicketCreationForEveryOne .modal-dialog {
+        width: 900px;
+    }
+    .select2-drop-active, .select2-drop-mask {
+        position: absolute !important;
+        z-index: 1000000000000000000000000000000 !important;
+    }
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.css" />
+
+
+
+@*<a style="margin-bottom: 15px;" id="ButonOpen" role="button" data-ui-class="a-fadeLeft" class=" btn btn-success" data-toggle="modal" data-target="#TicketCreationForEveryOne">
+
+    <i class="fas fa-money-bill"></i> Generate Ticket
+</a>*@
+@*<h4>Tickets</h4>*@
+@if (Model.Any())
+{<div id="ListViewTicketdiv">
+    <table id="ListViewTicket" class="mt-4">
+        <thead>
+            <tr>
+                <th>Ticket Id</th>
+                <th class="hide"></th>
+                @*<th>Id</th>*@
+                <th>
+                    Subject Name
+                </th>
+                <th>
+                    Prority
+                </th>
+                <th>
+                    CreatedBy
+                </th>
+                <th>Created Date</th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Assign to
+                </th>
+                <th>
+                    Action
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.UserTicketId</td>
+                    <td class="hide">@Html.HiddenFor(modelitem => item.UserTicketId)</td>
+                    <td>@Html.DisplayFor(modelitem => item.subjectName)</td>
+                    <td>@Html.DisplayFor(modelitem => item.Priority.priorityLevel) - @Html.DisplayFor(modelitem => item.Priority.priorityMinute)</td>
+                    <td>@Html.DisplayFor(modelitem => item.createdBy)</td>
+                    <td>@Html.DisplayFor(modelitem => item.createdDate)</td>
+                    <td><strong style="text-transform:uppercase">@Html.DisplayFor(modelitem => item.statusName)</strong> </td>
+                    <td>@Html.DisplayFor(modelitem => item.AssignTo)</td>
+
+                    <td><button onclick="openAssigneeTicketing('@item.UserTicketId', '@item.statusName')" data-toggle="modal" data-target="#AssigneeTicket" class="btn btn-info ViewticketModelForrAdmin">View Ticket</button></td>
+                </tr>
+
+            }
+
+        </tbody>
+    </table>
+</div>
+}
+else
+{
+    <h5 class="jumbotron">No Created Tickets Available</h5>
+}
+<!-- The Modal -->
+<div id="AdminViewTicketAssignee">
+    <div class="modal-background">
+        <div class="modal " id="AssigneeTicket" style="position:absolute" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog"style="width:1200px;">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Assignee Ticket Working</h4>
+                        @*<button type="button"  data-dismiss="modal"></button>*@
+                        <a role="button" data-dismiss="modal" class="close close-custom-button-view-ticket">&times;</a>
+
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body" id="assigneeModalBody" style="max-height: 800px; overflow: scroll; min-height: 650px;">
+                        @*@{
+                Html.RenderAction("AssigneeTicket");
+            }*@
+
+                    </div>
+                    <div class="row" style="margin-top: 15px;margin-bottom: 10px;">
+                        <div class="form-group">
+                            <div class="col-md-3 pull-right">
+                                @*<input id="buttonAssigneeTicketGenerationForm" type="button" value="Save" class="btn btn-primary" />
+                    <input id="resetAssigneeTicketGenerationForm" type="button" value="Reset" class="btn btn-default" />*@
+                                <a style="float: right;" data-dismiss="modal" role="button" class="btn btn-default close-custom-button-view-ticket">Close</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="modal-container">
+    <div class="modal-background">
+        <div id="TicketCreationForEveryOne" class="modal animate fade" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content  slideInLeft animated">
+                    <div class="modal-header">
+                        <h5 class="modal-title">CCM Health Ticketing System</h5>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        @Html.Partial("UserTicketGeneration", new  UserTicketGeneration())
+                        @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script src="~/Scripts/imageuploadify.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    @* Select2 Script Library *@
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.js"></script>
+
+    <script>
+        $(function () {
+            $('#ListViewTicket').DataTable({
+                pageLength: 10,
+                columnDefs: [{ type: 'date', 'targets': [5] }],
+                order: [[5, 'desc']]
+            });
+            // Select2
+             $("#TicketGenerationId, #TypeId, #PriorityId,#TicketResolutionId,#StatusId").select2({
+            });
+            $("#PhyId").select2({
+
+            });
+            $("#StatusId").select2();
+            $('#patient').select2({
+                data: mockData(),
+                placeholder: 'search',
+                //multiple: true,
+                dropdownParent: $("#TicketCreationListView"),
+                // query with pagination
+                query: function (q) {
+                    debugger;
+                    var pageSize,
+                        results,
+                        that = this;
+                    pageSize = 20; // or whatever pagesize
+                    results = [];
+                    if (q.term && q.term !== '') {
+                        // HEADS UP; for the _.filter function i use underscore (actually lo-dash) here
+                        results = _.filter(that.data, function (e) {
+                            return e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0;
+                        });
+                    } else if (q.term === '') {
+                        results = that.data;
+                    }
+                    q.callback({
+                        results: results.slice((q.page - 1) * pageSize, q.page * pageSize),
+                        more: results.length >= q.page * pageSize,
+                    });
+                },
+            });
+
+        });
+
+
+        //$("#s2id_autogen1").keyup(function () {
+        //    console.log($(this).val());
+        //})
+
+        function mockData(val) {
+            var arr = [];
+
+            $.ajax({
+                url: "/Chats/getPatient?val=" + val,
+                type: "get"
+
+            }).done(function (res) {
+                debugger;
+
+                //for (var i = 0; i < 20000; i++) {
+                //    arr.push({
+                //        id: i,
+                //        text: 'te ststr ing to shuffle' + ' ' + i,
+                //    });
+                //}
+
+                $.each(res, function (i, obj) {
+                    //console.log(obj);
+
+                    arr.push({
+                        id: obj.Value,
+                        text: obj.Text,
+                    });
+                });
+
+            });
+
+            return arr;
+
+        }
+
+
+
+        function openAssigneeTicketing(userTicketId, statusname) {
+            debugger;
+            $.ajax({
+                url: "/Chats/getAdminAssignee?userTicketId=" + userTicketId + "&Ticket_status=" + statusname,
+                type: "get"
+            }).done(function (res) {
+                debugger;
+                if (res === "noticketId") {
+                    swal("Error!", "Error !!! UserTicketId Not Match:", "error");
+
+                } else if (res.indexOf("error_error") >= 0) {
+                    swal("Error!", "Error !!!" + res, "error");
+                }
+                else {
+                    $("#assigneeModalBody").html(res);
+                    $('#AssigneeUpload').imageuploadify();
+                }
+                $("#resetAssigneeTicketGenerationForm").click(function () {
+                    $('#AssigneeTicketGenerationForm').trigger("reset");
+                    $(".imageuploadify-container").remove();
+                });
+
+
+                $("#buttonAssigneeTicketGenerationForm").unbind().click(function () {
+                    var Form = "AssigneeTicketGenerationForm";
+                    var AddUpdate = "Save";
+                    $("#uploadFiles").val("");
+                    var form = $("#" + Form);
+                    form.validate();
+                    var formdata = false;
+                    $('.imageuploadify-container').each(function () {
+                        var src = $(this).find('img').attr("src");
+                        if ($("#uploadFiles").val() == "")
+                            $("#uploadFiles").val(src);
+                        else {
+                            var oldstr = $("#uploadFiles").val();
+                            src = oldstr + "|" + src;
+                            $("#uploadFiles").val(src);
+                        }
+                    });
+
+
+                    if (window.FormData) {
+                        formdata = new FormData(form[0]);
+                    }
+                    if (form.valid() == false) {
+                        return false;
+                    }
+
+                    var urltosend = form.attr('action');
+                    var datatosend = formdata ? formdata : form.serialize();
+                    $(".loader").show();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: urltosend,
+                        data: datatosend,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        success: function (json) {
+                            $(".loader").hide();
+                            if (json == "True") {
+                                $("#TicketGenerationId, #TypeId, #PriorityId").select2("val", "");
+                                var msg = "Saved Successfully";
+                                var titl = "Saved!";
+                                if (AddUpdate == "Update") {
+                                    titl = "Updated!";
+                                    msg = "Updated Successfully!";
+                                }
+                                else
+                                    $('#AssigneeTicketGenerationForm').trigger("reset");
+                                $(".imageuploadify-container").remove();
+
+                                swal({
+                                    title: titl,
+                                    text: msg,
+                                    icon: "success",
+                                    button: "Ok",
+                                    confirmButtonColor: "#1ab394",
+                                });
+                                debugger;
+                                window.location.href = "/Chats/ListViewTicket";
+                                //$("#AssigneeTicket").modal('toggle');
+
+                            }
+                            else {
+                                swal("Error!", "Error Accured :" + json, "error");
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            $(".loader").hide();
+                            var err = eval("(" + xhr.responseText + ")");
+                            swal("Error!", "Error Accured :" + err.Message, "error");
+                        }
+                    });
+
+                    return false
+
+
+                });
+
+            });
+        }
+
+
+        function clear() {
+            $('#AssigneeTicketGenerationForm').trigger("reset");
+            $(".imageuploadify-container").remove();
+
+        }
+        $('#ButonOpen').click(function () {
+            $('#modal-container').removeAttr('class').addClass("ButonOpen");
+            $('body').addClass('modal-active');
+        });
+        $('.close-custom-button').click(function () {
+            debugger;
+            $('#modal-container').addClass('out');
+            $('body').removeClass('modal-active');
+        });
+        $('.ViewticketModelForrAdmin').click(function () {
+            $('#AdminViewTicketAssignee').removeAttr('class').addClass("ViewticketModelForrAdmin");
+            $('body').addClass('modal-active');
+        });
+        $('.close-custom-button-view-ticket').click(function (e) {
+            debugger;
+            $('#AdminViewTicketAssignee').addClass('out');
+            $('body').removeClass('modal-active');
+        });
+
+    </script>
+}

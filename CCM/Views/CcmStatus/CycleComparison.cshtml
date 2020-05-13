@@ -1,0 +1,125 @@
+﻿@model CCM.Models.ReviewTimeViewModel
+
+
+
+@functions {
+    private static string TrimTimeSpan(TimeSpan reviewTime)
+    {
+        return reviewTime > TimeSpan.Zero ? reviewTime.ToString().Substring(0, reviewTime.ToString().IndexOf('.')) : reviewTime.ToString();
+    }
+}
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" type="text/css" />
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<style>
+    #CompareCycleModal .close{
+        margin-top:-36px;
+    }
+    .cycle-wrapper {
+        display: block;
+        table-layout: fixed;
+        width: 100%;
+        height: 90%;
+        border-collapse: separate;
+        border-spacing: 15px;
+        overflow:auto;
+    }
+    .cycle-wrapper-div {
+        display: table-cell;
+        box-shadow: 0px 0 8px 2px #ccc !important;
+        padding: 5px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        max-height:100%;
+        overflow:auto;
+    }
+    .modal-dialog{
+        width:90% !important;
+    }
+</style>
+
+
+
+
+<div class="cycle-wrapper">
+
+
+    @foreach (var rtcItem in Model.ReviewTimeCycles)
+    {
+        var submittedcycle = Model.billingCycles.Where(x => x.Cycle == rtcItem.CycleId).FirstOrDefault();
+
+        
+    <div class="cycle-wrapper-div">
+        <h3 style="text-align:center">Cycle: @rtcItem.CycleId</h3>
+
+        <label style="text-align:center;width:100%;">Total Time Spent: @TrimTimeSpan(rtcItem.TotalReviewTime)</label>
+        @if (submittedcycle != null)
+        {
+            <label style="text-align:center;width:100%;">Billing Code 1: @submittedcycle.BillingCode1</label>
+            <label style="text-align:center;width:100%;">Billing Code 2: @submittedcycle.BillingCode2</label>
+        }
+        else
+        {
+            <label style="text-align:center;width:100%;">Billing Code 1: N/A</label>
+            <label style="text-align:center;width:100%;">Billing Code 2: N/A</label>
+        }
+
+        <hr />
+        <div class="tablefixwidth">
+
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Page</th>
+                        <th>Review Encounter</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var rtcdetail in rtcItem.ReviewTimeCycleCcms)
+                    {
+                        <tr>
+                            <td>
+                                @rtcdetail.Page
+                            </td>
+                            <td>
+                                @{ var reviewTime = (TimeSpan)rtcdetail.ReviewTime; }
+                                @reviewTime.ToString(@"hh\:mm\:ss")
+                            </td>
+                            <td>
+                                @{
+                                    if (submittedcycle != null)
+                                    {
+                                        var submittedcycledetail = submittedcycle.BillingCycleDetails.Where(x => x.RecordingID == rtcdetail.Id && x.isDeleted == false).FirstOrDefault();
+                                        if (submittedcycledetail != null)
+                                        {
+                                            <label>Submitted</label>
+                                        }
+                                        else
+                                        {
+                                            <label>Pending</label>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <label>Pending</label>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    }
+</div>
+
+
+
+
+

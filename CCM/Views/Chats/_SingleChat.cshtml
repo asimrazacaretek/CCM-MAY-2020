@@ -1,0 +1,2322 @@
+﻿@using System.Linq
+@using System.Data;
+@using Microsoft.AspNet.Identity;
+@using CCM.Models.ViewModels;
+@using CCM.Controllers;
+@model IEnumerable<CCM.Models.GroupchatsViewModel>
+
+<link href="~/Content/BootToast/bootoast.css" rel="stylesheet" />
+
+@{
+    var TicketHistory = ViewBag.TicketHistory as List<NotificationViewMidal>;
+    TicketHistory = TicketHistory.OrderByDescending(x => x.createdDate).ToList();
+}
+<style>
+    #ticketnotifyTable > tbody > tr > td {
+        border: 0px;
+        padding: 0px !important
+    }
+
+    .Notifyspacer {
+        background: #e0e0e0;
+        height: 1px;
+        margin: 1px 0px;
+    }
+
+    .unread-Btn {
+        background: #1a7af7;
+        border-radius: 65px;
+        font-size: 1px;
+        margin-left: 16px;
+        padding: 4px;
+        width: min-content;
+        float: right;
+        margin-top: -31px;
+        margin-right: -13px;
+    }
+
+    #ChatModal.modal {
+        width: 300px;
+        right: 0;
+        position: fixed !important;
+        left: auto;
+        top: 10%;
+        overflow: hidden;
+    }
+
+    .modal-dialog-right {
+        padding: 0;
+        z-index: 2;
+    }
+
+        .modal-dialog-right .modal-content {
+            border-width: 0;
+            border-radius: 0
+        }
+
+    .modal.fade .modal-dialog-right {
+    }
+
+    .h-100 {
+        height: 100% !important;
+    }
+
+    .dropdown-header.bg-trans-gradient {
+        padding: 1.25rem 1.5rem
+    }
+
+    .bg-trans-gradient {
+        background: #1d76c8;
+        height: 48px;
+    }
+
+    .text-white {
+        color: white !important;
+    }
+
+    .d-flex {
+    }
+
+    .align-items-center {
+        -webkit-box-align: center !important;
+        -ms-flex-align: center !important;
+        align-items: center !important
+    }
+
+    .w-100 {
+        width: 100% !important;
+    }
+
+    .d-flex {
+        display: -webkit-box !important;
+        display: -ms-flexbox !important;
+        display: flex !important
+    }
+
+    .flex-row {
+        -webkit-box-orient: horizontal !important;
+        -webkit-box-direction: normal !important;
+        -ms-flex-direction: row !important;
+        flex-direction: row !important
+    }
+
+    .profile-image {
+        width: 3.125rem;
+        height: 3.125rem
+    }
+
+    .profile-image-md {
+        width: 2.5rem;
+        height: 2.5rem
+    }
+
+    .profile-image-sm {
+        width: 1.5625rem;
+        height: 1.5625rem
+    }
+
+    .d-block {
+        display: block !important
+    }
+
+    .info-card .info-card-text {
+        margin-left: 1rem;
+        color: inherit;
+        text-shadow: #000 0 1px;
+        z-index: 1;
+        position: relative;
+        line-height: normal
+    }
+
+        .info-card .info-card-text > span {
+            font-weight: 300
+        }
+
+    .info-card-text {
+        font-size: .875rem;
+        display: inline-block;
+        vertical-align: middle;
+        font-weight: 500;
+        line-height: 1.35
+    }
+
+        .info-card-text > span {
+            font-size: .875rem;
+            display: block;
+            font-weight: 300
+        }
+
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap
+    }
+
+    .msgr-list {
+        width: 300px;
+    }
+
+    .flex-column {
+        -webkit-box-orient: vertical !important;
+        -webkit-box-direction: normal !important;
+        -ms-flex-direction: column !important;
+        flex-direction: column !important
+    }
+
+    .pl-3 {
+        padding-left: 1rem !important;
+    }
+
+    #msgr_listfilter_input {
+        -webkit-transition: all 470ms cubic-bezier(.34,1.25,.3,1);
+        transition: all 470ms cubic-bezier(.34,1.25,.3,1)
+    }
+
+    #msgr_listfilter_input {
+        width: calc(100% - 1rem);
+        margin: 0 auto;
+        margin-top: -41px;
+        padding-left: 41px;
+        margin-bottom: 10px;
+        opacity: 0;
+        background: 0 0;
+        -webkit-transition-delay: .1s;
+        transition-delay: .1s;
+        max-width: 85%;
+        border: 1px solid lightgrey;
+    }
+
+    .msgr-list:hover #msgr_listfilter_input {
+        opacity: 1
+    }
+
+    .msgr-list:hover + .msgr:before {
+        opacity: 1;
+        visibility: visible
+    }
+
+    body:not(.no-slimscroll) .custom-scroll {
+        overflow: hidden;
+    }
+
+    .flex-1 {
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1
+    }
+
+    .custom-scroll, .custom-scrollbar {
+        overflow: hidden;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch
+    }
+
+    .list-unstyled {
+        padding-left: 0;
+        list-style: none
+    }
+
+    .d-table {
+        display: table;
+    }
+
+    .pr-2, .px-2 {
+        padding-right: .5rem !important
+    }
+
+    .px-2 {
+        padding-left: .5rem !important
+    }
+
+    .pt-2, .py-2 {
+        padding-top: .5rem !important
+    }
+
+    .pb-2, .py-2 {
+        padding-bottom: .5rem !important
+    }
+
+    .d-table-cell {
+        display: table-cell !important;
+    }
+
+    .status {
+        position: inherit;
+        vertical-align: bottom;
+    }
+
+        .status:before {
+            content: " ";
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            display: block;
+            top: -2px;
+            right: -2px;
+            background: #505050;
+            border-radius: 50%;
+            border: 2px solid #fff
+        }
+
+        .status.status-sm:before {
+            width: 10px;
+            height: 10px;
+            border-width: 1px;
+            top: 0;
+            right: 0
+        }
+
+        .status.status-success:before {
+            background: #1dc9b7
+        }
+
+        .status.status-danger:before {
+            background: #fd3995
+        }
+
+        .status.status-warning:before {
+            background: #ffc241
+        }
+
+    .pl-2, .px-2 {
+        padding-left: .5rem !important
+    }
+
+    .fs-xs {
+        font-size: .95rem !important
+    }
+
+    .close span {
+        float: right;
+        margin-left: 150px;
+    }
+
+    .close:hover {
+        background-color: transparent !important;
+    }
+
+    .chat-segment-sent {
+        text-align: right;
+        position: relative;
+        margin: 0 0 .5rem 3rem
+    }
+
+        .chat-segment-sent.chat-start .chat-message {
+            border-bottom-right-radius: 3px
+        }
+
+        .chat-segment-sent.chat-start + :not(.chat-end) .chat-message {
+            border-bottom-right-radius: 3px;
+            border-top-right-radius: 3px
+        }
+
+        .chat-segment-sent.chat-end .chat-message {
+            border-top-right-radius: 3px
+        }
+
+        .chat-segment-sent .chat-message {
+            background: #1dc9b7;
+            color: #fff;
+            text-align: left
+        }
+
+    .chat-message {
+        padding: .75rem 1rem;
+        border-radius: .625rem;
+        position: relative;
+        display: inline-block;
+        background: #f1f0f0;
+    }
+
+        .chat-message > p {
+            padding: .75rem 0 0;
+            margin: 0
+        }
+
+            .chat-message > p:first-child {
+                padding-top: 0
+            }
+
+    .chat-start {
+        margin-bottom: 3px !important
+    }
+
+        .chat-start .time-stamp {
+            display: none
+        }
+
+        .chat-start + .chat-segment:not(.chat-end) {
+            margin-bottom: 3px !important
+        }
+
+            .chat-start + .chat-segment:not(.chat-end) .time-stamp {
+                display: none
+            }
+
+    .chat-segment-get .chat-message {
+        margin-right: 55px;
+    }
+</style>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Button used to open the chat form - fixed at the bottom of the page */
+    .open-button {
+        background-color: #555;
+        color: white;
+        padding: 16px 20px;
+        border: none;
+        cursor: pointer;
+        opacity: 0.8;
+        position: fixed;
+        bottom: 23px;
+        right: 28px;
+        width: 280px;
+    }
+
+    /* The popup chat - hidden by default */
+    .chat-popup {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        right: 300px;
+        width: 28%;
+        z-index: 9;
+    }
+
+    /* Add styles to the form container */
+    .form-container {
+        max-width: 100%;
+        padding: 10px;
+        background-color: white;
+    }
+
+        /* Full-width textarea */
+        .form-container textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0 22px 0;
+            border: none;
+            background: #f1f1f1;
+            resize: none;
+            min-height: 200px;
+        }
+
+            /* When the textarea gets focus, do something */
+            .form-container textarea:focus {
+                background-color: #ddd;
+                outline: none;
+            }
+
+        /* Add some hover effects to buttons */
+        .form-container .btn:hover, .open-button:hover {
+            opacity: 1;
+        }
+
+    #Userlist {
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 75vh;
+    }
+
+    #GroupListforTab {
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 69vh;
+    }
+
+        #Userlist li, #GroupListforTab li {
+            list-style: none;
+            padding: 3px 0;
+            cursor: pointer;
+        }
+
+            #Userlist li:hover, #GroupListforTab li:hover {
+                background-color: rgba(0, 0, 0, 0.3);
+            }
+
+            #Userlist li a, #GroupListforTab li:hover {
+                cursor: pointer;
+            }
+
+    .overflow-y-scroll {
+        overflow-y: scroll !important;
+    }
+
+
+    .modal-open .modal {
+        position: fixed;
+    }
+
+    #SearchBoxListUnit {
+        width: 95%;
+        margin-top: 15px;
+    }
+
+        #SearchBoxListUnit input {
+            width: 100%;
+            /* min-width: 185%; */
+            padding: 10px;
+        }
+
+    .custom-cross-btn {
+        cursor: pointer;
+        margin-left: 8px;
+        font-size: 12px;
+        color: black;
+        background: white;
+        border-radius: 50%;
+        padding: 0px 5px;
+    }
+
+    #chatuser {
+        padding: 15px 1px;
+        margin-bottom: 0;
+        font-size: 14px;
+    }
+
+    .mt-5 {
+        margin-top: 15px;
+    }
+
+    .color-white {
+        color: white !important;
+    }
+
+    #message, #txtGroupmessage {
+        border-radius: 10px;
+        padding: 12px 40px 11px 90px;
+        background-color: rgba(209, 206, 206, 0.3) !important;
+        border: 0 !important;
+        color: black !important;
+        height: 60px !important;
+        overflow-y: auto;
+        width: 100%;
+        position: relative;
+        font-size: 1.2em;
+        word-break: break-word;
+    }
+
+    #btnemoji {
+        position: fixed;
+        margin-top: 17px;
+        cursor: pointer !important;
+        font-size: 20px !important;
+        z-index: 5 !important;
+    }
+
+    .chat-segment.chat-segment-get {
+        margin-bottom: 10px;
+    }
+
+    .text-sent {
+        color: rgba(255,255,255,0.9) !important;
+    }
+
+    .text-get {
+        color: #999 !important;
+    }
+
+    .p-0 {
+        padding: 0 !important;
+        position: initial !important;
+    }
+
+    .modal-open .navbar-fixed-top {
+        margin-right: 0 !important;
+    }
+
+    .noti-msg, .notifi-msg, .new-group {
+        float: right;
+        font-size: 17px;
+        color: white;
+        background: linear-gradient(250deg,#3e93d6,#8a75aa);
+        border-radius: 50%;
+        min-width: 22px;
+        padding: 0px 2px;
+        text-align: center;
+    }
+
+    #document, #Groupdocument {
+        display: none;
+    }
+
+    #styledInput, #GroupstyledInput {
+        color: #1dc9b7;
+        font-size: 20px;
+        margin-left: 9%;
+        position: relative;
+        bottom: 40px;
+        font-weight: bolder;
+        z-index: 5;
+        cursor: pointer;
+    }
+
+    .cstm-file-icon {
+        font-size: 16px;
+        margin-right: 7px;
+        color: #8477AC;
+    }
+
+    .file-message {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .customized-tabs {
+        width: 49%;
+    }
+
+    .nav-for-chat {
+        box-shadow: 8px -2px 25px;
+        font-weight: bolder;
+    }
+
+    #GroupListforTab {
+        padding: 0 !important;
+    }
+
+    .customized-btn {
+        min-width: 100%;
+        border-color: #428bca !important;
+        color: #428bca !important;
+    }
+
+        .customized-btn:hover {
+            background-color: #428bca !important;
+            border-color: #428bca !important;
+            color: white !important;
+        }
+
+        .customized-btn:active {
+            background-color: #428bca !important;
+            border-color: #428bca !important;
+            color: white !important;
+        }
+
+        .customized-btn:focus {
+            background-color: #428bca !important;
+            border-color: #428bca !important;
+            color: white !important;
+        }
+
+    .customized-tabs a {
+        border-radius: 0 !important;
+    }
+
+    .editchatdiv {
+        font-size: 16px;
+    }
+
+    #Groupchatuser {
+        margin-bottom: 0;
+        font-size: 16px;
+        padding: 6px 0px;
+        min-height: 50px;
+        max-width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #AddGroupChat .open .dropdown-menu {
+        margin-left: 0;
+        padding-left: 0px;
+    }
+
+        #AddGroupChat .open .dropdown-menu .checkbox input[type="checkbox"] {
+            margin-left: 0;
+            padding-left: 5px;
+        }
+
+    #chatparticipents {
+        max-width: 70%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        position: absolute;
+        top: 30px;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .chat-segment-get .chat-message strong {
+        color: #083dd2;
+        border-bottom: 0px solid;
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+
+    .nav-tabs {
+        margin-left: 0 !important;
+    }
+
+    .activity-feed {
+        display: inline-grid;
+        background: white;
+        width: 100%;
+        padding: 13px;
+        border: 1px solid #1dc9b7;
+    }
+
+    .inner-div {
+        padding: 5px 10px;
+        text-decoration: underline;
+        font-weight: 700;
+    }
+
+    .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+        background-color: #1d76c8;
+    }
+
+    #MainUlofPart {
+        margin-top: 40px;
+        letter-spacing: 1px;
+        padding-left: 5px;
+        height: 30vh;
+        overflow-y: scroll;
+    }
+
+        #MainUlofPart li {
+            padding: 5px;
+            text-decoration: underline;
+            list-style: none;
+        }
+
+    #GroupModal {
+        overflow: auto;
+        HEIGHT: 470PX;
+        OVERFLOW-Y: HIDDEN;
+    }
+
+    .DummyImg img {
+        border-radius: 50%;
+        width: 30px;
+        margin: 0px 10px;
+    }
+
+    .DummyImgGroup img {
+        width: 30px;
+        margin: 0px 10px;
+        border-radius: 50%;
+        background-color: #d1d1d1;
+    }
+
+    #ChatModal .tab-content {
+        background-color: white !important;
+        box-shadow: none !important;
+    }
+
+    .mr-17 {
+        margin-right: 17px
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script>
+    $(document).ready(function () {
+        Notification();
+        $("#chatparticipents").click(function (e) {
+            debugger;
+            var elm = $(this);
+            var xPos = e.clientX - 100;
+            var yPos = e.clientY;
+            $("#GroupModal").css({
+                "top": yPos,
+                "left": xPos
+            });
+        });
+    });
+    function Notification() {
+        var Userid = '@User.Identity.GetUserId()';
+        $.ajax({
+            type: "POST",
+            url: "/Chats/GetNotificationsDetails",
+            data: {
+                'id': Userid
+            },
+            success: function (result) {
+
+                var data = result;
+                if (data.length > 0) {
+                    for (var i = 0; i < data.length; i++) {
+                        var obj = data[i];
+                        if (obj.unreadAllMsg > 0) {
+                            $("span.frnotif." + Userid).text(obj.unreadAllMsg);
+                            $("span.frnotif." + Userid).addClass("red");
+                            if (obj.UnreadGroupMsg > 0) {
+                                $("#GroupListforTab li." + Userid).find(".newgroupchatMsgicon." + obj.groupid).text(obj.UnreadGroupMsg);
+                                $("#GroupListforTab li." + Userid).find(".newgroupchatMsgicon." + obj.groupid).addClass("notifi-msg");
+                                $("#GroupListforTab li." + Userid).find(".newgroupchatMsgicon." + obj.groupid).parent().parent().parent().parent().addClass("unread");
+                                $("#Tab-GroupNoti").removeClass('hide');
+                                $("#GroupListforTab li." + Userid).find("[data-id='" + obj.groupid + "']").parent().prependTo('ul#GroupListforTab');
+                                $("#GroupListforTab." + Userid).scrollTop(0);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        /////////////Private Chat One Time Notifications
+        $.ajax({
+            type: "POST",
+            url: "/Chats/GetPrivateChatDetails",
+            data: {
+                'id': Userid
+            },
+            success: function (result) {
+                var data = result;
+                if (data.length > 0) {
+                    for (var i = 0; i < data.length; i++) {
+                        var obj = data[i];
+                        if (obj.total > 0) {
+                            $("li." + Userid).find("." + obj.user).text(obj.total);
+                            $("li." + Userid).find("." + obj.user).addClass("noti-msg");
+                            $("li." + Userid).find("." + obj.user).parent().parent().parent().parent().addClass("unread");
+
+                            $("#Userlist li." + Userid).find("[data-id='" + obj.user + "']").parent().prependTo('ul#Userlist');
+                            $("#Userlist." + Userid).scrollTop(300);
+                            $("#Tab-SingleNoti").removeClass('hide');
+                        }
+                    }
+                }
+            }
+        });
+        ///New Group Notifications
+        $.ajax({
+            type: "POST",
+            url: "/Chats/GetNewGroupList",
+            data: {
+                'id': Userid
+            },
+            success: function (result) {
+                var data = result;
+                if (data.length > 0) {
+                    for (var i = 0; i < data.length; i++) {
+                        var obj = data[i];
+
+                        if (obj.totalgroup > 0) {
+                            $("span.newgroup." + Userid).text(obj.totalgroup);
+                            if (!$("#GroupListforTab li." + Userid).find(".newgroupchatMsgicon." + obj.user).hasClass("notifi-msg")) {
+                                $("#GroupListforTab li." + Userid).find(".newgroupchatMsgicon." + obj.user).append("+");
+                                $("#GroupListforTab li." + Userid).find(".newgroupchatMsgicon." + obj.user).addClass("new-group");
+                            }
+                            $("#Tab-GroupNoti").removeClass('hide');
+                            $("#GroupListforTab li." + Userid).find("[data-id='" + obj.user + "']").parent().prependTo('ul#GroupListforTab');
+                            $("#GroupListforTab." + Userid).scrollTop(300);
+                        }
+                    }
+                }
+            }
+        });
+    }
+    function CloseGropChatbox() {
+        $("#GroupChatBox").hide();
+    }
+    $("#BigButtonofAddGroupChat").unbind().click(function () {
+        $("#selectedgroupid").val("");
+        ChatModalPostionAbs();
+    });
+    function ChatModalPostionAbs() {
+
+        $(".modal-open .modal").css({ position: 'absolute' });
+        $("#ChatModal").modal("hide");
+    }
+    function ChatModalPostionStat() {
+        $(".modal-open .modal").css({ position: 'static' });
+        }
+
+    $('#document').change(function () {
+        var filename = this.value.split("fakepath")[1];
+        $('#message').val(filename);
+    });
+        $('#styledInput').unbind().click(function () {
+        $("#document").trigger('click');
+    })
+    $('#Groupdocument').change(function () {
+        var filename = this.value.split("fakepath")[1];
+        $('#txtGroupmessage').val(filename);
+    });
+        $('#GroupstyledInput').unbind().click(function () {
+        $("#Groupdocument").trigger('click');
+    })
+    function RefreshChat() {
+        $.ajax({
+            url: "/Chats/_SingleChat",
+            type: 'GET',
+            success: function (result) {
+                $('#SingnalR').html();
+                $('#SingnalR').html(result);
+            }
+        });
+    }
+
+    function editchatdialog() {
+        CloseGropChatbox();
+        CloseChatbox();
+        ChatModalPostionAbs();
+        $(".loader").show();
+        isedit = true;
+        $.ajax({
+            type: "POST",
+            url: "/Chats/GetChatParticipent",
+            data: {
+                'id': $("#selectedgroupid").val()
+            },
+            success: function (result) {
+                if (result != "false") {
+                    $('#ddlUsers').val(result);
+                    $('#ddlUsers').multiselect('refresh');
+
+                    $("#txtchatname").val($("#groupchatlabel" + $("#selectedgroupid").val()).text().trim());
+                    var chatid = $("#selectedgroupid").val();
+                    var status = $("#groupchatstatus" + $("#selectedgroupid").val()).attr("data-status");
+                    $("#ddlStatus").val(status);
+
+                    $(".chatstatus").show();
+                    $("#AddGroupChat").modal("show");
+                }
+                else {
+
+                }
+                $(".loader").hide();
+
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+    function setselectedchatandgetdetails(id) {
+        $("#MainUlofPart").html("");
+        CloseChatbox();
+        var send = '@User.Identity.GetUserId()';
+        $("#GroupChatBox").show();
+        var val = $("span.frnotif." + send).text();
+        var groupmsg = $("#groupchatlabel" + id).find(".newgroupchatMsgicon." + id).text();
+        $("#groupchatlabel" + id).find(".newgroupchatMsgicon." + id).find(".notifi-msg").removeClass("notifi-msg");
+        $("#GroupListforTab li." + id).find(".unread").removeClass("unread");
+        debugger;
+        var count = 0;
+        if(groupmsg!="+")
+        {
+            debugger;
+               if (groupmsg != undefined && val != "")
+                    count = val - groupmsg;
+                if (count == 0)
+                    $("span.frnotif." + send).text("");
+                else
+                    $("span.frnotif." + send).text(count);
+        }
+        else{
+            var groups= $("span.newgroup." + send).text();
+            if (groups != undefined && groups != "") {
+                if (groups != "1" && groups != "0") {
+                    $("span.newgroup." + send).text(groups - 1);
+                }
+                else {
+                    $("span.newgroup." + send).text("");
+                }
+            }
+        }
+
+        $("#groupchatlabel" + id).find(".newgroupchatMsgicon." + id).text("");
+
+        var createdby = $("#groupchat" + id).attr("data-CreatedBy");
+        var userid = $("#groupchat" + id).attr("data-Userid");
+        if (createdby == userid) {
+            $(".editchatdiv").show();
+        }
+        else {
+            $(".editchatdiv").hide();
+        }
+        $("#Tab-GroupNoti").addClass('hide');
+        $("#selectedgroupid").val(id);
+        $('#Groupdiscussion' + send).empty();
+        //$(".groupchatmaindiv").css("background-color", "transparent");
+        //$("#groupchat" + id).css("background-color", "rgba(0,0,0,0.3)");
+        var groupname = $("#groupchat" + id).attr("data-chatname");
+        $(".chatnamedetail").attr("data-groupname", groupname);
+        $("#Groupchatuser").text($("#groupchat" + id).attr("data-chatname"));
+        $("#ChatListofPart").text($("#groupchat" + id).attr("data-users"));
+        var send = '@User.Identity.GetUserId()';
+        $("#GroupChatBox").removeAttr('data-groupid');
+        $("#GroupChatBox").attr('data-groupid', id);
+
+        $("#GroupChatBox form").removeClass();
+        $("#GroupChatBox form").addClass('form-container chatform ' + id);
+        $("#Groupchatuser").attr("title", $("#Groupchatuser").text());
+        var tagslistarr = $("#ChatListofPart").text().split(',');
+        var abc = '';
+        $.each(tagslistarr, function (i, val) {
+            abc += '<li ><span class="DummyImg"> <img src="/images/avatar-m.png" /></span>'  + tagslistarr[i] + '</li>';
+
+            //<img src="~/images/avatar-m.png" alt="No Image" />
+
+
+        });
+        $("#ChatListofPart").text('');
+        $("#MainUlofPart").append(abc);
+        $('.groupchatCounts').text(@Model.Count());
+        getdetailsininterval();
+        ScrollToBottom();
+   }
+    function CloseChatbox() {
+        $("#myForm").hide();
+        $("#GroupChatBox").hide();
+    }
+    function SearchFunction() {
+        var input = document.getElementById("search-box");
+        var filter = input.value.toLowerCase();
+        var nodes = document.getElementsByClassName('searchablediv');
+
+        for (i = 0; i < nodes.length; i++) {
+            if (nodes[i].innerText.toLowerCase().includes(filter)) {
+                nodes[i].style.display = "block";
+
+            } else {
+                nodes[i].style.display = "none";
+            }
+        }
+    }
+    function SearchGroup() {
+        var input = document.getElementById("search-box-group");
+        var filter = input.value.toLowerCase();
+        var nodes = document.getElementsByClassName('groupsearchablediv');
+
+        for (i = 0; i < nodes.length; i++) {
+            if (nodes[i].innerText.toLowerCase().includes(filter)) {
+                nodes[i].style.display = "block";
+
+            } else {
+                nodes[i].style.display = "none";
+            }
+        }
+    }
+    function openForm(e)
+    {
+        CloseGropChatbox();
+        var send = '@User.Identity.GetUserId()';
+        $("#Tab-SingleNoti").addClass('hide');
+        $(e).find(".noti-msg").removeClass("noti-msg");
+        var val = $("span.frnotif." + send).text();
+        var msgs = $(e).find('.newchatMsgicon').text();
+        var count = 0;
+        if (msgs != undefined)
+            count = val - msgs;
+        if (count == 0)
+            $("span.frnotif." + send).text("");
+        else
+            $("span.frnotif." + send).text(count);
+        $(e).find('.newchatMsgicon').text("");
+        //$("#ChatModal").hide();
+
+        $('#discussion' + send).empty();
+
+        document.getElementById("myForm").style.display = "block";
+        $("#chatuser").text(e.text);
+        var reciverid = e.attributes["0"].value;
+        $("#reciverid").text(reciverid);
+        $("#myForm form").removeClass();
+        $("#myForm form").addClass('form-container chatform ' + reciverid);
+
+
+        var url = "/Chats/DisplayAllMessage";
+        $.post(url, { senderId: send, recevierId: reciverid }, function (data) {
+            if (data.list.length > 0) {
+                for (var i = 0; i < data.list.length; i++) {
+                    var obj = data.list[i];
+                    var date = parseJsonDate(obj.DateSent) != null ? parseJsonDate(obj.DateSent) : '-----';
+                    if (obj.From == send) {
+                        if (obj.Attachment === true) {
+                            $('#discussion' + obj.From).append("<div  onclick='DownloadDoc(" + obj.id + ")' class='chat-segment chat-segment-sent'><div style='cursor:pointer;text-decoration:underline' class='chat-message file-message'><p><span class='fa fa-file cstm-file-icon-send'></span>" + obj.Message + "</p><div class='text-right fw-300 text-sent mt-1 fs-xs pull-right'>" + getChatTime(date) + "</div></div></div>");
+
+                        } else {
+                        $('#discussion' + obj.From).append("<div class='chat-segment chat-segment-sent'><div class='chat-message'><p>" + obj.Message + "</p><div class='text-right fw-300 text-sent mt-1 fs-xs pull-right'>" + getChatTime(date) + "</div></div></div>");
+                        }
+                        //$('#discussion' + obj.to).append("<div class='chat-segment chat-segment-sent'><div class='chat-message'><p>" + obj.Message + "</p></div><div class='text-right fw-300 text-muted mt-1 fs-xs'></div></div>");
+                    }
+                    else {
+
+                        if (obj.Attachment === true) {
+
+                            $('#discussion' + obj.To).append("<div  onclick='DownloadDoc(" + obj.id + ")' class='chat-segment chat-segment-get'><div style='cursor:pointer;text-decoration:underline' class='chat-message file-message'><p><span class='fa fa-file cstm-file-icon'></span>" + obj.Message + "</p><div class='text-right fw-300 text-get mt-1 fs-xs pull-left'>" + getChatTime(date) + "</div></div></div>");
+
+
+                        } else {
+
+                        $('#discussion' + obj.To).append("<div class='chat-segment chat-segment-get'><div class='chat-message'><p>" + obj.Message + "</p><div class='text-right fw-300 text-get mt-1 fs-xs pull-left'>" + getChatTime(date) + "</div></div></div>");
+                        }
+                        //$('#discussion' + obj.From).append("<div class='chat-segment chat-segment-get'><div class='chat-message'><p>" + obj.Message + "</p></div><div class='text-right fw-300 text-muted mt-1 fs-xs'></div></div>");
+
+                    }
+                    ScrollToBottom();
+                }
+            }
+            $("#MessageCountForSingle").text(data.count);
+             $(".OneToOneListCount").text(@ViewBag.AllUserCount);
+
+        }).done(function () {
+            //hub.server.notifyOfMessageOwner();
+        });
+    }
+    function getdetailsininterval() {
+          var send = '@User.Identity.GetUserId()';
+        if ($("#selectedgroupid").val() == "") {
+            setTimeout(function () {
+                getdetailsininterval();
+            }, 200);
+        }
+        else {
+            var lastid = 0;
+            if ($("#lastid").val() != undefined) {
+                lastid = $("#lastid").val();
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Chats/Details",
+                data: {
+                    'id': $("#selectedgroupid").val()
+                },
+                success: function (result) {
+                    $(".loader").hide();
+                    $(".ChatContainer").html(result).promise().done(function () {
+                        ScrollToBottom();
+                        $("#TotalMessageofGroup").text($("#lastid").val());
+                    });
+
+                }, error: function (result) {
+                    $(".loader").hide();
+                }
+            });
+        }
+
+    }
+
+    //function DownloadDoc(id) {
+    //    window.location.href = "/Chats/DownloadDoc?id=" + id;
+    //}
+
+    function parseJsonDate(jsonDateString) {
+        return new Date(parseInt(jsonDateString.replace('/Date(', '')));
+    }
+    function closeForm() {
+        document.getElementById("myForm").style.display = "none";
+    }
+    function ScrollToBottom() {
+        $('.ChatContainer').scrollTop(1E10);
+    }
+    function parseDate(input) {
+        if (input) {
+            var parts = input.match(/(\d+)/g);
+            // new Date(year, month [, date [, hours[, minutes[, seconds[, ms]]]]])
+            return new Date(parts[0], parts[1] - 1, parts[2]); // months are 0-based
+        } else {
+            return null;
+        }
+    }
+
+
+</script>
+
+<!--Script references. -->
+<!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
+<!--Reference the SignalR library. -->
+<script src="~/Content/BootToast/bootoast.js"></script>
+<script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+<!--Reference the autogenerated SignalR hub script. -->
+<script src="~/signalr/hubs"></script>
+<!--SignalR script to update the chat page and send messages.-->
+<script>
+    $(function () {
+        function AutomatedSingleCounter() {
+            var value = $("#MessageCountForSingle").text();
+            value = Number(value) + Number(1);
+            $("#MessageCountForSingle").text(value);
+        }
+        function AutomatedGroupCounter() {
+            var value = $("#TotalMessageofGroup").text();
+            value = Number(value) + Number(1);
+            $("#TotalMessageofGroup").text(value);
+        }
+        // Reference the auto-generated proxy for the hub.
+        var chat = $.connection.chatHub;
+        var senderId = '@User.Identity.GetUserId()';
+        //Notification For Receipent
+        chat.client.frnotify = function (f, Totalcount, UnreadForUser, sender) {
+            debugger;
+            $("span.frnotif." + f).text(Totalcount);
+            $("span.frnotif." + f).addClass("red");
+            $("li." + f).find("." + sender).text(UnreadForUser);
+            $("li." + f).find("." + sender).addClass("noti-msg");
+            $("li." + f).find("." + sender).parent().parent().parent().parent().addClass("unread");
+            $("#Userlist li." + f).find("[data-id='" + sender + "']").parent().prependTo('ul#Userlist');
+            $("#Userlist." + f).scrollTop(0);
+        }
+
+
+        //Notification For Receipent
+        chat.client.groupchatnotify = function (notify) {
+            debugger;
+            let arr = notify;
+            let obj = arr.find(o => o.user === senderId);
+           // $("span.newgroup." + obj.user).text(obj.unreadAllMsg);
+            $("span.frnotif." + obj.user).text(obj.unreadAllMsg);
+            $("span.frnotif." + obj.user).addClass("red");
+            $("#GroupListforTab li." + obj.user).find(".newgroupchatMsgicon." + obj.groupid).text(obj.UnreadGroupMsg);
+            $("#GroupListforTab li." + obj.user).find(".newgroupchatMsgicon." + obj.groupid).addClass("notifi-msg");
+            $("#GroupListforTab li." + obj.user).find(".newgroupchatMsgicon." + obj.groupid).parent().parent().parent().parent().addClass("unread");
+            $("#Tab-GroupNoti").removeClass('hide');
+            $("#GroupListforTab li." + obj.user).find("[data-id='" + obj.groupid + "']").parent().prependTo('ul#GroupListforTab');
+            $("#GroupListforTab." + obj.user).scrollTop(0);
+        }
+        ///////////////////////////////This will update all UnRead Message to Read//////////////////////////////////////////////////////
+        //    $("body").on("click", "span.frnotif.red", function () {
+
+        //    $("ul#msgnotiful").empty();
+
+        //    var url = "/Chats/DisplayUnreadMessages";
+        //    $.post(url, { userId: senderId }, function (data) {
+        //        if (data.length > 0) {
+        //            $("ul#msgnotiful").append("<li class=close>x</li>");
+        //        }
+
+        //        for (var i = 0; i < data.length; i++) {
+        //            var obj = data[i];
+        //            $("ul#msgnotiful").append('<li class=msgnotifli><a href="/' + obj.From + '"><img src="uploads/' + obj.id + '.jpg" /><span class="label label-warning">' + ' ' + obj.Message + '</span></a></li>');
+        //        }
+        //        //chat.server.notify(to, senderId);
+
+        //    }).done(function () {
+        //        //chat.server.notify(to);
+        //    });
+
+        //});
+        ///////////////////////////////This will update all UnRead Message to Read//////////////////////////////////////////////////////
+        //Notification for NewGroup
+        //chat.client.NewgroupNotify = function (userlist) {
+        //    debugger;
+        //    let arr = userlist;
+        //    let obj = arr.find(o => o.user === senderId);
+        //    if (obj != undefined) {
+        //        $("span.newgroup." + obj.user).text(obj.totalgroup);
+        //    }
+        //    $("#GroupListforTab").scrollTop(0);
+        //    window.location.reload();
+
+        //}
+
+        // Create a function that the hub can call back to display messages.
+        chat.client.addNewMessageToPage = function (name, Reciverid, message, attachment, messageId) {
+            $("#Tab-SingleNoti").removeClass('hide');
+            // Add the message to the page.
+            var d = new Date();
+            var time = d.toLocaleString([], { hour: '2-digit', minute: '2-digit' });
+            if (attachment === true) {
+                $('.' + Reciverid).find('#discussion' + senderId).append("<div  onclick='DownloadDoc(" + messageId + ")' class='chat-segment chat-segment-get'><div style='cursor:pointer;text-decoration:underline' class='chat-message file-nessage'><p><span class='fa fa-file cstm-file-icon-send'></span>" + message + "</p><div class='text-right fw-300 text-get mt-1 fs-xs pull-left'>" + getChatTime(d) + "</div></div></div>");
+
+            } else {
+                    $('.' + Reciverid).find('#discussion' + senderId).append("<div class='chat-segment chat-segment-get'><div class='chat-message'><p>" + message + "</p><div class='text-right fw-300 text-get mt-1 fs-xs pull-left'>" + getChatTime(d) + "</div></div></div>");
+
+            }
+            AutomatedSingleCounter();
+            ScrollToBottom();
+        };
+        chat.client.receiveMessage = function (msgFrom, msg, senderid, groupid, attachment, msgid) {
+            if (msgFrom == "NewConnection") {
+                $("#usersCount").text(senderid);
+                $('#divUsers').append('<li>' + msg + '</li>')
+            }
+            else {
+                var date = new Date();
+                if (senderid == senderId) {
+                    if (attachment === true) {
+                        $('.' + groupid).find('#Groupdiscussion' + senderId).append("<div  onclick='DwonloadGroupdoc(" + msgid + ")' class='chat-segment chat-segment-sent'><div style='cursor:pointer;text-decoration:underline' class='chat-message'><p><span class='fa fa-file cstm-file-icon pull-right'></span>" + msg + "</p><div class='text-right fw-300 text-sent mt-1 fs-xs pull-right'>" + getChatTime(date) + "</div></div></div>");
+                    }
+                    else {
+                        $('.' + groupid).find('#Groupdiscussion' + senderId).append("<div class='chat-segment chat-segment-sent'><div class='chat-message'><p>" + msg + "</p><div class='text-right fw-300 text-sent mt-1 fs-xs pull-right'>" + getChatTime(date) + "</div></div></div>");
+                    }
+                }
+                else {
+                    if (attachment === true) {
+                        $('.' + groupid).find('#Groupdiscussion' + senderId).append("<div  onclick='DwonloadGroupdoc(" + msgid + ")' class='chat-segment chat-segment-get'><div style='cursor:pointer;text-decoration:underline' class='chat-message'><p><strong>" + msgFrom + "</strong><span class='fa fa-file cstm-file-icon pull-right'></span><br />" + msg + "</p><div class='text-right fw-300 text-get mt-1 fs-xs pull-left'>" + getChatTime(date) + "</div></div></div>");
+                    }
+                    else {
+                        $('.' + groupid).find('#Groupdiscussion' + senderId).append("<div class='chat-segment chat-segment-get'><div class='chat-message'><p><strong>" + msgFrom + "</strong><br />" + msg + "</p><div class='text-right fw-300 text-get mt-1 fs-xs pull-left'>" + getChatTime(date) + "</div></div></div>");
+                    }
+                }
+                AutomatedGroupCounter();
+                ScrollToBottom();
+            }
+
+        };
+
+        ScrollToBottom();
+
+        var name = '@User.Identity.GetFirstName()' + '@User.Identity.GetLastName()';
+        var Id = '@User.Identity.GetUserId()';
+        $('#name').text(name);
+        $('#displayname').val(name);
+        $('#message').focus();
+        $.connection.hub.start().done(function () {
+
+            try {
+                chat.server.groupconnect(Id);
+                //chat.server.AddNewGroupNotify(senderId);
+            } catch (e) { alert(e.message); }
+
+
+            $("#sendgroupmsg").unbind().click(function () {
+                if ($('#txtGroupmessage').val() == "" || $('#txtGroupmessage').val() == null) {
+                    bootoast.toast({
+                        message: "Please Enter Message",
+                        type: 'danger',
+                        animationDuration: 10,
+                        icon: ' fa fa-fw fa-warning'
+                    });
+                    return false;
+                }
+                else {
+                    var Attachment = false;
+                    var file = null;
+                    var filename = null;
+                    var filepath = null;
+                    var data = new FormData();
+                        var groupname = $(".chatnamedetail").attr("data-groupname");
+
+                        var groupid = $("#GroupChatBox").attr("data-groupid");
+                        if (document.getElementById("Groupdocument").value != "") {
+                            Attachment = true;
+                            file = document.getElementById("Groupdocument").files[0];
+                            var replicaname = document.getElementById("Groupdocument").value.split('\\').pop();
+                            $('#txtGroupmessage').val(replicaname);
+                            var date = new Date();
+                            filename = '@User.Identity.GetUserId()' + date.getTime() + replicaname;
+                            filepath = "/PrivateChatsFiles/" + filename.replace(/\s/g, '');
+                        }
+                            data.append("Message", $("#txtGroupmessage").val());
+                            data.append("GID", $("#selectedgroupid").val());
+                            data.append("Attachment", Attachment);
+                            data.append("filename", filename);
+                            data.append("filepath", filepath);
+                            data.append("file", file);
+                        if (Attachment === false) {
+                            chat.server.broadCastMessage(Id, name, $("#txtGroupmessage").val(), groupname, groupid, Attachment, "");
+                        }
+                        $(".upload-path").text("");
+                    $.ajax({
+                        type: "POST",
+                        url: "/Chats/AddnewChatmessage",
+                        data: data,
+                        contentType: false,
+                        processData: false,
+                        success: function (result) {
+
+                            chat.server.groupNotify($("#selectedgroupid").val(), senderId);
+                            if (Attachment === true) {
+                                chat.server.broadCastMessage(Id, name, $("#txtGroupmessage").val(), groupname, groupid, Attachment, result);
+                                $("#Groupdocument").val(null);
+                            }
+                            $("#txtGroupmessage").val("");
+                        }, error: function (result) {
+                            $(".loader").hide();
+                        }
+
+                    });
+                }
+
+                    //$('#Groupdiscussion' + senderId).append("<div class='chat-segment chat-segment-sent'><div class='chat-message'><p>" + $('#txtGroupmessage').val() + "</p><div class='text-right fw-300 text-sent mt-1 fs-xs pull-right'>" + getChatTime(date) + "</div></div></div>");
+            });
+            $("#txtGroupmessage").keypress(function (event) {
+
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode == '13') {
+                    debugger;
+                    if ($('#txtGroupmessage').val() == "" || $('#txtGroupmessage').val() == null) {
+                        bootoast.toast({
+                            message: "Please Enter Message",
+                            type: 'danger',
+                            animationDuration: 10,
+                            icon: ' fa fa-fw fa-warning'
+                        });
+                        return false;
+                    }
+                    else {
+                        var Attachment = false;
+                        var file = null;
+                        var filename = null;
+                        var filepath = null;
+                        var data = new FormData();
+                        var groupname = $(".chatnamedetail").attr("data-groupname");
+                        var groupid = $("#GroupChatBox").attr("data-groupid");
+                        if (document.getElementById("Groupdocument").value != "") {
+                            Attachment = true;
+                            file = document.getElementById("Groupdocument").files[0];
+                            var replicaname = document.getElementById("Groupdocument").value.split('\\').pop();
+                            $('#txtGroupmessage').val(replicaname);
+                            var date = new Date();
+                            filename = '@User.Identity.GetUserId()' + date.getTime() + replicaname;
+                            filepath = "/PrivateChatsFiles/" + filename.replace(/\s/g, '');
+                        }
+                            data.append("Message", $("#txtGroupmessage").val());
+                            data.append("GID", $("#selectedgroupid").val());
+                            data.append("Attachment", Attachment);
+                            data.append("filename", filename);
+                            data.append("filepath", filepath);
+                    data.append("file", file);
+                    if (Attachment === false) {
+                        chat.server.broadCastMessage(Id, name, $("#txtGroupmessage").val(), groupname, groupid, Attachment, "");
+                        }
+                        $(".upload-path").text("");
+                    $.ajax({
+                        type: "POST",
+                        url: "/Chats/AddnewChatmessage",
+                        data: data,
+                        contentType: false,
+                        processData: false,
+                        success: function (result) {
+
+                            chat.server.groupNotify($("#selectedgroupid").val(), senderId);
+                            if (Attachment === true) {
+                                chat.server.broadCastMessage(Id, name, $("#txtGroupmessage").val(), groupname, groupid, Attachment, result);
+                                $("#Groupdocument").val(null);
+                            }
+                            $("#txtGroupmessage").val("");
+                        }, error: function (result) {
+                            $(".loader").hide();
+                        }
+
+                    });
+                    event.preventDefault(); return false;
+                    }
+                    //$('#Groupdiscussion' + senderId).append("<div class='chat-segment chat-segment-sent'><div class='chat-message'><p>" + $('#txtGroupmessage').val() + "</p><div class='text-right fw-300 text-sent mt-1 fs-xs pull-right'>" + getChatTime(date) + "</div></div></div>");
+                }
+            });
+
+            ///********************************Single Chat *******************************//
+            $('#sendmessage').unbind().click(function () {
+                if ($('#message').val() == "" || $('#message').val() == null) {
+                        bootoast.toast({
+                            message: "Please Enter Message",
+                            type: 'danger',
+                            animationDuration: 10,
+                            icon: ' fa fa-fw fa-warning'
+                        });
+                        return false;
+                    }
+                    else {
+                         var Attachment = false;
+                var file = null;
+                var filename = null;
+                var filepath = null;
+                var messageVal = null;
+                    //Call the Send method on the hub.
+                var data = new FormData();
+
+                if (document.getElementById("document").value != "") {
+                    Attachment = true;
+                    file = document.getElementById("document").files[0];
+                    var replicaname = document.getElementById("document").value.split('\\').pop();
+                    $('#message').val(replicaname);
+                    var date = new Date();
+                    filename = '@User.Identity.GetUserId()' + date.getTime() + replicaname;
+                    filepath = "/PrivateChatsFiles/" + filename.replace(/\s/g, '');
+
+
+                    data.append("file", file);
+                    data.append("filename", filename);
+                    data.append("filepath", filepath);
+                } else {
+                    var date = new Date();
+                    $('#discussion' + senderId).append("<div  class='chat-segment chat-segment-sent'><div class='chat-message'><p>" + $('#message').val() + "</p><div class='text-right fw-300 text-sent mt-1 fs-xs pull-right'>" + getChatTime(date) + "</div></div></div>");
+                }
+
+                data.append("SenderName", '@User.Identity.GetUserName()');
+                data.append("from", senderId);
+                data.append("ReceiverName", ReceiverName($("#chatuser").text()));
+                data.append("to", $("#reciverid").text());
+                data.append("message", $('#message').val());
+                data.append("Attachment", Attachment);
+                messageVal = $('#message').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Chats/SendPrivateMessage",
+                    contentType: false,
+                    processData: false,
+                    data: data,
+
+                }).done(function (response) {
+                    if ($.isNumeric(response)) {
+                        $("#document").val(null);
+                        if (Attachment === true) {
+                            // append file here
+                            var date = new Date();
+                            $('#discussion' + senderId).append("<div  onclick='DownloadDoc(" + response + ")' class='chat-segment chat-segment-sent'><div style='cursor:pointer;text-decoration:underline' class='chat-message file-message'><p><span class='fa fa-file cstm-file-icon-send'></span>" + messageVal + "</p><div class='text-right fw-300 text-sent mt-1 fs-xs pull-right'>" + getChatTime(date) + "</div></div></div>");
+                            $(".upload-path").text("");
+                            ScrollToBottom();
+
+                            chat.server.send(senderId, $("#reciverid").text(), $('#displayname').val(), messageVal, true, response);
+                            chat.server.notify($("#reciverid").text(), senderId);
+                            AutomatedSingleCounter();
+                        } else {
+                            chat.server.send(senderId, $("#reciverid").text(), $('#displayname').val(), messageVal, false, null);
+                            chat.server.notify($("#reciverid").text(), senderId);
+                            AutomatedSingleCounter();
+                        }
+                    }
+                    // when error
+                    else {
+                        if (Attachment === true) {
+                            bootoast.toast({
+                                message: "File not send some problem occur",
+                                type: 'danger',
+                                animationDuration: 400,
+                                icon: ' fa fa-fw fa-warning'
+                            });
+                        } else {
+                            bootoast.toast({
+                                message: response,
+                                type: 'danger',
+                                animationDuration: 400,
+                                icon: ' fa fa-fw fa-warning'
+                            });
+                        }
+                            chat.server.notify(to, senderId);
+                    }
+                        ScrollToBottom();
+                });
+                    $('#message').val('').focus();
+                    }
+            });
+            $("#message").keypress(function (event)
+            {
+
+                var Attachment = false;
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode == '13') {
+                    if ($('#message').val() == "" || $('#message').val() == null) {
+                        bootoast.toast({
+                            message: "Please Enter Message",
+                            type: 'danger',
+                            animationDuration: 10,
+                            icon: ' fa fa-fw fa-warning'
+                        });
+                        return false;
+                    }
+                    else {
+                         var Attachment = false;
+                var file = null;
+                var filename = null;
+                var filepath = null;
+                var messageVal = null;
+                    //Call the Send method on the hub.
+                var data = new FormData();
+
+                if (document.getElementById("document").value != "") {
+                    Attachment = true;
+                    file = document.getElementById("document").files[0];
+                    var replicaname = document.getElementById("document").value.split('\\').pop();
+                    $('#message').val(replicaname);
+                    var date = new Date();
+                    filename = '@User.Identity.GetUserId()' + date.getTime() + replicaname;
+                    filepath = "/PrivateChatsFiles/" + filename.replace(/\s/g, '');
+
+
+                    data.append("file", file);
+                    data.append("filename", filename);
+                    data.append("filepath", filepath);
+                } else {
+                    var date = new Date();
+                    $('#discussion' + senderId).append("<div  class='chat-segment chat-segment-sent'><div class='chat-message'><p>" + $('#message').val() + "</p><div class='text-right fw-300 text-sent mt-1 fs-xs pull-right'>" + getChatTime(date) + "</div></div></div>");
+                }
+
+                data.append("SenderName", '@User.Identity.GetUserName()');
+                data.append("from", senderId);
+                data.append("ReceiverName", ReceiverName($("#chatuser").text()));
+                data.append("to", $("#reciverid").text());
+                data.append("message", $('#message').val());
+                data.append("Attachment", Attachment);
+                messageVal = $('#message').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Chats/SendPrivateMessage",
+                    contentType: false,
+                    processData: false,
+                    data: data,
+
+                }).done(function (response) {
+                    if ($.isNumeric(response)) {
+                        $("#document").val(null);
+                        if (Attachment === true) {
+                            // append file here
+                            var date = new Date();
+                            $('#discussion' + senderId).append("<div  onclick='DownloadDoc(" + response + ")' class='chat-segment chat-segment-sent'><div style='cursor:pointer;text-decoration:underline' class='chat-message file-message'><p><span class='fa fa-file cstm-file-icon-send'></span>" + messageVal + "</p><div class='text-right fw-300 text-sent mt-1 fs-xs pull-right'>" + getChatTime(date) + "</div></div></div>");
+                            $(".upload-path").text("");
+                            ScrollToBottom();
+
+                            chat.server.send(senderId, $("#reciverid").text(), $('#displayname').val(), messageVal, true, response);
+                            chat.server.notify($("#reciverid").text(), senderId);
+                            AutomatedSingleCounter();
+                        } else {
+                            chat.server.send(senderId, $("#reciverid").text(), $('#displayname').val(), messageVal, false, null);
+                            chat.server.notify($("#reciverid").text(), senderId);
+                            AutomatedSingleCounter();
+                        }
+                    }
+                    // when error
+                    else {
+                        if (Attachment === true) {
+                            bootoast.toast({
+                                message: "File not send some problem occur",
+                                type: 'danger',
+                                animationDuration: 400,
+                                icon: ' fa fa-fw fa-warning'
+                            });
+                        } else {
+                            bootoast.toast({
+                                message: response,
+                                type: 'danger',
+                                animationDuration: 400,
+                                icon: ' fa fa-fw fa-warning'
+                            });
+                        }
+                            chat.server.notify(to, senderId);
+                    }
+                        ScrollToBottom();
+                });
+                    $('#message').val('').focus();
+                    event.preventDefault(); return false;
+                    }
+
+                }
+            });
+            $("#btnAddGroup").unbind().click(function () {
+                if ($("#txtchatname").val() == "") {
+                    swal("Error!", "Please enter Name of Group", "error");
+                    return false;
+                }
+                else {
+                    debugger;
+                    addgroupchat();
+                    function addgroupchat() {
+                        var isedit = true;
+                        $(".loader").show();
+                        if ($("#txtchatname").val() == "") {
+                            return false;
+                        }
+                        var chatid = $("#selectedgroupid").val();
+                        //status = $("#ddlStatus").val();
+                        var status = "Open";
+                        if (chatid === "") {
+                            chatid = 0;
+                            isedit = false;
+
+                        }
+                        //if (isedit = true) {
+                        //    status = $("#ddlStatus").val();
+                        //}
+                        $.ajax({
+                            type: "POST",
+                            url: "/Chats/AddnewChat",
+                            data: {
+                                'ChatName': $("#txtchatname").val().trim(), 'Participents': $("#ddlUsers").val(), 'chatId': chatid, 'status': status, 'isTicket': $("#isTicket").prop("checked"), 'TicketTitle': $("#txtTicketTitle").val(), 'Department': $("#ddlchatdepartments").val()
+                            },
+                            success: function (result) {
+                                debugger;
+                                //location.reload(true);
+                                RefreshChat();
+                                $(".loader").hide();
+                                $("#AddGroupChat").modal("hide");
+                                swal({
+                                    title: "Added",
+                                    text: "Group Added Successfully",
+                                    icon: "success",
+                                    button: "Ok",
+                                    confirmButtonColor: "#1ab394",
+                                });
+                                window.location.reload();
+                                //chat.server.addnewgroupNotify(senderId, result);
+                            }, error: function (result) {
+                                $(".loader").hide();
+
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    });
+    function registerEvents(chatHub) {
+        try {
+        var name = '@User.Identity.GetFirstName()';
+            var Id = '@User.Identity.GetUserId()';
+            chatHub.server.connect(name, Id, Id);
+        } catch (e) { alert(e.message); }
+    }
+    // This optional function html-encodes messages for display in the page.
+
+    function getChatTime(updatedDate) {
+        if (updatedDate) {
+
+
+            const updatedSecondMilli = updatedDate.getTime() / 1000;
+            const currentdateMilli = new Date().getTime() / 1000;
+
+            const seconds = currentdateMilli - updatedSecondMilli;
+
+
+
+            let minutes = Math.floor(seconds / 60);
+            let hours = Math.floor(minutes / 60);
+            let days = Math.floor(hours / 24);
+            let years = Math.floor(days / 365);
+            let words;
+
+            if (seconds < 45) {
+                words = 'just now';
+            } else if (seconds < 90) {
+                words = '1 minute ago';
+            } else if (minutes < 45) {
+                words = minutes + ' minutes ago';
+            } else if (minutes < 90) {
+                words = '1 hour ago';
+            } else if (hours < 24) {
+                words = hours + ' hours ago';
+            } else if (hours < 42) {
+                words = '1 day ago';
+            } else if (days < 30) {
+                words = days + ' days ago';
+            } else if (days < 45) {
+                words = '1 month ago';
+            } else if (days < 365) {
+                words = Math.floor((days / 30)) + ' months ago';
+            } else if (years < 1.5) {
+                words = '1 year ago';
+            } else {
+                words = years + ' years ago';
+            }
+
+            return words;
+        } return 'not found';
+
+    }
+
+
+    function htmlEncode(value) {
+        var encodedValue = $('<div />').text(value).html();
+        return encodedValue;
+    }
+
+    function ReceiverName(receiverName) {
+        var receiver = $.trim(receiverName);
+        receiver = receiver.split("(");
+        return $.trim(receiver[0]);
+    }
+
+    function DownloadDoc(id) {
+        window.location.href = "/Chats/DownloadDoc?id=" + id;
+    }
+    function DwonloadGroupdoc(id) {
+        window.location.href = "/Chats/DwonloadGroupdoc?id=" + id;
+    }
+    $(document).ready(function () {
+
+        $("#document").change(function (e) {
+            var fileName = e.target.files[0].name;
+
+            var extension = fileName.replace(/^.*\./, '');
+            if (fileName.match(/.(jpg|jpeg|png|gif|pdf|docx)$/i)) {
+                //bootoast.toast({
+                //    message: "File Found",
+                //    type: 'success',
+                //    animationDuration: 400,
+                //    icon: ' fa fa-fw fa-check'
+                //});
+            } else {
+                $("#document").val(null);
+                bootoast.toast({
+                    message: "Please Select Valid File",
+                    type: 'danger',
+                    animationDuration: 400,
+                    icon: ' fa fa-fw fa-warning'
+                });
+            }
+        });
+    });
+    function registerEvents(chatHub) {
+        try {
+            chatHub.server.connect($("#spnName").text(), $("#connID").text(), $("#connID").text());
+        } catch (e) { alert(e.message); }
+    }
+    ////Group Chat
+    function sendGroupmessage() {
+        if ($("#txtGroupmessage").val().trim() != "") {
+            var gid = 0;
+
+            $.ajax({
+                type: "POST",
+                url: "/Chats/AddnewChatmessage",
+                data: {
+                    'Message': $("#txtGroupmessage").val(), 'GID': $("#selectedgroupid").val()
+                },
+                success: function (result) {
+                    $("#txtGroupmessage").val("");
+                }, error: function (result) {
+                    $(".loader").hide();
+                }
+            });
+        }
+        else
+            $("#txtGroupmessage").focus();
+    }
+
+
+    var clearNotifcations = function (Id) {
+        debugger;
+   
+
+        $.ajax({
+            url: "/Chats/clearTicketNotification?TicktId=" + Id ,
+            type: "get"
+        }).done(function (res) {
+            if (res == "TicketsCreated" || res =="listviewticket") {
+                //$(".ticketnotifycount." + id).text("");
+                window.location.href = "/Chats/" + res;
+            } else {
+                swal("Error!", "Error Accured :" + res, "error");
+            }
+        });
+    }
+    //$(".clearNotifactionsLink").click(function () {
+    //    clearNotifcations();
+    //});
+
+</script>
+<div class="modal fade js-modal-Notifications modal-backdrop-transparent" id="ChatModal" role="dialog" data-backdrop="false" style="width: 330px; display: block;padding: 0px 0px 12px 0px; box-shadow: -5px 7px 14px 1px #0000001c; max-height: 480px; min-height: fit-content;display:none">
+    <div class="modal-dialog modal-dialog-right" style="margin-bottom: -11px;">
+        <div class="modal-content h-100">
+            <div class="modal-body p-0 h-75">
+                <!-- BEGIN msgr-list -->
+                <div class="msgr-list d-flex flex-column bg-faded border-faded border-top-0 border-right-0 border-bottom-0 position-absolute pos-top pos-bottom" style="margin-left:-8px!important">
+
+                    <div class="flex-1 h-10">
+                        <ul class="nav nav-pills nav-for-chat" style="width: 300px;">
+                            <li class="active customized-tabs text-center" style="width: 112%;">
+                                <a style="text-align: left; padding: 10px 0px 12px 22px; font-size: 14px;background: #0364bd; color: white;">
+                                    <i class="fa fa-ticket" style="border: 1px solid; border-radius: 58px; padding: 3px; margin-right: 7px; color: white; transform: rotate(45deg);"></i>Notifications
+                                </a>
+                            </li>
+
+                        </ul>
+                        <div class="tab-content clearfix" style="width: 115%!important;margin:0px;padding:0px;" @*style="margin-bottom: -11px;width: 100%;overflow:auto;max-height:430px;width:336px;padding: 1px 0px 15px 8px;"*@>
+                            <div class="NotificationBody" style="margin: 1px 0px 0px 7px; overflow: auto; max-height: 430px; width: 336px;">
+                                <div class="tab-pane active" style="width: 322px;">
+                                    @*<div class="w-100 chatlist @User.Identity.Name">*@
+                                    <ul id="UserNotificationList" class="UserNotificationList @User.Identity.GetUserId() list-unstyled m-0" style="margin: 0px;">
+                                        @{
+                                            var checkList = false;
+                                            if (TicketHistory != null && TicketHistory.Count > 0)
+                                            {
+                                                checkList = true;
+                                            }
+                                        }
+
+                                        @if (checkList)
+                                        {
+                                            var i = 1;
+                                            foreach (var item in TicketHistory)
+                                            {
+                                                if (item.ChangingType == "Create")
+                                                {
+                                                    <li class="searchablediv clearNotifactionsLink @User.Identity.GetUserId()" style="padding: 8px 0px 0px 0px; @if (item.notify==false) { <text>background-color: #0364bd2b</text>};margin-right: -4px;">
+                                                        <a href='#' onClick="clearNotifcations('@item.TicketId')" class='clearTicketNotifications d-table w-100 px-2 py-2 text-dark hover-white' style="padding: 4px 0px;">
+                                                            <div class="d-table-cell align-middle status status-indicator status-sm " style="vertical-align: top;padding: 0px 0px 0px 5px;">
+                                                                <span class="profile-image-md rounded-circle d-block " style="background-image: url('../../images/avatar-m.png'); background-size: cover;"></span>
+                                                            </div>
+                                                            <div class='d-table-cell align-middle status status-indicator status-sm '>  </div>
+                                                            <div class='d-table-cell w-100 align-middle pl-2 pr-2'>
+                                                                <div class="col-md-11 notification-Padding" style="padding: 0px 0px 0px 5px;">
+                                                                    <div @*class='text-truncate  text-truncate-md ticketnotifycount '*@ style="width: 244px; color: black; font-size: 12px;">
+                                                                        <b> @item.AssigneeName</b> Assigned you a ticket (@item.TicketId) @*(@item.TicketId)*@
+
+                                                                        <div class='row'>
+                                                                            <table id='ticketnotifyTable'>
+                                                                                @*<tr>
+                                                            <td> <small class='font-italic'> <b>TicketId</b> : @item.TicketId</small> </td>
+                                                            <td> <small class='font-italic'> <b>Type</b> : @item.TicketType</small> </td>
+                                                            <td> <small class='font-italic'> <b>Priority</b> : @item.Priority</small> </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td> <small class='font-italic'> <b>PatientId</b> :@item.patientId</small> </td>
+                                                            <td> <small class='font-italic'> <b>Status</b> :  @item.Status</small> </td>
+                                                        </tr>*@
+                                                                                <tr>
+                                                                                    @*<td colspan='2'> <small class='font-italic' style='float: left;white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 190px;'> <b>Creator Notes</b> : @item.CreatorNotes</small> </td>*@
+                                                                                    <td style='text-align: left;'>
+                                                                                        <small class='font-italic text-success'>@item.Time</small>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                @if (item.notify == false)
+                                                                {
+                                                                    <div class="col-md-1" style="float:right">
+                                                                        <div class="unread-Btn"></div>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </a>
+
+                                                    </li>
+                                                    if (i != TicketHistory.Count)
+                                                    {
+                                                        <li>
+                                                            <div class='Notifyspacer'></div>
+                                                        </li>
+                                                    }
+                                                    i++;
+
+                                                }
+                                                else if (item.ChangingType == "Comment")
+                                                {
+                                                    <li class="searchablediv clearNotifactionsLink @User.Identity.GetUserId()" style="padding: 8px 0px 0px 0px;@if (item.notify==false) { <text>background-color: #0364bd2b</text>};margin-right: -4px;">
+                                                        <a href='#' onClick="clearNotifcations('@item.TicketId')" class='clearTicketNotifications d-table w-100 px-2 py-2 text-dark hover-white' style="padding: 4px 0px;">
+                                                            <div class="d-table-cell align-middle status status-indicator status-sm " style="vertical-align: top;padding: 0px 0px 0px 5px;">
+                                                                <span class="profile-image-md rounded-circle d-block " style="background-image: url('../../images/avatar-m.png'); background-size: cover;"></span>
+                                                            </div>
+                                                            <div class='d-table-cell align-middle status status-indicator status-sm '>  </div>
+                                                            <div class='d-table-cell w-100 align-middle pl-2 pr-2'>
+                                                                <div class="col-md-11 notification-Padding" style="padding: 0px 0px 0px 5px;">
+                                                                    <div @*class='text-truncate  text-truncate-md ticketnotifycount '*@ style="width: 244px; color: black; font-size: 12px;">
+                                                                        <b> @item.AssigneeName</b> commented on ticket (@item.TicketId)  @*(@item.TicketId)*@
+
+                                                                        <div class='row'>
+                                                                            <table id='ticketnotifyTable'>
+                                                                                @*<tr>
+                                                            <td> <small class='font-italic'> <b>TicketId</b> : @item.TicketId</small> </td>
+                                                            <td> <small class='font-italic'> <b>Type</b> : @item.TicketType</small> </td>
+                                                            <td> <small class='font-italic'> <b>Priority</b> : @item.Priority</small> </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td> <small class='font-italic'> <b>PatientId</b> :@item.patientId</small> </td>
+                                                            <td> <small class='font-italic'> <b>Status</b> :  @item.Status</small> </td>
+                                                        </tr>*@
+                                                                                <tr>
+                                                                                    @*<td colspan='2'> <small class='font-italic' style='float: left;white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 190px;'> <b>Creator Notes</b> : @item.CreatorNotes</small> </td>*@
+                                                                                    <td style='text-align: left;'>
+                                                                                        <small class='font-italic text-success'>@item.Time</small>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                @if (item.notify == false)
+                                                                {
+                                                                    <div class="col-md-1" style="float:right">
+                                                                        <div class="unread-Btn"></div>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </a>
+
+                                                    </li>
+                                                    if (i != TicketHistory.Count)
+                                                    {
+                                                        <li>
+                                                            <div class='Notifyspacer'></div>
+                                                        </li>
+                                                    }
+                                                    i++;
+                                                }
+                                                else if (item.ChangingType == "Status")
+                                                {
+                                                    <li class="searchablediv clearNotifactionsLink @User.Identity.GetUserId()" style="padding: 8px 0px 0px 0px;@if (item.notify==false) { <text>background-color: #0364bd2b</text>};margin-right: -4px;">
+                                                        <a href='#' onClick="clearNotifcations('@item.TicketId')" class='clearTicketNotifications d-table w-100 px-2 py-2 text-dark hover-white' style="padding: 4px 0px;">
+                                                            <div class="d-table-cell align-middle status status-indicator status-sm " style="vertical-align: top;padding: 0px 0px 0px 5px;">
+                                                                <span class="profile-image-md rounded-circle d-block " style="background-image: url('../../images/avatar-m.png'); background-size: cover;"></span>
+                                                            </div>
+                                                            <div class='d-table-cell align-middle status status-indicator status-sm '>  </div>
+                                                            <div class='d-table-cell w-100 align-middle pl-2 pr-2'>
+                                                                <div class="col-md-11" style="padding: 0px 0px 0px 5px;">
+                                                                    <div @*class='text-truncate  text-truncate-md ticketnotifycount '*@ style="width: 244px; color: black; font-size: 12px;">
+                                                                        <b> @item.AssigneeName</b> Changed the status ticket to @item.Status (@item.TicketId) @*(@item.TicketId)*@
+
+                                                                        <div class='row'>
+                                                                            <table id='ticketnotifyTable'>
+                                                                                @*<tr>
+                                                            <td> <small class='font-italic'> <b>TicketId</b> : @item.TicketId</small> </td>
+                                                            <td> <small class='font-italic'> <b>Type</b> : @item.TicketType</small> </td>
+                                                            <td> <small class='font-italic'> <b>Priority</b> : @item.Priority</small> </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td> <small class='font-italic'> <b>PatientId</b> :@item.patientId</small> </td>
+                                                            <td> <small class='font-italic'> <b>Status</b> :  @item.Status</small> </td>
+                                                        </tr>*@
+                                                                                <tr>
+                                                                                    @*<td colspan='2'> <small class='font-italic' style='float: left;white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 190px;'> <b>Creator Notes</b> : @item.CreatorNotes</small> </td>*@
+                                                                                    <td style='text-align: left;'>
+                                                                                        <small class='font-italic text-success'>@item.Time</small>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                @if (item.notify == false)
+                                                                {
+                                                                    <div class="col-md-1" style="float:right">
+                                                                        <div class="unread-Btn"></div>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </a>
+
+                                                    </li>
+                                                    if (i != TicketHistory.Count)
+                                                    {
+                                                        <li>
+                                                            <div class='Notifyspacer'></div>
+                                                        </li>
+                                                    }
+                                                    i++;
+                                                }
+
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <li>
+                                                <h5 style='text-align:center'>No Notifications</h5>
+                                            </li>
+
+                                        }
+
+                                    </ul>
+
+
+                                    @*</div>*@
+                                </div>
+                            </div>
+
+                        </div>
+                        @*<div class="row">
+                                <button class="btn btn-primary" id="viewAllNotifications" onclick="clearNotfcations()" style="display:none; width: 100%; margin-top: -10px;height: 34px; background-color: #1d76c8;">
+                                    View All
+                                </button>
+                            </div>*@
+                    </div>
+
+                </div>
+                <!-- END msgr-list -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- BEGIN Messenger -->
+<div class="modal fade js-modal-messenger modal-backdrop-transparent" id="ChatModal" role="dialog" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-right">
+        <div class="modal-content h-100">
+            <div class="modal-body p-0 h-75">
+                <!-- BEGIN msgr-list -->
+                <div class="msgr-list d-flex flex-column bg-faded border-faded border-top-0 border-right-0 border-bottom-0 position-absolute pos-top pos-bottom">
+
+                    <div class="flex-1 h-10">
+                        <ul class="nav nav-pills nav-for-chat">
+                            <li class="active customized-tabs text-center">
+                                <a href="#SingleList" id="ClickedBySingle" data-toggle="tab"><i style="color:red" id="Tab-SingleNoti" class="fa fa-bell hide"></i><i class="fa fa-user"></i>User List</a>
+                            </li>
+                            <li class="customized-tabs text-center">
+                                <a id="ClickedByGroup" href="#GroupList" data-toggle="tab"><i style="color:red" id="Tab-GroupNoti" class="fa fa-bell hide"></i><i class="fa fa-users"></i>Group Chat</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix">
+                            <div class="tab-pane active" id="SingleList">
+                                <div class="w-100 chatlist @User.Identity.Name">
+                                    <ul id="Userlist" class="@User.Identity.GetUserId() list-unstyled m-0">
+                                        @foreach (var item in ViewBag.Users)
+                                        {
+                                            <li class="searchablediv @User.Identity.GetUserId()" data-id="@item.Id">
+
+                                                <a data-id="@item.Id" onclick="openForm(this)" href="#" class="d-table w-100 px-2 py-2 text-dark hover-white" data-filter-tags="tracey chang online">
+                                                    <div class="d-table-cell align-middle status status-indicator status-sm ">
+                                                        <span class="profile-image-md rounded-circle d-block " style="background-image: url('../../images/avatar-m.png'); background-size: cover;"></span>
+                                                    </div>
+                                                    <div class="d-table-cell w-100 align-middle pl-2 pr-2">
+                                                        <div class="text-truncate  text-truncate-md">
+                                                            @{ string[] a = item.Name.Split('(');
+                                                                var name = a[0].ToString();
+                                                                var Rules = "(" + a[1].ToString();
+                                                            }
+                                                            @*@item.Name*@
+                                                            @name
+                                                            <span class="newchatMsgicon @item.Id"></span>
+                                                            <small class="d-block font-italic text-success fs-xs">
+                                                                @Rules
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <div id="SearchBoxListUnit">
+                                        <input type="text" id="search-box" onkeyup="SearchFunction()" placeholder="Search Chat" />
+                                    </div>
+                                    <div class="filter-message js-filter-message"></div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="GroupList">
+                                <div class="groupleft">
+                                    <div class="grupchatnames">
+                                        <div>
+                                            <button class="btn customized-btn" data-toggle="modal" data-target="#AddGroupChat" id="BigButtonofAddGroupChat">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <ul id="GroupListforTab" class="@User.Identity.GetUserId() list-unstyled m-0">
+
+                                            @foreach (var groupchat in Model)
+                                            {
+                                                <li class="groupsearchablediv @User.Identity.GetUserId()" data-id="@groupchat.GroupChat.Id">
+                                                    <a class="d-table w-100 px-2 py-2 text-dark hover-white" data-id="@groupchat.GroupChat.Id" data-filter-tags="tracey chang online" id="groupchat@(groupchat.GroupChat.Id)" onclick="setselectedchatandgetdetails(@groupchat.GroupChat.Id)" data-chatname="@groupchat.GroupChat.ChatName" data-users="@string.Join(" ,",groupchat.usersViewModels.Select(x=>
+                                                        x.Name).ToList())" data-CreatedBy="@groupchat.GroupChat.CreatedBy" data-Userid="@User.Identity.GetUserId()">
+                                                        <div class="d-table-cell align-middle status status-indicator status-sm ">
+                                                            <span class="profile-image-md rounded-circle d-block " style="background-image: url('../../images/group-img.jpg'); background-color:#d1d1d1; background-size: cover;"></span>
+                                                        </div>
+                                                        <div class="d-table-cell w-100 align-middle pl-2 pr-2">
+                                                            <div class="text-truncate text-truncate-md" id="groupchatlabel@(groupchat.GroupChat.Id)">
+                                                                <span class="newgroupchatMsgicon @groupchat.GroupChat.Id"></span>
+                                                                <input type="hidden" id="groupchatdetailscount@(groupchat.GroupChat.Id)" value="@groupchat.TotalCount" />
+                                                                @groupchat.GroupChat.ChatName
+                                                            </div>
+                                                            @*<span class="newgroupchatMsgicon @groupchat.GroupChat.Id"></span>*@
+                                                        </div>
+                                                    </a>
+
+                                                </li>
+                                            }
+                                        </ul>
+                                        <div id="SearchBoxListUnit">
+                                            <input type="text" id="search-box-group" onkeyup="SearchGroup()" placeholder="Search Chat" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- END msgr-list -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END Messenger -->
+<!-----Add New Group Chat Model-->
+<div class="modal fade" id="AddGroupChat" tabindex="-1" role="dialog" aria-labelledby="AddGroupChat" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add/Update Group Chat</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="ChatModalPostionStat()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-12">ChatName</label>
+                        <div class="col-md-12">
+                            <input type="text" class="form-control" id="txtchatname" maxlength="25" />
+                        </div>
+                    </div>
+                </div>
+
+
+                <ul class="nav nav-tabs">
+                    <li class="dropdown">
+                        <label class="col-md-12 nopadding">Users</label>
+                        @Html.DropDownList("Users",
+                        new SelectList(ViewBag.Users, "Id", "Name", Model),
+                        new { @class = "form-control border-input search_combo col-md-12", id= "ddlUsers",multiple="multiple" })
+                    </li>
+                </ul>
+                @*<div class="chatstatus" style="display:none">
+                        <label>Status</label>
+                        @Html.DropDownList(
+                        "ddlStatus",
+                        new SelectList(
+                        new[]
+                        {
+                        new { Value = "Open",  Text = "Open" },
+                        new { Value = "Closed",   Text = "Closed" }
+
+
+                        },
+                        "Value", "Text", Model),
+                        null,new { @class = "form-control border-input", id = "ddlStatus" })
+                    </div>*@
+            </div>
+
+
+            <div class="modal-footer">
+                <input type="button" value="Add/Update Chat" id="btnAddGroup" class="btn btn-warning" />
+                <input type="button" value="Close" class="btn btn-success" data-dismiss="modal" onclick="ChatModalPostionStat()" />
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-----Add New Group Chat Model-->
+
+<input id="selectedgroupid" type="hidden" value="" />
+@*<h2 data-toggle="modal" data-target=".js-modal-messenger"><span><a href="#">User Lists</a></span></h2>
+    <label>Group Chat</label>*@
+<!------------------------ Message Chat Box------------------- -->
+<div class="chat-popup" id="myForm">
+    <div class="row bg-trans-gradient color-white">
+        <div class="col-md-10">
+            <h4 class="" id="chatuser"></h4>
+        </div>
+        <div class="col-md-2 mt-5">
+            <span class="ml-5 custom-cross-btn" onclick="CloseChatbox()">x</span>
+        </div>
+    </div>
+    <form action="#" class="form-container chatform">
+        <span class="hide" id="reciverid"></span>
+        @*<label for="msg"><b>Message</b></label>*@
+        <input type="hidden" id="displayname" />
+        <div id="discussion@(User.Identity.GetUserId())" class="ChatContainer" style="height:39vh; overflow-y:auto; padding-left:0;overflow-x:hidden;">
+        </div>
+        <input type="text" placeholder="Type message.." id="message" name="msg" autocomplete="off" />
+        <span class="input-group-text send_btn send_btn" id="sendmessage" style="position: fixed;bottom: 135px; right:336px; font-size:14px"><i class="fas fa-location-arrow"></i></span>
+        <input type="file" id="document" />
+        <span for="fileupload" id="styledInput" class="fa fa-paperclip"></span>
+        <span class="upload-path"></span>
+        <div class="activity-feed">
+            <div class="inner-div">
+                Activity
+            </div>
+            <div class="inner-div">
+                <span class="pull-left">One to One Chats - <span class="OneToOneListCount"></span></span>
+                <span class="pull-right">Number of Messages - <span id="MessageCountForSingle"></span></span>
+            </div>
+            @*<div class="inner-div">
+                    <span class="pull-left">Group Chats - 20</span><span class="pull-right">Active Chats - 02</span>
+                </div>*@
+        </div>
+    </form>
+</div>
+<!------------------------END Message Chat Box------------------- -->
+<!------------------------Start Group Chat Box------------------- -->
+<div class="chat-popup" id="GroupChatBox">
+    <div class="row bg-trans-gradient color-white">
+        <div class="col-md-9">
+            <div class="chatnamedetail">
+                <h4 class="" id="Groupchatuser"></h4>
+                <span id="spnName"></span>
+                <span id="connID"></span>
+                <span id="usersCount"></span>
+                <span id="GroupName"></span>
+                <small id="chatparticipents" data-toggle="modal" data-target="#GroupModal">Group Paticipants</small>
+
+            </div>
+        </div>
+        <div class="col-md-3 mt-5">
+            <span class="editchatdiv" onclick="editchatdialog()">
+                <i class="fa fa-edit"></i>
+            </span>
+            <span class="ml-5 custom-cross-btn pull-right" onclick="CloseGropChatbox()">x</span>
+        </div>
+    </div>
+    <form action="#" class="form-container chatform">
+        <span class="hide" id="reciverid"></span>
+        @*<label for="msg"><b>Message</b></label>*@
+        <input type="hidden" id="displayname" />
+        <div id="Groupdiscussion@(User.Identity.GetUserId())" class="ChatContainer" style="height:39vh; overflow-y:auto; padding-left:0;overflow-x:hidden;     min-width: 150px;">
+            <div style="height: auto" id="divUsers"></div>
+            <div style="height: 70%" id="divChat"></div>
+        </div>
+
+        <input type="text" placeholder="Type message.." id="txtGroupmessage" name="msg" autocomplete="off" />
+        <span class="input-group-text send_btn send_btn" id="sendgroupmsg" style="position: fixed;right: 337px;bottom: 135px; font-size:14px"><i class="fas fa-location-arrow"></i></span>
+        <input type="file" id="Groupdocument" />
+        <span for="fileupload" id="GroupstyledInput" class="fa fa-paperclip"></span>
+        <span class="upload-path"></span>
+        <div class="activity-feed">
+            <div class="inner-div">
+                Activity
+            </div>
+            @*<div class="inner-div">
+                    <span class="pull-left">One to One Chats - 20</span><span class="pull-right">Number of Replies - 12</span>
+                </div>*@
+            <div class="inner-div">
+                <span class="pull-left">Group Chats - <span class="groupchatCounts"></span></span>
+                <span class="pull-right">TotalMessages - <span id="TotalMessageofGroup"></span></span>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="GroupModal" class="modal fade" role="dialog" data-backdrop="false" style="width:375px;">
+    <div class="modal-dialog" style="width:375px;">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="hide" id="ChatListofPart">
+
+                </div>
+                <h5>
+                    <span class="DummyImgGroup"><img src="~/images/group-img.jpg" /></span>
+                    <span>Group Participants</span>
+                </h5>
+                <ul id="MainUlofPart"></ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!------------------------ Group Chat Box------------------- -->
+<script src="~/Scripts/inputEmoji.js"></script>
+<script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+<script>
+    $("#message").emoji({ place: 'before' });
+    $("#txtGroupmessage").emoji({ place: 'before' });
+    $('#ddlUsers').multiselect({
+        includeSelectAllOption: false,
+        enableCaseInsensitiveFiltering: true,
+        enableFiltering: true,
+        buttonWidth: '540px',
+        maxHeight: 200,
+    });
+
+</script>
+
+

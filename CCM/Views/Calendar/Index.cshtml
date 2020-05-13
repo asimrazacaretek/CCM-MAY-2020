@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>DevExtreme Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery-3.1.0.min.js"%3E%3C/script%3E'))</script>
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/17.2.7/css/dx.spa.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/17.2.7/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="https://cdn3.devexpress.com/jslib/17.2.7/css/dx.light.css" />
+    <script src="https://cdn3.devexpress.com/jslib/17.2.7/js/dx.all.js"></script>
+    <script src="data.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script src="index.js"></script>
+</head>
+<body class="dx-viewport">
+    <div class="demo-container">
+        <div class="scheduler"></div>
+    </div>
+</body>
+</html>
+
+@*CSS:*@
+<style>
+
+
+.dx-scheduler-date-table-other-month.dx-scheduler-date-table-cell {
+    opacity: 1;
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.dx-scheduler-group-header-content {
+    position: relative;
+}
+
+.avatar{
+    width: 155px;
+    float: left;
+    overflow: hidden;
+    position: relative;
+    height: 125px;
+}
+
+.name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.name h2{
+	color: #fff;
+    text-align: left;
+    padding: 0 0 5px 175px;      
+}
+
+.info{
+    width: auto;
+    text-align: left;
+    height: 100%;
+    font-size: 11pt;
+    font-weight: normal;
+    padding: 25px 20px;
+    color: #707070;
+}
+    
+.dx-color-scheme-contrast .info{
+    color: #FFF;
+}
+
+.userInfo div{
+    margin: 20px;      
+}      
+
+    
+.day-cell{
+    width: 100%;
+    height: 60px;        
+    background-position: center bottom;
+    background-repeat: no-repeat;
+}
+
+.day-cell.employee-1{
+    background-color: rgba(86, 202, 133, 0.1);
+}
+    
+.day-cell.employee-2{
+    background-color: rgba(255, 151, 71, 0.1);
+}
+
+.employee-weekend-1{
+    background-color: rgba(86, 202, 133, 0.1);
+}
+
+.employee-weekend-2{
+    background-color: rgba(255, 151, 71, 0.1);
+}
+
+.abs-background{
+    background-image: url("images/gym/icon-abs.png");
+}
+
+.step-background{
+    background-image: url("images/gym/icon-step.png");
+}
+
+.fitball-background{
+    background-image: url("images/gym/icon-fitball.png");
+}
+
+
+</style>
+
+@*JavaScript:*@
+<script>
+    $(function () {
+        var dataSource = new DevExpress.data.DataSource({
+            store: data
+        });
+
+        $(".scheduler").dxScheduler({
+            dataSource: dataSource,
+            views: ["month"],
+            currentView: "month",
+            currentDate: new Date(2016, 7, 2, 11, 30),
+            firstDayOfWeek: 1,
+            startDayHour: 8,
+            endDayHour: 18,
+            showAllDayPanel: false,
+            height: 600,
+            groups: ["employeeID"],
+            resources: [
+                {
+                    fieldExpr: "employeeID",
+                    allowMultiple: false,
+                    dataSource: employees,
+                    label: "Employee"
+                }
+            ],
+            dataCellTemplate: function (cellData, index, container) {
+                var employeeID = cellData.groups.employeeID,
+                    currentTraining = getCurrentTraining(index, employeeID);
+
+                if (isWeekEnd(cellData.startDate)) {
+                    container.addClass("employee-weekend-" + employeeID);
+                }
+
+                return $("<div>")
+                        .addClass("day-cell")
+                        .addClass(currentTraining)
+                        .addClass("employee-" + employeeID)
+                        .text(cellData.text);
+            },
+            resourceCellTemplate: function (cellData, index, container) {
+                var name = $("<div>")
+                                .addClass("name")
+                                .css({ backgroundColor: cellData.color })
+                                .append($("<h2>")
+                                        .text(cellData.text));
+
+                var avatar = $("<div>")
+                                .addClass("avatar")
+                                .html("<img src=" + cellData.data.avatar + ">")
+                                .attr("title", cellData.text);
+
+                var info = $("<div>")
+                                .addClass("info")
+                                .css({ color: cellData.color })
+                                .html("Age: " + cellData.data.age + "<br/><b>" + cellData.data.discipline + "</b>");
+
+                return $("<div>").append([name, avatar, info]);
+            }
+        });
+
+        function isWeekEnd(date) {
+            var day = date.getDay();
+            return day === 0 || day === 6;
+        }
+
+        function getCurrentTraining(index, employeeID) {
+            var currentTraining,
+                result = (index + employeeID) % 3;
+
+            switch (result) {
+                case 0:
+                    currentTraining = "abs-background";
+                    break;
+                case 1:
+                    currentTraining = "step-background";
+                    break;
+                case 2:
+                    currentTraining = "fitball-background";
+                    break;
+                default:
+                    currentTraining = "";
+            }
+
+            return currentTraining;
+        }
+    });
+</script>

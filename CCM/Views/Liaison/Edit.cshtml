@@ -1,0 +1,626 @@
+﻿@model CCM.Models.Liaison
+<style>
+    th {
+        background: #a4d4fe!important;
+        color: black!important;
+    }
+</style>
+@using (Html.BeginForm("Edit", "Liaison", new { userId = Model.UserId }, FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data", id = "editliasion" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.CreatedOn)
+    @Html.HiddenFor(model => model.CreatedBy)
+    @Html.HiddenFor(model => model.UserId)
+
+    @Html.HiddenFor(model => model.Email)
+    @*@Html.HiddenFor(model => model.MobilePhoneNumber)*@
+    @Html.HiddenFor(model => model.PayRate)
+    @Html.HiddenFor(model => model.SkillLevel)
+    @Html.HiddenFor(model => model.TwiliopathSid)
+    @Html.HiddenFor(model => model.TwilioNumbersTableId)
+
+    if (!User.IsInRole("Admin"))
+    {
+        @Html.HiddenFor(model => model.isActive)
+        @Html.HiddenFor(model => model.IsTranslator)
+    }
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4 col-md-5">
+                <br />
+                <br />
+                <div class="card card-user">
+                    <div class="image">
+                        <img src="~/dashboard/assets/img/background.jpg" alt="..." />
+                    </div>
+                    <div class="content">
+                        <div class="author">
+                            <img class="avatar border-white" src="@Url.Action("UserPhotos", "Liaison", new { userId = Model.UserId })" alt="" />
+                            <h4 class="title">
+                                @Model.FirstName @Model.LastName
+                                <br />
+                                <small>
+                                    @Model.Email <br />
+                                    @Model.MobilePhoneNumber<br />
+                                    @Model.Gender<br />
+                                    @if (!string.IsNullOrEmpty(Model.AboutMe))
+                                    {
+                                        <span>"@Model.AboutMe"</span>
+                                    }
+                                    <br />
+                                    @if (Model.Resume != null)
+                                    {
+                                        <a href="@Url.Action("Resume", "Liaison", new { liaisonId = Model.Id })" target="_blank" title="View Resume">View Resume</a>
+                                    }
+                                </small>
+                            </h4>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <div class="row">
+                            <div class="col-md-3 col-md-offset-1">
+                                <h5>
+                                    @ViewBag.CCMEnrolledCount
+                                    <br />
+                                    <small>CCM Patients</small>
+                                </h5>
+                            </div>
+                            <div class="col-md-4">
+                                @*<h5>2GB<br /><small>Used</small></h5>*@
+                            </div>
+                            <div class="col-md-3">
+                                <h5>
+                                    $@(Convert.ToInt32(ViewBag.CCMBilledCount) * Model.PayRate)
+                                    <br />
+                                    <small>Billed</small>
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8 col-md-7">
+                <br />
+                <div class="card">
+                    <div class="header">
+                        <table>
+                            <tr>
+                                <td width="90%">
+                                    <h4 class="title">Edit Profile</h4>
+                                </td>
+                                <td nowrap>
+                                    <a href="/Manage/ChangePassword?email=@Model.Email">Change Password</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content">
+
+                        <div class="row">
+                            <div class="form-group">
+
+                                <div class="col-md-12">
+                                    @if (Model.IsTranslator == true)
+                                    {
+                                        <h4 style="font-weight:900">Translator</h4>
+                                        @Html.CheckBoxFor(m => m.IsTranslator, new { @checked = "checked", @style = "display:none" });
+
+                                    }
+                                    else
+                                    {
+                                        <h4 style="font-weight:900">Counselor</h4>
+
+                                        @*@Html.CheckBoxFor(m => m.IsTranslator);*@
+                                    }
+                                    @*@Html.LabelFor(model => model.IsTranslator, new { @class = "col-md-2" })*@
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.FirstName, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control border-input", placeholher = "Required" } })
+                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MiddleName, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                        @Html.ValidationMessageFor(model => model.MiddleName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.LastName, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control border-input", placeholher = "Required" } })
+                                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Gender, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.DropDownListFor(
+                                            item => item.Gender,
+                                            new SelectList(
+                                                new[]
+                                                {
+                                                    new {Value = "Male", Text = "Male"},
+                                                    new {Value = "Female", Text = "Female"},
+                                                },
+                                                "Value", "Text", Model),
+                                            "Select Gender", new { @class = "form-control border-input" })
+                                        @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Email, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control border-input", placeholher = "Required", disabled = "disabled" } })
+                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MobilePhoneNumber, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.MobilePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input", placeholher = "Required" } })
+                                        @Html.ValidationMessageFor(model => model.MobilePhoneNumber, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PrimaryLanguage, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.PrimaryLanguage, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                        @Html.ValidationMessageFor(model => model.PrimaryLanguage, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.SecondaryLanguage, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.SecondaryLanguage, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                        @Html.ValidationMessageFor(model => model.SecondaryLanguage, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.TertiaryLanguage, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.TertiaryLanguage, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                        @Html.ValidationMessageFor(model => model.TertiaryLanguage, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Address1, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.Address1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                        @Html.ValidationMessageFor(model => model.Address1, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Address2, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.Address2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                        @Html.ValidationMessageFor(model => model.Address2, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.City, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                        @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.State, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.State, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                        @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Zipcode, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.Zipcode, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                        @Html.ValidationMessageFor(model => model.Zipcode, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.TwilioCallerId, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.TwilioCallerId, new { htmlAttributes = new { @class = "form-control border-input", @disabled = "disabled" } })
+                                        @Html.ValidationMessageFor(model => model.Zipcode, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    @Html.Label("CallerID", "Caller ID", htmlAttributes: new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+
+                                        @Html.DropDownList("CallerID1",
+                                                     new SelectList(ViewBag.TwilioAvailableNumbers, "Value", "Text", Model), "Select if you want to update",
+                                                         new { @class = "form-control border-input select2", id = "ddlCallerID" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.AboutMe, new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextAreaFor(model => model.AboutMe, new { @class = "form-control border-input", rows = "5" })
+                                @Html.ValidationMessageFor(model => model.AboutMe, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="form-group">
+
+                                <div class="col-md-12">
+                                    @if (Model.isActive == true)
+                                    {
+                                        @Html.CheckBoxFor(m => m.isActive, new { @checked = "checked" });
+                                    }
+                                    else
+                                    {
+                                        @Html.CheckBoxFor(m => m.isActive);
+                                    }
+                                    @Html.LabelFor(model => model.isActive, new { @class = "col-md-2" })
+                                </div>
+                            </div>
+                        }
+                        @{
+                            string str = "checked";
+
+                        }
+
+                        <div class="form-group">
+                            <label class="col-md-2" style="text-align: center; margin-left: -4px;">Category</label>
+                            <div class="col-md-10">
+                                <div style="display:inline-flex;margin-top: 7px;">
+                                    @foreach (var item in ViewBag.BillingCategories)
+                                    {
+                                        <label class="d-block" style="margin-right: 12px;font-weight:100; font-size: 13px;"><input type="checkbox" value="@item.BillingCategoryId" id="@("billingCategoryCheckBox"+item.BillingCategoryId)" data-identifier="@item.Name" onclick="SelectUnselectCategory(@item.BillingCategoryId)" name="billingCategory" @if (item.BillingCategoryId == Model.Liaisons_BillingCategories.Where(p => p.BillingCategoryId == item.BillingCategoryId && p.Status == true).Select(p => p.BillingCategoryId).FirstOrDefault()) { @str } /> @item.Name  </label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.UserPhoto, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="UserPhoto" id="UserPhoto" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                                        @Html.ValidationMessageFor(model => model.UserPhoto, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Resume, new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="Resume" id="Resume" class="form-control border-input" accept=".pdf" />
+                                        @Html.ValidationMessageFor(model => model.Resume, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        @*<div class="form-horizontal col-md-6">
+                                <h3>Salary Rates</h3>
+                                <hr />
+                                <div class="form-group">
+                                    @Html.Label("CCM 20 Minutes - CPT 99490 *", htmlAttributes: new { @class = "control-label col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="text" name="CPT99490Billing" value="@ViewBag.CPT99490Billing" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("Simple CCM 30 Minutes - CPT 99491 *", htmlAttributes: new { @class = "control-label col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="text" name="CPT99491Billing" value="@ViewBag.CPT99491Billing" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("Complex CCM 60 Minutes - CPT 99487 *", htmlAttributes: new { @class = "control-label col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="text" name="CPT99487Billing" value="@ViewBag.CPT99487Billing" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("Complex CCM 30 Minutes - CPT 99489 + 99487 *", htmlAttributes: new { @class = "control-label col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="text" name="CPT99489Billing" value="@ViewBag.CPT99489Billing" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+                                    </div>
+                                </div>
+
+
+                            </div>*@
+                        <div class="col-md-12 pull-left" style="margin-top: 10px;">
+
+
+
+
+
+                            @*<div id="phybusiness-hour">
+                                    <input type="hidden" id="businessHours" data-Id="@Model.ID" />
+                                </div>*@
+                            <div class="">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading" style="padding: 20px 15px;background-color: #0364bd">
+                                        <h3 style="margin-top: -14px;" class="col-sm-5">Business hours</h3>
+
+                                    </div>
+                                    <div class="panel-body" style="padding: 0px;margin-top: 7px;">
+                                        <div class="row">
+                                            <div class="col-sm-4 form-group" style="text-align: center;padding-top: 9px;">
+                                                <label>Bulk Time Change</label>
+                                                <input type="checkbox" id="chkbulk" class="checkbox check-mark" style="z-index:123;" />
+                                            </div>
+                                            <div class="col-sm-8" style="margin-top:10px;padding: 0px;">
+                                                <label class="text-orange" style="text-align:left;color:blue;width: 104%;">*Please Select Monday Timing 1st then Click on Checkbox for Bulk Assign*</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12" style="padding:0px">
+                                            <div class="table-responsive">
+
+                                                <table class="col-md-12  table date-table-phy date-table-phyC">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                Days
+                                                            </th>
+
+                                                            <th>
+                                                                Start Time
+                                                            </th>
+                                                            <th>
+                                                                End Time
+                                                            </th>
+                                                            <th>
+                                                                Holiday
+                                                            </th>
+
+                                                        </tr>
+                                                    </thead>
+
+
+                                                    @{ var i = 0;}
+                                                    @foreach (CCM.Models.ClinicTimingViewModel item in ViewBag.ClinicTimining)
+                                                    {
+                                                        i++;
+                                                        <tr class="row-select" id="tr@(item.WeekDayName)">
+                                                            <td class="enabledisable">
+                                                                <label>@item.WeekDayName</label>
+                                                                <input type="hidden" value="@item.ID" name="IDs" />
+                                                                <input type="text" name="WeekDays" value="@item.WeekDayName" style="display:none" />
+                                                            </td>
+
+                                                            <td>
+                                                                <input type="text" class="form-control datetime Starttime-@i" name="StartTime" style="margin-top: 0;" value="@item.StartTime" id="dtp1" />
+
+
+
+
+                                                                @*<input type="time" class="form-control EndTime-@i" value="@Model.list[i].EndTime" />*@
+
+
+
+
+                                                            </td>
+                                                            <td>
+
+
+
+
+
+                                                                <input type="text" class="form-control datetime EndTime-@i" name="EndTime" style="margin-top: 0;" value="@item.EndTime" id="dtp2" />
+
+
+
+
+
+
+
+                                                            </td>
+                                                            <td width="100px">
+                                                                <label class="custom-checkbox custom-weight">
+                                                                    <input type="checkbox" class="IsHollyDay-@item.WeekDayName weekdayname" data-weekname="@item.WeekDayName" id="chk@(item.WeekDayName)" onchange="enabledisablerow('@item.WeekDayName')" />
+                                                                    <span></span>
+                                                                </label>
+                                                                <input type="hidden" name="isHoliday" value="@(item.isHoliday.ToString().ToLower())" id="hf@(item.WeekDayName)" />
+                                                            </td>
+                                                            @*<td>
+                                                                    <label>@item.ClinicTimingStr</label>
+                                                                </td>*@
+
+                                                        </tr>
+
+                                                    }
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                           
+
+
+                            </div>
+
+                        </div>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <br />
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    <input type="submit" value="Update Profile" class="btn btn-success" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+}
+<style>
+    .table td {
+        position: relative;
+    }
+</style>
+
+<script type="text/javascript">
+    function enabledisablerow(id) {
+        debugger;
+        var ischecked = $("#chk" + id).prop("checked");
+
+        if (ischecked == true) {
+            $("#hf" + id).val(true);
+            $("#tr" + id + " #dtp1").attr('disabled', 'disabled');
+            $("#tr" + id + " #dtp2").attr('disabled', 'disabled');
+        }
+        else {
+            $("#hf" + id).val(false);
+            $("#tr" + id + " #dtp1").removeAttr('disabled');
+            $("#tr" + id + " #dtp2").removeAttr('disabled');
+
+        }
+    }
+
+    const SelectUnselectCategory = id => {
+        debugger;
+
+        //if ($("#billingCategoryCheckBox" + id).prop("checked") == true) {
+
+        //    if ($("#billingCategoryCheckBox" + id).data('identifier') == "CCM") {
+        //        $('[data-identifier="G0506 INITIAL VISIT"]').prop("checked", true);
+        //    }
+        //    if ($("#billingCategoryCheckBox" + id).data('identifier') == "G0506 INITIAL VISIT") {
+        //        $('[data-identifier="CCM"]').prop("checked", true);
+        //    }
+        //} else {
+        //    if ($("#billingCategoryCheckBox" + id).data('identifier') == "CCM") {
+        //        $('[data-identifier="G0506 INITIAL VISIT"]').prop("checked", false);
+        //    }
+        //    if ($("#billingCategoryCheckBox" + id).data('identifier') == "G0506 INITIAL VISIT") {
+        //        $('[data-identifier="CCM"]').prop("checked", false);
+        //    }
+        //}
+    }
+    $(document).ready(function () {
+
+        $('.datetime').datetimepicker({
+            format: 'LT'
+        });
+        $(".numbers-only").keypress(function (e) {
+            if (e.which == 46) {
+                if ($(this).val().indexOf('.') != -1) {
+                    return false;
+                }
+            }
+
+            if (e.which != 8 && e.which != 0 && e.which != 46 && (e.which < 48 || e.which > 57)) {
+                return false;
+            }
+        });
+        $('#editliasion').submit(function (event) {
+            var isvalidform = true;
+            $(".numbers-only").each(function () {
+                if ($(this).val() == "") {
+                    isvalidform = false;
+                }
+            });
+            if (isvalidform == false) {
+                event.preventDefault();
+            }
+            if ($('input[name ="billingCategory"]:checked').val() == null) {
+                swal("Warning", "Please Select Billing Category", "warning");
+                event.preventDefault();
+                return false;
+            }
+        });
+        $(".weekdayname").each(function () {
+
+            var dataweekname = $(this).attr("data-weekname");
+            if ($("#hf" + dataweekname).val() == "true") {
+                $("#chk" + dataweekname).prop("checked", true);
+                $("#tr" + dataweekname + " #dtp1").attr('disabled', 'disabled');
+                $("#tr" + dataweekname + " #dtp2").attr('disabled', 'disabled');
+            }
+        });
+
+        $('#chkbulk').click(function () {
+            if ($(this).is(":checked")) {
+                var start = $(".Starttime-1").val();
+                $('input[name="StartTime"]').val(start);
+
+                var start = $(".EndTime-1").val();
+                $('input[name="EndTime"]').val(start);
+            }
+        });
+    });
+</script>

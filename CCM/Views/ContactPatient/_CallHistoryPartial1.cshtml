@@ -1,0 +1,47 @@
+﻿@model IEnumerable<CCM.Models.CallHistory>
+
+<table id="callHistoryTable1" class="display nowrap" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>PatientID</th>
+            <th>Date Time</th>
+            <th>Phone Number</th>
+            <th>Duration</th>
+            <th>Status</th>
+            <th>Recording</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr data-dbCallId="@item.Id">
+            <td>@item.PatientID</td>
+            <td>
+                @Convert.ToDateTime(item.StartTime).ToString("g")
+            </td>
+            <td>@item.To</td>
+            <td>@item.Duration</td>
+            <td>@item.Status</td>
+            <td>
+                @if (item.RecordingURL != null)
+                {
+                    //var src = item.RecordingURL.Substring(0, item.RecordingURL.IndexOf('.'));
+                    //var fullSource = "https://api.twilio.com" + src + ".mp3?Download=false";
+
+                    <audio controls controlsList="nodownload" preload="metadata">
+                        <source src="/Recordings/@(item.TwilioCallId).mp3" type='audio/mpeg; codecs="mp3"'>
+                    </audio>
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $('#callHistoryTable1').DataTable({
+        pageLength: 25,
+        scrollY: "50vh",
+        order: [[0, "desc"]]
+    });
+</script>

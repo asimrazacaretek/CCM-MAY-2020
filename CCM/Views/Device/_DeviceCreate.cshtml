@@ -1,0 +1,458 @@
+﻿@model CCM.Models.DataModels.Device
+@using Microsoft.AspNet.Identity;
+@using CCM.Models;
+
+<link href="~/Content/Plugins/Tags/src/bootstrap-tagsinput.css" rel="stylesheet" />
+<link href="~/Content/BootToast/bootoast.css" rel="stylesheet" />
+
+
+<style>
+    .bootstrap-tagsinput .tag {
+        margin-right: 2px;
+        color: #f7f7f7;
+        font-size: 13px;
+        background: #8c8c8c;
+        border-radius: 6px;
+        padding: 2px 10px 3px;
+        font-weight: 100;
+    }
+        .bootstrap-tagsinput .tag [data-role="remove"]:after {
+            content: "✖";
+            padding: 3px 3px 1px 3px;
+            font-size: 8px;
+            border-radius: 17px;
+            margin-right: -11px;
+            vertical-align: super;
+            background: red;
+            color: white;
+            font-weight: bold;
+            border: 0px;
+            box-shadow: 2px 2px 6px #676767;
+        }
+            .bootstrap-tagsinput {
+        width: 100%;
+        border: 1px solid black;
+        border-radius: 0px;
+        text-align: left;
+    }
+
+    .autocomplete-suggestions {
+        border: 1px solid #999;
+        background: #FFF;
+        overflow: auto;
+    }
+
+    .autocomplete-suggestion {
+        padding: 2px 5px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .autocomplete-selected {
+        background: #F0F0F0;
+    }
+
+    .autocomplete-suggestions strong {
+        font-weight: normal;
+        color: #3399FF;
+    }
+
+    .autocomplete-group {
+        padding: 2px 5px;
+    }
+
+        .autocomplete-group strong {
+            display: block;
+            border-bottom: 1px solid #000;
+        }
+
+
+    .imageuploadify-overlay {
+        display: none;
+    }
+
+    .imageuploadify-images-list i {
+        color: #3AA0FF;
+        display: block;
+        font-size: 5em;
+        text-align: center;
+        margin: .5em auto;
+        margin-bottom: 7px;
+        /* padding-bottom: 12px; */
+    }
+
+    span.imageuploadify-message {
+        font-size: 24px;
+        border-top: 1px solid #3AA0FF;
+        border-bottom: 1px solid #3AA0FF;
+        padding: 10px;
+        display: inline-block;
+        color: #3AA0FF;
+    }
+
+    .imageuploadify-images-list button.btn-default {
+        display: block;
+        color: #3AA0FF;
+        border-color: #3AA0FF;
+        border-radius: 1em;
+        margin: 25px auto;
+        width: 100%;
+        max-width: 500px;
+        cursor: pointer;
+    }
+
+    .imageuploadify {
+        border: 2px dashed #d2d2d2;
+        position: relative;
+        min-height: 250px;
+        min-width: 250px;
+        max-width: 100% !important;
+        margin: auto;
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        text-align: center;
+        background-color: #fff;
+        color: #3AA0FF;
+        top: 10px;
+    }
+
+    .imageuploadify-container img {
+        max-width: 100px;
+        max-height: 100px;
+        text-align: left;
+    }
+
+    .a {
+        float: left;
+        margin-left: -32px
+    }
+
+    .form-le {
+        width: 250px;
+    }
+
+    .Upload-for-Ticket {
+        margin-left: -25px;
+        margin-right: 17px;
+        padding-left: 0px;
+    }
+
+    .select2-container {
+        width: 250px;
+    }
+    ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        text-overflow: inherit;
+        line-height: initial;
+        white-space: pre;
+        overflow-wrap: normal;
+        -webkit-user-modify: read-only !important;
+        overflow: hidden;
+        -webkit-text-security: none;
+        color: rgb(117, 117, 117);
+        pointer-events: none !important;
+    }
+
+    ::-moz-placeholder { /* Firefox 19+ */
+        text-overflow: inherit;
+        line-height: initial;
+        white-space: pre;
+        overflow-wrap: normal;
+        -webkit-user-modify: read-only !important;
+        overflow: hidden;
+        -webkit-text-security: none;
+        color: rgb(117, 117, 117);
+        pointer-events: none !important;
+    }
+
+    :-ms-input-placeholder { /* IE 10+ */
+        text-overflow: inherit;
+        line-height: initial;
+        white-space: pre;
+        overflow-wrap: normal;
+        -webkit-user-modify: read-only !important;
+        overflow: hidden;
+        -webkit-text-security: none;
+        color: rgb(117, 117, 117);
+        pointer-events: none !important;
+    }
+
+    :-moz-placeholder { /* Firefox 18- */
+        text-overflow: inherit;
+        line-height: initial;
+        white-space: pre;
+        overflow-wrap: normal;
+        -webkit-user-modify: read-only !important;
+        overflow: hidden;
+        -webkit-text-security: none;
+        color: rgb(117, 117, 117);
+        pointer-events: none !important;
+    }
+</style>
+
+@*<input id="patient" style="width:50%;" placeholder="Type PatientName,PatientId,DOB" />*@
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <h4>Device Creation</h4>
+        </div>
+    </div>
+    <div class="row">
+        @*@using (Html.BeginForm("_DeviceCreate", "Device", FormMethod.Post, new { @id = "UserTicketGenerationForm", role = "form", enctype = "multipart/form-data" }))
+            {*@
+        <div class="row">
+            <form id="DiviceForm">
+                @Html.HiddenFor(model => model.Id, new { @id = "HiddenId" })
+                <div class="form-group">
+                    <div class="row">
+                        @Html.Label("Brand Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(model => model.Devices_BrandId, new SelectList(ViewBag.Device_brands, "Value", "Text"), "--Select--", new {  @id = "BrandName", @required = "required", @placeholder = "Device Name", @class = "form-control"  })
+
+                            @Html.ValidationMessageFor(model => model.Devices_BrandId, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Label("Device Type", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(model => model.RPMServiceId, CCM.Helpers.CommonFunctions.GetActiveDevicesTypes(),
+                                                        "Select Device Type", new { @required = "required", @class = "DeviceTypeId form-control" })
+                            @Html.ValidationMessageFor(model => model.RPMServiceId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Label("Model Number", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8" >
+                          
+                                <select id="ModelNumber" name="ModelNumber" class="form-control">
+                                    <option value="">--Select--</option>
+                                    @foreach (var item in ViewBag.ModelNumber)
+                                    {
+                                    <option value="@item.Id" data-BrandId="@item.Devices_BrandId">@item.Name</option>
+                                    }
+                                </select>
+                        
+                            @Html.ValidationMessageFor(model => model.Device_BrandModelId, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @Html.Label("Serial Number", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.SerialNumber, new { htmlAttributes = new { @id = "SerialNumber", @placeholder = "Serial Number", @class = "form-control" ,@data_role = "tagsinput" } })
+                 
+                      
+                            @Html.ValidationMessageFor(model => model.SerialNumber, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Label("Vendor Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(model => model.VendorId, new SelectList(ViewBag.Vendors, "Value", "Text"), "--Select--", new { @id = "VendorName", @placeholder = "Vendor Name", @class = "form-control" })
+
+                            @Html.ValidationMessageFor(model => model.VendorId, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Label("Purchase date", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(model => model.DatePurchase,new { @type = "date", @class = "pickerdate form-control" })
+                            @Html.ValidationMessageFor(model => model.DatePurchase, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @Html.Label("Device Current Status", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(model => model.DeviceStatusId, new SelectList(ViewBag.DeviceStatus, "Value", "Text"),"--Select--", new { @class = "DeviceStatusId form-control", @id = "DeviceStatusId" })
+
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        @Html.Label("Is Active", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(model => model.IsActive,  new SelectList(ViewBag.IsAvtiveStatus, "Value", "Text"), "--Select--", new { @class = "IsActive form-control", @id = "IsActive" })
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @Html.Label("Reason For Deactivate", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.ReasonForDeactivate, new { htmlAttributes = new { @id = "ReasonForDeactivate", @placeholder = "Reason For Deactivate", @class = "form-control" } })
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+            <div class="form-group">
+                <div class="col-md-10 pull-right">
+                    <input id="deviceCreateButton" type="button" value="Create" class="btn btn-default" />
+                    <button type="button" class="btn btn-default close-custom-button somexclassrest" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        @*}*@
+
+    </div>
+
+</div>
+<script src="~/Content/Plugins/Tags/src/bootstrap-tagsinput.js"></script>
+<script>
+    $(document).ready(function () {
+       
+        $("#BrandName").keyup(function () {
+
+            if ($("#BrandName").val().trim() != '') {
+
+                $("#deviceCreateButton").attr("disabled", false);
+            } else {
+                $("#deviceCreateButton").attr("disabled", true);
+
+            }
+        })
+        $("#ModelNumber option").hide();
+
+        $("#BrandName").change(function () {
+            var val = $("#BrandName :selected").val();
+            $("#ModelNumber").val('');
+            $("#ModelNumber option").filter(function () {
+                return $(this).data('brandid') == val;
+            }).show()
+            $("#ModelNumber option").filter(function () {
+                return $(this).data('brandid') != val;
+            }).hide()
+        })
+    });
+
+
+    $("#deviceCreateButton").on("click", function () {
+        if ($("#BrandName").val().trim() != "") {
+            var valdata = $("#DiviceForm").serialize();
+            $("#HiddenId").val(0);
+            AddOrEdit(valdata);
+        }
+
+    });
+    
+    function AddOrEdit(valdata) {
+        $.ajax({
+            type: "POST",
+            data: valdata,
+            url: "/Device/DeviceCreate",
+            success: function (result) {
+               // var table = $('#ListViewTicket').dataTable();
+                if (result == 1) {
+                    $("#BrandName").val('');
+                    $("#BrandName").val("");
+                    swal({
+                        title: "Saved",
+                        text: "Saved Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    var dataform = $("#filterTickets").serialize()
+                    $.ajax({
+                        async: false,
+                        url: '/Device/_DeviceListView',
+                        //data: '{model:' + JSON.stringify(check) + '}',
+                        data: dataform,
+                        type: 'POST',
+                        success: function (objOperations) {
+                            $("#ticketpartialview").html(objOperations);
+                            // console.log(objOperations);
+                        }
+                    });
+                   
+                   // $("#devicePage").load(window.location + " #devicePage");
+                   
+                  
+                }
+                else if (result == 2) {
+                    $("#BrandName").val('');
+                    $("#BrandName").val("");
+                    swal({
+                        title: "Update",
+                        text: "Updated Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    var dataform = $("#filterTickets").serialize()
+                    $.ajax({
+                        async: false,
+                        url: '/Device/_DeviceListView',
+                        //data: '{model:' + JSON.stringify(check) + '}',
+                        data: dataform,
+                        type: 'POST',
+                        success: function (objOperations) {
+                            $("#ticketpartialview").html(objOperations);
+                            // console.log(objOperations);
+                        }
+                    });
+                   // $("#devicePage").load(window.location + " #devicePage");
+                
+
+                }
+                else if (result == -3) {
+                    var s = $("#BrandName").val();
+                    swal("Warning!", s + " Already exists as a Device Name", "warning");
+                }
+                else if (result == -1 || result == -2) {
+                    var s = $("#BrandName").val();
+                    swal("Error!", "Unable to insert", "error");
+                }
+                else {
+                   
+                    $('.close-custom-button').click();
+                    swal("Error!", "Error Accured", "error");
+                  
+
+                }
+                ClearForm();
+            //    alert("as");
+            //    if ($.fn.DataTable.isDataTable("#ListViewTicket")) {
+            //        $('#ListViewTicket').DataTable().clear().destroy();
+            //    }
+
+            //    $("#ListViewTicket").dataTable({
+            //        pageLength: 10,
+
+            //    });
+
+            }
+        });
+
+        
+    }
+
+   
+    function ClearForm() {
+       
+        $("#BrandName").val("");
+        $("#HiddenId").val(0);
+        $("#ModelNumber").val("");
+        $("#SerialNumber").val("");
+        $("#VendorName").val("");
+        $("#device_DatePurchase").val("");
+       //$("#device_DeviceTypeId").val(-1);
+       //  $("#IsActive").val(-1);
+        //$("#IsActive")[0].selectedIndex = 0;
+        $("#ReasonForDeactivate").val("");
+       // $("#device_DeviceTypeId").val(-1);
+    }
+
+  
+</script>
+
+
+
+

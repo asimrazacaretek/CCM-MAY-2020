@@ -1,0 +1,396 @@
+﻿@model CCM.Models.PatientMeidcareMedicaidEligibility
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })*@
+
+<style>
+    .screnshot {
+        padding: 5px;
+        max-width: 340px;
+    }
+    .imagandlabeldetails {
+        float: left;
+        width: 100%;
+        border-radius: 2px;
+        border: 1px solid;
+        margin: 6px 0px;
+        box-shadow: 0 2px 2px rgba(21, 27, 45, 0.85);
+        max-height: 116px;
+        overflow: hidden;
+    }
+
+        .imagandlabeldetails label {
+            float: left;
+            width: 100%;
+            color: white;
+            background-color: #0364bd;
+            padding: 5px;
+            margin-bottom: 0px;
+        }
+
+    .mz-expand {
+        background-color: #000000a3 !important;
+    }
+
+    .close-large-img {
+        position: absolute;
+        right: 33px;
+        left: auto;
+        margin-top: 3px;
+        color: white;
+        font-size: 15px;
+    }
+</style>
+<link href="~/Content/Plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" />
+<link href="~/Content/Plugins/magiczoomplus/magiczoomplus.module.css" rel="stylesheet" />
+<script src="~/Content/Plugins/magiczoomplus/magiczoomplus.js"></script>
+<div>
+    @using (Html.BeginForm("_Create", "PatientMeidcareMedicaidEligibilities", FormMethod.Post, new { id = "frmPatientMedicare", @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+    {
+        <input type="hidden" id="EnrollmentStatushiden" name="EnrollmentStatushiden" value="@ViewBag.EnrollmentStatush" />
+        <input type="hidden" id="EnrollmentSubStatushiden" name="EnrollmentSubStatushiden" value="@ViewBag.EnrollmentSubStatush" />
+        <input type="hidden" id="EnrollmentSubStatusReasonhiden" name="EnrollmentSubStatusReasonhiden" value="@ViewBag.EnrollemntStatusResonh" />
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.PatientId)
+        @Html.HiddenFor(m => m.CreatedBy)
+        @Html.HiddenFor(m => m.CreatedOn)
+        <div class="form-horizontal">
+            <div class="custom-title">
+                <h4>Patient Medicare and Medicaid Eligibility</h4>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="col-md-6">
+
+                <div class="inner-heading">
+                    <h4>Medicare Eligibility</h4>
+                </div>
+                <div class="form-group">
+                    @Html.Label("Eligibility", htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(
+          model => model.MedicareEligibilty,
+          new SelectList(
+              new[]
+              {
+                                     new {Value = "Yes",  Text = "Yes"},
+                                     new {Value = "No",  Text = "No"},
+
+                                 },
+              "Value", "Text", Model.MedicareEligibilty == null ? "" : Model.MedicareEligibilty),
+           new { @class = "form-control border-input", id = "MedicareEligibilty" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Notes", htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        @Html.TextAreaFor(model => model.MedicareEligibiltyNotes, new { @class = "form-control border-input", rows = "5" })
+                        @Html.ValidationMessageFor(model => model.MedicareEligibiltyNotes, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                @{
+                    @*if (Model.MedicareEligibiltySceenshot != null)
+                    {
+                        var base64 = Convert.ToBase64String(Model.MedicareEligibiltySceenshot);
+                        var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                        <label class="col-md-3"></label>
+                        <div class="col-md-9">
+                            <a class="MagicZoom" style="height: 129px; overflow: hidden;" data-options="zoomMode: off;zoomCaption:off;rightClick:false;hint:off" href="@imgSrc">
+
+                                <img src="@imgSrc" class="screnshot" />
+                            </a>
+                        </div>
+                    }*@
+
+                }
+                <div class="form-group">
+                    @Html.Label("Screenshot", htmlAttributes: new { @class = "col-md-3 text-right" })
+                    <div class="col-md-9">
+                        <input type="file" name="MedicareEligibiltySceenshot" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+
+                <div class="inner-heading">
+                    <h4>Medicaid Eligibility</h4>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Eligibility", htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(
+         model => model.MedicaidEligibilty,
+         new SelectList(
+             new[]
+             {
+                                    new {Value = "Yes",  Text = "Yes"},
+                                    new {Value = "No",  Text = "No"},
+
+                                },
+             "Value", "Text", Model.MedicaidEligibilty == null ? "" : Model.MedicaidEligibilty),
+          new { @class = "form-control border-input", id = "MedicaidEligibilty" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Notes", htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        @Html.TextAreaFor(model => model.MedicaidEligibiltyNotes, new { @class = "form-control border-input", rows = "5" })
+                        @Html.ValidationMessageFor(model => model.MedicaidEligibiltyNotes, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                @{
+                    @*if (Model.MedicaidEligibiltySceenshot != null)
+                    {
+                        var base64 = Convert.ToBase64String(Model.MedicaidEligibiltySceenshot);
+                        var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+
+                        <label class="col-md-3"></label>
+                        <div class="col-md-9">
+                            <a class="MagicZoom" style="height: 129px; overflow: hidden;" data-options="zoomMode: off;zoomCaption:off;rightClick:false;hint:off" href="@imgSrc">
+
+                                <img src="@imgSrc" class="screnshot" />
+
+                            </a> 
+                            </div>
+                    }*@
+
+                            }
+
+
+
+                            <div class="form-group">
+                                @Html.Label("Screenshot", htmlAttributes: new { @class = "col-md-3 text-right" })
+                                <div class="col-md-9">
+                                    <input type="file" name="MedicaidEligibiltySceenshot" id="fileUpload1" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+
+                                </div>
+                            </div>
+
+                        </div>
+                        @*<div class="row">
+                    <div class="enrollmentStatus">
+
+                        <div class="col-md-4">
+                            <label>Enrollment Status</label>
+                            @Html.DropDownList("EnrollmentStatus", (IEnumerable<SelectListItem>)ViewBag.EnrollmentStatus, null, new { @class = "form-control border-input" })
+                        </div>
+                        <div class="col-md-4">
+                            <label>SubStatus</label>
+                            @Html.DropDownList("EnrollmentSubStatus", (IEnumerable<SelectListItem>)ViewBag.EnrollmentSubStatus, null, new { @class = "form-control border-input" })
+                        </div>
+                        <div class="col-md-4">
+                            <div id="EnrollemntStatusResondiv">
+
+
+                                <label>Reason <span style="color:red">*</span></label>
+                                @Html.DropDownList("EnrollemntStatusReson", (IEnumerable<SelectListItem>)ViewBag.EnrollemntStatusReson, null, new { @class = "form-control border-input" })
+                            </div>
+                        </div>
+                    </div>
+
+                </div>*@
+                        <br />
+                        <div class="row">
+
+                            <div class="col-md-12" style="position: inherit;">
+                                <label>Enrollment Status Notes</label>
+                                <textarea class="form-control border-input" cols="20" id="EnrollmentStatusNotes" name="EnrollmentStatusNotes" rows="5">@ViewBag.EnrollReason</textarea>
+                                <div class="form-group" style="margin:15px 0 0 0px">
+                                    <input type="button" value="Create/Update" class="btn btn-default logdetails" onclick="SubmitForm('frmPatientMedicare','Update')" />
+
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+
+                    </div>
+
+        <div class="row">
+
+            @if (Model.MedicareEligibiltySceenshot != null)
+            {
+                var base64 = Convert.ToBase64String(Model.MedicareEligibiltySceenshot);
+                var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                <div class="col-md-3">
+                    <div class="imagandlabeldetails">
+                        <label>Medicare Eligibility</label>
+                        <div class="close-large-img">
+                            <img style="width: 8%; float: right; filter: invert(1); margin-top: 2px;" src="~/images/Minimize.png" />
+                        </div>
+                        <a class="MagicZoom" style="height: 129px; overflow: hidden;" data-options="expand: off;zoomCaption:off;zoomPosition: inner;rightClick:false;hint:off" href="@imgSrc">
+
+                            <img src="@imgSrc" alt="" />
+                        </a>
+                    </div>
+                </div>
+
+
+            }
+            @{
+                if (Model.MedicaidEligibiltySceenshot != null)
+                {
+                    var base64 = Convert.ToBase64String(Model.MedicaidEligibiltySceenshot);
+                    var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+
+                    <div class="col-md-3">
+                        <div class="imagandlabeldetails">
+                            <label>Medicaid  Eligibility</label>
+                            <div class="close-large-img">
+                                <img style="width: 8%; float: right; filter: invert(1); margin-top: 2px;" src="~/images/Minimize.png" />
+                            </div>
+                            <a class="MagicZoom" style="height: 129px; overflow: hidden;" data-options="expand: off;zoomCaption:off;zoomPosition: inner;rightClick:false;hint:off" href="@imgSrc">
+
+                                <img src="@imgSrc" alt="" />
+                            </a>
+                        </div>
+                    </div>
+
+                }
+
+
+            }
+
+        </div>
+
+    }
+</div>
+<script>
+    //$("form").submit(function () {
+    //    var form = $(this);
+    //    var formdata = false;
+    //    if (window.FormData) {
+    //        formdata = new FormData(form[0]);
+    //    }
+    //    var urltosend = $("#frmPatientMedicare").attr('action');
+    //    //var datatosend = $("#createform").serialize();
+    //    var datatosend = formdata ? formdata : form.serialize();
+    //    $(".loader").show();
+    //    $.ajax({
+    //        type: 'POST',
+    //        url: urltosend,
+    //        data: datatosend,
+    //        cache: false,
+    //        contentType: false,
+    //        processData: false,
+    //        success: function (json) {
+    //            $(".loader").hide();
+    //            if (json == "True") {
+    //                swal({
+    //                    title: "Saved!",
+    //                    text: json,
+    //                    icon: "success",
+    //                    button: "Ok",
+    //                    confirmButtonColor: "#1ab394",
+    //                });
+    //                $("input:text").val("");
+    //            }
+    //            else { swal("Error!", "Error Accured :" + json, "error"); }
+    //        },
+    //        error: function (xhr, status, error) {
+    //            $(".loader").hide();
+    //            var err = eval("(" + xhr.responseText + ")");
+    //            //;
+    //            swal("Error!", "Error Accured :" + err.Message, "error");
+    //        }
+    //    });
+
+    //    return false;
+    //});
+</script>
+<script type="text/javascript">
+    function Pageload() {
+        debugger;
+        //$("#EnrollmentSubStatus").children('option').hide();
+
+        //$("#EnrollmentStatus option").filter(function () {
+        //    return $(this).text() == $("#EnrollmentStatushiden").val();
+        //}).prop("selected", true);
+
+        //$("#EnrollmentSubStatus").children("option[value='" + $('#EnrollmentStatus').get(0).value + "']").show();
+        //$("#EnrollmentSubStatus option").filter(function () {
+        //    return $(this).text() == $("#EnrollmentSubStatushiden").val();
+        //}).prop("selected", true);
+
+        //$("#EnrollemntStatusReson option:contains(" + $("#EnrollmentSubStatusReasonhiden").val() + ")").attr('selected', 'selected');
+        //$("#EnrollemntStatusResondiv").hide();
+        //if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+        //    $("#EnrollemntStatusResondiv").show();
+        //}
+
+    }
+    $(document).ready(function () {
+        Pageload();
+        $("figure img").click(function () {
+
+            $(this).parent().parent().parent().parent().addClass("col-md-12", { duration: 500 });
+            $(this).parent().parent().parent().parent().css("width", "max");
+            $(this).parent().parent().parent().parent().removeClass("col-md-3");
+            $(this).parent().parent().parent().css("max-height", "initial");
+            $(this).parent().parent().css("height", "auto");
+            $(this).parent().parent().parent().find(".close-large-img").show();
+
+        })
+        $(".close-large-img ").click(function () {
+            $(this).parent().css("max-height: 116px;");
+            $(this).parent().parent().addClass("col-md-3", { duration: 500 });
+
+            $(this).parent().parent().removeClass("col-md-12", { duration: 500 });
+            $(this).next().animate({ height: '86px' }, { duration: 500 })
+            $(this).hide();
+        });
+        $(".close-large-img ").hide();
+        $(document).on('change', '#EnrollmentStatus', function () {
+
+            $("#EnrollmentSubStatus").children('option').hide();
+            $("#EnrollmentSubStatus").children("option[value='" + $(this).val() + "']").show();
+            $("#EnrollmentSubStatus").val($("#EnrollmentStatus").val());
+
+            $("#EnrollmentStatushiden").val($("#EnrollmentStatus option:selected").text());
+            $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+            $("#EnrollemntStatusResondiv").hide();
+        });
+        $(document).on('change', '#EnrollmentSubStatus', function () {
+
+            $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+
+            if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+
+                $("#EnrollemntStatusResondiv").show();
+            }
+            else {
+                $("#EnrollemntStatusResondiv").hide();
+            }
+        });
+        $(document).on('change', '#EnrollemntStatusReson', function () {
+            $("#EnrollmentSubStatusReasonhiden").val($("#EnrollemntStatusReson option:selected").text());
+        });
+    });
+</script>
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+             async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+    </SCRIPT>
+}

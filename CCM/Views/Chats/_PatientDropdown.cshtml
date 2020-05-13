@@ -1,0 +1,13 @@
+﻿@using CCM.Models
+@model IEnumerable<SelectListItem>
+ 
+@if (Model.Any() == true) {
+<div class="form-group">
+    @Html.Label("Patient", htmlAttributes: new { @class = "control-label " })
+    <div class="">
+        @Html.DropDownList("PatientId",Model,
+            "Select Patient", new {@class = "hide form-control border-input" })
+        @Html.ValidationMessage("PatientId", "", new { @class = "text-danger" })
+    </div>
+</div>
+}

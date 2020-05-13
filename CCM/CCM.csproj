@@ -1,0 +1,2779 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8C89B3BC-7E45-4E17-A05F-CE9A0DC5DF7D}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CCM</RootNamespace>
+    <AssemblyName>CCM</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort>44356</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication>
+    </IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>
+    </IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
+    <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer">
+      <HintPath>E:\HtmlRenderer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer.PdfSharp">
+      <HintPath>E:\HtmlRenderer.PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.4.1\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=1.1.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.1.1.2\lib\net451\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.1.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.1.2\lib\net451\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.3.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Facebook, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.3.0.1\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Google, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Google.3.0.1\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.3.0.1\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Twitter, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.3.0.1\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcPaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MVC4.Paging.3.1.1\lib\net40\MvcPaging.dll</HintPath>
+    </Reference>
+    <Reference Include="Nager.Date, Version=1.25.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nager.Date.1.25.7\lib\net45\Nager.Date.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.6.9.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.6.9\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Rotativa, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rotativa.1.6.4\lib\net40\Rotativa.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.1.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.1.2\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="Twilio, Version=5.37.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Twilio.5.37.1\lib\net451\Twilio.dll</HintPath>
+    </Reference>
+    <Reference Include="Twilio.AspNet.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Twilio.AspNet.Common.5.33.1\lib\net45\Twilio.AspNet.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Twilio.AspNet.Mvc, Version=5.33.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Twilio.AspNet.Mvc.5.33.1\lib\net451\Twilio.AspNet.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Ability\AbilityEligibility.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\APIManulSyncReadingController.cs" />
+    <Compile Include="Controllers\APIParserController.cs" />
+    <Compile Include="Controllers\AppointmentController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\BillingController.cs" />
+    <Compile Include="Controllers\CAccountController.cs" />
+    <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Controllers\CarePlanController.cs" />
+    <Compile Include="Controllers\CcmFlowController.cs" />
+    <Compile Include="Controllers\CcmStatusController.cs" />
+    <Compile Include="Controllers\ChatsController.cs" />
+    <Compile Include="Controllers\ContactPatientController.cs" />
+    <Compile Include="Controllers\DeviceController.cs" />
+    <Compile Include="Controllers\DeviceTypeController.cs" />
+    <Compile Include="Controllers\DoctorVisitController.cs" />
+    <Compile Include="Controllers\EnrollmentStatusController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\EvaluationController.cs" />
+    <Compile Include="Controllers\FinalCarePlanController.cs" />
+    <Compile Include="Controllers\FinalCarePlanNotesController.cs" />
+    <Compile Include="Controllers\G0506Controller.cs" />
+    <Compile Include="Controllers\GroupChatsController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IcdController.cs" />
+    <Compile Include="Controllers\LiaisonController.cs" />
+    <Compile Include="Controllers\LiaisonGroupsController.cs" />
+    <Compile Include="Controllers\LiaisonGroup_LiaisonMappingController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MessageNotificationsController.cs" />
+    <Compile Include="Controllers\PatientAddressController.cs" />
+    <Compile Include="Controllers\PatientAllergyController.cs" />
+    <Compile Include="Controllers\PatientContactController.cs" />
+    <Compile Include="Controllers\CurrentMedicationController.cs" />
+    <Compile Include="Controllers\PatientDeviceReadingController.cs" />
+    <Compile Include="Controllers\PatientFamilyHistoryController.cs" />
+    <Compile Include="Controllers\PatientInsuranceController.cs" />
+    <Compile Include="Controllers\PatientLifestyle_DietAndHabitController.cs" />
+    <Compile Include="Controllers\PatientLifestyle_LifeStressController.cs" />
+    <Compile Include="Controllers\PatientLifestyle_NutritionalSupplementController.cs" />
+    <Compile Include="Controllers\PatientMedicalHistory_MedicalConditionController.cs" />
+    <Compile Include="Controllers\PatientMedicalStatusController.cs" />
+    <Compile Include="Controllers\PatientMeidcareMedicaidEligibilitiesController.cs" />
+    <Compile Include="Controllers\PatientPortalController.cs" />
+    <Compile Include="Controllers\PatientProfileController.cs" />
+    <Compile Include="Controllers\PatientController.cs" />
+    <Compile Include="Controllers\PatientSignatureController.cs" />
+    <Compile Include="Controllers\PatientUrgencyContactController.cs" />
+    <Compile Include="Controllers\PatientWorkAndRelationshipController.cs" />
+    <Compile Include="Controllers\PhysicianGroupPhysicianMappingController.cs" />
+    <Compile Include="Controllers\PhysicianGroupEnrollerController.cs" />
+    <Compile Include="Controllers\PhysicianPortalController.cs" />
+    <Compile Include="Controllers\PhysicianController.cs" />
+    <Compile Include="Controllers\PhysiciansGroupController.cs" />
+    <Compile Include="Controllers\QualityControlsController.cs" />
+    <Compile Include="Controllers\EnrollerController.cs" />
+    <Compile Include="Controllers\QuestionBanksController.cs" />
+    <Compile Include="Controllers\RpmController.cs" />
+    <Compile Include="Controllers\RpmServiceController.cs" />
+    <Compile Include="Controllers\SecondaryDoctorController.cs" />
+    <Compile Include="Controllers\SurveyController.cs" />
+    <Compile Include="Controllers\TicketDashboardController.cs" />
+    <Compile Include="Controllers\TokenController.cs" />
+    <Compile Include="Controllers\TwilioTableController.cs" />
+    <Compile Include="Controllers\UpdateReviewTimeController.cs" />
+    <Compile Include="Controllers\VoiceController.cs" />
+    <Compile Include="CustomUserIdProvider.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\BillingCodeHelper.cs" />
+    <Compile Include="Helpers\BillingPeriodsHelper.cs" />
+    <Compile Include="Helpers\BulkChangesStatus.cs" />
+    <Compile Include="Helpers\CCMRequestRestAPI.cs" />
+    <Compile Include="Helpers\CommonFunctions.cs" />
+    <Compile Include="Helpers\DataManipulation.cs" />
+    <Compile Include="Helpers\DateTimeExtension.cs" />
+    <Compile Include="Helpers\EnrollmentStatusHelper.cs" />
+    <Compile Include="Helpers\HelperExtensions.cs" />
+    <Compile Include="Helpers\IsActiveStatus.cs" />
+    <Compile Include="Helpers\LiaisionHelper.cs" />
+    <Compile Include="Helpers\LiasionHelper.cs" />
+    <Compile Include="Helpers\ModalStateValidator.cs" />
+    <Compile Include="Helpers\CategoryCycleStatusHelper.cs" />
+    <Compile Include="Helpers\RPMHelper.cs" />
+    <Compile Include="Helpers\SeedDataHelper.cs" />
+    <Compile Include="Helpers\WeekDaysHelper.cs" />
+    <Compile Include="Migrations\201902191840180_liasionassignedon.cs" />
+    <Compile Include="Migrations\201902191840180_liasionassignedon.Designer.cs">
+      <DependentUpon>201902191840180_liasionassignedon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902191843395_liasionassignedby.cs" />
+    <Compile Include="Migrations\201902191843395_liasionassignedby.Designer.cs">
+      <DependentUpon>201902191843395_liasionassignedby.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902192010182_changelisaonassingedontype.cs" />
+    <Compile Include="Migrations\201902192010182_changelisaonassingedontype.Designer.cs">
+      <DependentUpon>201902192010182_changelisaonassingedontype.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902201840488_addnewtables.cs" />
+    <Compile Include="Migrations\201902201840488_addnewtables.Designer.cs">
+      <DependentUpon>201902201840488_addnewtables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902201849046_changecolumntype.cs" />
+    <Compile Include="Migrations\201902201849046_changecolumntype.Designer.cs">
+      <DependentUpon>201902201849046_changecolumntype.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902201928433_addcolumnspatienttablesubstatusandreason.cs" />
+    <Compile Include="Migrations\201902201928433_addcolumnspatienttablesubstatusandreason.Designer.cs">
+      <DependentUpon>201902201928433_addcolumnspatienttablesubstatusandreason.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902251654494_addcolumnstopatiensCallingStatusandCallingnotes.cs" />
+    <Compile Include="Migrations\201902251654494_addcolumnstopatiensCallingStatusandCallingnotes.Designer.cs">
+      <DependentUpon>201902251654494_addcolumnstopatiensCallingStatusandCallingnotes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902271643475_addnewtablesphysicianandliasoncptrates.cs" />
+    <Compile Include="Migrations\201902271643475_addnewtablesphysicianandliasoncptrates.Designer.cs">
+      <DependentUpon>201902271643475_addnewtablesphysicianandliasoncptrates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902272112233_addcolumnsDoctorTypeandIsCCMProviderandEMRnumandEmrType.cs" />
+    <Compile Include="Migrations\201902272112233_addcolumnsDoctorTypeandIsCCMProviderandEMRnumandEmrType.Designer.cs">
+      <DependentUpon>201902272112233_addcolumnsDoctorTypeandIsCCMProviderandEMRnumandEmrType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902272116369_addcolumnenrollmentstatusnotes.cs" />
+    <Compile Include="Migrations\201902272116369_addcolumnenrollmentstatusnotes.Designer.cs">
+      <DependentUpon>201902272116369_addcolumnenrollmentstatusnotes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902281332532_addcolumnpicassocheckedandnewtablemedicareandmedicaideligibilty.cs" />
+    <Compile Include="Migrations\201902281332532_addcolumnpicassocheckedandnewtablemedicareandmedicaideligibilty.Designer.cs">
+      <DependentUpon>201902281332532_addcolumnpicassocheckedandnewtablemedicareandmedicaideligibilty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902281341475_changedefaultvalues.cs" />
+    <Compile Include="Migrations\201902281341475_changedefaultvalues.Designer.cs">
+      <DependentUpon>201902281341475_changedefaultvalues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902281632227_addcolumnpicassocheckeddate.cs" />
+    <Compile Include="Migrations\201902281632227_addcolumnpicassocheckeddate.Designer.cs">
+      <DependentUpon>201902281632227_addcolumnpicassocheckeddate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903051017366_addcolumnsCapitatedfromtoandhmoandorderby.cs" />
+    <Compile Include="Migrations\201903051017366_addcolumnsCapitatedfromtoandhmoandorderby.Designer.cs">
+      <DependentUpon>201903051017366_addcolumnsCapitatedfromtoandhmoandorderby.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903061520222_addtablesbillingcycles.cs" />
+    <Compile Include="Migrations\201903061520222_addtablesbillingcycles.Designer.cs">
+      <DependentUpon>201903061520222_addtablesbillingcycles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903061522511_changedefaultvalue.cs" />
+    <Compile Include="Migrations\201903061522511_changedefaultvalue.Designer.cs">
+      <DependentUpon>201903061522511_changedefaultvalue.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903071323074_addtablebillingcyclecomments.cs" />
+    <Compile Include="Migrations\201903071323074_addtablebillingcyclecomments.Designer.cs">
+      <DependentUpon>201903071323074_addtablebillingcyclecomments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903111631079_addcolumnactivitytoreveiwtimeccm.cs" />
+    <Compile Include="Migrations\201903111631079_addcolumnactivitytoreveiwtimeccm.Designer.cs">
+      <DependentUpon>201903111631079_addcolumnactivitytoreveiwtimeccm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903131801292_addcolumncycletoreviewtimeccm.cs" />
+    <Compile Include="Migrations\201903131801292_addcolumncycletoreviewtimeccm.Designer.cs">
+      <DependentUpon>201903131801292_addcolumncycletoreviewtimeccm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903151117265_addcolumnstopatient.cs" />
+    <Compile Include="Migrations\201903151117265_addcolumnstopatient.Designer.cs">
+      <DependentUpon>201903151117265_addcolumnstopatient.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903181220582_addtableCCMCycleStatus.cs" />
+    <Compile Include="Migrations\201903181220582_addtableCCMCycleStatus.Designer.cs">
+      <DependentUpon>201903181220582_addtableCCMCycleStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903181457395_addcolumntoccmcyclestatus.cs" />
+    <Compile Include="Migrations\201903181457395_addcolumntoccmcyclestatus.Designer.cs">
+      <DependentUpon>201903181457395_addcolumntoccmcyclestatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903182014330_addcolumnnotestoccmcyclestatus.cs" />
+    <Compile Include="Migrations\201903182014330_addcolumnnotestoccmcyclestatus.Designer.cs">
+      <DependentUpon>201903182014330_addcolumnnotestoccmcyclestatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903191214392_addtablequalitycontrol.cs" />
+    <Compile Include="Migrations\201903191214392_addtablequalitycontrol.Designer.cs">
+      <DependentUpon>201903191214392_addtablequalitycontrol.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903201203421_addcolumnsBillingRatestoBillingCycle.cs" />
+    <Compile Include="Migrations\201903201203421_addcolumnsBillingRatestoBillingCycle.Designer.cs">
+      <DependentUpon>201903201203421_addcolumnsBillingRatestoBillingCycle.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903231159345_addnewtablereasons.cs" />
+    <Compile Include="Migrations\201903231159345_addnewtablereasons.Designer.cs">
+      <DependentUpon>201903231159345_addnewtablereasons.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903261806208_addnewtablephysiciangroupmaping.cs" />
+    <Compile Include="Migrations\201903261806208_addnewtablephysiciangroupmaping.Designer.cs">
+      <DependentUpon>201903261806208_addnewtablephysiciangroupmaping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903271457040_addcolumnsisactiveforliaisonandphysician.cs" />
+    <Compile Include="Migrations\201903271457040_addcolumnsisactiveforliaisonandphysician.Designer.cs">
+      <DependentUpon>201903271457040_addcolumnsisactiveforliaisonandphysician.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904091209308_addtabledoctortiming.cs" />
+    <Compile Include="Migrations\201904091209308_addtabledoctortiming.Designer.cs">
+      <DependentUpon>201904091209308_addtabledoctortiming.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904091215523_changecolumnname.cs" />
+    <Compile Include="Migrations\201904091215523_changecolumnname.Designer.cs">
+      <DependentUpon>201904091215523_changecolumnname.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904092003460_addnewtables1.cs" />
+    <Compile Include="Migrations\201904092003460_addnewtables1.Designer.cs">
+      <DependentUpon>201904092003460_addnewtables1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904092124508_changecolumntype1.cs" />
+    <Compile Include="Migrations\201904092124508_changecolumntype1.Designer.cs">
+      <DependentUpon>201904092124508_changecolumntype1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904101129145_changerelation.cs" />
+    <Compile Include="Migrations\201904101129145_changerelation.Designer.cs">
+      <DependentUpon>201904101129145_changerelation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904111234001_addcolumnstofinalcareplan.cs" />
+    <Compile Include="Migrations\201904111234001_addcolumnstofinalcareplan.Designer.cs">
+      <DependentUpon>201904111234001_addcolumnstofinalcareplan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904171712314_addcolumnstobillingcycles.cs" />
+    <Compile Include="Migrations\201904171712314_addcolumnstobillingcycles.Designer.cs">
+      <DependentUpon>201904171712314_addcolumnstobillingcycles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904181332596_addphotoinphysician.cs" />
+    <Compile Include="Migrations\201904181332596_addphotoinphysician.Designer.cs">
+      <DependentUpon>201904181332596_addphotoinphysician.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904291112294_addcolumnstopatientcontact.cs" />
+    <Compile Include="Migrations\201904291112294_addcolumnstopatientcontact.Designer.cs">
+      <DependentUpon>201904291112294_addcolumnstopatientcontact.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904291145404_addupdatecolumnspatientcontacturgencycontactpatient.cs" />
+    <Compile Include="Migrations\201904291145404_addupdatecolumnspatientcontacturgencycontactpatient.Designer.cs">
+      <DependentUpon>201904291145404_addupdatecolumnspatientcontacturgencycontactpatient.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904291903436_addphonenumbertosecondarydoctor.cs" />
+    <Compile Include="Migrations\201904291903436_addphonenumbertosecondarydoctor.Designer.cs">
+      <DependentUpon>201904291903436_addphonenumbertosecondarydoctor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904291926479_remvoefieldsfrompatient.cs" />
+    <Compile Include="Migrations\201904291926479_remvoefieldsfrompatient.Designer.cs">
+      <DependentUpon>201904291926479_remvoefieldsfrompatient.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904301210102_changecolumnsize.cs" />
+    <Compile Include="Migrations\201904301210102_changecolumnsize.Designer.cs">
+      <DependentUpon>201904301210102_changecolumnsize.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905010914515_addnewtablesliasiongroupandmapping.cs" />
+    <Compile Include="Migrations\201905010914515_addnewtablesliasiongroupandmapping.Designer.cs">
+      <DependentUpon>201905010914515_addnewtablesliasiongroupandmapping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905021314420_historytable.cs" />
+    <Compile Include="Migrations\201905021314420_historytable.Designer.cs">
+      <DependentUpon>201905021314420_historytable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905021316213_historytablenew.cs" />
+    <Compile Include="Migrations\201905021316213_historytablenew.Designer.cs">
+      <DependentUpon>201905021316213_historytablenew.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905021320190_addnewtablehistory.cs" />
+    <Compile Include="Migrations\201905021320190_addnewtablehistory.Designer.cs">
+      <DependentUpon>201905021320190_addnewtablehistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905021325258_changename.cs" />
+    <Compile Include="Migrations\201905021325258_changename.Designer.cs">
+      <DependentUpon>201905021325258_changename.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905081715294_addcolumnstoliaisonfortwilio.cs" />
+    <Compile Include="Migrations\201905081715294_addcolumnstoliaisonfortwilio.Designer.cs">
+      <DependentUpon>201905081715294_addcolumnstoliaisonfortwilio.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905091217344_addcolumnrejecttiondatetoccmcyclestatus.cs" />
+    <Compile Include="Migrations\201905091217344_addcolumnrejecttiondatetoccmcyclestatus.Designer.cs">
+      <DependentUpon>201905091217344_addcolumnrejecttiondatetoccmcyclestatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905141351426_addcolumnlogouttimetologinhistory.cs" />
+    <Compile Include="Migrations\201905141351426_addcolumnlogouttimetologinhistory.Designer.cs">
+      <DependentUpon>201905141351426_addcolumnlogouttimetologinhistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905151925274_newcolumnsinccmcyclestatusapprovedbyrejectedby.cs" />
+    <Compile Include="Migrations\201905151925274_newcolumnsinccmcyclestatusapprovedbyrejectedby.Designer.cs">
+      <DependentUpon>201905151925274_newcolumnsinccmcyclestatusapprovedbyrejectedby.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905231523250_addcolumnTwilioCallerIDinTextHistory.cs" />
+    <Compile Include="Migrations\201905231523250_addcolumnTwilioCallerIDinTextHistory.Designer.cs">
+      <DependentUpon>201905231523250_addcolumnTwilioCallerIDinTextHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905231542263_addcolumntwiliopathsidinliaisons.cs" />
+    <Compile Include="Migrations\201905231542263_addcolumntwiliopathsidinliaisons.Designer.cs">
+      <DependentUpon>201905231542263_addcolumntwiliopathsidinliaisons.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905232000015_addnewtablefinalcareplanhistory.cs" />
+    <Compile Include="Migrations\201905232000015_addnewtablefinalcareplanhistory.Designer.cs">
+      <DependentUpon>201905232000015_addnewtablefinalcareplanhistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905301102363_addtablevoicemailhistory.cs" />
+    <Compile Include="Migrations\201905301102363_addtablevoicemailhistory.Designer.cs">
+      <DependentUpon>201905301102363_addtablevoicemailhistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906121233507_addnewtableMedicationDoseRepitionTimes.cs" />
+    <Compile Include="Migrations\201906121233507_addnewtableMedicationDoseRepitionTimes.Designer.cs">
+      <DependentUpon>201906121233507_addnewtableMedicationDoseRepitionTimes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906121408357_addnewtableMedicationRoute.cs" />
+    <Compile Include="Migrations\201906121408357_addnewtableMedicationRoute.Designer.cs">
+      <DependentUpon>201906121408357_addnewtableMedicationRoute.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906131223066_addnewcolumnsPatientMedicalHistory_MedicationRx.cs" />
+    <Compile Include="Migrations\201906131223066_addnewcolumnsPatientMedicalHistory_MedicationRx.Designer.cs">
+      <DependentUpon>201906131223066_addnewcolumnsPatientMedicalHistory_MedicationRx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906131330143_changecolumntypePatientMedicalHistory_MedicationRx.cs" />
+    <Compile Include="Migrations\201906131330143_changecolumntypePatientMedicalHistory_MedicationRx.Designer.cs">
+      <DependentUpon>201906131330143_changecolumntypePatientMedicalHistory_MedicationRx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906141340144_addnewcolumninicd10codes.cs" />
+    <Compile Include="Migrations\201906141340144_addnewcolumninicd10codes.Designer.cs">
+      <DependentUpon>201906141340144_addnewcolumninicd10codes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906141438073_addcolumndiseasehistory.cs" />
+    <Compile Include="Migrations\201906141438073_addcolumndiseasehistory.Designer.cs">
+      <DependentUpon>201906141438073_addcolumndiseasehistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906141713433_addnewcolumnsPatientMedicalHistory_MedicationRx1.cs" />
+    <Compile Include="Migrations\201906141713433_addnewcolumnsPatientMedicalHistory_MedicationRx1.Designer.cs">
+      <DependentUpon>201906141713433_addnewcolumnsPatientMedicalHistory_MedicationRx1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906141819014_addcolumnisshowninpopup.cs" />
+    <Compile Include="Migrations\201906141819014_addcolumnisshowninpopup.Designer.cs">
+      <DependentUpon>201906141819014_addcolumnisshowninpopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906181405585_addcolumnsPatientProfile_UrgencyContact_AddNewTablesPatientProfile_ProfesionalCareProviderANDPatientProfile_DieseaseState.cs" />
+    <Compile Include="Migrations\201906181405585_addcolumnsPatientProfile_UrgencyContact_AddNewTablesPatientProfile_ProfesionalCareProviderANDPatientProfile_DieseaseState.Designer.cs">
+      <DependentUpon>201906181405585_addcolumnsPatientProfile_UrgencyContact_AddNewTablesPatientProfile_ProfesionalCareProviderANDPatientProfile_DieseaseState.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906181826287_addnewcolumnsDoctorVisitAndSecondaryDoctor.cs" />
+    <Compile Include="Migrations\201906181826287_addnewcolumnsDoctorVisitAndSecondaryDoctor.Designer.cs">
+      <DependentUpon>201906181826287_addnewcolumnsDoctorVisitAndSecondaryDoctor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906191405034_addnewcolumnsPatientMedicalHistory_MedicationRx_DiscontinueMedicine.cs" />
+    <Compile Include="Migrations\201906191405034_addnewcolumnsPatientMedicalHistory_MedicationRx_DiscontinueMedicine.Designer.cs">
+      <DependentUpon>201906191405034_addnewcolumnsPatientMedicalHistory_MedicationRx_DiscontinueMedicine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906201726292_addnewtablesPatientProfile_ConsentAndPatientProfile_ConsentTemplate.cs" />
+    <Compile Include="Migrations\201906201726292_addnewtablesPatientProfile_ConsentAndPatientProfile_ConsentTemplate.Designer.cs">
+      <DependentUpon>201906201726292_addnewtablesPatientProfile_ConsentAndPatientProfile_ConsentTemplate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906201957404_addnewcolumnIsShareCarePlaninSecondaryDoctor.cs" />
+    <Compile Include="Migrations\201906201957404_addnewcolumnIsShareCarePlaninSecondaryDoctor.Designer.cs">
+      <DependentUpon>201906201957404_addnewcolumnIsShareCarePlaninSecondaryDoctor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906202017379_addnewcolumnsPatientProfile_UrgencyContact.cs" />
+    <Compile Include="Migrations\201906202017379_addnewcolumnsPatientProfile_UrgencyContact.Designer.cs">
+      <DependentUpon>201906202017379_addnewcolumnsPatientProfile_UrgencyContact.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906211355089_addnewcolumnAdditionalProvidersInDoctorVisit.cs" />
+    <Compile Include="Migrations\201906211355089_addnewcolumnAdditionalProvidersInDoctorVisit.Designer.cs">
+      <DependentUpon>201906211355089_addnewcolumnAdditionalProvidersInDoctorVisit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906261136531_addtablecareplansharedhistory.cs" />
+    <Compile Include="Migrations\201906261136531_addtablecareplansharedhistory.Designer.cs">
+      <DependentUpon>201906261136531_addtablecareplansharedhistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906261753556_addcolumnsinsecondarydoctors.cs" />
+    <Compile Include="Migrations\201906261753556_addcolumnsinsecondarydoctors.Designer.cs">
+      <DependentUpon>201906261753556_addcolumnsinsecondarydoctors.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906271313011_addnewtablessalesstaffandaddcolumninurgencycontact.cs" />
+    <Compile Include="Migrations\201906271313011_addnewtablessalesstaffandaddcolumninurgencycontact.Designer.cs">
+      <DependentUpon>201906271313011_addnewtablessalesstaffandaddcolumninurgencycontact.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906271438530_changecolumnnameinsalestaffmapping.cs" />
+    <Compile Include="Migrations\201906271438530_changecolumnnameinsalestaffmapping.Designer.cs">
+      <DependentUpon>201906271438530_changecolumnnameinsalestaffmapping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907011952433_changecolumntypedateinmedication.cs" />
+    <Compile Include="Migrations\201907011952433_changecolumntypedateinmedication.Designer.cs">
+      <DependentUpon>201907011952433_changecolumntypedateinmedication.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907012027371_changecolumntype2.cs" />
+    <Compile Include="Migrations\201907012027371_changecolumntype2.Designer.cs">
+      <DependentUpon>201907012027371_changecolumntype2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907121324046_addcolumnliaisonidincallhistoryandvoicemail.cs" />
+    <Compile Include="Migrations\201907121324046_addcolumnliaisonidincallhistoryandvoicemail.Designer.cs">
+      <DependentUpon>201907121324046_addcolumnliaisonidincallhistoryandvoicemail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907161512395_addtablesofgroupchat.cs" />
+    <Compile Include="Migrations\201907161512395_addtablesofgroupchat.Designer.cs">
+      <DependentUpon>201907161512395_addtablesofgroupchat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907161526582_changecolumnamesandtypesofgroupchats.cs" />
+    <Compile Include="Migrations\201907161526582_changecolumnamesandtypesofgroupchats.Designer.cs">
+      <DependentUpon>201907161526582_changecolumnamesandtypesofgroupchats.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907191248525_changecolumnnamecreatedbyingroupchatparticipents.cs" />
+    <Compile Include="Migrations\201907191248525_changecolumnnamecreatedbyingroupchatparticipents.Designer.cs">
+      <DependentUpon>201907191248525_changecolumnnamecreatedbyingroupchatparticipents.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907191632560_changecolumntypeupdatebygroupchats.cs" />
+    <Compile Include="Migrations\201907191632560_changecolumntypeupdatebygroupchats.Designer.cs">
+      <DependentUpon>201907191632560_changecolumntypeupdatebygroupchats.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908062026449_addcolumnreceivernameincareplansharedhistory.cs" />
+    <Compile Include="Migrations\201908062026449_addcolumnreceivernameincareplansharedhistory.Designer.cs">
+      <DependentUpon>201908062026449_addcolumnreceivernameincareplansharedhistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908081305366_addcolumnsreceiveridandreceivertypeincareplansharedhistory.cs" />
+    <Compile Include="Migrations\201908081305366_addcolumnsreceiveridandreceivertypeincareplansharedhistory.Designer.cs">
+      <DependentUpon>201908081305366_addcolumnsreceiveridandreceivertypeincareplansharedhistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908091049251_addcolumnsubmittedbyinccmcyclestatus.cs" />
+    <Compile Include="Migrations\201908091049251_addcolumnsubmittedbyinccmcyclestatus.Designer.cs">
+      <DependentUpon>201908091049251_addcolumnsubmittedbyinccmcyclestatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908211534115_addcolumntranslatoridinpatientsandliaisons.cs" />
+    <Compile Include="Migrations\201908211534115_addcolumntranslatoridinpatientsandliaisons.Designer.cs">
+      <DependentUpon>201908211534115_addcolumntranslatoridinpatientsandliaisons.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908211542173_addcolumnstranslatoridinpatient_history.cs" />
+    <Compile Include="Migrations\201908211542173_addcolumnstranslatoridinpatient_history.Designer.cs">
+      <DependentUpon>201908211542173_addcolumnstranslatoridinpatient_history.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908221212070_addcolumnsinccmccyclestatus.cs" />
+    <Compile Include="Migrations\201908221212070_addcolumnsinccmccyclestatus.Designer.cs">
+      <DependentUpon>201908221212070_addcolumnsinccmccyclestatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908231501471_addnewtablespatienthospitalanddepartmentandhospitals.cs" />
+    <Compile Include="Migrations\201908231501471_addnewtablespatienthospitalanddepartmentandhospitals.Designer.cs">
+      <DependentUpon>201908231501471_addnewtablespatienthospitalanddepartmentandhospitals.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908231506533_addnewtablespatienthospitalanddepartmentandhospitalsnew.cs" />
+    <Compile Include="Migrations\201908231506533_addnewtablespatienthospitalanddepartmentandhospitalsnew.Designer.cs">
+      <DependentUpon>201908231506533_addnewtablespatienthospitalanddepartmentandhospitalsnew.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908261335101_PatirntProfile_addColumnDepartmentID.cs" />
+    <Compile Include="Migrations\201908261335101_PatirntProfile_addColumnDepartmentID.Designer.cs">
+      <DependentUpon>201908261335101_PatirntProfile_addColumnDepartmentID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908261842476_changecolumnsinpatientprofilehospitaldetails.cs" />
+    <Compile Include="Migrations\201908261842476_changecolumnsinpatientprofilehospitaldetails.Designer.cs">
+      <DependentUpon>201908261842476_changecolumnsinpatientprofilehospitaldetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201908281611566_addnewtableautomaticcyclestatusentry.cs" />
+    <Compile Include="Migrations\201908281611566_addnewtableautomaticcyclestatusentry.Designer.cs">
+      <DependentUpon>201908281611566_addnewtableautomaticcyclestatusentry.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909021212071_patientprofiletablechange.cs" />
+    <Compile Include="Migrations\201909021212071_patientprofiletablechange.Designer.cs">
+      <DependentUpon>201909021212071_patientprofiletablechange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909021237089_patientprofilenewtableadded.cs" />
+    <Compile Include="Migrations\201909021237089_patientprofilenewtableadded.Designer.cs">
+      <DependentUpon>201909021237089_patientprofilenewtableadded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909061457479_changecolumnlengthforhosptialvisits.cs" />
+    <Compile Include="Migrations\201909061457479_changecolumnlengthforhosptialvisits.Designer.cs">
+      <DependentUpon>201909061457479_changecolumnlengthforhosptialvisits.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909161824115_addcolumnsubmittedtoreadyforclinicalsignoffinccmcyclestatus.cs" />
+    <Compile Include="Migrations\201909161824115_addcolumnsubmittedtoreadyforclinicalsignoffinccmcyclestatus.Designer.cs">
+      <DependentUpon>201909161824115_addcolumnsubmittedtoreadyforclinicalsignoffinccmcyclestatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909171341257_addcolumnsignaturetopatientandpatientprofileconsent.cs" />
+    <Compile Include="Migrations\201909171341257_addcolumnsignaturetopatientandpatientprofileconsent.Designer.cs">
+      <DependentUpon>201909171341257_addcolumnsignaturetopatientandpatientprofileconsent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909181203075_addnewcolumnenrolleridinpatientappintmentanddoctorschedule.cs" />
+    <Compile Include="Migrations\201909181203075_addnewcolumnenrolleridinpatientappintmentanddoctorschedule.Designer.cs">
+      <DependentUpon>201909181203075_addnewcolumnenrolleridinpatientappintmentanddoctorschedule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909181400015_addcolumnenrolleridindoctortiming.cs" />
+    <Compile Include="Migrations\201909181400015_addcolumnenrolleridindoctortiming.Designer.cs">
+      <DependentUpon>201909181400015_addcolumnenrolleridindoctortiming.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909181815079_addcolumninphysicianholidayandchangeliaisonidtonullable.cs" />
+    <Compile Include="Migrations\201909181815079_addcolumninphysicianholidayandchangeliaisonidtonullable.Designer.cs">
+      <DependentUpon>201909181815079_addcolumninphysicianholidayandchangeliaisonidtonullable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909181923411_changecolumnnameandaddrelationintables.cs" />
+    <Compile Include="Migrations\201909181923411_changecolumnnameandaddrelationintables.Designer.cs">
+      <DependentUpon>201909181923411_changecolumnnameandaddrelationintables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909192006351_addnewcolumnstatusingroupchatdetails.cs" />
+    <Compile Include="Migrations\201909192006351_addnewcolumnstatusingroupchatdetails.Designer.cs">
+      <DependentUpon>201909192006351_addnewcolumnstatusingroupchatdetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909201207350_changecolumntypePatientIdallownullinPA.cs" />
+    <Compile Include="Migrations\201909201207350_changecolumntypePatientIdallownullinPA.Designer.cs">
+      <DependentUpon>201909201207350_changecolumntypePatientIdallownullinPA.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909201635445_addnewtablegroupchatmessagereceiptants.cs" />
+    <Compile Include="Migrations\201909201635445_addnewtablegroupchatmessagereceiptants.Designer.cs">
+      <DependentUpon>201909201635445_addnewtablegroupchatmessagereceiptants.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909261859083_addcolumnsingroupchats.cs" />
+    <Compile Include="Migrations\201909261859083_addcolumnsingroupchats.Designer.cs">
+      <DependentUpon>201909261859083_addcolumnsingroupchats.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909272200438_addnewcolumninparticipents.cs" />
+    <Compile Include="Migrations\201909272200438_addnewcolumninparticipents.Designer.cs">
+      <DependentUpon>201909272200438_addnewcolumninparticipents.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909301427424_addnewColumnheightweightBMIinPatientMedicalHistory_GeneralCondition.cs" />
+    <Compile Include="Migrations\201909301427424_addnewColumnheightweightBMIinPatientMedicalHistory_GeneralCondition.Designer.cs">
+      <DependentUpon>201909301427424_addnewColumnheightweightBMIinPatientMedicalHistory_GeneralCondition.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909301637272_RemoveBMIColumnfromPatientMedicalHistory_GeneralCondition.cs" />
+    <Compile Include="Migrations\201909301637272_RemoveBMIColumnfromPatientMedicalHistory_GeneralCondition.Designer.cs">
+      <DependentUpon>201909301637272_RemoveBMIColumnfromPatientMedicalHistory_GeneralCondition.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910011815401_newTablePatient_LaboratoryResult.cs" />
+    <Compile Include="Migrations\201910011815401_newTablePatient_LaboratoryResult.Designer.cs">
+      <DependentUpon>201910011815401_newTablePatient_LaboratoryResult.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910021535177_renamecolumnTypefrombytetoStringinLaboratoryResult.cs" />
+    <Compile Include="Migrations\201910021535177_renamecolumnTypefrombytetoStringinLaboratoryResult.Designer.cs">
+      <DependentUpon>201910021535177_renamecolumnTypefrombytetoStringinLaboratoryResult.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910072006082_updateTable.cs" />
+    <Compile Include="Migrations\201910072006082_updateTable.Designer.cs">
+      <DependentUpon>201910072006082_updateTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910081245103_RenameTableLabResultToPatientImages.cs" />
+    <Compile Include="Migrations\201910081245103_RenameTableLabResultToPatientImages.Designer.cs">
+      <DependentUpon>201910081245103_RenameTableLabResultToPatientImages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910152001524_AddNewTablePrivateChatAndonline.cs" />
+    <Compile Include="Migrations\201910152001524_AddNewTablePrivateChatAndonline.Designer.cs">
+      <DependentUpon>201910152001524_AddNewTablePrivateChatAndonline.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910171315276_AddNewColumnInPrivateChatTable.cs" />
+    <Compile Include="Migrations\201910171315276_AddNewColumnInPrivateChatTable.Designer.cs">
+      <DependentUpon>201910171315276_AddNewColumnInPrivateChatTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910221943322_addnewtablePriorityStatusTypeTicketGeneration.cs" />
+    <Compile Include="Migrations\201910221943322_addnewtablePriorityStatusTypeTicketGeneration.Designer.cs">
+      <DependentUpon>201910221943322_addnewtablePriorityStatusTypeTicketGeneration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910241856312_UserTicketGenerationTable.cs" />
+    <Compile Include="Migrations\201910241856312_UserTicketGenerationTable.Designer.cs">
+      <DependentUpon>201910241856312_UserTicketGenerationTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910241908270_Update_UserTicketGenerationTable.cs" />
+    <Compile Include="Migrations\201910241908270_Update_UserTicketGenerationTable.Designer.cs">
+      <DependentUpon>201910241908270_Update_UserTicketGenerationTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910252029136_add_TicketAttachmentClass.cs" />
+    <Compile Include="Migrations\201910252029136_add_TicketAttachmentClass.Designer.cs">
+      <DependentUpon>201910252029136_add_TicketAttachmentClass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910291212069_CreatedByinUserTicketGenerations.cs" />
+    <Compile Include="Migrations\201910291212069_CreatedByinUserTicketGenerations.Designer.cs">
+      <DependentUpon>201910291212069_CreatedByinUserTicketGenerations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910291733351_UserTicketGeneration_Update_And_AddASSIGNEETICKET.cs" />
+    <Compile Include="Migrations\201910291733351_UserTicketGeneration_Update_And_AddASSIGNEETICKET.Designer.cs">
+      <DependentUpon>201910291733351_UserTicketGeneration_Update_And_AddASSIGNEETICKET.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910291739221_AddASSIGNEE_TICKET.cs" />
+    <Compile Include="Migrations\201910291739221_AddASSIGNEE_TICKET.Designer.cs">
+      <DependentUpon>201910291739221_AddASSIGNEE_TICKET.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910301735010_AttachmentandFilePathinGroupChatMessages.cs" />
+    <Compile Include="Migrations\201910301735010_AttachmentandFilePathinGroupChatMessages.Designer.cs">
+      <DependentUpon>201910301735010_AttachmentandFilePathinGroupChatMessages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911041310169_update_assigneeTicketIdInAttachment.cs" />
+    <Compile Include="Migrations\201911041310169_update_assigneeTicketIdInAttachment.Designer.cs">
+      <DependentUpon>201911041310169_update_assigneeTicketIdInAttachment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911061718466_update_TicketGeneration.cs" />
+    <Compile Include="Migrations\201911061718466_update_TicketGeneration.Designer.cs">
+      <DependentUpon>201911061718466_update_TicketGeneration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911061723238_update_TicketGeneration2.cs" />
+    <Compile Include="Migrations\201911061723238_update_TicketGeneration2.Designer.cs">
+      <DependentUpon>201911061723238_update_TicketGeneration2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911061938589_update_ticketdatetime.cs" />
+    <Compile Include="Migrations\201911061938589_update_ticketdatetime.Designer.cs">
+      <DependentUpon>201911061938589_update_ticketdatetime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911072013474_CCMCycleStatus_ClaimSubmission.cs" />
+    <Compile Include="Migrations\201911072013474_CCMCycleStatus_ClaimSubmission.Designer.cs">
+      <DependentUpon>201911072013474_CCMCycleStatus_ClaimSubmission.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911081259012_update_columnName_CCMCycleStatus.cs" />
+    <Compile Include="Migrations\201911081259012_update_columnName_CCMCycleStatus.Designer.cs">
+      <DependentUpon>201911081259012_update_columnName_CCMCycleStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911081301034_update_columnName_CCMCycleStatuss.cs" />
+    <Compile Include="Migrations\201911081301034_update_columnName_CCMCycleStatuss.Designer.cs">
+      <DependentUpon>201911081301034_update_columnName_CCMCycleStatuss.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911081436581_TaskComment.cs" />
+    <Compile Include="Migrations\201911081436581_TaskComment.Designer.cs">
+      <DependentUpon>201911081436581_TaskComment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911111757531_ticketHonorIdANDisTicketHonorINUserTicketGeneration.cs" />
+    <Compile Include="Migrations\201911111757531_ticketHonorIdANDisTicketHonorINUserTicketGeneration.Designer.cs">
+      <DependentUpon>201911111757531_ticketHonorIdANDisTicketHonorINUserTicketGeneration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911181301012_add-tableticketResolution.cs" />
+    <Compile Include="Migrations\201911181301012_add-tableticketResolution.Designer.cs">
+      <DependentUpon>201911181301012_add-tableticketResolution.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911271005291_add_ccmClinicalSignOffCounter.cs" />
+    <Compile Include="Migrations\201911271005291_add_ccmClinicalSignOffCounter.Designer.cs">
+      <DependentUpon>201911271005291_add_ccmClinicalSignOffCounter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201912041530194_Add-TicketResolution-In-AssigneeTicket.cs" />
+    <Compile Include="Migrations\201912041530194_Add-TicketResolution-In-AssigneeTicket.Designer.cs">
+      <DependentUpon>201912041530194_Add-TicketResolution-In-AssigneeTicket.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201912122016347_updateAuditTrailTable.cs" />
+    <Compile Include="Migrations\201912122016347_updateAuditTrailTable.Designer.cs">
+      <DependentUpon>201912122016347_updateAuditTrailTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001041859513__final.cs" />
+    <Compile Include="Migrations\202001041859513__final.Designer.cs">
+      <DependentUpon>202001041859513__final.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001211251203__FullBillingCodeMigration.cs" />
+    <Compile Include="Migrations\202001211251203__FullBillingCodeMigration.Designer.cs">
+      <DependentUpon>202001211251203__FullBillingCodeMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001271725139_Liaison_BillingCategory_table_Added.cs" />
+    <Compile Include="Migrations\202001271725139_Liaison_BillingCategory_table_Added.Designer.cs">
+      <DependentUpon>202001271725139_Liaison_BillingCategory_table_Added.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001281909415_Patient_liaison_NewTable_Added.cs" />
+    <Compile Include="Migrations\202001281909415_Patient_liaison_NewTable_Added.Designer.cs">
+      <DependentUpon>202001281909415_Patient_liaison_NewTable_Added.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001282244341_BillingCategory_MinimumMinutes_ColoumnAdded.cs" />
+    <Compile Include="Migrations\202001282244341_BillingCategory_MinimumMinutes_ColoumnAdded.Designer.cs">
+      <DependentUpon>202001282244341_BillingCategory_MinimumMinutes_ColoumnAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001291413587_Patients_Liaison_relationRemoved.cs" />
+    <Compile Include="Migrations\202001291413587_Patients_Liaison_relationRemoved.Designer.cs">
+      <DependentUpon>202001291413587_Patients_Liaison_relationRemoved.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001291431124_Patient_BillingCategory_liaison_Relationship.cs" />
+    <Compile Include="Migrations\202001291431124_Patient_BillingCategory_liaison_Relationship.Designer.cs">
+      <DependentUpon>202001291431124_Patient_BillingCategory_liaison_Relationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001292005450_Patient_BillingCategories_NewColoumnsAdded.cs" />
+    <Compile Include="Migrations\202001292005450_Patient_BillingCategories_NewColoumnsAdded.Designer.cs">
+      <DependentUpon>202001292005450_Patient_BillingCategories_NewColoumnsAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001301945512_Patient_PatientsPreLiasons_relationShip.cs" />
+    <Compile Include="Migrations\202001301945512_Patient_PatientsPreLiasons_relationShip.Designer.cs">
+      <DependentUpon>202001301945512_Patient_PatientsPreLiasons_relationShip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001302032372_Patients_PreLiaisonsId_Coloumn_AddedIn_patientsHistory.cs" />
+    <Compile Include="Migrations\202001302032372_Patients_PreLiaisonsId_Coloumn_AddedIn_patientsHistory.Designer.cs">
+      <DependentUpon>202001302032372_Patients_PreLiaisonsId_Coloumn_AddedIn_patientsHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001311728205_PatientsProfileConcent_ImageAndNote_Relation_BillingCategory.cs" />
+    <Compile Include="Migrations\202001311728205_PatientsProfileConcent_ImageAndNote_Relation_BillingCategory.Designer.cs">
+      <DependentUpon>202001311728205_PatientsProfileConcent_ImageAndNote_Relation_BillingCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002051344504_ReviewTimeCycle_billingCategory_Changes.cs" />
+    <Compile Include="Migrations\202002051344504_ReviewTimeCycle_billingCategory_Changes.Designer.cs">
+      <DependentUpon>202002051344504_ReviewTimeCycle_billingCategory_Changes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002051943388__updatedatatype_Patients_PreLiaisons.cs" />
+    <Compile Include="Migrations\202002051943388__updatedatatype_Patients_PreLiaisons.Designer.cs">
+      <DependentUpon>202002051943388__updatedatatype_Patients_PreLiaisons.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002121357247_AddHospitalReasonTable.cs" />
+    <Compile Include="Migrations\202002121357247_AddHospitalReasonTable.Designer.cs">
+      <DependentUpon>202002121357247_AddHospitalReasonTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002121432255_addHospitalDepartmentstable.cs" />
+    <Compile Include="Migrations\202002121432255_addHospitalDepartmentstable.Designer.cs">
+      <DependentUpon>202002121432255_addHospitalDepartmentstable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002172144002_EnrollmentSubstatusReason_BillingCategory_relationship.cs" />
+    <Compile Include="Migrations\202002172144002_EnrollmentSubstatusReason_BillingCategory_relationship.Designer.cs">
+      <DependentUpon>202002172144002_EnrollmentSubstatusReason_BillingCategory_relationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002251406234__addtableHospitalProcedures.cs" />
+    <Compile Include="Migrations\202002251406234__addtableHospitalProcedures.Designer.cs">
+      <DependentUpon>202002251406234__addtableHospitalProcedures.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002261800242__QuestionBankstableadded.cs" />
+    <Compile Include="Migrations\202002261800242__QuestionBankstableadded.Designer.cs">
+      <DependentUpon>202002261800242__QuestionBankstableadded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002262023165_EvaluationAndG0506TablesAdded.cs" />
+    <Compile Include="Migrations\202002262023165_EvaluationAndG0506TablesAdded.Designer.cs">
+      <DependentUpon>202002262023165_EvaluationAndG0506TablesAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002271448298_TwiliotableAdded.cs" />
+    <Compile Include="Migrations\202002271448298_TwiliotableAdded.Designer.cs">
+      <DependentUpon>202002271448298_TwiliotableAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002281237302_SecondaryDoctors_History_maintaining_coloumns.cs" />
+    <Compile Include="Migrations\202002281237302_SecondaryDoctors_History_maintaining_coloumns.Designer.cs">
+      <DependentUpon>202002281237302_SecondaryDoctors_History_maintaining_coloumns.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002281331408__PatientProfile_Hospitalvisits_History_tableAdded.cs" />
+    <Compile Include="Migrations\202002281331408__PatientProfile_Hospitalvisits_History_tableAdded.Designer.cs">
+      <DependentUpon>202002281331408__PatientProfile_Hospitalvisits_History_tableAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003021202270__Patient_HospitalVisit_NotAdmitted_TableAdded.cs" />
+    <Compile Include="Migrations\202003021202270__Patient_HospitalVisit_NotAdmitted_TableAdded.Designer.cs">
+      <DependentUpon>202003021202270__Patient_HospitalVisit_NotAdmitted_TableAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003031742461__otherProcedureColoumnAdded.cs" />
+    <Compile Include="Migrations\202003031742461__otherProcedureColoumnAdded.Designer.cs">
+      <DependentUpon>202003031742461__otherProcedureColoumnAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003031956511__otherProcedureColoumnAdded_hospital_Historytable.cs" />
+    <Compile Include="Migrations\202003031956511__otherProcedureColoumnAdded_hospital_Historytable.Designer.cs">
+      <DependentUpon>202003031956511__otherProcedureColoumnAdded_hospital_Historytable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003041400080__EvaluationFormDatabaseStructureDesign.cs" />
+    <Compile Include="Migrations\202003041400080__EvaluationFormDatabaseStructureDesign.Designer.cs">
+      <DependentUpon>202003041400080__EvaluationFormDatabaseStructureDesign.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003041512427__EvaluationFormDatabaseStructureDesignChanges2.cs" />
+    <Compile Include="Migrations\202003041512427__EvaluationFormDatabaseStructureDesignChanges2.Designer.cs">
+      <DependentUpon>202003041512427__EvaluationFormDatabaseStructureDesignChanges2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003042313516__addGUIDForQuestions.cs" />
+    <Compile Include="Migrations\202003042313516__addGUIDForQuestions.Designer.cs">
+      <DependentUpon>202003042313516__addGUIDForQuestions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003052248018_G0506_tables_Plus_EvaluationFormDataSave.cs" />
+    <Compile Include="Migrations\202003052248018_G0506_tables_Plus_EvaluationFormDataSave.Designer.cs">
+      <DependentUpon>202003052248018_G0506_tables_Plus_EvaluationFormDataSave.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003052335433_G0506_tables_Plus_EvaluationFormDataSave__Change2.cs" />
+    <Compile Include="Migrations\202003052335433_G0506_tables_Plus_EvaluationFormDataSave__Change2.Designer.cs">
+      <DependentUpon>202003052335433_G0506_tables_Plus_EvaluationFormDataSave__Change2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003062150460_G0506patientupdatetable.cs" />
+    <Compile Include="Migrations\202003062150460_G0506patientupdatetable.Designer.cs">
+      <DependentUpon>202003062150460_G0506patientupdatetable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003101916388__CategoryStatusesTableAdded.cs" />
+    <Compile Include="Migrations\202003101916388__CategoryStatusesTableAdded.Designer.cs">
+      <DependentUpon>202003101916388__CategoryStatusesTableAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003111955253_RejectionHistoryAccordingtoBillingCategory.cs" />
+    <Compile Include="Migrations\202003111955253_RejectionHistoryAccordingtoBillingCategory.Designer.cs">
+      <DependentUpon>202003111955253_RejectionHistoryAccordingtoBillingCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003161514476__ticketNotificationTableAdded.cs" />
+    <Compile Include="Migrations\202003161514476__ticketNotificationTableAdded.Designer.cs">
+      <DependentUpon>202003161514476__ticketNotificationTableAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003161657410__ticketNotificationTableAdded_UserticketGenerationRelationShip.cs" />
+    <Compile Include="Migrations\202003161657410__ticketNotificationTableAdded_UserticketGenerationRelationShip.Designer.cs">
+      <DependentUpon>202003161657410__ticketNotificationTableAdded_UserticketGenerationRelationShip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003161824597__TicketNotificationHistoryaddedColumnChangingType.cs" />
+    <Compile Include="Migrations\202003161824597__TicketNotificationHistoryaddedColumnChangingType.Designer.cs">
+      <DependentUpon>202003161824597__TicketNotificationHistoryaddedColumnChangingType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003181336295__addedColumnNotificationCreatedByInTicketNotificationHistory.cs" />
+    <Compile Include="Migrations\202003181336295__addedColumnNotificationCreatedByInTicketNotificationHistory.Designer.cs">
+      <DependentUpon>202003181336295__addedColumnNotificationCreatedByInTicketNotificationHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003181713439_Patient_NoAdditionalProvider_TableAdded.cs" />
+    <Compile Include="Migrations\202003181713439_Patient_NoAdditionalProvider_TableAdded.Designer.cs">
+      <DependentUpon>202003181713439_Patient_NoAdditionalProvider_TableAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004081257289__AddBulkChangesTablesAndAddColumnInPatientsAppointment.cs" />
+    <Compile Include="Migrations\202004081257289__AddBulkChangesTablesAndAddColumnInPatientsAppointment.Designer.cs">
+      <DependentUpon>202004081257289__AddBulkChangesTablesAndAddColumnInPatientsAppointment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004091853346__removepatientsrelationwithbulkchangelog.cs" />
+    <Compile Include="Migrations\202004091853346__removepatientsrelationwithbulkchangelog.Designer.cs">
+      <DependentUpon>202004091853346__removepatientsrelationwithbulkchangelog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004211125143__AddedRpmServices.cs" />
+    <Compile Include="Migrations\202004211125143__AddedRpmServices.Designer.cs">
+      <DependentUpon>202004211125143__AddedRpmServices.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004211221396__addedVirtualInDeviceTable.cs" />
+    <Compile Include="Migrations\202004211221396__addedVirtualInDeviceTable.Designer.cs">
+      <DependentUpon>202004211221396__addedVirtualInDeviceTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004271255466__addedTableDeviceMappingHistory.cs" />
+    <Compile Include="Migrations\202004271255466__addedTableDeviceMappingHistory.Designer.cs">
+      <DependentUpon>202004271255466__addedTableDeviceMappingHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004271324172__addedColumnCreatedByDeviceMappingHistory.cs" />
+    <Compile Include="Migrations\202004271324172__addedColumnCreatedByDeviceMappingHistory.Designer.cs">
+      <DependentUpon>202004271324172__addedColumnCreatedByDeviceMappingHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004271541400__addedDeviceMappingHistoryAddedVirtal.cs" />
+    <Compile Include="Migrations\202004271541400__addedDeviceMappingHistoryAddedVirtal.Designer.cs">
+      <DependentUpon>202004271541400__addedDeviceMappingHistoryAddedVirtal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004281540025__addedTableRpm_DeviceMappingAttachments.cs" />
+    <Compile Include="Migrations\202004281540025__addedTableRpm_DeviceMappingAttachments.Designer.cs">
+      <DependentUpon>202004281540025__addedTableRpm_DeviceMappingAttachments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004281600499__AddedtableRpm_PatientDeviceReading.cs" />
+    <Compile Include="Migrations\202004281600499__AddedtableRpm_PatientDeviceReading.Designer.cs">
+      <DependentUpon>202004281600499__AddedtableRpm_PatientDeviceReading.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004281622429_addedForeignKeyPatientIdInRpm_DeviceMappingAttachments.cs" />
+    <Compile Include="Migrations\202004281622429_addedForeignKeyPatientIdInRpm_DeviceMappingAttachments.Designer.cs">
+      <DependentUpon>202004281622429_addedForeignKeyPatientIdInRpm_DeviceMappingAttachments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004281753038__AddedColumnIsSyncFormliveInDeviceMappingHistory.cs" />
+    <Compile Include="Migrations\202004281753038__AddedColumnIsSyncFormliveInDeviceMappingHistory.Designer.cs">
+      <DependentUpon>202004281753038__AddedColumnIsSyncFormliveInDeviceMappingHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005071148040__addedRelationDevice_BrandModelAndRPMService.cs" />
+    <Compile Include="Migrations\202005071148040__addedRelationDevice_BrandModelAndRPMService.Designer.cs">
+      <DependentUpon>202005071148040__addedRelationDevice_BrandModelAndRPMService.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005081949023_addedcolumninpatientbillingcategory.cs" />
+    <Compile Include="Migrations\202005081949023_addedcolumninpatientbillingcategory.Designer.cs">
+      <DependentUpon>202005081949023_addedcolumninpatientbillingcategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AlertModel.cs" />
+    <Compile Include="Models\AuditTrail.cs" />
+    <Compile Include="Models\BackGroundJob\CatagoryCyclesStatusUpdate.cs" />
+    <Compile Include="Models\BackGroundJob\PatientReadingBackGroundJob.cs" />
+    <Compile Include="Models\BulkChanges\BulkChangesModel.cs" />
+    <Compile Include="Models\CAccount.cs" />
+    <Compile Include="Models\Caching\HttpContextCaching.cs" />
+    <Compile Include="Models\Caching\ICacheService.cs" />
+    <Compile Include="Models\Caching\InMemoryCache.cs" />
+    <Compile Include="Models\CarePlan.cs" />
+    <Compile Include="Models\CCMBILLINGS\BillingCategory.cs" />
+    <Compile Include="Models\CCMBILLINGS\BillingCodes.cs" />
+    <Compile Include="Models\CCMBILLINGS\BillingPeriods.cs" />
+    <Compile Include="Models\CCMBILLINGS\LaisonViewModel.cs" />
+    <Compile Include="Models\CCMBILLINGS\Liaisons_BillingCategories.cs" />
+    <Compile Include="Models\CCMBILLINGS\Patients_BillingCategories.cs" />
+    <Compile Include="Models\CCMBILLINGS\ViewModels\BillingViewModel.cs" />
+    <Compile Include="Models\CCMBILLINGS\ViewModels\PreLiasonViewModel.cs" />
+    <Compile Include="Models\CCMBILLINGS\ViewModels\ReviewIdViewModel.cs" />
+    <Compile Include="Models\CCMBILLINGS\ViewModels\PatientBillingCategoryViewModel.cs" />
+    <Compile Include="Models\CCMBILLINGS\ViewModels\PatientBillingCategoryViewModelEdit.cs" />
+    <Compile Include="Models\CCMBILLINGS\ViewModels\Patients_PreLiaisons.cs" />
+    <Compile Include="Models\ChatandTickets.cs" />
+    <Compile Include="Models\DataManipulation.cs" />
+    <Compile Include="Models\DataModels\BulkChange.cs" />
+    <Compile Include="Models\DataModels\BulkChangesLog.cs" />
+    <Compile Include="Models\DataModels\CategoriesStatuses.cs" />
+    <Compile Include="Models\DataModels\Device.cs" />
+    <Compile Include="Models\DataModels\Devices\DeviceMappingHistory.cs" />
+    <Compile Include="Models\DataModels\Devices\Devices_Brand.cs" />
+    <Compile Include="Models\DataModels\Devices\Device_BrandModel.cs" />
+    <Compile Include="Models\DataModels\Devices\Device_Vendor.cs" />
+    <Compile Include="Models\DataModels\Devices\Rpm_PatientDeviceReading.cs" />
+    <Compile Include="Models\DataModels\Devices\Rpm_DeviceMappingAttachments.cs" />
+    <Compile Include="Models\DataModels\DeviceType.cs" />
+    <Compile Include="Models\DataModels\EvaluationFormDataAnswersForCheckBox.cs" />
+    <Compile Include="Models\DataModels\EvaluationFormData.cs" />
+    <Compile Include="Models\DataModels\Evaluation_MainQuestionAnswer.cs" />
+    <Compile Include="Models\DataModels\Evaluation_SubQuestionAnswer.cs" />
+    <Compile Include="Models\DataModels\Evaluation_SubQuestions.cs" />
+    <Compile Include="Models\DataModels\G0506_AdditionalProviders.cs" />
+    <Compile Include="Models\DataModels\G0506_PatientsInfo.cs" />
+    <Compile Include="Models\DataModels\G0506_PrimaryInsurance.cs" />
+    <Compile Include="Models\DataModels\G0506_SecondaryInsurance.cs" />
+    <Compile Include="Models\DataModels\HospitalDepartments.cs" />
+    <Compile Include="Models\DataModels\HospitalProcedures.cs" />
+    <Compile Include="Models\DataModels\HospitalReasons.cs" />
+    <Compile Include="Models\DataModels\Patients_Services.cs" />
+    <Compile Include="Models\DataModels\Patient_NoAdditionalProvider.cs" />
+    <Compile Include="Models\DataModels\TicketNotificationHistory.cs" />
+    <Compile Include="Models\DataModels\PatientProfile_Hospitalvisits_History.cs" />
+    <Compile Include="Models\DataModels\Patient_HospitalVisit_NotAdmitted.cs" />
+    <Compile Include="Models\DataModels\QuestionBank.cs" />
+    <Compile Include="Models\DataModels\Evaluation.cs" />
+    <Compile Include="Models\DataModels\Evaluation_Questions.cs" />
+    <Compile Include="Models\DataModels\TwilioNumbersTable.cs" />
+    <Compile Include="Models\ENUMS_\ETicketStatus.cs" />
+    <Compile Include="Models\ErrorLoggerAttribute.cs" />
+    <Compile Include="Models\HomeViewModels.cs" />
+    <Compile Include="Models\ICD10Codes.cs" />
+    <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Liaison.cs" />
+    <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\MessageNotification.cs" />
+    <Compile Include="Models\PatientDeviceReadingsRequest.cs" />
+    <Compile Include="Models\PatientLifestyle.cs" />
+    <Compile Include="Models\PatientMedicalHistory.cs" />
+    <Compile Include="Models\PatientProfile.cs" />
+    <Compile Include="Models\Patient.cs" />
+    <Compile Include="Models\CcdaPatientViewModel.cs" />
+    <Compile Include="Models\PatientsforQues.cs" />
+    <Compile Include="Models\Physician.cs" />
+    <Compile Include="Models\PrivateMessageViewModel.cs" />
+    <Compile Include="Models\ReviewTime.cs" />
+    <Compile Include="Models\ContactPatient.cs" />
+    <Compile Include="Models\RPM\RPMModel.cs" />
+    <Compile Include="Models\ShowConsoleOutput.cs" />
+    <Compile Include="Models\SurveyModels.cs" />
+    <Compile Include="Models\NewTotalPatientsViewModel.cs" />
+    <Compile Include="Models\ViewModels\AnswersViewModal.cs" />
+    <Compile Include="Models\ViewModels\BulkChangesLogViewModel.cs" />
+    <Compile Include="Models\ViewModels\BulkChangesViewModel.cs" />
+    <Compile Include="Models\ViewModels\BulkChangeViewModel.cs" />
+    <Compile Include="Models\ViewModels\CPTCODES.cs" />
+    <Compile Include="Models\ViewModels\DeEnrollmentReasonViewModel.cs" />
+    <Compile Include="Models\ViewModels\DeviceFilterViewModel.cs" />
+    <Compile Include="Models\ViewModels\DevicesListViewModel.cs" />
+    <Compile Include="Models\ViewModels\EnrollmentListViewModel.cs" />
+    <Compile Include="Models\ViewModels\EvaluationViewModel.cs" />
+    <Compile Include="Models\ViewModels\G0506FormDataViewModel.cs" />
+    <Compile Include="Models\ViewModels\G0506ViewModel.cs" />
+    <Compile Include="Models\ViewModels\MainAnswerViewModal.cs" />
+    <Compile Include="Models\ViewModels\MainQuestionViewModal.cs" />
+    <Compile Include="Models\ViewModels\PatientBloodSugarReadingViewModel.cs" />
+    <Compile Include="Models\ViewModels\PatientDeviceReading.cs" />
+    <Compile Include="Models\ViewModels\PatientsViewModel.cs" />
+    <Compile Include="Models\ViewModels\PatientViewModel.cs" />
+    <Compile Include="Models\ViewModels\ReviewTimeActivityViewModel.cs" />
+    <Compile Include="Models\ViewModels\ReviewTime_TimeviewModal.cs" />
+    <Compile Include="Models\ViewModels\RpmPatientsViewModel.cs" />
+    <Compile Include="Models\ViewModels\RpmQueFilterViewModel.cs" />
+    <Compile Include="Models\ViewModels\Rpm_DeviceMappingAttachmentsViewModel.cs" />
+    <Compile Include="Models\ViewModels\SubjectsViewModel.cs" />
+    <Compile Include="Models\ViewModels\SubQuestionsViewModal.cs" />
+    <Compile Include="Models\ViewModels\TicketGenerationViewModel.cs" />
+    <Compile Include="Models\ViewModels\TicketNotificationHistoryViewModal.cs" />
+    <Compile Include="Models\ViewModels\TotalPatientsCategoryViewModel.cs" />
+    <Compile Include="Models\ViewModels\TotalPatientsViewModel.cs" />
+    <Compile Include="Models\ViewModels\TotalPatientsViewModel2.cs" />
+    <Compile Include="Models\ViewModels\TwilioNumberViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerSideController\ServerSideProcessingController.cs" />
+    <Compile Include="signalr\hubs\BulkChangesHub.cs" />
+    <Compile Include="signalr\hubs\ChatHub.cs" />
+    <Compile Include="signalr\hubs\MyGroupHub.cs" />
+    <Compile Include="signalr\hubs\TicketHub.cs" />
+    <Compile Include="Startup.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Readme\Elmah.txt" />
+    <Content Include="bin\Antlr3.Runtime.dll" />
+    <Content Include="bin\Elmah.dll" />
+    <Content Include="bin\EntityFramework.dll" />
+    <Content Include="bin\EntityFramework.SqlServer.dll" />
+    <Content Include="bin\log4net.dll" />
+    <Content Include="bin\Microsoft.AspNet.Identity.Core.dll" />
+    <Content Include="bin\Microsoft.AspNet.Identity.EntityFramework.dll" />
+    <Content Include="bin\Microsoft.AspNet.Identity.Owin.dll" />
+    <Content Include="bin\Microsoft.AspNet.SignalR.Core.dll" />
+    <Content Include="bin\Microsoft.AspNet.SignalR.SystemWeb.dll" />
+    <Content Include="bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll" />
+    <Content Include="bin\Microsoft.IdentityModel.Logging.dll" />
+    <Content Include="bin\Microsoft.IdentityModel.Tokens.dll" />
+    <Content Include="bin\Microsoft.Owin.dll" />
+    <Content Include="bin\Microsoft.Owin.Host.SystemWeb.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Cookies.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Facebook.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Google.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.MicrosoftAccount.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.OAuth.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Twitter.dll" />
+    <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\MvcPaging.dll" />
+    <Content Include="bin\Nager.Date.dll" />
+    <Content Include="bin\Newtonsoft.Json.dll" />
+    <Content Include="bin\Owin.dll" />
+    <Content Include="bin\RestSharp.dll" />
+    <Content Include="bin\Rotativa.dll" />
+    <Content Include="bin\System.IdentityModel.Tokens.Jwt.dll" />
+    <Content Include="bin\System.Linq.Dynamic.dll" />
+    <Content Include="bin\System.Web.Helpers.dll" />
+    <Content Include="bin\System.Web.Mvc.dll" />
+    <Content Include="bin\System.Web.Optimization.dll" />
+    <Content Include="bin\System.Web.Razor.dll" />
+    <Content Include="bin\System.Web.WebPages.Deployment.dll" />
+    <Content Include="bin\System.Web.WebPages.dll" />
+    <Content Include="bin\System.Web.WebPages.Razor.dll" />
+    <Content Include="bin\Twilio.AspNet.Common.dll" />
+    <Content Include="bin\Twilio.AspNet.Mvc.dll" />
+    <Content Include="bin\Twilio.dll" />
+    <Content Include="bin\WebGrease.dll" />
+    <Content Include="Content\animate.css" />
+    <Content Include="Content\at.css" />
+    <Content Include="Content\barChart.css" />
+    <Content Include="Content\BookCarePlan.css" />
+    <Content Include="Content\bootstrap-1.1.0.css" />
+    <Content Include="Content\bootstrap-1.1.0.min.css" />
+    <Content Include="Content\bootstrap-datetimepicker.min.css" />
+    <Content Include="Content\bootstrap-material-datetimepicker.css" />
+    <Content Include="Content\bootstrap-select.css" />
+    <Content Include="Content\bootstrap-select.min.css" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\CardCss.css" />
+    <Content Include="Content\css\app.bundle.css" />
+    <Content Include="Content\css\vendors.bundle.css" />
+    <Content Include="Content\CustomStyle.css" />
+    <Content Include="Content\Error\Error.css" />
+    <Content Include="Content\Error\error2.css" />
+    <Content Include="Content\Evaluation\EvaluationWizard.css" />
+    <Content Include="Content\Evaluation\EvaluationWizard.js" />
+    <Content Include="Content\FontAwesome\css\all.css" />
+    <Content Include="Content\FontAwesome\css\all.min.css" />
+    <Content Include="Content\FontAwesome\css\brands.css" />
+    <Content Include="Content\FontAwesome\css\brands.min.css" />
+    <Content Include="Content\FontAwesome\css\fontawesome.css" />
+    <Content Include="Content\FontAwesome\css\fontawesome.min.css" />
+    <Content Include="Content\FontAwesome\css\light.css" />
+    <Content Include="Content\FontAwesome\css\light.min.css" />
+    <Content Include="Content\FontAwesome\css\regular.css" />
+    <Content Include="Content\FontAwesome\css\regular.min.css" />
+    <Content Include="Content\FontAwesome\css\solid.css" />
+    <Content Include="Content\FontAwesome\css\solid.min.css" />
+    <Content Include="Content\FontAwesome\css\svg-with-js.css" />
+    <Content Include="Content\FontAwesome\css\svg-with-js.min.css" />
+    <Content Include="Content\FontAwesome\css\v4-shims.css" />
+    <Content Include="Content\FontAwesome\css\v4-shims.min.css" />
+    <Content Include="Content\FontAwesome\js\all.js" />
+    <Content Include="Content\FontAwesome\js\all.min.js" />
+    <Content Include="Content\FontAwesome\js\brands.js" />
+    <Content Include="Content\FontAwesome\js\brands.min.js" />
+    <Content Include="Content\FontAwesome\js\fontawesome.js" />
+    <Content Include="Content\FontAwesome\js\fontawesome.min.js" />
+    <Content Include="Content\FontAwesome\js\light.js" />
+    <Content Include="Content\FontAwesome\js\light.min.js" />
+    <Content Include="Content\FontAwesome\js\regular.js" />
+    <Content Include="Content\FontAwesome\js\regular.min.js" />
+    <Content Include="Content\FontAwesome\js\solid.js" />
+    <Content Include="Content\FontAwesome\js\solid.min.js" />
+    <Content Include="Content\FontAwesome\js\v4-shims.js" />
+    <Content Include="Content\FontAwesome\js\v4-shims.min.js" />
+    <Content Include="Content\FontAwesome\webfonts\fa-brands-400.svg" />
+    <Content Include="Content\FontAwesome\webfonts\fa-light-300.svg" />
+    <Content Include="Content\FontAwesome\webfonts\fa-regular-400.svg" />
+    <Content Include="Content\FontAwesome\webfonts\fa-solid-900.svg" />
+    <Content Include="Content\multiselect\bootstrap-multiselect.css" />
+    <Content Include="Content\clndr.css" />
+    <Content Include="Content\component.css" />
+    <Content Include="Content\custom.css" />
+    <Content Include="Content\default.css" />
+    <Content Include="Content\demo-page.css" />
+    <Content Include="Content\Dialer\button-action.js" />
+    <Content Include="Content\Dialer\jquery.js" />
+    <Content Include="Content\Dialer\style.css" />
+    <Content Include="Content\examples.css" />
+    <Content Include="Content\FlipBook.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\foundation.min-978d4ce8.css" />
+    <Content Include="Content\hover.css" />
+    <Content Include="Content\image-markup.css" />
+    <Content Include="Content\jqcandlestick.css" />
+    <Content Include="Content\jquery-ui.css" />
+    <Content Include="Content\jquery.contextMenu.css" />
+    <Content Include="Content\jquery.jqplot.css" />
+    <Content Include="Content\jquerysctipttop.css" />
+    <Content Include="Content\jqvmap.css" />
+    <Content Include="Content\morris.css" />
+    <Content Include="Content\multilevelmenu.css" />
+    <Content Include="Content\newbooks.css" />
+    <Content Include="Content\paging.css" />
+    <Content Include="Content\BootToast\bootoast.css" />
+    <Content Include="Content\BootToast\bootoast.js" />
+    <Content Include="Content\PatientDeatil\ProgressBar.css" />
+    <Content Include="Content\PatientDeatil\ProgressBar.js" />
+    <Content Include="Content\Plugins\magiczoomplus\magiczoomplus.css" />
+    <Content Include="Content\Plugins\magiczoomplus\magiczoomplus.js" />
+    <Content Include="Content\Plugins\magiczoomplus\magiczoomplus.module.css" />
+    <Content Include="Content\Plugins\Tags\src\bootstrap-tagsinput-angular.js" />
+    <Content Include="Content\Plugins\Tags\src\bootstrap-tagsinput.css" />
+    <Content Include="Content\Plugins\Tags\src\bootstrap-tagsinput.js" />
+    <Content Include="Content\style.css" />
+    <Content Include="Content\stylelogin0302.css" />
+    <Content Include="Content\styleStock.css" />
+    <Content Include="Content\swipebox.css" />
+    <Content Include="Content\themes\base\accordion.css" />
+    <Content Include="Content\themes\base\all.css" />
+    <Content Include="Content\themes\base\autocomplete.css" />
+    <Content Include="Content\themes\base\base.css" />
+    <Content Include="Content\themes\base\button.css" />
+    <Content Include="Content\themes\base\core.css" />
+    <Content Include="Content\themes\base\datepicker.css" />
+    <Content Include="Content\themes\base\dialog.css" />
+    <Content Include="Content\themes\base\draggable.css" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_444444_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_555555_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_777620_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_777777_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\jquery-ui.min.css" />
+    <Content Include="Content\themes\base\menu.css" />
+    <Content Include="Content\themes\base\progressbar.css" />
+    <Content Include="Content\themes\base\resizable.css" />
+    <Content Include="Content\themes\base\selectable.css" />
+    <Content Include="Content\themes\base\selectmenu.css" />
+    <Content Include="Content\themes\base\slider.css" />
+    <Content Include="Content\themes\base\sortable.css" />
+    <Content Include="Content\themes\base\spinner.css" />
+    <Content Include="Content\themes\base\tabs.css" />
+    <Content Include="Content\themes\base\theme.css" />
+    <Content Include="Content\themes\base\tooltip.css" />
+    <Content Include="Content\TopNotifications.css" />
+    <Content Include="Content\your-turn.mp3" />
+    <Content Include="dashboard\assets\css\paper-dashboard.css" />
+    <Content Include="dashboard\assets\css\themify-icons.css" />
+    <Content Include="dashboard\assets\fonts\themify.svg" />
+    <Content Include="dashboard\assets\img\background.jpg" />
+    <Content Include="dashboard\assets\img\faces\patient.jpg" />
+    <Content Include="dashboard\assets\img\faces\patientfemale.png" />
+    <Content Include="dashboard\assets\img\loader.gif" />
+    <Content Include="dashboard\assets\img\loader1.gif" />
+    <Content Include="dashboard\assets\img\Logo.jpg" />
+    <Content Include="dashboard\assets\img\Logomakr_9gbYI3.png" />
+    <Content Include="dashboard\assets\img\Logomakr_9gbYI3_old.png" />
+    <Content Include="dashboard\assets\img\LogoSmall.png" />
+    <Content Include="dashboard\assets\img\MegaAidLogo.jpg" />
+    <Content Include="dashboard\assets\js\chartist.min.js" />
+    <Content Include="dashboard\assets\js\demo.js" />
+    <Content Include="dbscript\CCM Fresh DB Script.sql" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\codropsicons\codropsicons.svg" />
+    <Content Include="fonts\codropsicons\license.txt" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\menuicons\icomoon.svg" />
+    <Content Include="fonts\menuicons\license.txt" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site0306.css" />
+    <Content Include="images\acceptcall1.gif" />
+    <Content Include="images\admin.jpg" />
+    <Content Include="images\adverse..png" />
+    <Content Include="images\allegriesicon.jpg" />
+    <Content Include="images\allergies.jpg" />
+    <Content Include="images\avatar-m.png" />
+    <Content Include="images\background.jpg" />
+    <Content Include="images\backimage.jpg" />
+    <Content Include="images\CarePlan\additional-arrow.png" />
+    <Content Include="images\CarePlan\background1.jpg" />
+    <Content Include="images\CarePlan\bg-doc.png" />
+    <Content Include="images\CarePlan\bg-white 2.png" />
+    <Content Include="images\CarePlan\bg-white.png" />
+    <Content Include="images\CarePlan\CCM Logo.png" />
+    <Content Include="images\CarePlan\ChronicCare_bottim_border.png" />
+    <Content Include="images\CarePlan\dark-green-box-border.png" />
+    <Content Include="images\CarePlan\green-box-border.png" />
+    <Content Include="images\CarePlan\orange-box-border.png" />
+    <Content Include="images\CarePlan\skyblue-box-border.png" />
+    <Content Include="images\CarePlan\sp-physcian.png" />
+    <Content Include="images\CarePlan\Untitled-1-01.png" />
+    <Content Include="images\CarePlan\Untitled-1-02.png" />
+    <Content Include="images\CarePlan\Untitled-1-03.png" />
+    <Content Include="images\CarePlan\Untitled-1-04.png" />
+    <Content Include="images\CarePlan\Untitled-1-06.png" />
+    <Content Include="images\CarePlan\Untitled-1-061.png" />
+    <Content Include="images\CarePlan\Untitled-1-07.png" />
+    <Content Include="images\CarePlan\Untitled-1-08.png" />
+    <Content Include="images\CarePlan\Untitled-1-09.png" />
+    <Content Include="images\CarePlan\Untitled-2-01.png" />
+    <Content Include="images\CarePlan\Untitled-2-02.png" />
+    <Content Include="images\CarePlan\Untitled-2-03.png" />
+    <Content Include="images\CarePlan\Untitled-2-04.png" />
+    <Content Include="images\CarePlan\Untitled-2-05.png" />
+    <Content Include="images\CarePlan\Untitled-2-06.png" />
+    <Content Include="images\CarePlan\Untitled-2-07.png" />
+    <Content Include="images\CarePlan\Untitled-2-08.png" />
+    <Content Include="images\CarePlan\Untitled-2-09.png" />
+    <Content Include="images\CarePlan\Untitled-2-10.png" />
+    <Content Include="images\CarePlan\Untitled-2-11.png" />
+    <Content Include="images\CarePlan\Untitled-2-12.png" />
+    <Content Include="images\CarePlan\Untitled-2-13.png" />
+    <Content Include="images\CarePlan\Untitled-2-14.png" />
+    <Content Include="images\CarePlan\Untitled-2-15.png" />
+    <Content Include="images\CarePlan\Untitled-2-16.png" />
+    <Content Include="images\CarePlan\Untitled-2-17.png" />
+    <Content Include="images\CarePlan\user_icon.png" />
+    <Content Include="images\CCM Logo Final.png" />
+    <Content Include="images\chronic.png" />
+    <Content Include="images\drug-to-drug.jpg" />
+    <Content Include="images\drugs.jpg" />
+    <Content Include="images\female1.jpg" />
+    <Content Include="images\group-img.jpg" />
+    <Content Include="images\healthcare-industry-trends.jpg" />
+    <Content Include="images\hosptail.jpg" />
+    <Content Include="images\loginbg.jpeg" />
+    <Content Include="images\logo.png" />
+    <Content Include="images\logo1.png" />
+    <Content Include="images\male.jpg" />
+    <Content Include="images\manypatients.jpg" />
+    <Content Include="images\MDicon.png" />
+    <Content Include="images\medicaldiagnosis.jpg" />
+    <Content Include="images\medication.png" />
+    <Content Include="images\meds.jpg" />
+    <Content Include="images\Minimize.png" />
+    <Content Include="images\pain.jpg" />
+    <Content Include="images\rejectcall1.gif" />
+    <Content Include="images\sideeffect.jpg" />
+    <Content Include="images\TDD.jpg" />
+    <Content Include="images\tools.png" />
+    <Content Include="images\user-g.jpg" />
+    <Content Include="images\user.jpg" />
+    <Content Include="images\vitalsigns.jpg" />
+    <Content Include="images\Wedges-3s-200px.gif" />
+    <Content Include="Content\FontAwesome\webfonts\fa-brands-400.eot" />
+    <Content Include="Content\FontAwesome\webfonts\fa-brands-400.ttf" />
+    <Content Include="Content\FontAwesome\webfonts\fa-brands-400.woff" />
+    <Content Include="Content\FontAwesome\webfonts\fa-brands-400.woff2" />
+    <Content Include="Content\FontAwesome\webfonts\fa-light-300.eot" />
+    <Content Include="Content\FontAwesome\webfonts\fa-light-300.ttf" />
+    <Content Include="Content\FontAwesome\webfonts\fa-light-300.woff" />
+    <Content Include="Content\FontAwesome\webfonts\fa-light-300.woff2" />
+    <Content Include="Content\FontAwesome\webfonts\fa-regular-400.eot" />
+    <Content Include="Content\FontAwesome\webfonts\fa-regular-400.ttf" />
+    <Content Include="Content\FontAwesome\webfonts\fa-regular-400.woff" />
+    <Content Include="Content\FontAwesome\webfonts\fa-regular-400.woff2" />
+    <Content Include="Content\FontAwesome\webfonts\fa-solid-900.eot" />
+    <Content Include="Content\FontAwesome\webfonts\fa-solid-900.ttf" />
+    <Content Include="Content\FontAwesome\webfonts\fa-solid-900.woff" />
+    <Content Include="Content\FontAwesome\webfonts\fa-solid-900.woff2" />
+    <None Include="Local.config">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="logs\log.txt" />
+    <Content Include="Patients_Concent_Images\Database diagram.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PrivateChatsFiles\testfile.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Recordings\testfile.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Rotativa\help-wkhtmltoimage.txt" />
+    <Content Include="Rotativa\help-wkhtmltopdf.txt" />
+    <Content Include="Rotativa\wkhtmltopdf.exe" />
+    <Content Include="Scripts\amcharts.js" />
+    <Content Include="Scripts\amstock.js" />
+    <Content Include="Scripts\at.js" />
+    <Content Include="Scripts\autocompleteevents.js" />
+    <Content Include="Scripts\bluebutton.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
+    <Content Include="Content\multiselect\bootstrap-multiselect.js" />
+    <Content Include="Scripts\bootstrap-select.js" />
+    <Content Include="Scripts\bootstrap-select.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\CategoryTimer.js" />
+    <Content Include="Scripts\Chart.js" />
+    <Content Include="Scripts\ChatScripts\app.bundle.js" />
+    <Content Include="Scripts\ChatScripts\vendors.bundle.js" />
+    <Content Include="Scripts\classie.js" />
+    <Content Include="Scripts\clndr.js" />
+    <Content Include="Scripts\CommandManager.js" />
+    <Content Include="Scripts\custom.js" />
+    <Content Include="Scripts\data.js" />
+    <Content Include="Scripts\FlipBook.js" />
+    <Content Include="Scripts\formValidation.js" />
+    <Content Include="Scripts\gmaps.js" />
+    <Content Include="Scripts\html2canvas.js" />
+    <Content Include="Scripts\image-markup.js" />
+    <Content Include="Scripts\ImageMinifier.js" />
+    <Content Include="Scripts\imageuploadify.min.js" />
+    <Content Include="Scripts\inputEmoji.js" />
+    <Content Include="Scripts\jqPlot\changes.txt" />
+    <Content Include="Scripts\jqPlot\copyright.txt" />
+    <Content Include="Scripts\jqPlot\excanvas.js" />
+    <Content Include="Scripts\jqPlot\excanvas.min.js" />
+    <Content Include="Scripts\jqPlot\gpl-2.0.txt" />
+    <Content Include="Scripts\jqPlot\jqPlotCssStyling.txt" />
+    <Content Include="Scripts\jqPlot\jqPlotOptions.txt" />
+    <Content Include="Scripts\jqPlot\jquery.jqplot.css" />
+    <Content Include="Scripts\jqPlot\jquery.jqplot.js" />
+    <Content Include="Scripts\jqPlot\jquery.jqplot.min.css" />
+    <Content Include="Scripts\jqPlot\jquery.jqplot.min.js" />
+    <Content Include="Scripts\jqPlot\jquery.js" />
+    <Content Include="Scripts\jqPlot\jquery.min.js" />
+    <Content Include="Scripts\jqPlot\MIT-LICENSE.txt" />
+    <Content Include="Scripts\jqPlot\optionsTutorial.txt" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.barRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.barRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.BezierCurveRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.BezierCurveRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.blockRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.blockRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.bubbleRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.bubbleRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.canvasAxisLabelRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.canvasAxisLabelRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.canvasAxisTickRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.canvasAxisTickRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.canvasOverlay.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.canvasOverlay.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.canvasTextRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.canvasTextRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.categoryAxisRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.categoryAxisRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.ciParser.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.ciParser.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.cursor.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.cursor.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.dateAxisRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.dateAxisRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.donutRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.donutRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.dragable.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.dragable.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.enhancedLegendRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.enhancedLegendRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.funnelRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.funnelRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.highlighter.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.highlighter.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.json2.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.json2.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.logAxisRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.logAxisRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.mekkoAxisRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.mekkoAxisRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.mekkoRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.mekkoRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.meterGaugeRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.meterGaugeRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.mobile.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.mobile.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.ohlcRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.ohlcRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.pieRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.pieRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.pointLabels.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.pointLabels.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.pyramidAxisRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.pyramidAxisRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.pyramidGridRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.pyramidGridRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.pyramidRenderer.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.pyramidRenderer.min.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.trendline.js" />
+    <Content Include="Scripts\jqPlot\plugins\jqplot.trendline.min.js" />
+    <Content Include="Scripts\jqPlot\README.txt" />
+    <Content Include="Scripts\jqPlot\usage.txt" />
+    <Content Include="Scripts\jquery-1.11.1.min.js" />
+    <Content Include="fonts\codropsicons\codropsicons.eot" />
+    <Content Include="fonts\codropsicons\codropsicons.ttf" />
+    <Content Include="fonts\codropsicons\codropsicons.woff" />
+    <Content Include="fonts\menuicons\icomoon.eot" />
+    <Content Include="fonts\menuicons\icomoon.ttf" />
+    <Content Include="fonts\menuicons\icomoon.woff" />
+    <Content Include="dashboard\assets\fonts\themify.eot" />
+    <Content Include="dashboard\assets\fonts\themify.ttf" />
+    <Content Include="dashboard\assets\fonts\themify.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="App_Browsers\qt.browser" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap\wells.less" />
+    <Content Include="Content\bootstrap\variables.less" />
+    <Content Include="Content\bootstrap\utilities.less" />
+    <Content Include="Content\bootstrap\type.less" />
+    <Content Include="Content\bootstrap\tooltip.less" />
+    <Content Include="Content\bootstrap\thumbnails.less" />
+    <Content Include="Content\bootstrap\theme.less" />
+    <Content Include="Content\bootstrap\tables.less" />
+    <Content Include="Content\bootstrap\scaffolding.less" />
+    <Content Include="Content\bootstrap\responsive-utilities.less" />
+    <Content Include="Content\bootstrap\responsive-embed.less" />
+    <Content Include="Content\bootstrap\progress-bars.less" />
+    <Content Include="Content\bootstrap\print.less" />
+    <Content Include="Content\bootstrap\popovers.less" />
+    <Content Include="Content\bootstrap\panels.less" />
+    <Content Include="Content\bootstrap\pagination.less" />
+    <Content Include="Content\bootstrap\pager.less" />
+    <Content Include="Content\bootstrap\normalize.less" />
+    <Content Include="Content\bootstrap\navs.less" />
+    <Content Include="Content\bootstrap\navbar.less" />
+    <Content Include="Content\bootstrap\modals.less" />
+    <Content Include="Content\bootstrap\mixins\vendor-prefixes.less" />
+    <Content Include="Content\bootstrap\mixins\text-overflow.less" />
+    <Content Include="Content\bootstrap\mixins\text-emphasis.less" />
+    <Content Include="Content\bootstrap\mixins\table-row.less" />
+    <Content Include="Content\bootstrap\mixins\tab-focus.less" />
+    <Content Include="Content\bootstrap\mixins\size.less" />
+    <Content Include="Content\bootstrap\mixins\responsive-visibility.less" />
+    <Content Include="Content\bootstrap\mixins\resize.less" />
+    <Content Include="Content\bootstrap\mixins\reset-text.less" />
+    <Content Include="Content\bootstrap\mixins\reset-filter.less" />
+    <Content Include="Content\bootstrap\mixins\progress-bar.less" />
+    <Content Include="Content\bootstrap\mixins\panels.less" />
+    <Content Include="Content\bootstrap\mixins\pagination.less" />
+    <Content Include="Content\bootstrap\mixins\opacity.less" />
+    <Content Include="Content\bootstrap\mixins\nav-vertical-align.less" />
+    <Content Include="Content\bootstrap\mixins\nav-divider.less" />
+    <Content Include="Content\bootstrap\mixins\list-group.less" />
+    <Content Include="Content\bootstrap\mixins\labels.less" />
+    <Content Include="Content\bootstrap\mixins\image.less" />
+    <Content Include="Content\bootstrap\mixins\hide-text.less" />
+    <Content Include="Content\bootstrap\mixins\grid.less" />
+    <Content Include="Content\bootstrap\mixins\grid-framework.less" />
+    <Content Include="Content\bootstrap\mixins\gradients.less" />
+    <Content Include="Content\bootstrap\mixins\forms.less" />
+    <Content Include="Content\bootstrap\mixins\clearfix.less" />
+    <Content Include="Content\bootstrap\mixins\center-block.less" />
+    <Content Include="Content\bootstrap\mixins\buttons.less" />
+    <Content Include="Content\bootstrap\mixins\border-radius.less" />
+    <Content Include="Content\bootstrap\mixins\background-variant.less" />
+    <Content Include="Content\bootstrap\mixins\alerts.less" />
+    <Content Include="Content\bootstrap\mixins.less" />
+    <Content Include="Content\bootstrap\media.less" />
+    <Content Include="Content\bootstrap\list-group.less" />
+    <Content Include="Content\bootstrap\labels.less" />
+    <Content Include="Content\bootstrap\jumbotron.less" />
+    <Content Include="Content\bootstrap\input-groups.less" />
+    <Content Include="Content\bootstrap\grid.less" />
+    <Content Include="Content\bootstrap\glyphicons.less" />
+    <Content Include="Content\bootstrap\forms.less" />
+    <Content Include="Content\bootstrap\dropdowns.less" />
+    <Content Include="Content\bootstrap\component-animations.less" />
+    <Content Include="Content\bootstrap\code.less" />
+    <Content Include="Content\bootstrap\close.less" />
+    <Content Include="Content\bootstrap\carousel.less" />
+    <Content Include="Content\bootstrap\buttons.less" />
+    <Content Include="Content\bootstrap\button-groups.less" />
+    <Content Include="Content\bootstrap\breadcrumbs.less" />
+    <Content Include="Content\bootstrap\bootstrap.less" />
+    <Content Include="Content\bootstrap\badges.less" />
+    <Content Include="Content\bootstrap\alerts.less" />
+    <Content Include="Content\_bootstrap-datetimepicker.less" />
+    <Content Include="Content\bootstrap-datetimepicker-build.less" />
+    <Content Include="Content\bootstrap-select.css.map" />
+    <Content Include="Pat_Images\2017\11\11202017CCM1_PD_11202017_86" />
+    <Content Include="Pat_Images\2017\11\11202017CCM2_PD_11202017_86" />
+    <Content Include="Pat_Images\2019\10\10102019CCM\1_LR_10102019_16623" />
+    <Content Include="Pat_Images\2019\10\10102019CCM\1_PD_10102019_16620" />
+    <Content Include="Pat_Images\2019\10\10102019CCM\1_PD_10102019_16622" />
+    <Content Include="Pat_Images\2019\10\10102019CCM\2_LR_10102019_16623" />
+    <Content Include="Pat_Images\2019\10\10102019CCM\2_PD_10102019_16622" />
+    <Content Include="Pat_Images\2019\10\10102019CCM\3_PD_10102019_16623" />
+    <Content Include="Pat_Images\2019\10\10102019CCM\4_PD_10102019_16623" />
+    <Content Include="Pat_Images\2019\10\10102019CCM\5_PD_10102019_16623" />
+    <Content Include="Pat_Images\2019\10\10102019CCM\6_PD_10102019_16623" />
+    <Content Include="Pat_Images\2019\10\10102019CCM\7_LR_10102019_16623" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\10_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\11_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\12_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\13_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\14_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\15_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\16_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\17_LR_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\1_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\1_PD_10112019_16625" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\2_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\2_PD_10112019_16625" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\3_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\3_PD_10112019_16625" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\4_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\5_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\6_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\7_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\8_PD_10112019_16623" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\8_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\9_PD_10112019_16623" />
+    <Content Include="Pat_Images\2019\10\10112019CCM\9_PD_10112019_16624" />
+    <Content Include="Pat_Images\2019\10\10122019CCM\1_PD_10122019_16633" />
+    <Content Include="Pat_Images\2019\10\10122019CCM\1_PD_10122019_16634" />
+    <Content Include="Pat_Images\2019\10\10122019CCM\2_PD_10122019_16633" />
+    <Content Include="Pat_Images\2019\10\10122019CCM\2_PD_10122019_16634" />
+    <Content Include="Pat_Images\2019\10\10122019CCM\3_PD_10122019_16633" />
+    <Content Include="Pat_Images\2019\10\10122019CCM\3_PD_10122019_16634" />
+    <Content Include="Pat_Images\2019\10\10122019CCM\4_PD_10122019_16634" />
+    <Content Include="Pat_Images\2019\10\10122019CCM\5_PD_10122019_16634" />
+    <Content Include="Pat_Images\2019\10\10122019CCM\6_PD_10122019_16634" />
+    <None Include="Properties\PublishProfiles\FolderProfile2.pubxml" />
+    <Content Include="Scripts\bootstrap-select.js.map" />
+    <Content Include="Scripts\bootstrap-select.min.js.map" />
+    <None Include="Properties\PublishProfiles\LocalServerFileSystem.pubxml" />
+    <None Include="Scripts\jquery-1.12.4.intellisense.js" />
+    <Content Include="Scripts\jquery-1.12.4.js" />
+    <Content Include="Scripts\jquery-1.12.4.min.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\jquery-ui-1.12.1.js" />
+    <Content Include="Scripts\jquery-ui-1.12.1.min.js" />
+    <Content Include="Scripts\jquery.autocomplete.js" />
+    <Content Include="Scripts\jquery.circlechart.js" />
+    <Content Include="Scripts\jquery.contextMenu.js" />
+    <Content Include="Scripts\jquery.dlmenu.js" />
+    <Content Include="Scripts\jquery.doubleScroll.js" />
+    <Content Include="Scripts\jquery.flot.animator.min.js" />
+    <Content Include="Scripts\jquery.flot.js" />
+    <Content Include="Scripts\jquery.flot.min.js" />
+    <Content Include="Scripts\jquery.jqcandlestick.min.js" />
+    <Content Include="Scripts\jquery.nicescroll.js" />
+    <Content Include="Scripts\jquery.signalR-2.4.1.js" />
+    <Content Include="Scripts\jquery.signalR-2.4.1.min.js" />
+    <Content Include="Scripts\jquery.sparkline.min.js" />
+    <Content Include="Scripts\jquery.swipebox.min.js" />
+    <Content Include="Scripts\jquery.ui.position.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jquery.vmap.js" />
+    <Content Include="Scripts\jquery.vmap.sampledata.js" />
+    <Content Include="Scripts\jquery.vmap.world.js" />
+    <Content Include="Scripts\metisMenu.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\modernizr.custom.js" />
+    <Content Include="Scripts\moment-2.2.1.js" />
+    <Content Include="Scripts\moment-with-locales.js" />
+    <Content Include="Scripts\moment-with-locales.min.js" />
+    <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\multi-step-modal.js" />
+    <Content Include="Scripts\pagetransitions.js" />
+    <Content Include="Scripts\paper-core.js" />
+    <Content Include="Scripts\paper-core.min.js" />
+    <Content Include="Scripts\paper-full.js" />
+    <Content Include="Scripts\paper-full.min.js" />
+    <Content Include="Scripts\pie-chart.js" />
+    <Content Include="Scripts\quickstart.js" />
+    <Content Include="Scripts\RadarChart.js" />
+    <Content Include="Scripts\RecordActivity.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\scripts.js" />
+    <Content Include="Scripts\serial.js" />
+    <Content Include="Scripts\site.js" />
+    <Content Include="Scripts\skycons.js" />
+    <Content Include="Scripts\Timer.js" />
+    <Content Include="Scripts\transform_spline-b5efd14d.js" />
+    <Content Include="Scripts\underscore-min.js" />
+    <Content Include="Scripts\validator.min.js" />
+    <Content Include="Scripts\wow.min.js" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Scripts\jquery-1.12.4.min.map" />
+    <None Include="Scripts\_references.js" />
+    <Content Include="Views\G0506\G0506Report.cshtml" />
+    <Content Include="Views\G0506\_UpdateAdditionalProviders.cshtml" />
+    <Content Include="Views\Patient\Bulkchanges.cshtml" />
+    <Content Include="Views\Patient\GetBulkchangeslogData.cshtml" />
+    <Content Include="Views\Patient\BulkchangesLogs.cshtml" />
+    <Content Include="Views\Patient\GetBulkchangesData.cshtml" />
+    <Content Include="Views\Rpm\Index.cshtml" />
+    <Content Include="Views\DeviceType\DeviceTypeIndex.cshtml" />
+    <Content Include="Views\Device\DeviceIndex.cshtml" />
+    <Content Include="Views\Device\_DeviceCreate.cshtml" />
+    <Content Include="Views\Device\_DeviceListView.cshtml" />
+    <Content Include="Views\RpmService\Index.cshtml" />
+    <Content Include="Views\RpmService\DeviceMapping.cshtml" />
+    <Content Include="Views\RpmService\AssignDevice.cshtml" />
+    <Content Include="Views\RpmService\Service.cshtml" />
+    <Content Include="Views\RpmService\Brands.cshtml" />
+    <Content Include="Views\RpmService\DeviceModels.cshtml" />
+    <Content Include="Views\RpmService\Vendors.cshtml" />
+    <Content Include="Views\Device\Index.cshtml" />
+    <Content Include="Views\Device\Filters.cshtml" />
+    <Content Include="Views\Device\LoadDevices.cshtml" />
+    <Content Include="Views\Rpm\patients.cshtml" />
+    <Content Include="Views\Rpm\RpmPatientsList.cshtml" />
+    <Content Include="Views\Rpm\Filters.cshtml" />
+    <Content Include="Views\Rpm\LoadDetails.cshtml" />
+    <Content Include="Views\APIManulSyncReading\Index.cshtml" />
+    <Content Include="Views\PatientDeviceReading\Index.cshtml" />
+    <Content Include="Views\Rpm\BloodSugar.cshtml" />
+    <Content Include="Views\Rpm\BloodSugarAjax.cshtml" />
+    <None Include="Web.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Account\ForgotPassword.cshtml" />
+    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Shared\Lockout.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Patient\Delete.cshtml" />
+    <Content Include="Views\Patient\Edit.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\PatientProfile\Create.cshtml" />
+    <Content Include="Views\PatientContact\Create.cshtml" />
+    <Content Include="Views\PatientAddress\Create.cshtml" />
+    <Content Include="Views\PatientUrgencyContact\Create.cshtml" />
+    <Content Include="Views\PatientInsurance\Create.cshtml" />
+    <Content Include="Views\PatientMedicalStatus\Create.cshtml" />
+    <Content Include="Views\PatientMedicalHistory_MedicalCondition\Create.cshtml" />
+    <Content Include="Views\PatientFamilyHistory\Create.cshtml" />
+    <Content Include="Views\PatientAllergy\Create.cshtml" />
+    <Content Include="Views\PatientWorkAndRelationship\Create.cshtml" />
+    <Content Include="Views\PatientLifestyle_DietAndHabit\Create.cshtml" />
+    <Content Include="Views\PatientLifestyle_LifeStress\Create.cshtml" />
+    <Content Include="Views\PatientLifestyle_NutritionalSupplement\Create.cshtml" />
+    <Content Include="Views\Patient\Details.cshtml" />
+    <Content Include="Views\Patient\Index1.cshtml" />
+    <Content Include="Views\PatientPortal\Details.cshtml" />
+    <Content Include="Views\Physician\Create.cshtml" />
+    <Content Include="Views\Physician\Delete.cshtml" />
+    <Content Include="Views\Physician\Details.cshtml" />
+    <Content Include="Views\Physician\Edit.cshtml" />
+    <Content Include="Views\Physician\Index.cshtml" />
+    <Content Include="Views\PhysicianPortal\Details.cshtml" />
+    <Content Include="Views\ContactPatient\_CallHistoryPartial.cshtml" />
+    <Content Include="Views\Liaison\Delete.cshtml" />
+    <Content Include="Views\Liaison\Details.cshtml" />
+    <Content Include="Views\Liaison\Edit.cshtml" />
+    <Content Include="Views\Liaison\Index.cshtml" />
+    <Content Include="Views\Liaison\Create.cshtml" />
+    <Content Include="Views\MessageNotifications\_MessagesPartial.cshtml" />
+    <Content Include="Views\MessageNotifications\_NewMessagePartial.cshtml" />
+    <Content Include="Views\PhysicianPortal\_PatientsPartial.cshtml" />
+    <Content Include="Views\PhysicianPortal\_PatientDetailsPartial.cshtml" />
+    <Content Include="Views\CurrentMedication\Patient.cshtml" />
+    <Content Include="Views\CurrentMedication\_MedicationsListPartial.cshtml" />
+    <Content Include="Views\CurrentMedication\_AddMedicationPartial.cshtml" />
+    <Content Include="Views\CurrentMedication\_GeneralConditionsPartial.cshtml" />
+    <Content Include="Views\CarePlan\Create.cshtml" />
+    <Content Include="Views\FinalCarePlan\Patient.cshtml" />
+    <Content Include="Views\FinalCarePlan\View4Pdf.cshtml" />
+    <Content Include="Views\Patient\Create.cshtml" />
+    <Content Include="Views\Patient\UploadNewPatient.cshtml" />
+    <Content Include="Views\Home\_DashBoardPartial.cshtml" />
+    <Content Include="Views\SecondaryDoctor\Create.cshtml" />
+    <Content Include="Views\SecondaryDoctor\Index.cshtml" />
+    <Content Include="Views\FinalCarePlanNotes\Create.cshtml" />
+    <Content Include="Views\PhysiciansGroup\Create.cshtml" />
+    <Content Include="Views\PhysiciansGroup\Delete.cshtml" />
+    <Content Include="Views\PhysiciansGroup\Details.cshtml" />
+    <Content Include="Views\PhysiciansGroup\Edit.cshtml" />
+    <Content Include="Views\PhysiciansGroup\Index.cshtml" />
+    <Content Include="Views\EnrollmentStatus\NotAssigned.cshtml" />
+    <Content Include="Views\CcmStatus\ReviewClaimSubmission.cshtml" />
+    <Content Include="Views\CcmStatus\Reconciliation.cshtml" />
+    <Content Include="Views\CcmStatus\ReviewTime.cshtml" />
+    <Content Include="Views\ContactPatient\Index.cshtml" />
+    <Content Include="Views\DoctorVisit\Create.cshtml" />
+    <Content Include="Views\DoctorVisit\ListDoctorVisits.cshtml" />
+    <Content Include="Views\EnrollmentStatus\Index.cshtml" />
+    <Content Include="Views\CcmStatus\Index.cshtml" />
+    <Content Include="Views\Shared\_EnrollmentStatusLinks.cshtml" />
+    <Content Include="Views\ContactPatient\_TextHistoryPartial.cshtml" />
+    <Content Include="Views\ContactPatient\_EmailHistoryPartial.cshtml" />
+    <Content Include="Views\CcmStatus\_CcmActivityLinks.cshtml" />
+    <Content Include="Views\CcmStatus\ZakharovPatients.cshtml" />
+    <Content Include="Views\Patient\Index.cshtml" />
+    <Content Include="Views\Patient\TotalPatients.cshtml" />
+    <Content Include="Views\CarePlan\Index.cshtml" />
+    <Content Include="Views\FinalCarePlanNotes\Index.cshtml" />
+    <Content Include="Views\FinalCarePlanNotes\IndividualCarePlan.cshtml" />
+    <Content Include="Views\Icd\Create.cshtml" />
+    <Content Include="Views\Icd\Delete.cshtml" />
+    <Content Include="Views\Icd\Details.cshtml" />
+    <Content Include="Views\Icd\Edit.cshtml" />
+    <Content Include="Views\Icd\Index.cshtml" />
+    <Content Include="Views\Calendar\Index.cshtml" />
+    <Content Include="ServerSideView\ServersideView.cshtml" />
+    <Content Include="Views\CcmStatus\ReviewTimeV1.cshtml" />
+    <Content Include="Views\Shared\_EnrollmentStatusLinksv1.cshtml" />
+    <Content Include="Views\CcmStatus\Index1.cshtml" />
+    <Content Include="Views\EnrollmentStatus\Index1.cshtml" />
+    <Content Include="Views\Home\_DashBoardPartial1.cshtml" />
+    <Content Include="Views\Patient\PatientInsuranceInfo.cshtml" />
+    <Content Include="Views\PatientMeidcareMedicaidEligibilities\Create.cshtml" />
+    <Content Include="Views\PatientMeidcareMedicaidEligibilities\Delete.cshtml" />
+    <Content Include="Views\PatientMeidcareMedicaidEligibilities\Details.cshtml" />
+    <Content Include="Views\PatientMeidcareMedicaidEligibilities\Edit.cshtml" />
+    <Content Include="Views\PatientMeidcareMedicaidEligibilities\Index.cshtml" />
+    <Content Include="Views\CcmStatus\CycleComparison.cshtml" />
+    <Content Include="Views\FinalCarePlanNotes\PreviousCarePlan.cshtml" />
+    <Content Include="Views\PhysicianPortal\Index.cshtml" />
+    <Content Include="Views\PhysicianPortal\FinalCarePlanAll.cshtml" />
+    <Content Include="Views\QualityControls\Create.cshtml" />
+    <Content Include="Views\QualityControls\Delete.cshtml" />
+    <Content Include="Views\QualityControls\Details.cshtml" />
+    <Content Include="Views\QualityControls\Edit.cshtml" />
+    <Content Include="Views\QualityControls\Index.cshtml" />
+    <Content Include="Views\PhysicianGroupPhysicianMapping\Create.cshtml" />
+    <Content Include="Views\PhysicianGroupPhysicianMapping\Delete.cshtml" />
+    <Content Include="Views\PhysicianGroupPhysicianMapping\Details.cshtml" />
+    <Content Include="Views\PhysicianGroupPhysicianMapping\Edit.cshtml" />
+    <Content Include="Views\PhysicianGroupPhysicianMapping\Index.cshtml" />
+    <Content Include="Views\PhysicianGroupPhysicianMapping\EditPhysicianGroupMapping.cshtml" />
+    <Content Include="Views\PhysicianGroupPhysicianMapping\EditDoctorMapping.cshtml" />
+    <Content Include="Views\PhysicianGroupPhysicianMapping\MapDoctors.cshtml" />
+    <Content Include="Views\PhysicianGroupPhysicianMapping\ViewDoctorMapping.cshtml" />
+    <Content Include="Views\PhysicianPortal\CycleComparison.cshtml" />
+    <Content Include="Views\Appointment\AddUpdateSchedule.cshtml" />
+    <Content Include="Views\Appointment\BookAppointment.cshtml" />
+    <Content Include="Views\Appointment\EditSchedule.cshtml" />
+    <Content Include="Views\Appointment\Holidays.cshtml" />
+    <Content Include="Views\Appointment\Index.cshtml" />
+    <Content Include="Views\Appointment\ManageSchedules.cshtml" />
+    <Content Include="Views\Appointment\Schedules.cshtml" />
+    <Content Include="Views\CurrentMedication\MedicationListPartialNew.cshtml" />
+    <Content Include="Views\Appointment\_BookAppointment.cshtml" />
+    <Content Include="Views\Liaison\LiaisonWorkLoad.cshtml" />
+    <Content Include="Views\Liaison\ScheduleList.cshtml" />
+    <Content Include="Views\LiaisonGroups\Create.cshtml" />
+    <Content Include="Views\LiaisonGroups\Delete.cshtml" />
+    <Content Include="Views\LiaisonGroups\Details.cshtml" />
+    <Content Include="Views\LiaisonGroups\Edit.cshtml" />
+    <Content Include="Views\LiaisonGroups\Index.cshtml" />
+    <Content Include="Views\LiaisonGroupLiaisonMapping\MapDoctors.cshtml" />
+    <Content Include="Views\LiaisonGroupLiaisonMapping\ViewDoctorMapping.cshtml" />
+    <Content Include="Views\LiaisonGroupLiaisonMapping\Index.cshtml" />
+    <Content Include="Views\LiaisonGroupLiaisonMapping\EditPhysicianGroupMapping.cshtml" />
+    <Content Include="Views\LiaisonGroupLiaisonMapping\Create.cshtml" />
+    <Content Include="Views\LiaisonGroupLiaisonMapping\Edit.cshtml" />
+    <Content Include="Views\Home\NewDashBoard.cshtml" />
+    <Content Include="Views\Home\_DashBoardPartialNew.cshtml" />
+    <Content Include="Views\Home\LiasionDashBoard.cshtml" />
+    <Content Include="Views\Home\_DashBoardLiaison.cshtml" />
+    <Content Include="Views\ContactPatient\_CallHistoryPartial1.cshtml" />
+    <Content Include="Views\ContactPatient\_EmailHistoryPartial1.cshtml" />
+    <Content Include="Views\ContactPatient\_TextHistoryPartial1.cshtml" />
+    <Content Include="Views\Home\LiasionDashBoardAll.cshtml" />
+    <Content Include="Views\Home\_DashBoardLiaisonAll.cshtml" />
+    <Content Include="Views\ContactPatient\IndexNew.cshtml" />
+    <Content Include="Views\Home\LiasionHourlyReport.cshtml" />
+    <Content Include="Views\Home\_DashBoardLiaisonHourly.cshtml" />
+    <Content Include="Views\CcmStatus\ActiveWorkQueChart.cshtml" />
+    <Content Include="Views\Icd\_Create.cshtml" />
+    <Content Include="Views\Icd\_Index.cshtml" />
+    <Content Include="Views\DoctorVisit\_Create.cshtml" />
+    <Content Include="Views\DoctorVisit\_ListDoctorVisits.cshtml" />
+    <Content Include="Views\Liaison\_VoiceMailData.cshtml" />
+    <Content Include="Views\Liaison\VoiceMails.cshtml" />
+    <Content Include="Views\FinalCarePlanNotes\_Index.cshtml" />
+    <Content Include="Views\CcmStatus\_ReviewTimeV1.cshtml" />
+    <Content Include="Views\ContactPatient\ReceiveCalls.cshtml" />
+    <Content Include="Views\CurrentMedication\_Patient.cshtml" />
+    <Content Include="Views\Patient\_Details.cshtml" />
+    <Content Include="Views\PatientAddress\_Create.cshtml" />
+    <Content Include="Views\PatientAllergy\_Create.cshtml" />
+    <Content Include="Views\PatientContact\_Create.cshtml" />
+    <Content Include="Views\PatientFamilyHistory\_Create.cshtml" />
+    <Content Include="Views\PatientInsurance\_Create.cshtml" />
+    <Content Include="Views\PatientLifestyle_DietAndHabit\_Create.cshtml" />
+    <Content Include="Views\PatientLifestyle_DietAndHabit\_LifeStyleAndHabits.cshtml" />
+    <Content Include="Views\PatientLifestyle_LifeStress\_Create.cshtml" />
+    <Content Include="Views\PatientLifestyle_NutritionalSupplement\_Create.cshtml" />
+    <Content Include="Views\PatientMedicalHistory_MedicalCondition\_Create.cshtml" />
+    <Content Include="Views\PatientMedicalStatus\_Create.cshtml" />
+    <Content Include="Views\PatientMedicalStatus\_MedicalHistory.cshtml" />
+    <Content Include="Views\PatientMeidcareMedicaidEligibilities\_Create.cshtml" />
+    <Content Include="Views\PatientProfile\Create1.cshtml" />
+    <Content Include="Views\PatientProfile\_ContactPreferences.cshtml" />
+    <Content Include="Views\PatientProfile\_Create.cshtml" />
+    <Content Include="Views\PatientUrgencyContact\_Create.cshtml" />
+    <Content Include="Views\PatientWorkAndRelationship\_Create.cshtml" />
+    <Content Include="Views\SecondaryDoctor\_Create.cshtml" />
+    <Content Include="Views\SecondaryDoctor\_Index.cshtml" />
+    <Content Include="Views\Shared\_BadRequest.cshtml" />
+    <Content Include="Views\Shared\_Error.cshtml" />
+    <Content Include="Views\Shared\_NotFound.cshtml" />
+    <Content Include="Views\Icd\_Edit.cshtml" />
+    <Content Include="Views\Icd\_Details.cshtml" />
+    <Content Include="Views\CurrentMedication\_EditMedicationPartial.cshtml" />
+    <Content Include="Views\DoctorVisit\_DoctorVisitAndAditionalProvider.cshtml" />
+    <Content Include="Views\PatientProfile\_PatientProfileConsent.cshtml" />
+    <Content Include="Views\FinalCarePlanNotes\_Create.cshtml" />
+    <Content Include="Views\FinalCarePlanNotes\_IndividualCarePlan.cshtml" />
+    <Content Include="Views\FinalCarePlanNotes\_PreviousCarePlan.cshtml" />
+    <Content Include="Views\Home\LiaisonCallsHistory.cshtml" />
+    <Content Include="Views\Home\_LiaisonCallHistoryData.cshtml" />
+    <Content Include="Views\Patient\GetImportantNotes.cshtml" />
+    <Content Include="Views\Patient\PatientNotes.cshtml" />
+    <Content Include="Views\Home\TotalCallsandReviewTime.cshtml" />
+    <Content Include="Views\Enroller\Create.cshtml" />
+    <Content Include="Views\Enroller\Delete.cshtml" />
+    <Content Include="Views\Enroller\Details.cshtml" />
+    <Content Include="Views\Enroller\Edit.cshtml" />
+    <Content Include="Views\Enroller\Index.cshtml" />
+    <Content Include="Views\PhysicianGroupEnroller\Create.cshtml" />
+    <Content Include="Views\PhysicianGroupEnroller\Delete.cshtml" />
+    <Content Include="Views\PhysicianGroupEnroller\Details.cshtml" />
+    <Content Include="Views\PhysicianGroupEnroller\EditPhysicianGroupMapping.cshtml" />
+    <Content Include="Views\PhysicianGroupEnroller\Index.cshtml" />
+    <Content Include="Views\PhysicianGroupEnroller\MapDoctors.cshtml" />
+    <Content Include="Views\PhysicianGroupEnroller\ViewDoctorMapping.cshtml" />
+    <Content Include="Views\PhysicianGroupEnroller\Edit.cshtml" />
+    <Content Include="Views\Patient\SaleStaffPatient.cshtml" />
+    <Content Include="Views\PatientUrgencyContact\_Edit.cshtml" />
+    <Content Include="Views\PatientUrgencyContact\_Index.cshtml" />
+    <Content Include="Views\Patient\PatientSurveys.cshtml" />
+    <Content Include="Views\Patient\SurveyResult.cshtml" />
+    <Content Include="Views\Survey\AddQuestions.cshtml" />
+    <Content Include="Views\Survey\SurveyStart.cshtml" />
+    <Content Include="Views\Survey\SurveyQuestions.cshtml" />
+    <Content Include="Views\Survey\SurveyQuestionMappingsStart.cshtml" />
+    <Content Include="Views\Survey\SurveyQuestionMappings.cshtml" />
+    <Content Include="Views\Shared\_AlreadySurvey.cshtml" />
+    <Content Include="Views\Survey\surveyAdmin.cshtml" />
+    <Content Include="Views\Survey\PatientSurveys.cshtml" />
+    <Content Include="Views\Survey\SurveyQAs.cshtml" />
+    <Content Include="Views\Survey\PatientSurveysTaken.cshtml" />
+    <Content Include="Views\Home\_partialViewReport.cshtml" />
+    <Content Include="Views\Survey\SurveyQuestionsFlowDiagram.cshtml" />
+    <Content Include="Views\Survey\_SurveyQuestionsEdit.cshtml" />
+    <Content Include="Views\Survey\_SurveyStart.cshtml" />
+    <Content Include="Views\Survey\SurveyQuestionsFlowDiagram1.cshtml" />
+    <Content Include="Views\PhysicianGroupEnroller\Create1.cshtml" />
+    <Content Include="Views\FinalCarePlan\_View4Pdf.cshtml" />
+    <Content Include="Views\ContactPatient\ReceiveCallsNew.cshtml" />
+    <Content Include="Views\Patient\_ShareCarePlanView.cshtml" />
+    <Content Include="Views\Patient\_ShareCarePlanViewAll.cshtml" />
+    <Content Include="Views\PatientProfile\_EditHospitalDetails.cshtml" />
+    <Content Include="Views\PatientProfile\_HospitalDetailList.cshtml" />
+    <Content Include="Views\PatientProfile\_PatientProfile_AddHospitalDetails.cshtml" />
+    <Content Include="Views\PatientProfile\_PatientProfile_CreateHospitalVisit.cshtml" />
+    <Content Include="Views\PatientProfile\_PatientProfile_EditHospitalVisit.cshtml" />
+    <Content Include="Views\PatientProfile\_PatientProfile_HospitalVisit.cshtml" />
+    <Content Include="Views\GroupChats\Create.cshtml" />
+    <Content Include="Views\GroupChats\Delete.cshtml" />
+    <Content Include="Views\GroupChats\Details.cshtml" />
+    <Content Include="Views\GroupChats\Edit.cshtml" />
+    <Content Include="Views\GroupChats\Index.cshtml" />
+    <Content Include="Views\Survey\SurveyDependent.cshtml" />
+    <Content Include="Views\Survey\PatientsSurveyList.cshtml" />
+    <Content Include="Views\Liaison\ScheduleListOld.cshtml" />
+    <Content Include="Views\FinalCarePlan\_View4PdfLocal.cshtml" />
+    <Content Include="Views\Home\TestReport.cshtml" />
+    <Content Include="Views\Appointment\BookAppointmentEnroller.cshtml" />
+    <Content Include="Views\Enroller\EnrollerWorkLoad.cshtml" />
+    <Content Include="Views\Enroller\ScheduleList.cshtml" />
+    <Content Include="Views\PatientSignature\Index.cshtml" />
+    <Content Include="Views\PatientSignature\Thanks.cshtml" />
+    <Content Include="Views\PatientProfile\LaboratoryResult.cshtml" />
+    <Content Include="Views\Patient\Convertbinarytoimg.cshtml" />
+    <Content Include="Views\Home\Chat.cshtml" />
+    <Content Include="Views\Chats\Index.cshtml" />
+    <Content Include="Views\Chats\_SingleChat.cshtml" />
+    <Content Include="Views\Chats\GroupChat.cshtml" />
+    <Content Include="Views\Chats\Details.cshtml" />
+    <Content Include="Views\Chats\AdminTicketGeneration.cshtml" />
+    <Content Include="Views\Chats\ListViewTicket.cshtml" />
+    <Content Include="Views\Chats\UserTicketGeneration.cshtml" />
+    <Content Include="Views\Chats\_AssigneeTicket.cshtml" />
+    <Content Include="Views\Chats\_PatientDropdown.cshtml" />
+    <Content Include="Views\TicketDashboard\Index.cshtml" />
+    <Content Include="Views\Chats\_AdminTicketGeneration.cshtml" />
+    <Content Include="Views\Chats\AdminListViewTicket.cshtml" />
+    <Content Include="Views\Chats\TestingModal.cshtml" />
+    <Content Include="Views\Chats\_CommentBox.cshtml" />
+    <Content Include="Views\Chats\AllAssociatedComments.cshtml" />
+    <Content Include="Views\Chats\TicketsCreated.cshtml" />
+    <Content Include="Views\Chats\Resolutions.cshtml" />
+    <Content Include="Views\Shared\_AlertView.cshtml" />
+    <Content Include="Views\Error\exception.cshtml" />
+    <Content Include="Views\Chats\_MyTicket.cshtml" />
+    <Content Include="Views\Chats\getAdminAssignee.cshtml" />
+    <Content Include="Views\Chats\_TicketListView.cshtml" />
+    <Content Include="Views\Chats\_TicketCreated.cshtml" />
+    <Content Include="Views\Billing\CategoryIndex.cshtml" />
+    <Content Include="Views\Billing\BillingPeriods.cshtml" />
+    <Content Include="Views\Billing\BilingCodes.cshtml" />
+    <Content Include="Views\PatientProfile\_PatientEnrollmentCategories.cshtml" />
+    <Content Include="Views\Home\CommingSoon.cshtml" />
+    <Content Include="Views\G0506\Index.cshtml" />
+    <Content Include="Views\Evaluation\Index.cshtml" />
+    <Content Include="Views\Evaluation\Create.cshtml" />
+    <Content Include="Views\TwilioTable\Index.cshtml" />
+    <Content Include="Views\QuestionBanks\Index.cshtml" />
+    <Content Include="Views\Shared\_UpdateReviewTime.cshtml" />
+    <Content Include="Views\UpdateReviewTime\Index.cshtml" />
+    <Content Include="Views\UpdateReviewTime\_UpdateTime.cshtml" />
+    <Content Include="Views\PatientProfile\_PatientProfileConsentPatrial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="bin\roslyn\" />
+    <Folder Include="ErrorLogFiles\" />
+    <Folder Include="obj\" />
+    <Folder Include="Scripts\datetimepicker\" />
+    <Folder Include="Scripts\i18n\" />
+    <Folder Include="Views\APIParser\" />
+    <Folder Include="Views\Api\" />
+    <Folder Include="Views\CAccount\" />
+    <Folder Include="Views\LiaisonGroup_LiaisonMapping\" />
+    <Folder Include="VoiceMails\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201902191840180_liasionassignedon.resx">
+      <DependentUpon>201902191840180_liasionassignedon.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902191843395_liasionassignedby.resx">
+      <DependentUpon>201902191843395_liasionassignedby.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902192010182_changelisaonassingedontype.resx">
+      <DependentUpon>201902192010182_changelisaonassingedontype.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902201840488_addnewtables.resx">
+      <DependentUpon>201902201840488_addnewtables.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902201849046_changecolumntype.resx">
+      <DependentUpon>201902201849046_changecolumntype.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902201928433_addcolumnspatienttablesubstatusandreason.resx">
+      <DependentUpon>201902201928433_addcolumnspatienttablesubstatusandreason.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902251654494_addcolumnstopatiensCallingStatusandCallingnotes.resx">
+      <DependentUpon>201902251654494_addcolumnstopatiensCallingStatusandCallingnotes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902271643475_addnewtablesphysicianandliasoncptrates.resx">
+      <DependentUpon>201902271643475_addnewtablesphysicianandliasoncptrates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902272112233_addcolumnsDoctorTypeandIsCCMProviderandEMRnumandEmrType.resx">
+      <DependentUpon>201902272112233_addcolumnsDoctorTypeandIsCCMProviderandEMRnumandEmrType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902272116369_addcolumnenrollmentstatusnotes.resx">
+      <DependentUpon>201902272116369_addcolumnenrollmentstatusnotes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902281332532_addcolumnpicassocheckedandnewtablemedicareandmedicaideligibilty.resx">
+      <DependentUpon>201902281332532_addcolumnpicassocheckedandnewtablemedicareandmedicaideligibilty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902281341475_changedefaultvalues.resx">
+      <DependentUpon>201902281341475_changedefaultvalues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902281632227_addcolumnpicassocheckeddate.resx">
+      <DependentUpon>201902281632227_addcolumnpicassocheckeddate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903051017366_addcolumnsCapitatedfromtoandhmoandorderby.resx">
+      <DependentUpon>201903051017366_addcolumnsCapitatedfromtoandhmoandorderby.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903061520222_addtablesbillingcycles.resx">
+      <DependentUpon>201903061520222_addtablesbillingcycles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903061522511_changedefaultvalue.resx">
+      <DependentUpon>201903061522511_changedefaultvalue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903071323074_addtablebillingcyclecomments.resx">
+      <DependentUpon>201903071323074_addtablebillingcyclecomments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903111631079_addcolumnactivitytoreveiwtimeccm.resx">
+      <DependentUpon>201903111631079_addcolumnactivitytoreveiwtimeccm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903131801292_addcolumncycletoreviewtimeccm.resx">
+      <DependentUpon>201903131801292_addcolumncycletoreviewtimeccm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903151117265_addcolumnstopatient.resx">
+      <DependentUpon>201903151117265_addcolumnstopatient.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903181220582_addtableCCMCycleStatus.resx">
+      <DependentUpon>201903181220582_addtableCCMCycleStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903181457395_addcolumntoccmcyclestatus.resx">
+      <DependentUpon>201903181457395_addcolumntoccmcyclestatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903182014330_addcolumnnotestoccmcyclestatus.resx">
+      <DependentUpon>201903182014330_addcolumnnotestoccmcyclestatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903191214392_addtablequalitycontrol.resx">
+      <DependentUpon>201903191214392_addtablequalitycontrol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903201203421_addcolumnsBillingRatestoBillingCycle.resx">
+      <DependentUpon>201903201203421_addcolumnsBillingRatestoBillingCycle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903231159345_addnewtablereasons.resx">
+      <DependentUpon>201903231159345_addnewtablereasons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903261806208_addnewtablephysiciangroupmaping.resx">
+      <DependentUpon>201903261806208_addnewtablephysiciangroupmaping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903271457040_addcolumnsisactiveforliaisonandphysician.resx">
+      <DependentUpon>201903271457040_addcolumnsisactiveforliaisonandphysician.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904091209308_addtabledoctortiming.resx">
+      <DependentUpon>201904091209308_addtabledoctortiming.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904091215523_changecolumnname.resx">
+      <DependentUpon>201904091215523_changecolumnname.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904092003460_addnewtables1.resx">
+      <DependentUpon>201904092003460_addnewtables1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904092124508_changecolumntype1.resx">
+      <DependentUpon>201904092124508_changecolumntype1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904101129145_changerelation.resx">
+      <DependentUpon>201904101129145_changerelation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904111234001_addcolumnstofinalcareplan.resx">
+      <DependentUpon>201904111234001_addcolumnstofinalcareplan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904171712314_addcolumnstobillingcycles.resx">
+      <DependentUpon>201904171712314_addcolumnstobillingcycles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904181332596_addphotoinphysician.resx">
+      <DependentUpon>201904181332596_addphotoinphysician.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904291112294_addcolumnstopatientcontact.resx">
+      <DependentUpon>201904291112294_addcolumnstopatientcontact.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904291145404_addupdatecolumnspatientcontacturgencycontactpatient.resx">
+      <DependentUpon>201904291145404_addupdatecolumnspatientcontacturgencycontactpatient.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904291903436_addphonenumbertosecondarydoctor.resx">
+      <DependentUpon>201904291903436_addphonenumbertosecondarydoctor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904291926479_remvoefieldsfrompatient.resx">
+      <DependentUpon>201904291926479_remvoefieldsfrompatient.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904301210102_changecolumnsize.resx">
+      <DependentUpon>201904301210102_changecolumnsize.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905010914515_addnewtablesliasiongroupandmapping.resx">
+      <DependentUpon>201905010914515_addnewtablesliasiongroupandmapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905021314420_historytable.resx">
+      <DependentUpon>201905021314420_historytable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905021316213_historytablenew.resx">
+      <DependentUpon>201905021316213_historytablenew.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905021320190_addnewtablehistory.resx">
+      <DependentUpon>201905021320190_addnewtablehistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905021325258_changename.resx">
+      <DependentUpon>201905021325258_changename.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905081715294_addcolumnstoliaisonfortwilio.resx">
+      <DependentUpon>201905081715294_addcolumnstoliaisonfortwilio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905091217344_addcolumnrejecttiondatetoccmcyclestatus.resx">
+      <DependentUpon>201905091217344_addcolumnrejecttiondatetoccmcyclestatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905141351426_addcolumnlogouttimetologinhistory.resx">
+      <DependentUpon>201905141351426_addcolumnlogouttimetologinhistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905151925274_newcolumnsinccmcyclestatusapprovedbyrejectedby.resx">
+      <DependentUpon>201905151925274_newcolumnsinccmcyclestatusapprovedbyrejectedby.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905231523250_addcolumnTwilioCallerIDinTextHistory.resx">
+      <DependentUpon>201905231523250_addcolumnTwilioCallerIDinTextHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905231542263_addcolumntwiliopathsidinliaisons.resx">
+      <DependentUpon>201905231542263_addcolumntwiliopathsidinliaisons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905232000015_addnewtablefinalcareplanhistory.resx">
+      <DependentUpon>201905232000015_addnewtablefinalcareplanhistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905301102363_addtablevoicemailhistory.resx">
+      <DependentUpon>201905301102363_addtablevoicemailhistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906121233507_addnewtableMedicationDoseRepitionTimes.resx">
+      <DependentUpon>201906121233507_addnewtableMedicationDoseRepitionTimes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906121408357_addnewtableMedicationRoute.resx">
+      <DependentUpon>201906121408357_addnewtableMedicationRoute.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906131223066_addnewcolumnsPatientMedicalHistory_MedicationRx.resx">
+      <DependentUpon>201906131223066_addnewcolumnsPatientMedicalHistory_MedicationRx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906131330143_changecolumntypePatientMedicalHistory_MedicationRx.resx">
+      <DependentUpon>201906131330143_changecolumntypePatientMedicalHistory_MedicationRx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906141340144_addnewcolumninicd10codes.resx">
+      <DependentUpon>201906141340144_addnewcolumninicd10codes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906141438073_addcolumndiseasehistory.resx">
+      <DependentUpon>201906141438073_addcolumndiseasehistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906141713433_addnewcolumnsPatientMedicalHistory_MedicationRx1.resx">
+      <DependentUpon>201906141713433_addnewcolumnsPatientMedicalHistory_MedicationRx1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906141819014_addcolumnisshowninpopup.resx">
+      <DependentUpon>201906141819014_addcolumnisshowninpopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906181405585_addcolumnsPatientProfile_UrgencyContact_AddNewTablesPatientProfile_ProfesionalCareProviderANDPatientProfile_DieseaseState.resx">
+      <DependentUpon>201906181405585_addcolumnsPatientProfile_UrgencyContact_AddNewTablesPatientProfile_ProfesionalCareProviderANDPatientProfile_DieseaseState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906181826287_addnewcolumnsDoctorVisitAndSecondaryDoctor.resx">
+      <DependentUpon>201906181826287_addnewcolumnsDoctorVisitAndSecondaryDoctor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906191405034_addnewcolumnsPatientMedicalHistory_MedicationRx_DiscontinueMedicine.resx">
+      <DependentUpon>201906191405034_addnewcolumnsPatientMedicalHistory_MedicationRx_DiscontinueMedicine.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906201726292_addnewtablesPatientProfile_ConsentAndPatientProfile_ConsentTemplate.resx">
+      <DependentUpon>201906201726292_addnewtablesPatientProfile_ConsentAndPatientProfile_ConsentTemplate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906201957404_addnewcolumnIsShareCarePlaninSecondaryDoctor.resx">
+      <DependentUpon>201906201957404_addnewcolumnIsShareCarePlaninSecondaryDoctor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906202017379_addnewcolumnsPatientProfile_UrgencyContact.resx">
+      <DependentUpon>201906202017379_addnewcolumnsPatientProfile_UrgencyContact.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906211355089_addnewcolumnAdditionalProvidersInDoctorVisit.resx">
+      <DependentUpon>201906211355089_addnewcolumnAdditionalProvidersInDoctorVisit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906261136531_addtablecareplansharedhistory.resx">
+      <DependentUpon>201906261136531_addtablecareplansharedhistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906261753556_addcolumnsinsecondarydoctors.resx">
+      <DependentUpon>201906261753556_addcolumnsinsecondarydoctors.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906271313011_addnewtablessalesstaffandaddcolumninurgencycontact.resx">
+      <DependentUpon>201906271313011_addnewtablessalesstaffandaddcolumninurgencycontact.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906271438530_changecolumnnameinsalestaffmapping.resx">
+      <DependentUpon>201906271438530_changecolumnnameinsalestaffmapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907011952433_changecolumntypedateinmedication.resx">
+      <DependentUpon>201907011952433_changecolumntypedateinmedication.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907012027371_changecolumntype2.resx">
+      <DependentUpon>201907012027371_changecolumntype2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907121324046_addcolumnliaisonidincallhistoryandvoicemail.resx">
+      <DependentUpon>201907121324046_addcolumnliaisonidincallhistoryandvoicemail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907161512395_addtablesofgroupchat.resx">
+      <DependentUpon>201907161512395_addtablesofgroupchat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907161526582_changecolumnamesandtypesofgroupchats.resx">
+      <DependentUpon>201907161526582_changecolumnamesandtypesofgroupchats.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907191248525_changecolumnnamecreatedbyingroupchatparticipents.resx">
+      <DependentUpon>201907191248525_changecolumnnamecreatedbyingroupchatparticipents.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907191632560_changecolumntypeupdatebygroupchats.resx">
+      <DependentUpon>201907191632560_changecolumntypeupdatebygroupchats.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908062026449_addcolumnreceivernameincareplansharedhistory.resx">
+      <DependentUpon>201908062026449_addcolumnreceivernameincareplansharedhistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908081305366_addcolumnsreceiveridandreceivertypeincareplansharedhistory.resx">
+      <DependentUpon>201908081305366_addcolumnsreceiveridandreceivertypeincareplansharedhistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908091049251_addcolumnsubmittedbyinccmcyclestatus.resx">
+      <DependentUpon>201908091049251_addcolumnsubmittedbyinccmcyclestatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908211534115_addcolumntranslatoridinpatientsandliaisons.resx">
+      <DependentUpon>201908211534115_addcolumntranslatoridinpatientsandliaisons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908211542173_addcolumnstranslatoridinpatient_history.resx">
+      <DependentUpon>201908211542173_addcolumnstranslatoridinpatient_history.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908221212070_addcolumnsinccmccyclestatus.resx">
+      <DependentUpon>201908221212070_addcolumnsinccmccyclestatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908231501471_addnewtablespatienthospitalanddepartmentandhospitals.resx">
+      <DependentUpon>201908231501471_addnewtablespatienthospitalanddepartmentandhospitals.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908231506533_addnewtablespatienthospitalanddepartmentandhospitalsnew.resx">
+      <DependentUpon>201908231506533_addnewtablespatienthospitalanddepartmentandhospitalsnew.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908261335101_PatirntProfile_addColumnDepartmentID.resx">
+      <DependentUpon>201908261335101_PatirntProfile_addColumnDepartmentID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908261842476_changecolumnsinpatientprofilehospitaldetails.resx">
+      <DependentUpon>201908261842476_changecolumnsinpatientprofilehospitaldetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908281611566_addnewtableautomaticcyclestatusentry.resx">
+      <DependentUpon>201908281611566_addnewtableautomaticcyclestatusentry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909021212071_patientprofiletablechange.resx">
+      <DependentUpon>201909021212071_patientprofiletablechange.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909021237089_patientprofilenewtableadded.resx">
+      <DependentUpon>201909021237089_patientprofilenewtableadded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909061457479_changecolumnlengthforhosptialvisits.resx">
+      <DependentUpon>201909061457479_changecolumnlengthforhosptialvisits.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909161824115_addcolumnsubmittedtoreadyforclinicalsignoffinccmcyclestatus.resx">
+      <DependentUpon>201909161824115_addcolumnsubmittedtoreadyforclinicalsignoffinccmcyclestatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909171341257_addcolumnsignaturetopatientandpatientprofileconsent.resx">
+      <DependentUpon>201909171341257_addcolumnsignaturetopatientandpatientprofileconsent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909181203075_addnewcolumnenrolleridinpatientappintmentanddoctorschedule.resx">
+      <DependentUpon>201909181203075_addnewcolumnenrolleridinpatientappintmentanddoctorschedule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909181400015_addcolumnenrolleridindoctortiming.resx">
+      <DependentUpon>201909181400015_addcolumnenrolleridindoctortiming.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909181815079_addcolumninphysicianholidayandchangeliaisonidtonullable.resx">
+      <DependentUpon>201909181815079_addcolumninphysicianholidayandchangeliaisonidtonullable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909181923411_changecolumnnameandaddrelationintables.resx">
+      <DependentUpon>201909181923411_changecolumnnameandaddrelationintables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909192006351_addnewcolumnstatusingroupchatdetails.resx">
+      <DependentUpon>201909192006351_addnewcolumnstatusingroupchatdetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909201207350_changecolumntypePatientIdallownullinPA.resx">
+      <DependentUpon>201909201207350_changecolumntypePatientIdallownullinPA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909201635445_addnewtablegroupchatmessagereceiptants.resx">
+      <DependentUpon>201909201635445_addnewtablegroupchatmessagereceiptants.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909261859083_addcolumnsingroupchats.resx">
+      <DependentUpon>201909261859083_addcolumnsingroupchats.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909272200438_addnewcolumninparticipents.resx">
+      <DependentUpon>201909272200438_addnewcolumninparticipents.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909301427424_addnewColumnheightweightBMIinPatientMedicalHistory_GeneralCondition.resx">
+      <DependentUpon>201909301427424_addnewColumnheightweightBMIinPatientMedicalHistory_GeneralCondition.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909301637272_RemoveBMIColumnfromPatientMedicalHistory_GeneralCondition.resx">
+      <DependentUpon>201909301637272_RemoveBMIColumnfromPatientMedicalHistory_GeneralCondition.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910011815401_newTablePatient_LaboratoryResult.resx">
+      <DependentUpon>201910011815401_newTablePatient_LaboratoryResult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910021535177_renamecolumnTypefrombytetoStringinLaboratoryResult.resx">
+      <DependentUpon>201910021535177_renamecolumnTypefrombytetoStringinLaboratoryResult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910072006082_updateTable.resx">
+      <DependentUpon>201910072006082_updateTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910081245103_RenameTableLabResultToPatientImages.resx">
+      <DependentUpon>201910081245103_RenameTableLabResultToPatientImages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910152001524_AddNewTablePrivateChatAndonline.resx">
+      <DependentUpon>201910152001524_AddNewTablePrivateChatAndonline.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910171315276_AddNewColumnInPrivateChatTable.resx">
+      <DependentUpon>201910171315276_AddNewColumnInPrivateChatTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910221943322_addnewtablePriorityStatusTypeTicketGeneration.resx">
+      <DependentUpon>201910221943322_addnewtablePriorityStatusTypeTicketGeneration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910241856312_UserTicketGenerationTable.resx">
+      <DependentUpon>201910241856312_UserTicketGenerationTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910241908270_Update_UserTicketGenerationTable.resx">
+      <DependentUpon>201910241908270_Update_UserTicketGenerationTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910252029136_add_TicketAttachmentClass.resx">
+      <DependentUpon>201910252029136_add_TicketAttachmentClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910291212069_CreatedByinUserTicketGenerations.resx">
+      <DependentUpon>201910291212069_CreatedByinUserTicketGenerations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910291733351_UserTicketGeneration_Update_And_AddASSIGNEETICKET.resx">
+      <DependentUpon>201910291733351_UserTicketGeneration_Update_And_AddASSIGNEETICKET.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910291739221_AddASSIGNEE_TICKET.resx">
+      <DependentUpon>201910291739221_AddASSIGNEE_TICKET.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910301735010_AttachmentandFilePathinGroupChatMessages.resx">
+      <DependentUpon>201910301735010_AttachmentandFilePathinGroupChatMessages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911041310169_update_assigneeTicketIdInAttachment.resx">
+      <DependentUpon>201911041310169_update_assigneeTicketIdInAttachment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911061718466_update_TicketGeneration.resx">
+      <DependentUpon>201911061718466_update_TicketGeneration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911061723238_update_TicketGeneration2.resx">
+      <DependentUpon>201911061723238_update_TicketGeneration2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911061938589_update_ticketdatetime.resx">
+      <DependentUpon>201911061938589_update_ticketdatetime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911072013474_CCMCycleStatus_ClaimSubmission.resx">
+      <DependentUpon>201911072013474_CCMCycleStatus_ClaimSubmission.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911081259012_update_columnName_CCMCycleStatus.resx">
+      <DependentUpon>201911081259012_update_columnName_CCMCycleStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911081301034_update_columnName_CCMCycleStatuss.resx">
+      <DependentUpon>201911081301034_update_columnName_CCMCycleStatuss.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911081436581_TaskComment.resx">
+      <DependentUpon>201911081436581_TaskComment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911111757531_ticketHonorIdANDisTicketHonorINUserTicketGeneration.resx">
+      <DependentUpon>201911111757531_ticketHonorIdANDisTicketHonorINUserTicketGeneration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911181301012_add-tableticketResolution.resx">
+      <DependentUpon>201911181301012_add-tableticketResolution.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911271005291_add_ccmClinicalSignOffCounter.resx">
+      <DependentUpon>201911271005291_add_ccmClinicalSignOffCounter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201912041530194_Add-TicketResolution-In-AssigneeTicket.resx">
+      <DependentUpon>201912041530194_Add-TicketResolution-In-AssigneeTicket.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201912122016347_updateAuditTrailTable.resx">
+      <DependentUpon>201912122016347_updateAuditTrailTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001041859513__final.resx">
+      <DependentUpon>202001041859513__final.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001211251203__FullBillingCodeMigration.resx">
+      <DependentUpon>202001211251203__FullBillingCodeMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001271725139_Liaison_BillingCategory_table_Added.resx">
+      <DependentUpon>202001271725139_Liaison_BillingCategory_table_Added.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001281909415_Patient_liaison_NewTable_Added.resx">
+      <DependentUpon>202001281909415_Patient_liaison_NewTable_Added.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001282244341_BillingCategory_MinimumMinutes_ColoumnAdded.resx">
+      <DependentUpon>202001282244341_BillingCategory_MinimumMinutes_ColoumnAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001291413587_Patients_Liaison_relationRemoved.resx">
+      <DependentUpon>202001291413587_Patients_Liaison_relationRemoved.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001291431124_Patient_BillingCategory_liaison_Relationship.resx">
+      <DependentUpon>202001291431124_Patient_BillingCategory_liaison_Relationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001292005450_Patient_BillingCategories_NewColoumnsAdded.resx">
+      <DependentUpon>202001292005450_Patient_BillingCategories_NewColoumnsAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001301945512_Patient_PatientsPreLiasons_relationShip.resx">
+      <DependentUpon>202001301945512_Patient_PatientsPreLiasons_relationShip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001302032372_Patients_PreLiaisonsId_Coloumn_AddedIn_patientsHistory.resx">
+      <DependentUpon>202001302032372_Patients_PreLiaisonsId_Coloumn_AddedIn_patientsHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001311728205_PatientsProfileConcent_ImageAndNote_Relation_BillingCategory.resx">
+      <DependentUpon>202001311728205_PatientsProfileConcent_ImageAndNote_Relation_BillingCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002051344504_ReviewTimeCycle_billingCategory_Changes.resx">
+      <DependentUpon>202002051344504_ReviewTimeCycle_billingCategory_Changes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002051943388__updatedatatype_Patients_PreLiaisons.resx">
+      <DependentUpon>202002051943388__updatedatatype_Patients_PreLiaisons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002121357247_AddHospitalReasonTable.resx">
+      <DependentUpon>202002121357247_AddHospitalReasonTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002121432255_addHospitalDepartmentstable.resx">
+      <DependentUpon>202002121432255_addHospitalDepartmentstable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002172144002_EnrollmentSubstatusReason_BillingCategory_relationship.resx">
+      <DependentUpon>202002172144002_EnrollmentSubstatusReason_BillingCategory_relationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002251406234__addtableHospitalProcedures.resx">
+      <DependentUpon>202002251406234__addtableHospitalProcedures.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002261800242__QuestionBankstableadded.resx">
+      <DependentUpon>202002261800242__QuestionBankstableadded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002262023165_EvaluationAndG0506TablesAdded.resx">
+      <DependentUpon>202002262023165_EvaluationAndG0506TablesAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002271448298_TwiliotableAdded.resx">
+      <DependentUpon>202002271448298_TwiliotableAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002281237302_SecondaryDoctors_History_maintaining_coloumns.resx">
+      <DependentUpon>202002281237302_SecondaryDoctors_History_maintaining_coloumns.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002281331408__PatientProfile_Hospitalvisits_History_tableAdded.resx">
+      <DependentUpon>202002281331408__PatientProfile_Hospitalvisits_History_tableAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003021202270__Patient_HospitalVisit_NotAdmitted_TableAdded.resx">
+      <DependentUpon>202003021202270__Patient_HospitalVisit_NotAdmitted_TableAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003031742461__otherProcedureColoumnAdded.resx">
+      <DependentUpon>202003031742461__otherProcedureColoumnAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003031956511__otherProcedureColoumnAdded_hospital_Historytable.resx">
+      <DependentUpon>202003031956511__otherProcedureColoumnAdded_hospital_Historytable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003041400080__EvaluationFormDatabaseStructureDesign.resx">
+      <DependentUpon>202003041400080__EvaluationFormDatabaseStructureDesign.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003041512427__EvaluationFormDatabaseStructureDesignChanges2.resx">
+      <DependentUpon>202003041512427__EvaluationFormDatabaseStructureDesignChanges2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003042313516__addGUIDForQuestions.resx">
+      <DependentUpon>202003042313516__addGUIDForQuestions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003052248018_G0506_tables_Plus_EvaluationFormDataSave.resx">
+      <DependentUpon>202003052248018_G0506_tables_Plus_EvaluationFormDataSave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003052335433_G0506_tables_Plus_EvaluationFormDataSave__Change2.resx">
+      <DependentUpon>202003052335433_G0506_tables_Plus_EvaluationFormDataSave__Change2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003062150460_G0506patientupdatetable.resx">
+      <DependentUpon>202003062150460_G0506patientupdatetable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003101916388__CategoryStatusesTableAdded.resx">
+      <DependentUpon>202003101916388__CategoryStatusesTableAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003111955253_RejectionHistoryAccordingtoBillingCategory.resx">
+      <DependentUpon>202003111955253_RejectionHistoryAccordingtoBillingCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003161514476__ticketNotificationTableAdded.resx">
+      <DependentUpon>202003161514476__ticketNotificationTableAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003161657410__ticketNotificationTableAdded_UserticketGenerationRelationShip.resx">
+      <DependentUpon>202003161657410__ticketNotificationTableAdded_UserticketGenerationRelationShip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003161824597__TicketNotificationHistoryaddedColumnChangingType.resx">
+      <DependentUpon>202003161824597__TicketNotificationHistoryaddedColumnChangingType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003181336295__addedColumnNotificationCreatedByInTicketNotificationHistory.resx">
+      <DependentUpon>202003181336295__addedColumnNotificationCreatedByInTicketNotificationHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003181713439_Patient_NoAdditionalProvider_TableAdded.resx">
+      <DependentUpon>202003181713439_Patient_NoAdditionalProvider_TableAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004081257289__AddBulkChangesTablesAndAddColumnInPatientsAppointment.resx">
+      <DependentUpon>202004081257289__AddBulkChangesTablesAndAddColumnInPatientsAppointment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004091853346__removepatientsrelationwithbulkchangelog.resx">
+      <DependentUpon>202004091853346__removepatientsrelationwithbulkchangelog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004211125143__AddedRpmServices.resx">
+      <DependentUpon>202004211125143__AddedRpmServices.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004211221396__addedVirtualInDeviceTable.resx">
+      <DependentUpon>202004211221396__addedVirtualInDeviceTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004271255466__addedTableDeviceMappingHistory.resx">
+      <DependentUpon>202004271255466__addedTableDeviceMappingHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004271324172__addedColumnCreatedByDeviceMappingHistory.resx">
+      <DependentUpon>202004271324172__addedColumnCreatedByDeviceMappingHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004271541400__addedDeviceMappingHistoryAddedVirtal.resx">
+      <DependentUpon>202004271541400__addedDeviceMappingHistoryAddedVirtal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004281540025__addedTableRpm_DeviceMappingAttachments.resx">
+      <DependentUpon>202004281540025__addedTableRpm_DeviceMappingAttachments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004281600499__AddedtableRpm_PatientDeviceReading.resx">
+      <DependentUpon>202004281600499__AddedtableRpm_PatientDeviceReading.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004281622429_addedForeignKeyPatientIdInRpm_DeviceMappingAttachments.resx">
+      <DependentUpon>202004281622429_addedForeignKeyPatientIdInRpm_DeviceMappingAttachments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004281753038__AddedColumnIsSyncFormliveInDeviceMappingHistory.resx">
+      <DependentUpon>202004281753038__AddedColumnIsSyncFormliveInDeviceMappingHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005071148040__addedRelationDevice_BrandModelAndRPMService.resx">
+      <DependentUpon>202005071148040__addedRelationDevice_BrandModelAndRPMService.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005081949023_addedcolumninpatientbillingcategory.resx">
+      <DependentUpon>202005081949023_addedcolumninpatientbillingcategory.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>61408</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>https://localhost:44356/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>http://www.myccmhealth.com</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\BuildWebCompiler.1.12.394\build\BuildWebCompiler.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BuildWebCompiler.1.12.394\build\BuildWebCompiler.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <Import Project="..\packages\BuildWebCompiler.1.12.394\build\BuildWebCompiler.targets" Condition="Exists('..\packages\BuildWebCompiler.1.12.394\build\BuildWebCompiler.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

@@ -1,0 +1,72 @@
+﻿@model IEnumerable<CCM.Models.SecondaryDoctor>
+
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = ViewBag.PatientId })
+
+<div class="container">
+    @{
+        if (ViewBag.PrimaryPhysician != "")
+        {
+            <h3 class="pageTitle text-info">CCM PROVIDER: @ViewBag.PrimaryPhysician</h3>
+            <br />
+            <br />
+        }
+    }
+    <h3 class="pageTitle text-info">ADDITIONAL PROVIDER</h3>
+
+    @Html.ActionLink("Add New Provider", "Create", new { patientId = ViewBag.PatientId }, new { @class = "btn btn-success logdetails" })
+
+    <br /><br /><br />
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table">
+                <tr>
+                    <th>Doctor's Full Name</th>
+                    <th>@Html.DisplayNameFor(model => model.Speciality)</th>
+                    <th>@Html.DisplayNameFor(model => model.DoctorType)</th>
+
+                    <th>Last Visited</th>
+                    <th>Next Appointment</th>
+                    <th>Phone Number</th>
+                    <th></th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Speciality)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DoctorType)</td>
+
+                    <td>@Html.DisplayFor(modelItem => item.LastVisit)</td>
+                    <td>@Html.DisplayFor(modelItem => item.NextAppointment)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MobilePhoneNumber)</td>
+                    <td>@Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-sm btn-danger logdetails" })</td>
+                </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<br /><br /><br />
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+    </SCRIPT>
+}

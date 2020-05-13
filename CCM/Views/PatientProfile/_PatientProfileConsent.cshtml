@@ -1,0 +1,820 @@
+﻿@model CCM.Models.PatientProfile_Consent
+@using CCM.Helpers;
+
+@using CCM.Models;
+
+
+@{
+    var PatientConsentHistory = new List<PatientProfile_Consent>(ViewBag.PatientConsetHistory);
+}
+
+<script src="~/Scripts/imageuploadify.min.js" type="text/javascript"></script>
+<style>
+    .Upload-for-Ticket {
+        margin-left: 20px;
+        margin-right: 17px;
+        padding-left: 0px;
+        width: 45%;
+        margin-bottom: 10px;
+    }
+
+    .imageuploadify-overlay {
+        display: none;
+    }
+
+    .imageuploadify-images-list i {
+        color: #3AA0FF;
+        display: block;
+        font-size: 5em;
+        text-align: center;
+        margin: .5em auto;
+        margin-bottom: 7px;
+        /* padding-bottom: 12px; */
+    }
+
+    span.imageuploadify-message {
+        font-size: 24px;
+        border-top: 1px solid #3AA0FF;
+        border-bottom: 1px solid #3AA0FF;
+        padding: 10px;
+        display: inline-block;
+        color: #3AA0FF;
+    }
+
+    .imageuploadify-images-list button.btn-default {
+        display: block;
+        color: #3AA0FF;
+        border-color: #3AA0FF;
+        border-radius: 1em;
+        margin: 25px auto;
+        width: 100%;
+        max-width: 500px;
+        cursor: pointer;
+    }
+
+    .imageuploadify {
+        border: 2px dashed #d2d2d2;
+        position: relative;
+        min-height: 250px;
+        min-width: 250px;
+        max-width: 100% !important;
+        margin: auto;
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        text-align: center;
+        background-color: #fff;
+        color: #3AA0FF;
+        top: 10px;
+    }
+
+    .imageuploadify-container img {
+        max-width: 50px;
+        max-height: 50px;
+        text-align: left;
+        height: 50px;
+    }
+
+    .imageuploadify-container {
+        display: inline-block;
+        width: 100px;
+    }
+
+    .sign {
+        width: 210px !important;
+    }
+</style>
+
+
+<div>
+
+    <div class="custom-title">
+        <h3>PATIENT CONSENT-@BillingCodeHelper.ccm</h3>
+    </div>
+    @using (Html.BeginForm("_PatientProfileConsent", "PatientProfile", FormMethod.Post,
+        new { @class = "form-horizontal frmStyle", id = "frmPatientProfileConsent", role = "form", enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.PatientId)
+        @Html.HiddenFor(m => m.CreatedBy)
+        @Html.HiddenFor(m => m.CreatedOn)
+        @Html.HiddenFor(m => m.fileName)
+        @Html.HiddenFor(m => m.filePath)
+
+
+        <input type="hidden" name="BillingCategoryId" value="@BillingCodeHelper.cmmBillingCatagoryid" />
+
+
+
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        @Html.LabelFor(item => item.Consent, "Consent", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12" id="concentdiv">
+                            @Html.TextAreaFor(model => model.Consent, new { @id="Concent", @class = "form-control border-input", @style = "height:150px !important",@placeholder="Default template" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="col-md-12" for="Signature">Click to Signature</label>
+                        <div class="col-md-12" id="sign">
+                            @Html.TextBoxFor(model => model.Signature, new { @id = "txtSignatureID", @style = "border-radius: 5px;" })
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        @Html.LabelFor(item => item.Note, "Note", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12" id="notediv">
+                            @Html.TextAreaFor(model => model.Note, new {@id="notes", @class = "form-control border-input", @style = "height:150px !important"})
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="display:inline-block">
+                    <label>Upload Image</label>
+                    <input type="file" name="uploadFiles" id="uploadFiles" class="form-control border-input" style="width:auto!important" accept=".png,.jpg,.jpeg,.pdf" onchange="return fileValidation()" />
+                </div>
+                <div id="imagePreview"></div>
+            </div>
+            <div class="row">
+                @*<div class="Upload-for-Ticket col-lg-6 col-md-6">
+                        <input type="file" id="ImgUpForPatientCo" accept="image/*" multiple />
+                    </div>*@
+
+                <div class="col-lg-6 col-md-6">
+                    @if (Model.filePath != null)
+                    {
+                        <img src="@ViewBag.filepath" style="height:100px;width:100px" />
+                    }
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <br />
+                            <input type="button" value="Click Save to Upload signature and consent" class="btn btn-success logdetails" id="saveButton" onclick="SubmitForm('frmPatientProfileConsent','Update')" />
+                            <input type="button" value="Send link for signature" class="btn btn-success logdetails" onclick="opensignaturesendlinkmodal()" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+</div>
+<div class="card " >
+    <h3 class="custom-title" style="color:#fff;">Patient Consent History</h3>
+    <div class="card-body" id="PatientConsentHistoryPartialDiv">
+        <div class="tablefixwidth1">
+            <div id="tablescroll">
+                <table id="example" class="table table-striped nowrap " style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Patient Id</th>
+                            <th>Consent</th>
+                            <th>Created By</th>
+                            <th>Created On</th>
+                            <th>Updated By</th>
+                            <th>Updated On</th>
+                            <th style="width:98px!important;">Signature</th>
+                            <th>Note</th>
+                            <th>Billing Category Id</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ph in PatientConsentHistory)
+                        {
+                            <tr>
+                                <td>@ph.Id</td>
+                                <td>@ph.PatientId</td>
+                                <td>@ph.Consent</td>
+                                <td>@HelperExtensions.GetUserNamebyID(@ph.CreatedBy)</td>
+                                <td>@ph.CreatedOn</td>
+                                <td>@HelperExtensions.GetUserNamebyID(@ph.UpdatedBy)</td>
+                                <td>@ph.UpdatedOn</td>
+                                <td style="text-align:center;">
+                                    <img src="data: image; base64,@System.Convert.ToBase64String(ph.Signature)" width="120" height="60" style="border:1px solid #d2d2d2;" />
+                                </td>
+                                <td>@ph.Note</td>
+                                <td>@ph.BillingCategoryId</td>
+                            </tr>
+
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+</script>
+<script src="~/Scripts/imageuploadify.min.js" type="text/javascript"></script>
+
+<!--Signature Pad Scripts Start-->
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>*@
+
+<script>
+    function fileValidation() {
+        var fileInput = document.getElementById('uploadFiles');
+        var filePath = fileInput.value;
+        var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.pdf)$/i;
+        if (!allowedExtensions.exec(filePath)) {
+            swal("Warning!", "Please select files with correct format", "warning");
+            fileInput.value = '';
+            return false;
+        } else {
+            //Image preview
+            if (fileInput.files && fileInput.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('imagePreview').innerHTML = '<img src="' + e.target.result + '" style="height:100px;width:100px"/>';
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+    }
+    var empty = '';
+    //sketch lib
+    (function () {
+        var __slice = [].slice;
+
+        (function ($) {
+            var Sketch;
+            $.fn.sketch = function () {
+                var args, key, sketch;
+                key = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+                if (this.length > 1) {
+                    $.error('Sketch.js can only be called on one element at a time.');
+                }
+                sketch = this.data('sketch');
+                if (typeof key === 'string' && sketch) {
+                    if (sketch[key]) {
+                        if (typeof sketch[key] === 'function') {
+                            return sketch[key].apply(sketch, args);
+                        } else if (args.length === 0) {
+                            return sketch[key];
+                        } else if (args.length === 1) {
+                            return sketch[key] = args[0];
+                        }
+                    } else {
+                        return $.error('Sketch.js did not recognize the given command.');
+                    }
+                } else if (sketch) {
+                    return sketch;
+                } else {
+                    this.data('sketch', new Sketch(this.get(0), key));
+                    return this;
+                }
+            };
+            Sketch = (function () {
+
+                function Sketch(el, opts) {
+                    this.el = el;
+                    this.canvas = $(el);
+                    this.context = el.getContext('2d');
+                    this.options = $.extend({
+                        toolLinks: true,
+                        defaultTool: 'marker',
+                        defaultColor: '#000000',
+                        defaultSize: 2
+                    }, opts);
+                    this.painting = false;
+                    this.color = this.options.defaultColor;
+                    this.size = this.options.defaultSize;
+                    this.tool = this.options.defaultTool;
+                    this.actions = [];
+                    this.action = [];
+                    this.canvas.bind('click mousedown mouseup mousemove mouseleave mouseout touchstart touchmove touchend touchcancel', this.onEvent);
+                    if (this.options.toolLinks) {
+                        $('body').delegate("a[href=\"#" + (this.canvas.attr('id')) + "\"]", 'click', function (e) {
+                            var $canvas, $this, key, sketch, _i, _len, _ref;
+                            $this = $(this);
+                            $canvas = $($this.attr('href'));
+                            sketch = $canvas.data('sketch');
+                            _ref = ['color', 'size', 'tool'];
+                            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                                key = _ref[_i];
+                                if ($this.attr("data-" + key)) {
+                                    sketch.set(key, $(this).attr("data-" + key));
+                                }
+                            }
+                            if ($(this).attr('data-download')) {
+                                sketch.download($(this).attr('data-download'));
+                            }
+                            return false;
+                        });
+                    }
+                }
+
+                Sketch.prototype.download = function (format) {
+                    var mime;
+                    format || (format = "png");
+                    if (format === "jpg") {
+                        format = "jpeg";
+                    }
+                    mime = "image/" + format;
+                    return window.open(this.el.toDataURL(mime));
+                };
+
+                Sketch.prototype.set = function (key, value) {
+                    this[key] = value;
+                    return this.canvas.trigger("sketch.change" + key, value);
+                };
+
+                Sketch.prototype.startPainting = function () {
+                    this.painting = true;
+                    return this.action = {
+                        tool: this.tool,
+                        color: this.color,
+                        size: parseFloat(this.size),
+                        events: []
+                    };
+                };
+
+
+                Sketch.prototype.stopPainting = function () {
+                    if (this.action) {
+                        this.actions.push(this.action);
+                    }
+                    this.painting = false;
+                    this.action = null;
+                    return this.redraw();
+                };
+
+                Sketch.prototype.onEvent = function (e) {
+                    if (e.originalEvent && e.originalEvent.targetTouches) {
+                        e.pageX = e.originalEvent.targetTouches[0].pageX;
+                        e.pageY = e.originalEvent.targetTouches[0].pageY;
+                    }
+                    $.sketch.tools[$(this).data('sketch').tool].onEvent.call($(this).data('sketch'), e);
+                    e.preventDefault();
+                    return false;
+                };
+
+                Sketch.prototype.redraw = function () {
+                    var sketch;
+                    //this.el.width = this.canvas.width();
+                    this.context = this.el.getContext('2d');
+                    sketch = this;
+                    $.each(this.actions, function () {
+                        if (this.tool) {
+                            return $.sketch.tools[this.tool].draw.call(sketch, this);
+                        }
+                    });
+                    if (this.painting && this.action) {
+                        return $.sketch.tools[this.action.tool].draw.call(sketch, this.action);
+                    }
+                };
+
+                return Sketch;
+
+            })();
+            $.sketch = {
+                tools: {}
+            };
+            $.sketch.tools.marker = {
+                onEvent: function (e) {
+                    switch (e.type) {
+                        case 'mousedown':
+                        case 'touchstart':
+                            if (this.painting) {
+                                this.stopPainting();
+                            }
+                            this.startPainting();
+                            break;
+                        case 'mouseup':
+                        //return this.context.globalCompositeOperation = oldcomposite;
+                        case 'mouseout':
+                        case 'mouseleave':
+                        case 'touchend':
+                        //this.stopPainting();
+                        case 'touchcancel':
+                            this.stopPainting();
+                    }
+                    if (this.painting) {
+                        this.action.events.push({
+                            x: e.pageX - this.canvas.offset().left,
+                            y: e.pageY - this.canvas.offset().top,
+                            event: e.type
+                        });
+                        return this.redraw();
+                    }
+                },
+                draw: function (action) {
+                    var event, previous, _i, _len, _ref;
+                    this.context.lineJoin = "round";
+                    this.context.lineCap = "round";
+                    this.context.beginPath();
+                    this.context.moveTo(action.events[0].x, action.events[0].y);
+                    _ref = action.events;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        event = _ref[_i];
+                        this.context.lineTo(event.x, event.y);
+                        previous = event;
+                    }
+                    this.context.strokeStyle = action.color;
+                    this.context.lineWidth = action.size;
+                    return this.context.stroke();
+                }
+            };
+            return $.sketch.tools.eraser = {
+                onEvent: function (e) {
+                    return $.sketch.tools.marker.onEvent.call(this, e);
+                },
+                draw: function (action) {
+                    var oldcomposite;
+                    oldcomposite = this.context.globalCompositeOperation;
+                    this.context.globalCompositeOperation = "destination-out";
+                    action.color = "rgba(0,0,0,1)";
+                    $.sketch.tools.marker.draw.call(this, action);
+                    return this.context.globalCompositeOperation = oldcomposite;
+                }
+            };
+        })(jQuery);
+
+    }).call(this);
+
+
+    (function ($) {
+        $.fn.SignaturePad = function (options) {
+
+            //update the settings
+            var settings = $.extend({
+                allowToSign: true,
+                img64: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                border: '1px solid #c7c8c9',
+                width: '300px',
+                height: '150px',
+                class: "sign",
+                callback: function () {
+                    return true;
+                }
+            }, options);
+
+            //control should be a textbox
+            //loop all the controls
+            var id = 0;
+
+            //add a very big pad
+            var big_pad = $('#signPadBig');
+            var back_drop = $('#signPadBigBackDrop');
+            var canvas = undefined;
+            if (big_pad.length == 0) {
+
+                back_drop = $('<div>')
+                back_drop.css('position', 'fixed');
+                back_drop.css('top', '0');
+                back_drop.css('right', '0');
+                back_drop.css('bottom', '0');
+                back_drop.css('left', '0');
+                back_drop.css('z-index', '1040 !important');
+                back_drop.css('background-color', '#000');
+                back_drop.css('display', 'none');
+                back_drop.css('filter', 'alpha(opacity=50)');
+                back_drop.css('opacity', '0.5');
+                $('body').append(back_drop);
+
+                big_pad = $('<div>');
+                big_pad.css('display', 'none');
+                big_pad.css('position', 'fixed');
+                big_pad.css('margin', '0 auto');
+                big_pad.css('top', '0');
+                big_pad.css('bottom', '0');
+                big_pad.css('right', '0');
+                big_pad.css('left', '0');
+                big_pad.css('z-index', '1000002 !important');
+                big_pad.css('overflow', 'hidden');
+                big_pad.css('outline', '0');
+                big_pad.css('-webkit-overflow-scrolling', 'touch');
+
+                big_pad.css('right', '0');
+                big_pad.css('border', '1px solid #c8c8c8');
+                big_pad.css('padding', '15px');
+                big_pad.css('background-color', 'white');
+                big_pad.css('margin-top', '75px');
+                big_pad.css('z-index', '9');
+                big_pad.css('width', '95%');
+                big_pad.css('height', '90%');
+                big_pad.css('border-radius', '10px');
+                big_pad.attr('id', 'signPadBig');
+                $('body').append(big_pad);
+
+                var update_canvas_size = function () {
+                    var w = big_pad.width() //* 0.95;
+                    var h = big_pad.height() - 55;
+
+                    canvas.attr('width', w);
+                    canvas.attr('height', h);
+                }
+
+
+                canvas = $('<canvas>');
+                canvas.css('display', 'block');
+                canvas.css('margin', '0 auto');
+                canvas.css('border', '1px solid #c8c8c8');
+                canvas.css('border-radius', '10px');
+                //canvas.css('width', '90%');
+                //canvas.css('height', '80%');
+                big_pad.append(canvas);
+
+                update_canvas_size();
+                $(window).on('resize', function () {
+                    update_canvas_size();
+                });
+
+                var clearCanvas = function () {
+                    canvas.sketch().action = null;
+                    canvas.sketch().actions = [];       // this line empties the actions.
+                    var ctx = canvas[0].getContext("2d");
+                    ctx.clearRect(0, 0, canvas[0].width, canvas[0].height);
+                    return true
+                }
+
+                var _get_base64_value = function () {
+                    var text_control = $.data(big_pad[0], 'control');  //settings.control; // $('#' + big_pad.attr('id'));
+                    return $(text_control).val();
+                }
+
+                var copyCanvas = function () {
+
+                    //get data from bigger pad
+                    var sigData = canvas[0].toDataURL("image/png");
+
+                    var _img = new Image;
+                    _img.onload = resizeImage;
+                    _img.src = sigData;
+
+                    var targetWidth = canvas.width();
+                    var targetHeight = canvas.height();
+
+                    function resizeImage() {
+                        var imageToDataUri = function (img, width, height) {
+
+                            // create an off-screen canvas
+                            var canvas = document.createElement('canvas'),
+                                ctx = canvas.getContext('2d');
+
+                            // set its dimension to target size
+                            canvas.width = width;
+                            canvas.height = height;
+
+                            // draw source image into the off-screen canvas:
+                            ctx.drawImage(img, 0, 0, width, height);
+                            var blank = document.createElement('canvas');
+                            blank.width = canvas.width;
+                            blank.height = canvas.height;
+
+                            blank.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                            debugger;
+                            if (canvas.toDataURL() == blank.toDataURL()) {
+                                empty = canvas.toDataURL();
+                                return false;
+                            }
+
+                            // encode image to data-uri with base64 version of compressed image
+                            return canvas.toDataURL();
+                        }
+
+                        var newDataUri = imageToDataUri(this, targetWidth, targetHeight);
+                        var control_img = $.data(big_pad[0], 'img');
+                        if (control_img) {
+                            if (newDataUri == false) {
+                                newDataUri = "data:image/png;base64," + $('#txtSignatureID').val();
+                                $(control_img).attr("src", newDataUri);
+
+                            }
+                            else {
+
+                                $(control_img).attr("src", newDataUri);
+                            }
+                        }
+
+
+                        var text_control = $.data(big_pad[0], 'control');  //settings.control; // $('#' + big_pad.attr('id'));
+                        if (text_control)
+                            $(text_control).val(newDataUri);
+                    }
+                }
+
+                var buttons = [
+                    {
+                        title: 'Close',
+                        callback: function () {
+                            clearCanvas();
+                            big_pad.slideToggle(function () {
+                                back_drop.hide('fade');
+                            });
+
+                        }
+                    },
+                    {
+                        title: 'Clear',
+                        callback: function () {
+                            clearCanvas();
+                            if (settings.callback)
+                                settings.callback(_get_base64_value(), 'clear');
+                        }
+                    },
+                    {
+                        title: 'Accept',
+                        callback: function () {
+                         
+                            copyCanvas();
+                            clearCanvas();
+                            big_pad.slideToggle(function () {
+                              
+                                back_drop.hide('fade', function () {
+                                    if (settings.callback)
+                                        settings.callback(_get_base64_value(), 'accept');
+                                    if (_get_base64_value() != 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
+                                    $("#saveButton").attr("disabled", false);
+                                       
+                                    }
+
+                                });
+                            });
+                        }
+                    }].forEach(function (e) {
+                        var btn = $('<button>');
+                        btn.attr('type', 'button');
+                        btn.css('border', '1px solid #c8c8c8');
+                        btn.css('background-color', 'white');
+                        btn.css('padding', '10px');
+                        btn.css('display', 'block');
+                        btn.css('margin-top', '15px');
+                        btn.css('margin-right', '5px');
+                        btn.css('cursor', 'pointer');
+                        btn.css('border-radius', '5px');
+                        btn.css('float', 'right');
+                        btn.css('height', '40px');
+                        btn.text(e.title);
+                        btn.on('click', function () {
+                            e.callback(e.title);
+                        })
+                        big_pad.append(btn);
+
+                    });
+
+            }
+            else {
+                canvas = big_pad.find('canvas')[0];
+            }
+
+            //init the signpad
+            if (canvas) {
+                var sign1big = $(canvas).sketch({ defaultColor: "#000", defaultSize: 5 });
+            }
+
+            //for each control
+            return this.each(function () {
+
+                var control = $(this);
+                control.hide();
+
+                //get the control parent
+                var wrapper = control.parent();
+                var img = $('<img>');
+
+                //style it
+                img.css("cursor", "pointer");
+                img.css("border", settings.border);
+                img.css("height", settings.height);
+                img.css("width", settings.width);
+                img.css('border-radius', '5px')
+                img.attr("src", settings.img64);
+
+                if (typeof (wrapper) == 'object') {
+                    wrapper.append(img);
+                }
+
+
+
+
+                //init the big sign pad
+                if (settings.allowToSign == true) {
+                    //click to the pad bigger
+                    img.on('click', function () {
+                        //show the pad
+                        back_drop.show();
+                        big_pad.slideToggle();
+
+                        //save control to use later
+                        $.data(big_pad[0], 'img', img);
+                        $.data(big_pad[0], 'control', control);
+
+                        //settings.control = control;
+                        //settings.img = img;
+                    });
+                }
+            });
+        };
+
+
+    })(jQuery);
+</script>
+<script>
+    $(document).ready(function () {
+        $("#Concent").html("");
+        $("#notes").html("");
+    })
+    $("#Concent").bind('input propertychange', function () {
+
+        if ($("#Concent").val().trim() == "" && $("#notes").val().trim() == "") {
+            $("#saveButton").attr("disabled", true);
+        }
+        else {
+            $("#saveButton").attr("disabled", false);
+        }
+
+
+
+    });
+    $("#notes").bind('input propertychange', function () {
+
+        if ($("#notes").val().trim() == "" && $("#Concent").val().trim() == "") {
+            $("#saveButton").attr("disabled", true);
+        }
+        else {
+            $("#saveButton").attr("disabled", false);
+        }
+
+
+
+    });
+    
+    $(document).ready(function () {
+        $("#saveButton").attr("disabled", true);
+        $('#ImgUpForPatientCo').imageuploadify();
+
+        debugger;
+      @{
+          var imgSrc = "";
+          try
+          {
+              var base64 = "";
+              if (Model.Signature != null)
+              {
+                  base64 = Convert.ToBase64String(Model.Signature);
+              }
+              imgSrc = String.Format("data:image/png;base64,{0}", base64);
+
+          }
+
+          catch (Exception)
+          {
+
+
+          }
+          }
+
+
+        debugger;
+      var  data1 = 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+        $('#txtSignatureID').val(data1);
+
+        console.log('@imgSrc');
+          var sign = $('#txtSignatureID').SignaturePad({
+          allowToSign: true,
+            img64:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' ,
+            border: '3px dashed #c7c8c9',
+            width: '300px',
+            height: '150px',
+              callback: function (data, action) {
+                  debugger;
+                  if (data == "false") {
+                      alert("same");
+                      var data2 = '@imgSrc'.replace('data:image/png;base64,', '');
+                  } else {
+                data = data.replace('data:image/png;base64,', '');
+                $('#txtSignatureID').val(data);
+                  //console.log(data);
+
+                  }
+
+
+
+              }
+          });
+    })
+
+    $("#example").DataTable({
+        "order": [[6, "Dsec"]]
+    });
+
+
+</script>
+<!--Signature Pad Scripts End-->

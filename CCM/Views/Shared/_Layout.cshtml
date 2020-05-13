@@ -1,0 +1,3974 @@
+﻿@using Microsoft.AspNet.Identity
+@using CCM.Models
+@using CCM.Models.CCMBILLINGS
+@using CCM.Helpers;
+@{
+    ApplicationdbContect db = new ApplicationdbContect();
+    var BillingCategories = db.BillingCategories.Select(p => new
+    {
+        p.BillingCategoryId,
+        p.Name
+    });
+    var EnrolledCcmCategories = new List<BillingCategory>();
+    List<int> EnrolledIn = new List<int>();
+
+    var UserTypes = new List<string>(); ;
+    try
+    {
+        int pId = ViewBag.PatientId == null ? 0 : ViewBag.PatientId;
+
+        EnrolledCcmCategories = db.Patients_BillingCategories.Where(x => x.PatientId == pId && x.Status == true).Select(p => p.BillingCategory).Distinct().ToList();
+
+        var s = Html.Action("TestFun", "CcmStatus", new { patientId = pId, cycle = CategoryCycleStatusHelper.GetPatientNewOrOldCycleByCategory(pId,BillingCodeHelper.cmmBillingCatagoryid) });
+        UserTypes = (List<string>)Session["ReviewTimeViewModel"];
+        //Model = ViewBag.ReviewTimeViewModel as ReviewTimeViewModel;
+
+
+
+    }
+
+    catch (Exception ex)
+    {
+
+
+    }
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My CCM Health - Chronic Care Management</title>
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/Site0306.css" rel="stylesheet" />
+
+    <link href="~/dashboard/assets/css/paper-dashboard.css" rel="stylesheet" type="text/css" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Muli:400,300" rel="stylesheet" type="text/css" />
+    <link href="~/dashboard/assets/css/themify-icons.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.css" rel="stylesheet" type="text/css" />
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script type="text/javascript" src="//media.twiliocdn.com/sdk/js/client/v1.3/twilio.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+    <link href="https://fonts.googleapis.com/css?family=Cabin|Lato|Montserrat|Open+Sans|Open+Sans+Condensed:300|Oswald|Oxygen|Roboto|Roboto+Condensed|Ubuntu" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.5/css/fixedHeader.dataTables.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.css" />
+    <link href="~/Content/Plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" />
+    <link href="~/Content/Plugins/magiczoomplus/magiczoomplus.module.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        body {
+            overflow-y: scroll !important;
+        }
+
+        .isActive {
+            background-color: #d5f7d6!important;
+        }
+        .isNotActive {
+            background-color: #ecd6d6!important;
+        }
+
+        #myBtn {
+            display: none; /* Hidden by default */
+            position: fixed; /* Fixed/sticky position */
+            bottom: 45px; /* Place the button at the bottom of the page */
+            right: 30px; /* Place the button 30px from the right */
+            z-index: 99; /* Make sure it does not overlap */
+            border: none; /* Remove borders */
+            outline: none; /* Remove outline */
+            background-color: #0364bd; /* Set a background color */
+            color: white; /* Text color */
+            cursor: pointer; /* Add a mouse pointer on hover */
+            padding: 5px 15px;
+            border-radius: 10px;
+            font-size: 33px;
+        }
+
+        .phonenumberlink, .emaillink {
+            float: left;
+            width: 100%;
+        }
+
+        .dropdownBtns {
+            padding: 2px !important;
+            font-size: 13px !important;
+            color: white !important;
+            margin-bottom: -10px !important;
+            margin: 9px 4px 9px 4px !important;
+        }
+
+        .otherappStatus {
+            padding: 2px !important;
+            font-size: 13px !important;
+            color: white !important;
+            margin-bottom: -10px !important;
+            margin: 9px 4px 9px 4px !important;
+        }
+
+        .toast-info {
+            background-color: #0364bd !important;
+            font-size: 16px !important;
+        }
+
+        #toast-container > div {
+            width: 350px !important;
+        }
+  
+        .toast-message {
+            width: 284px !important;
+        }
+
+        .dropdownBtns2 {
+            padding: 2px !important;
+            font-size: 13px !important;
+            color: white !important;
+            margin-bottom: -10px !important;
+            margin: 9px 4px 9px 4px !important;
+        }
+
+        #myBtn:before {
+            content: '\f106';
+            font-family: fontawesome;
+            font-weight: 400;
+            vertical-align: top;
+        }
+
+        #myBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+
+        .msg {
+            width: 100%;
+            font-size: 20px;
+            text-align: center;
+            color: red;
+            font-family: monospace;
+            letter-spacing: 1.5px;
+        }
+
+        #TwilioCallModalR .modal-dialog {
+            width: 560px;
+        }
+
+        #TwilioCallModal .modal-dialog {
+            width: 1260px;
+        }
+
+        #activityul {
+            margin-top: 0px !important;
+            cursor: pointer;
+            height: 100%;
+        }
+
+            #activityul > li {
+                border-bottom: 1px solid #ccc;
+            }
+
+        #PatientNotes {
+            margin-bottom: 5px;
+        }
+
+        .modal-footer {
+            border-top: 0px solid;
+        }
+
+        .swal2-container {
+            z-index: 106000000;
+        }
+
+        #surveyul {
+            margin-top: 0px;
+            margin-left: 5px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .headerright {
+            float: left;
+            width: 84%;
+        }
+
+        .timerandmsg {
+            float: left;
+            width: 65%;
+        }
+
+        .warningmsg {
+            margin-bottom: 0px;
+            color: white;
+            font-size: 11px;
+            top: -21px;
+            position: relative;
+        }
+
+        .fa-sign-out-alt {
+            color: white;
+        }
+
+        .logouta {
+            margin: 9px 0px !important;
+        }
+
+        .fa-sign-out-alt:hover {
+            color: gray;
+        }
+
+        .alogo {
+            float: left;
+            width: 83%;
+        }
+
+        .headerleft {
+            float: left;
+            width: 15%;
+        }
+
+        .logoimg {
+            width: 100%;
+            height: 52px;
+        }
+
+
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: #F5F5F5;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            background-color: #F5F5F5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122,153,217)), color-stop(0.72, rgb(73,125,189)), color-stop(0.86, rgb(28,58,148)));
+        }
+
+        button.dt-button.buttons-columnVisibility.active {
+            background: #012f59 !important;
+            color: white !important;
+            border: 1px solid #fff !important;
+        }
+
+        table.fixedHeader-floating {
+            top: 60px !important;
+        }
+
+        .checkboxes {
+            width: 25px;
+            height: 23px;
+            margin-top: 0;
+        }
+
+        .buttons-colvis {
+            text-transform: capitalize;
+        }
+
+        #totalcountsmaingroupchat {
+            display: none;
+            float: right;
+            margin-top: -29px;
+            margin-right: 7px;
+            background: red;
+            padding: 5px;
+        }
+
+        #BADialogE #bamodaldialogE {
+            width: auto !important;
+            height: 99%;
+            overflow: auto;
+        }
+
+            #BADialogE #bamodaldialogE .modal-content {
+                height: 100%;
+                height: 99%;
+                overflow: auto;
+            }
+
+        /*Style for Dropdown Search Combo*/
+        .dropdown-menu > li > a {
+            padding: 10px 15px !important;
+        }
+
+        .input-group-btn, .radio input[type="radio"], .radio-inline input[type="radio"] {
+            display: none;
+        }
+
+        .input-group-addon {
+            padding: 0px 7px;
+        }
+
+        .checkbox, .radio {
+            padding-left: 15px;
+            margin-bottom: 3px;
+            margin-top: 3px;
+        }
+
+        /*.loginicon {
+            border-radius: 10%;
+            background: black;
+            padding: 5px;
+            float: right;
+            margin-top: 15px;
+            color: white;
+        }
+
+        .dropdown-menu > li > a {
+            padding: 10px 15px !important;
+        }
+
+        .glyphicon {
+            line-height: 1;
+            padding-right: 5px;
+        }
+
+        .navbar .navbar-nav > li > a {
+            padding-top: 15px;
+            padding-bottom: 15px;
+            margin: 0 !important;
+            margin-bottom: 5px !important;
+        }*/
+
+        .txtwhite {
+            color: white !important;
+            border-top-color: white !important;
+            border-bottom-color: white !important
+        }
+
+        .topbar .topbar-divider {
+            width: 0;
+            border-right: 1px solid #e3e6f0;
+            height: calc(4.375rem - 2rem);
+            margin: auto 1rem;
+        }
+
+        .img-profile {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        .rounded-circle {
+            border-radius: 50% !important;
+        }
+
+        .topbar .nav-item .nav-link {
+            height: 4.375rem;
+            display: flex;
+            align-items: center;
+            padding: 0 .75rem;
+        }
+
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: .25rem 1.5rem;
+            clear: both;
+            font-weight: 400;
+            color: #3a3b45;
+            text-align: inherit;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+        }
+
+        .dropdown-divider {
+            height: 0;
+            margin: .5rem 0;
+            overflow: hidden;
+            border-top: 1px solid #eaecf4;
+        }
+
+        .glyphicon {
+            padding-right: 5px !important;
+        }
+        /*End Style for Dropdown Search Combo*/
+        .badge {
+            position: absolute;
+            top: 1px;
+            right: 4px;
+            padding: 3px 5px;
+            border-radius: 50%;
+            background-color: red;
+            color: white;
+        }
+
+        .modal-header .close {
+            margin-top: -25px !important;
+            padding: 4px 8px !important;
+        }
+
+        .close:hover, .close:focus {
+            color: black !important;
+            text-decoration: none !important;
+            cursor: pointer !important;
+            border-radius: 50% !important;
+            background-color: #fff !important;
+        }
+
+        .custom-postion {
+            margin-top: 20px;
+            margin-right: 25px;
+            cursor: pointer;
+        }
+
+            .custom-postion span {
+                font-weight: bolder;
+                position: absolute;
+                top: -10px;
+                background: red;
+                left: 20px;
+                font-size: 16px;
+                text-shadow: none;
+                border-radius: 50%;
+                width: 25px;
+            }
+
+        .modal {
+            /*position:static !important;*/
+            overflow: auto;
+        }
+
+        #SingnalR {
+            font-family: Roboto,"Helvetica Neue",Helvetica,Arial !important;
+            font-size: 1.3125rem !important;
+            letter-spacing: .1px !important;
+        }
+
+        .js-modal-messenger .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+            background-color: #1d76c8;
+        }
+
+        body.modal-open {
+            margin-right: 0 !important;
+        }
+
+        .sidebar {
+            position: fixed !important;
+            margin-top: 10px;
+        }
+
+        .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+            color: #fff;
+            text-decoration: none;
+            background-color: #ddd;
+            outline: 0;
+        }
+
+        .sidebar .nav, .off-canvas-sidebar .nav {
+            margin-top: 16px;
+            overflow-x: hidden;
+            height: 91vh;
+        }
+
+        #appointmentsul {
+            height: 100% !important;
+        }
+
+        #ticketul {
+            height: max-content !important;
+        }
+
+        #BillingCodeul {
+            height: max-content !important;
+        }
+        #Rpmul {
+            height: max-content !important;
+        }
+
+        .dataTables_processing {
+            background-color: #e2e2e2 !important;
+            background: none !important
+        }
+
+        .dropbtn {
+            /*background-color: #3498DB;*/
+            color: white;
+            padding: 7px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+            .dropbtn:hover, .dropbtn:focus {
+                /*background-color: #2980B9*/;
+            }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn:hover, .dropbtn:focus, .dropbtn:active, .dropbtn.active {
+            background: #75b457 !important;
+            color: #fff;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #0364bd;
+            min-width: 201px;
+            /*overflow: auto;*/
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            margin-top: -8px;
+            margin-left: -2px;
+        }
+
+            .dropdown-content a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+            }
+
+        /*.dropdown a:hover {
+            background-color: #ddd;
+        }*/
+
+        .show {
+            display: block;
+        }
+
+        .dropdownBtns:hover {
+            background: #1a7f45 !important;
+        }
+
+        .dropdownBtns2:hover {
+            background: #1a7f45 !important;
+        }
+
+
+        .dropdownCounter {
+            display: inline-block;
+            position: relative;
+        }
+
+        .dd-button {
+            /*display: inline-block;
+            background-color: #ffffff;
+            cursor: pointer;
+            white-space: nowrap;*/
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+
+
+
+
+        .dd-input {
+            display: none;
+        }
+
+        .dd-menu {
+            position: absolute;
+            top: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 0;
+            margin: 2px 0 0 0;
+            box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
+            background-color: #ffffff;
+            list-style-type: none;
+        }
+
+        .dd-input + .dd-menu {
+            display: none;
+        }
+
+        .dd-input:checked + .dd-menu {
+            display: block;
+            background: #0364bd;
+            /* border-radius: 16px 13px 16px 16px; */
+            border: 1px solid #0364bd;
+            box-shadow: 1px 2px 8px 0px black;
+            margin-left: -19px;
+        }
+
+        .dd-menu li {
+            padding: 1px 10px;
+            cursor: pointer;
+            background: #004788;
+            font-size: 15px;
+            white-space: nowrap;
+            margin-top: 1px;
+            margin-bottom: 2px;
+            /* border-radius: 40px; */
+            /* border-radius: 1px; */
+            font-weight: 200;
+            color: white;
+            text-align: center;
+        }
+
+
+
+            .dd-menu li a {
+                display: block;
+                margin: -10px -20px;
+                padding: 10px 20px;
+            }
+
+            .dd-menu li.divider {
+                padding: 0;
+                border-bottom: 1px solid #cccccc;
+            }
+
+        .mz-expand {
+            background-color: #000000a3 !important;
+        }
+
+        .clearTicketNotifications:hover {
+            color: #424242ba;
+        }
+
+        .liaisonRejectbtn :hover {
+            background: #eb5e28 !important;
+        }
+
+        .btn-danger :hover {
+            border-color: #EB5E28 !important;
+            background-color: #EB5E28 !important;
+        }
+    </style>
+    <script>
+          var ReviewIdForRecordActivity = "@ViewBag.ReviewId";
+    </script>
+</head>
+
+<body>
+    <input type="hidden" id="SelectedCategory" value="CCM" data-id="" data-value="" />
+    <input type="hidden" id="PreviousCategory" value="" data-id="" data-value="" />
+    <input type="hidden" id="ControlTimerHidden" data-value="" value="CCM" />
+    <audio src="~/Content/your-turn.mp3" id="newmessagesound"></audio>
+    <div id="finalcareplanforpdf"></div>
+    <div class="modal fade" id="CompareCycleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index:5000000000">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="exampleModalLabel">Patient Cycle Comparison for:  @ViewBag.PatientName</h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="comparecyclesdiv">
+                    </div>
+                </div>
+
+
+                <div class="modal-footer">
+                    <input type="button" value="Close" class="btn btn-success" data-dismiss="modal" />
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="loader"></div>
+    <div class="loader1">
+
+    </div>
+    <div id="callingprogress">
+        <label class="callprogress blink_me">CALL IN PROGRESS, Click to show the call dialog again</label>
+
+    </div>
+    @* Top Bar *@
+    <div class="container-fluid navbar navbar-default navbar-fixed-top">
+        <div class="navbar-header headerleft" style="color: white">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a href="/" class="alogo">
+                <img id="logo" src="~/images/CCM Logo Final.png" class="logoimg" alt="" />
+            </a>
+            <a class="hideshowsidebar" title="Toggle Menu"><i class="fa fa-bars" style="font-size:1.2em;color:white"></i></a>
+
+        </div>
+
+        <div class="navbar-collapse collapse headerright">
+
+            @{
+                var controllerName = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString().ToLower();
+                var actionName = HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString().ToLower();
+
+                if (controllerName == "patient" && actionName == "details" ||
+
+                    controllerName == "patientprofile" || controllerName == "currentmedication" ||
+                    controllerName == "patientaddress" || controllerName == "patienturgencycontact" ||
+                    controllerName == "patientinsurance" || controllerName == "patientlifestyle_lifestress" ||
+                    controllerName == "patientcontact" || controllerName == "patientmedicalhistory_medicalcondition" ||
+                    controllerName == "patientallergy" || controllerName == "patientworkandrelationship" ||
+                    controllerName == "patientfamilyhistory" || controllerName == "patientlifestyle_dietandhabit" ||
+                    controllerName == "patientmedicalstatus" || controllerName == "patientlifestyle_nutritionalsupplement" ||
+                    controllerName == "careplan" || controllerName == "finalcareplannotes" ||
+                    controllerName == "doctorvisit" || controllerName == "patientmeidcaremedicaideligibilities" ||
+                    controllerName == "secondarydoctor" || controllerName == "icd"
+
+
+                    )
+                {
+                    <div class="timerandmsg">
+                        <ul class="nav navbar-nav" style="display: -webkit-box;">
+                            <li class="timer">
+                                <label class="dropdownCounter">
+
+                                    <div class="dd-button">
+                                        Total Time Spent
+                                        @{
+                                            var cycle = CategoryCycleStatusHelper.GetPatientNewOrOldCycleByCategory(ViewBag.PatientId, BillingCodeHelper.cmmBillingCatagoryid);
+                                        }
+                                        <h3 id="totalReviewTime" class="time"></h3>
+                                    </div>
+
+                                    <input type="checkbox" class="dd-input" id="test">
+
+
+                                    <ul class="dd-menu">
+                                        @try
+                                        {
+                                            foreach (var item in UserTypes)
+                                            {
+                                                <li> @item</li>
+                                            }
+                                        }
+                                        catch
+                                        {
+
+                                        }
+
+
+                                    </ul>
+                                </label>
+
+
+                                <script>
+                                $.ajax({
+                                    type: "GET",
+                                    url: "/CcmFlow/TotalReviewTime?patientId=" + @ViewBag.PatientId +"&Cycle="+@cycle,
+                                    success: function(timespan) {
+                                        var totalTime = timespan.substr(0, timespan.indexOf('.'));
+                                        $("#totalReviewTime").text(totalTime === "" ? timespan : totalTime);
+                                    }
+                                });
+                                </script>
+                            </li>
+                            <li>
+                                <a href="#" class="btn btn-sm btn-success logdetails" style="max-width:240px;text-overflow:ellipsis;overflow:hidden"
+                                   onClick="opencontactwindow('@ViewBag.PatientId')">
+                                    Contact @ViewBag.PatientName
+                                </a>
+                            </li>
+                            <li>
+
+                                @{
+                                    var ccmStatus1 = CategoryCycleStatusHelper.GetPatientNewOrOldCycleStatusbyCategory(ViewBag.PatientId, BillingCodeHelper.cmmBillingCatagoryid, null);
+                                    var ccmStatus = ccmStatus1 == "Enrolled" ? "Submit For Clinical Sign-Off" : ccmStatus1;
+                                    //ccmStatus1 == "In Progress" ? "In Progress"
+                                    //:
+                                    //ccmStatus1 == "QAQC Rejected" ? "Submit For Clinical Sign-Off" : ccmStatus1
+
+
+                                    //var action = ccmStatus == "Submit For Clinical Sign-Off" ? "ClinicalSignOff" :
+                                    //                ccmStatus == " In Progress" ? "ClaimsSubmission" :
+                                    //                ccmStatus == "Submit For Reconciliation" ? "Reconciliation" : "Index";
+
+                                    var action = ccmStatus == "Submit For Clinical Sign-Off" ? "ClinicalSignOff" :
+                                       ccmStatus == "Enrolled" ? "ClinicalSignOff"
+                                       : "";
+
+                                    var RejectStatus = false;
+
+
+
+
+
+
+                                    <div class="dropdown">
+                                        <button onclick="myFunctionDropdown()" class="dropbtn btn btn-sm btn-success logdetails patId" value="@ViewBag.PatientId">
+
+                                            @if (HelperExtensions.isTranslator(User.Identity.GetUserId()))
+                                            {
+                                                <text>Ready for Counselor Review </text>
+                                            }
+                                            else
+                                            {
+                                                <text>Submit For Clinical Sign-Off </text>
+                                            }
+
+
+
+                                        </button>
+                                        <div id="myDropdown" class="dropdown-content">
+                                            @foreach (var item in EnrolledCcmCategories)
+                                            {
+
+                                                if (item.BillingCategoryId != BillingCodeHelper.cmmBillingCatagoryid)
+                                                {
+                                                    var ccmStatus2 = CategoryCycleStatusHelper.GetPatientNewOrOldCycleStatusbyCategory(ViewBag.PatientId, item.BillingCategoryId, null);
+                                                    ccmStatus = ccmStatus2 == "Enrolled" ? "Submit For Clinical Sign-Off" : ccmStatus2;
+
+                                                }
+                                                else
+                                                {
+                                                    var ccmStatus3 = CategoryCycleStatusHelper.GetPatientNewOrOldCycleStatusbyCategory(ViewBag.PatientId, item.BillingCategoryId, null);
+                                                    ccmStatus = ccmStatus3 == "Enrolled" ? "Submit For Clinical Sign-Off" : ccmStatus3;
+                                                }
+
+                                                if (HelperExtensions.isTranslator(User.Identity.GetUserId()))
+                                                {
+                                                    if (ccmStatus == "Submit For Clinical Sign-Off")
+                                                    {
+                                                        <a class="btn btn-sm btn-success logdetails dropdownBtns2" data-billingcategoryid="@item.BillingCategoryId" data-value="@item.Name">Submit for @item.Name</a>
+                                                        @*<a class="btn btn-sm btn-success logdetails dropdownBtns" data-billingid="@item.BillingCategoryId" data-id="@item.MinimunMinutes" data-value="@item.Name">Submit for @item.Name</a>*@
+                                                    }
+                                                    else if (ccmStatus == "Ready for Clinical Sign-Off")
+                                                    {
+                                                        <a href="#" class="btn btn-danger">@ccmStatus <small> (@item.Name)</small></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="#" class="btn btn-danger otherappStatus">@ccmStatus <small> (@item.Name)</small></a>
+                                                    }
+
+                                                }
+                                                else
+                                                {
+
+
+                                                    if (ccmStatus == "Submit For Clinical Sign-Off")
+                                                    {
+                                                        <a class="btn btn-sm btn-success logdetails dropdownBtns" data-billingcategoryid="@item.BillingCategoryId" data-id="@item.MinimunMinutes" data-value="@item.Name">Submit for @item.Name</a>
+                                                    }
+
+                                                    else if (ccmStatus == "Ready for Clinical Sign-Off")
+                                                    {
+                                                        <a class="btn btn-sm btn-success logdetails dropdownBtns" data-billingcategoryid="@item.BillingCategoryId" data-id="@item.MinimunMinutes" data-value="@item.Name">Submit for @item.Name</a>
+                                                        RejectStatus = true;
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="#" class="btn btn-danger otherappStatus">@ccmStatus <small> (@item.Name)</small></a>
+                                                    }
+                                                }
+
+
+                                                //    else if (ccmStatus == "Ready for Clinical Sign-Off")
+                                                //                {
+                                                //        <a class="btn btn-sm btn-success logdetails dropdownBtns" data-id="@item.MinimunMinutes" data-value="@item.Name">Submit for @item.Name</a>
+                                                //}
+                                                //}
+
+                                            }
+                                        </div>
+                                    </div>
+                                    @*@Html.ActionLink("Ready for Counselor Review", "ReadyClinicalSignOff", "CcmFlow", new { patientId = ViewBag.PatientId }, new { @class = "btn btn-sm btn-success logdetails" })*@
+
+
+
+
+                                }
+                            </li>
+                            @if (RejectStatus)
+                            {
+                                <li>
+                                    <div class="dropdown">
+                                        <button onclick="DropdownRejectDropdown()" class="dropbtn btn btn-sm btn-danger logdetails liaisonRejectbtn" value="@ViewBag.PatientId">
+                                            reject
+                                        </button>
+                                        <div id="DropdownReject" class="dropdown-content" style="margin-left: -66px;">
+                                            @foreach (var item in EnrolledCcmCategories)
+                                            {
+                                                if (item.BillingCategoryId != BillingCodeHelper.cmmBillingCatagoryid)
+                                                {
+                                                    var ccmStatus2 = CategoryCycleStatusHelper.GetPatientNewOrOldCycleStatusbyCategory(ViewBag.PatientId, item.BillingCategoryId, null);
+                                                    ccmStatus = ccmStatus2 == "Enrolled" ? "Submit For Clinical Sign-Off" : ccmStatus2;
+                                                }
+                                                else
+                                                {
+                                                    var ccmStatus3 = CategoryCycleStatusHelper.GetPatientNewOrOldCycleStatusbyCategory(ViewBag.PatientId, item.BillingCategoryId, null);
+                                                    ccmStatus = ccmStatus3 == "Enrolled" ? "Submit For Clinical Sign-Off" : ccmStatus3;
+                                                }
+                                                if ((!HelperExtensions.isTranslator(User.Identity.GetUserId())))
+                                                {
+                                                    if (ccmStatus == "Ready for Clinical Sign-Off")
+                                                    {
+                                                        <a href="#" class="btn btn-danger" onclick="Showliaisonrejectionmodal('@item.BillingCategoryId')" style="padding: 3px 16px;color:white">Reject <small>(@item.Name)</small></a>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <input type="hidden" id="ShowliaisonrejectionHidden" />
+
+
+
+
+                                    @*@{
+                                            if (ccmStatus == "Ready for Clinical Sign-Off")
+                                            {
+                                                if (!HelperExtensions.isTranslator(User.Identity.GetUserId()))
+                                                {
+                                                    <a onclick="Showliaisonrejectionmodal()" class="btn btn-danger logdetails">Reject</a>
+
+                                                }
+                                            }
+
+                                        }*@
+                                </li>
+                            }
+                            <li class="timer">
+                                <span id="ccmTimer">
+                                    Page Review Encounter
+                                </span>
+                                <h3 id="time" class="time">
+                                    <time>00:00:00</time>
+                                </h3>
+                            </li>
+                        </ul>
+                        <label class="warningmsg">Total Time will be update once you refresh the page or move to any other page from menu</label>
+                        @Scripts.Render("~/Scripts/Timer.js")
+                    </div>
+                }
+                if (controllerName == "patient" && actionName == "create")
+                {
+                    <div class="timerandmsg">
+
+
+                        <ul class="nav navbar-nav">
+
+
+
+                            <li class="timer">
+                                <span id="ccmTimer">Page Review Encounter</span>
+                                <h3 id="time" class="time">
+                                    <time>00:00:00</time>
+                                </h3>
+                            </li>
+                        </ul>
+                        <label class="warningmsg">Total Time will be update once you refresh the page or move to any other page from menu</label>
+                        @Scripts.Render("~/Scripts/Timer.js")
+                    </div>
+                }
+            }
+            @*<div class="logoofbutton">
+                    @Html.Partial("_LoginPartial")
+                    @*<a class="username">Hello, @User.Identity.GetFirstName() @User.Identity.GetLastName()</a>
+                </div>*@
+
+            <ul id="navbarnotify" class="nav navbar-nav navbar-right">
+                @*Commentd Notification and Task*@
+                <li class="dropdown  ticketnotifycountclass" title="Notifications" id="@User.Identity.GetUserId() ticketnotifycountid">
+                    <a href="#" class="dropdown-toggle txtwhite" style="padding: 8px 10px 0px 0px; font-size: 12px;" data-toggle="modal" data-target=".js-modal-Notifications" id="singalLayoutIcon">
+                        <span id="ticketNotificationCount" class="txtwhite ticketnotifycount @User.Identity.GetUserId()" style="background: red; border-radius: 23px 23px 23px 23px; padding: 2px 7px 2px 6px; font-size: 11px; position: absolute; z-index: 1; left: 19px; top: 6px;display:none"></span>
+                        <i class="fas fa-ticket-alt fa-2x txtwhite"></i>
+                    </a>
+                    <ul id="msgnotiful" class="dropdown-menu"></ul>
+                </li>
+
+                <li class="dropdown" title="Chat Notifications">
+                    <a href="#" class="dropdown-toggle txtwhite" data-toggle="modal" data-target=".js-modal-messenger" id="singalLayoutIcon">
+                        <span class="glyphicon glyphicon-comment"></span><span class="badge frnotif @User.Identity.GetUserId()"></span>
+                    </a>
+                    <ul id="msgnotiful" class="dropdown-menu"></ul>
+                </li>
+                <li class="dropdown" title="Added into new groups">
+                    <a href="#" class="dropdown-toggle txtwhite" data-toggle="modal" data-target=".js-modal-messenger" id="GroupLayoutIcon">
+                        <span class="fa fa-user-plus fa-fw" aria-hidden="true"></span><span class="badge newgroup @User.Identity.GetUserId()"></span>
+                    </a>
+                </li>
+
+                @*<li class="dropdown" >
+                        <a href="#" class="dropdown-toggle txtwhite" data-toggle="dropdown">
+                            <span class="fas fa-tasks fa-fw"></span><span class="badge">3</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#"><span class="label label-warning">7:00 AM</span>Hi :)</a></li>
+                            <li><a href="#"><span class="label label-warning">8:00 AM</span>How are you?</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#" class="text-center">View All</a></li>
+                        </ul>
+                    </li>*@
+
+                <li class="nav-item dropdown no-arrow" style="cursor:pointer;">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-left: 0;">
+                        <span class="mr-2 d-none d-lg-inline txtwhite small" style="padding-right: 10px !important;">@User.Identity.GetFirstName() @User.Identity.GetLastName()</span>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <img src="~/images/admin.jpg" class="img-profile rounded-circle" @*alt="@User.Identity.GetFirstName() @User.Identity.GetLastName()"*@ />
+                        }
+                        else
+                        {
+                            if (Convert.ToString(Session["Gender"]) == "Male")
+                            {
+                                <img src="~/images/user.jpg" class="img-profile rounded-circle" @*alt="@User.Identity.GetFirstName() @User.Identity.GetLastName()"*@ />
+                            }
+                            else
+                            {
+                                <img src="~/images/user-g.jpg" class="img-profile rounded-circle" @*alt="@User.Identity.GetFirstName() @User.Identity.GetLastName()"*@ />
+                            }
+                        }
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        @if (User.IsInRole("Liaison") || HelperExtensions.isTranslator(User.Identity.GetUserId()))
+                        {
+                            <li>
+                                <a href="@Url.Action("Edit", "Liaison", new { userId = User.Identity.GetUserId() })"><span class="glyphicon glyphicon-user"></span>Profile</a>
+                            </li>
+                        }
+                        <li class="divider"></li>
+                        @Html.Partial("_LoginPartial")
+                    </ul>
+                </li>
+
+
+            </ul>
+        </div>
+    </div>
+
+
+    @if (!(controllerName == "account" || controllerName == "contactpatient" || User.IsInRole("Patient")))
+    {
+        // Side Bar
+        <div class="sidebar" data-background-color="white" data-active-color="danger" id="sidebar">
+            <div class="sidebar-wrapper">
+                <br /><br /><br />
+                <ul class="nav leftmenu">
+                    @if (!User.IsInRole("Sales") && !User.IsInRole("PhysiciansGroup"))
+                    {
+
+                        <li>
+                            <a href="@Url.Action("Index", "CcmStatus", new { status = "Claims Submission",forcareplan=true })">
+                                <i class="fas fa-people-carry"></i>
+                                <p>Share CarePlan Que</p>
+                            </a>
+                        </li>
+                    }
+
+
+                    @if ((!HelperExtensions.isTranslator(User.Identity.GetUserId()) && User.IsInRole("Liaison")) || (HelperExtensions.isTranslator(User.Identity.GetUserId()) && User.IsInRole("Liaison")))
+                    {
+                        @*<li>
+                                <a onclick="opencallreceivewindow()">
+                                    <i class="fas fa-phone-volume"></i>
+                                    <p>Receive Calls</p>
+                                </a>
+                            </li>*@
+                        <li>
+                            <a href="@Url.Action("Index", "Home")">
+                                <i class="fa fa-bar-chart"></i>
+                                <p>Dashboard</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Edit", "Liaison", new { userId = User.Identity.GetUserId() })">
+                                <i class="far fa-handshake"></i>
+                                <p>Profile</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("VoiceMails", "Liaison")">
+                                <i class="material-icons">voicemail</i>
+
+                                <p>Voice Mails Que</p>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a onclick="showhideactivitymenu()">
+                                <i class="fas fa-user-clock"></i>
+                                <p>Activity <i class="fa fa-toggle-down pull-right"></i></p>
+                            </a>
+                            <ul class="nav collapse" id="activityul">
+
+
+
+                                <li>
+                                    <a href="@Url.Action("LiasionHourlyReport", "Home")">
+                                        <i class="far fa-clock"></i>
+                                        <p>Hourly Report</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("LiaisonCallsHistory", "Home")">
+                                        <i class="fas fa-history"></i>
+                                        <p>Yearly Report</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a onclick="toggleappointments()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Appointments <i class="fa fa-toggle-down pull-right"></i></p>
+                            </a>
+                            <ul class=" collapse" id="appointmentsul">
+                                <li><a href="@Url.Action("Schedules", "Appointment")"><i class="fa fa-calendar" aria-hidden="true"></i><p>Schedules</p></a></li>
+                                <li><a href="@Url.Action("ManageSchedules", "Appointment")"><i class="fa fa-calendar" aria-hidden="true"></i><p>Manage Schedules</p></a></li>
+                                <li><a href="@Url.Action("Index", "Appointment")"><i class="fa fa-calendar" aria-hidden="true"></i><p>Appointments</p></a></li>
+
+                                @*<li><a href="@Url.Action("BookAppointment", "Appointment")"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i>Book an Appointment</a></li>*@
+                            </ul>
+                        </li>
+                        if (HelperExtensions.isTranslator(User.Identity.GetUserId()))
+                        {
+                            <li>
+                                <a href="@Url.Action("TotalPatients", "Patient")">
+                                    <i class="fa fa-users"></i>
+                                    <p>
+                                        Translator Total Patients
+                                    </p>
+                                </a>
+
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a href="@Url.Action("TotalPatients", "Patient")">
+                                    <i class="fa fa-users"></i>
+                                    <p>
+                                        Counselor Total Patients
+                                    </p>
+                                </a>
+
+                            </li>
+                        }
+                        <li>
+                            <a onclick="toggleActiveworkque()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Active Work Que  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="activeworkquesul" style="height:100%;">
+                                @foreach (var item in BillingCategories)
+                                {
+                                    <li><a href="@Url.Action("Index", "CcmStatus",new { BillingcategoryId=item.BillingCategoryId, status = "Enrolled" })"><i class="fa fa-calendar" aria-hidden="true"></i><p>AEP @item.Name</p></a></li>
+
+                                }
+                            </ul>
+                        </li>
+                        @*<li>
+                                <a href="@Url.Action("Index", "CcmStatus", new { status = "Enrolled" })">
+                                    <i class="fas fa-people-carry"></i>
+                                    <p>Active Work Que</p>
+                                </a>
+                            </li>*@
+                        if (!HelperExtensions.isTranslator(User.Identity.GetUserId()))
+                        {
+                            <li>
+                                <a onclick="toggleActiveworkquetranslator()">
+                                    <i class="fa fa-calendar"></i>
+                                    <p>Active Work Que<br />(Translators)  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                                </a>
+                                <ul class="nav collapse" id="activeworkquesultranslator" style="height:100%;">
+                                    @foreach (var item in BillingCategories)
+                                    {
+                                        <li><a href="@Url.Action("Index", "CcmStatus",new { BillingcategoryId=item.BillingCategoryId, status = "Enrolled", forTranslator="True" })"><i class="fa fa-calendar" aria-hidden="true"></i><p>AEP @item.Name</p></a></li>
+
+
+                                    }
+                                </ul>
+                            </li>
+                            @*<li>
+                                    <a href="@Url.Action("Index", "CcmStatus", new { status = "Enrolled", forTranslator="True" })">
+                                        <i class="fas fa-people-carry"></i>
+                                        <p>Active Work Que(Translators)</p>
+                                    </a>
+                                </li>*@
+                        }
+                        <li>
+                            <a onclick="toggleReadyToReviewByCounsoler()">
+                                <i class="fas fa-people-carry"></i>
+                                <p>Ready for Review by Counselor Que  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="ReadyToReviewByCounsolerul" style="height:100%;">
+                                @foreach (var item in BillingCategories)
+                                {
+                                    <li><a href="@Url.Action("Index", "CcmStatus", new { status = "Ready for Clinical Sign-Off",BillingcategoryId=item.BillingCategoryId})"><i class="fas fa-people-carry" aria-hidden="true"></i><p> @item.Name</p></a></li>
+
+                                }
+                            </ul>
+                        </li>
+
+                        @*<li>
+                                <a href="@Url.Action("Index", "CcmStatus", new { status = "Ready for Clinical Sign-Off"})">
+                                    <i class="fas fa-people-carry"></i>
+                                    <p>Ready for Review by Counselor Que</p>
+                                </a>
+                            </li>*@
+                        <li>
+                            <a onclick="toggleclinical()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Clinical Sign-Off  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="clinicalsignoff" style="height:100%;">
+                                @foreach (var item in BillingCategories)
+                                {
+                                    <li><a href="@Url.Action("Index", "CcmStatus",new { BillingcategoryId=item.BillingCategoryId,  status = "Clinical Sign-Off" })"><i class="fa fa-calendar" aria-hidden="true"></i><p>CSO @item.Name</p></a></li>
+
+
+                                }
+                            </ul>
+                        </li>
+                        @*<li>
+                                <a href="@Url.Action("Index", "CcmStatus", new { status = "Clinical Sign-Off" })">
+                                    <i class="fas fa-procedures"></i>
+                                    <p>Clinical Sign-Off</p>
+                                </a>
+                            </li>*@
+                        @*<li>
+                                <a onclick="toggleclaimsubmission()">
+                                    <i class="fa fa-calendar"></i>
+                                    <p>Claims Submission  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                                </a>
+                                <ul class="nav collapse" id="claimsubmission" style="height:100%;">
+                                    @foreach (var item in BillingCategories)
+                                    {
+                                        <li><a href="@Url.Action("Index", "CcmStatus",new { BillingcategoryId=item.BillingCategoryId, status = "Claims Submission" })"><i class="fa fa-calendar" aria-hidden="true"></i><p>Claims Submission @item.Name</p></a></li>
+
+
+                                    }
+                                </ul>
+                            </li>*@
+                        <li>
+                            <a href="@Url.Action("Index", "CcmStatus", new { status = "Claims Submission" })">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                <p>Claims Submission</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "CcmStatus", new { status = "Expired" })">
+                                <i class="fas fa-recycle"></i>
+                                <p>Expired Cycles Que</p>
+                            </a>
+                        </li>
+                    }
+
+
+
+                    else if (User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup") || User.IsInRole("LiaisonGroup"))
+                    {
+
+                        <li>
+                            <a href="@Url.Action("Index", "Home")">
+                                <i class="fa fa-bar-chart"></i>
+                                <p>Dashboard</p>
+                            </a>
+                        </li>
+
+                        if (User.IsInRole("Admin") || User.IsInRole("LiaisonGroup"))
+                        {
+                            <li>
+                                <a onclick="showhideactivitymenu()">
+                                    <i class="fas fa-user-clock"></i>
+                                    <p>Activity <i class="fa fa-toggle-down pull-right"></i></p>
+                                </a>
+                                <ul class="nav collapse" id="activityul">
+                                    <li>
+                                        <a href="@Url.Action("NewDashBoard", "Home")">
+                                            <i class="fas fa-history"></i>
+                                            <p>History Dashboard</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("LiasionDashBoard", "Home")">
+                                            <i class="far fa-life-ring"></i>
+                                            <p>Counselors Activity</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("LiasionDashBoardAll", "Home")">
+                                            <i class="fas fa-compress-arrows-alt"></i>
+                                            <p>Counselors Comparison</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("LiasionHourlyReport", "Home")">
+                                            <i class="far fa-clock"></i>
+                                            <p>Hourly Report</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("LiaisonCallsHistory", "Home")">
+                                            <i class="fas fa-history"></i>
+                                            <p>Yearly Report</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+
+                            <li>
+                                <a href="@Url.Action("VoiceMails", "Liaison")">
+                                    <i class="material-icons">voicemail</i>
+                                    <p>Voice Mails Que</p>
+                                </a>
+                            </li>
+                        }
+                        if (User.IsInRole("Admin"))
+                        {
+                            <li>
+                                <a onclick="showhideSurveysmenu()">
+                                    <i class="fas fa-poll"></i>
+                                    <p>Surveys <i class="fa fa-toggle-down pull-right"></i></p>
+                                </a>
+                                <ul class="nav collapse" id="surveyul">
+                                    <li>
+                                        <a href="@Url.Action("SurveyQuestionMappingsStart", "Survey")">
+                                            <i class="fa fa-link"></i>
+                                            <p>Survey Question Mapping</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("SurveyAdmin", "Survey")">
+                                            <i class="fas fa-users-cog"></i>
+                                            <p>Survey Admin</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("PatientsSurveyList", "Survey")">
+                                            <i class="fas fa-list-alt"></i>
+                                            <p>Patients Survey Que</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            @*<li>
+                                    <a href="@Url.Action("Convertbinarytoimg", "Patient")">
+                                        <i class="fas fa-list-alt"></i>
+                                        <p>Binary to Bas3e64</p>
+                                    </a>
+                                </li>*@
+
+                            @*<li>
+                                    <a onclick="opencallreceivewindow()">
+                                        <i class="fas fa-phone-volume"></i>
+                                        <p>Receive Calls</p>
+                                    </a>
+                                </li>*@
+                            @*<li>
+                                    <a href="@Url.Action("Index", "Liaison")">
+                                        <i class="far fa-handshake"></i>
+                                        <p>Counselors/Translator</p>
+                                    </a>
+                                </li>*@
+
+                            <li>
+                                <a href="@Url.Action("Index", "TwilioTable")">
+                                    <i class="far fa-handshake"></i>
+                                    <p>Phone Number Management</p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "QuestionBanks")">
+                                    <i class="far fa-handshake"></i>
+                                    <p>Question Bank</p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Bulkchanges", "Patient")">
+                                    <i class="fa fa-history"></i>
+                                    <p>Bulk changes log</p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "QualityControls")">
+                                    <i class="fas fa-eye"></i>
+                                    <p>QAQCs</p>
+                                </a>
+                            </li>
+                            @*<li>
+                                    <a href="@Url.Action("Index", "Enroller")">
+                                        <i class="fas fa-eye"></i>
+                                        <p>Enrollers</p>
+                                    </a>
+                                </li>*@
+                            @*<li>
+                                    <a href="@Url.Action("LiaisonWorkLoad", "Liaison")">
+                                        <i class="fas fa-user-clock"></i>
+                                        <p>Counselor Work Load</p>
+                                    </a>
+                                </li>*@
+                        }
+
+                        <li>
+                            <a onclick="toggleappointments()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Appointments    <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="appointmentsul">
+                                <li><a href="@Url.Action("Schedules", "Appointment")"><i class="fa fa-calendar" aria-hidden="true"></i><p>Schedules</p></a></li>
+                                <li><a href="@Url.Action("ManageSchedules", "Appointment")"><i class="fa fa-calendar" aria-hidden="true"></i><p>Manage Schedules</p></a></li>
+                                <li><a href="@Url.Action("Index", "Appointment")"><i class="fa fa-calendar" aria-hidden="true"></i><p>Appointments</p></a></li>
+                                @*<li><a href="@Url.Action("BookAppointment", "Appointment")"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i>Book an Appointment</a></li>*@
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("TotalPatients", "Patient")">
+                                <i class="fa fa-users"></i>
+                                <p>
+                                    Admin Total Patients
+                                </p>
+                            </a>
+                        </li>
+                        <li>
+                            <a onclick="toggleActiveworkque()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Active Work Que  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="activeworkquesul" style="height:100%;">
+                                @foreach (var item in BillingCategories)
+                                {
+                                    <li><a href="@Url.Action("Index", "CcmStatus",new { BillingcategoryId=item.BillingCategoryId, status = "Enrolled" })"><i class="fa fa-calendar" aria-hidden="true"></i><p>AEP @item.Name</p></a></li>
+
+                                }
+                            </ul>
+                        </li>
+                        @*<li>
+                                <a href="@Url.Action("Index", "CcmStatus", new { status = "Enrolled" })">
+                                    <i class="fas fa-people-carry"></i>
+                                    <p>Active Work Que</p>
+                                </a>
+                            </li>*@
+                        <li>
+                            <a onclick="toggleclinical()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Clinical Sign-Off  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="clinicalsignoff" style="height:100%;">
+                                @foreach (var item in BillingCategories)
+                                {
+                                    <li><a href="@Url.Action("Index", "CcmStatus",new { BillingcategoryId=item.BillingCategoryId,  status = "Clinical Sign-Off" })"><i class="fa fa-calendar" aria-hidden="true"></i><p>CSO @item.Name</p></a></li>
+
+
+                                }
+                            </ul>
+                        </li>
+                        @*<li>
+                                <a href="@Url.Action("Index", "CcmStatus", new { status = "Clinical Sign-Off" })">
+                                    <i class="fas fa-procedures"></i>
+                                    <p>Clinical Sign-Off</p>
+                                </a>
+                            </li>*@
+                    }
+                    @if (User.IsInRole("Sales"))
+                    {
+                        <li>
+                            <a href="@Url.Action("Index", "Home")">
+                                <i class="fa fa-bar-chart"></i>
+                                <p>Dashboard</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a onclick="toggleappointments()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Appointments    <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="appointmentsul">
+                                <li><a href="@Url.Action("Schedules", "Appointment")"><i class="fa fa-calendar" aria-hidden="true"></i><p>Schedules</p></a></li>
+                                <li><a href="@Url.Action("ManageSchedules", "Appointment")"><i class="fa fa-calendar" aria-hidden="true"></i><p>Manage Schedules</p></a></li>
+                                <li><a href="@Url.Action("Index", "Appointment")"><i class="fa fa-calendar" aria-hidden="true"></i><p>Appointments</p></a></li>
+
+                                <li><a href="@Url.Action("BookAppointmentEnroller", "Appointment")"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i><p>Book an Appointment</p></a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("EnrollerWorkLoad", "Enroller")">
+                                <i class="fas fa-user-clock"></i>
+                                <p>Work Load</p>
+                            </a>
+                        </li>
+                    }
+                    @if (User.IsInRole("QAQC"))
+                    {
+                        <li>
+                            <a onclick="toggleclinical()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Clinical Sign-Off  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="clinicalsignoff" style="height:100%;">
+                                @foreach (var item in BillingCategories)
+                                {
+                                    <li><a href="@Url.Action("Index", "CcmStatus",new { BillingcategoryId=item.BillingCategoryId,  status = "Clinical Sign-Off" })"><i class="fa fa-calendar" aria-hidden="true"></i><p>CSO @item.Name</p></a></li>
+
+
+                                }
+                            </ul>
+                        </li>
+                        @*<li>
+                                <a href="@Url.Action("Index", "CcmStatus", new { status = "Clinical Sign-Off" })">
+                                    <i class="fas fa-procedures"></i>
+                                    <p>Clinical Sign-Off</p>
+                                </a>
+                            </li>*@
+                    }
+                    @if (User.IsInRole("Sales"))
+                    {
+                        <li>
+                            <a href="@Url.Action("TotalPatients", "Patient")">
+                                <i class="fa fa-users"></i>
+                                <p>
+                                    Admin Total Patients
+                                </p>
+                            </a>
+                        </li>
+
+                    }
+                    @if (User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup") || User.IsInRole("LiaisonGroup"))
+                    {
+                        @*<li>
+                                <a onclick="toggleclaimsubmission()">
+                                    <i class="fa fa-calendar"></i>
+                                    <p>Claims Submission  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                                </a>
+                                <ul class="nav collapse" id="claimsubmission" style="height:100%;">
+                                    @foreach (var item in BillingCategories)
+                                    {
+                                        <li><a href="@Url.Action("Index", "CcmStatus",new { BillingcategoryId=item.BillingCategoryId, status = "Claims Submission" })"><i class="fa fa-calendar" aria-hidden="true"></i><p>Claims Submission @item.Name</p></a></li>
+
+
+                                    }
+                                </ul>
+                            </li>*@
+                        <li>
+                            <a href="@Url.Action("Index", "CcmStatus", new { status = "Claims Submission" })">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                <p>Claims Submission</p>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="https://theccmhealth.com/">
+                                <i class="fas fa-hands"></i>
+                                <p>Reconciliation</p>
+                            </a>
+                        </li>
+                        if (!User.IsInRole("PhysiciansGroup"))
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "CcmStatus", new { status = "Expired" })">
+                                    <i class="fas fa-recycle"></i>
+                                    <p>Expired Cycles Que</p>
+                                </a>
+                            </li>
+                        }
+
+                        if (!HelperExtensions.isTranslator(User.Identity.GetUserId()))
+                        {
+                            <li>
+                                <a onclick="toggleActiveworkquetranslator()">
+                                    <i class="fa fa-calendar"></i>
+                                    <p>Active Work <br />Que(Translators)  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                                </a>
+                                <ul class="nav collapse" id="activeworkquesultranslator" style="height:100%;">
+                                    @foreach (var item in BillingCategories)
+                                    {
+                                        <li><a href="@Url.Action("Index", "CcmStatus",new { BillingcategoryId=item.BillingCategoryId, status = "Enrolled", forTranslator="True" })"><i class="fa fa-calendar" aria-hidden="true"></i><p>AEP @item.Name</p></a></li>
+
+
+                                    }
+                                </ul>
+                            </li>
+                            @*<li>
+                                    <a href="@Url.Action("Index", "CcmStatus", new { status = "Enrolled", forTranslator="True" })">
+                                        <i class="fas fa-people-carry"></i>
+                                        <p>Active Work Que (Translators)</p>
+                                    </a>
+                                </li>*@
+                        }
+
+                        <li>
+                            <a onclick="toggleReadyToReviewByCounsoler()">
+                                <i class="fas fa-people-carry"></i>
+                                <p>Ready for Review by Counselor Que  <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="ReadyToReviewByCounsolerul" style="height:100%;">
+                                @foreach (var item in BillingCategories)
+                                {
+                                    <li><a href="@Url.Action("Index", "CcmStatus", new { status = "Ready for Clinical Sign-Off",BillingcategoryId=item.BillingCategoryId})"><i class="fas fa-people-carry" aria-hidden="true"></i><p> @item.Name</p></a></li>
+
+                                }
+                            </ul>
+                        </li>
+
+                        @*<li>
+                                <a href="@Url.Action("Index", "CcmStatus", new { status = "Ready for Clinical Sign-Off"})">
+                                    <i class="fas fa-people-carry"></i>
+                                    <p>Ready for Review by Counselor Que</p>
+                                </a>
+                            </li>*@
+                    }
+                    @if ((!HelperExtensions.isTranslator(User.Identity.GetUserId()) && User.IsInRole("Liaison")) || (HelperExtensions.isTranslator(User.Identity.GetUserId()) && User.IsInRole("Liaison"))@*|| User.IsInRole("Admin")*@)
+{
+
+<li>
+    <a href="@Url.Action("Index", "Physician")">
+        <i class="fas fa-user-md"></i>
+        <p>Physicians</p>
+    </a>
+</li>
+
+}
+                    @if (User.IsInRole("Admin"))
+                    {
+                        @*<li>
+                                <a href="@Url.Action("EnrollerWorkLoad", "Enroller")">
+                                    <i class="fas fa-user-clock"></i>
+                                    <p>Enroller Work Load</p>
+                                </a>
+                            </li>*@
+                        @*<li>
+                                <a href="@Url.Action("Index", "PhysiciansGroup")">
+                                    <i class="fas fa-users-cog"></i>
+                                    <p>Physicians Group</p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "PhysicianGroupPhysicianMapping")">
+                                    <i class="fas fa-diagnoses"></i>
+                                    <p>Physicians Group Mapping</p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "PhysicianGroupEnroller")">
+                                    <i class="fas fa-diagnoses"></i>
+                                    <p>Physicians Group & Enroller Mapping</p>
+                                </a>
+                            </li>*@
+                        <li>
+                            <a onclick="toggecouncelors()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Counselors <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="councelorsul" style="height:100% !important">
+                                <li>
+                                    <a href="@Url.Action("Index", "LiaisonGroups")">
+                                        <i class="fas fa-users-cog"></i>
+                                        <p>Counselor Manager</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "LiaisonGroupLiaisonMapping")">
+                                        <i class="fas fa-diagnoses"></i>
+                                        <p style="display:flex">Counselor Manager Mapping</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "Liaison")">
+                                        <i class="far fa-handshake"></i>
+                                        <p>Counselors/Translator</p>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="@Url.Action("LiaisonWorkLoad", "Liaison")">
+                                        <i class="fas fa-user-clock"></i>
+                                        <p>Counselor Work Load</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a onclick="toggephysicians()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Physicians <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="physiciansul" style="height:100% !important">
+                                <li>
+                                    <a href="@Url.Action("Index", "Physician")">
+                                        <i class="fas fa-user-md"></i>
+                                        <p>Physicians</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "PhysiciansGroup")">
+                                        <i class="fas fa-users-cog"></i>
+                                        <p>Physicians Group</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "PhysicianGroupPhysicianMapping")">
+                                        <i class="fas fa-diagnoses"></i>
+                                        <p>Physicians Group Mapping</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "PhysicianGroupEnroller")">
+                                        <i class="fas fa-diagnoses"></i>
+                                        <p>Physicians Group & Enroller Mapping</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a onclick="toggeenrollers()">
+                                <i class="fa fa-calendar"></i>
+                                <p>Enrollers <i class="fa fa-toggle-down pull-right"></i></p>
+
+                            </a>
+                            <ul class="nav collapse" id="enrollersul" style="height:100% !important">
+
+                                <li>
+                                    <a href="@Url.Action("Index", "Enroller")">
+                                        <i class="fas fa-eye"></i>
+                                        <p>Enrollers</p>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="@Url.Action("EnrollerWorkLoad", "Enroller")">
+                                        <i class="fas fa-user-clock"></i>
+                                        <p>Enroller Work Load</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        @*<li>
+                                <a href="@Url.Action("Index", "LiaisonGroups")">
+                                    <i class="fas fa-users-cog"></i>
+                                    <p>Counselor Manager</p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "LiaisonGroupLiaisonMapping")">
+                                    <i class="fas fa-diagnoses"></i>
+                                    <p>Counselor Manager Mapping</p>
+                                </a>
+                            </li>*@
+
+
+                    }
+                    @if (User.IsInRole("Liaison") || HelperExtensions.isTranslator(User.Identity.GetUserId()) || User.IsInRole("QAQC") || User.IsInRole("Physician") || User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup") || User.IsInRole("LiaisonGroup") || User.IsInRole("Sales"))
+                    {
+                        // for all user write here showhideSurveysmenu
+
+                        <li>
+                            <a onclick="showhideticketmenu()">
+                                <i class="fas fa-ticket-alt"></i>
+                                <p>Ticket <i class="fa fa-toggle-down pull-right"></i></p>
+                            </a>
+                            <ul class="nav collapse" id="ticketul">
+
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li>
+                                        <a href="/TicketDashboard/Index">
+                                            <i class="fas fa-tachometer-alt"></i>
+                                            <p>Ticket Dashboard</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("AdminTicketGeneration","Chats")">
+                                            <i class="fa fa-list-ol"></i>
+                                            <p>Ticket Subject</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("AdminListViewTicket","Chats")">
+                                            <i class="fas fa-ticket-alt"></i>
+                                            <p>All Tickets</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Resolutions","Chats")">
+                                            <i class="fab fa-resolving"></i>
+                                            <p>Ticket Resolution</p>
+                                        </a>
+                                    </li>
+
+
+                                }
+
+                                <li>
+                                    <a href="@Url.Action("listviewticket", "chats")">
+                                        <i class="fas fa-tasks"></i>
+                                        <p>Assigned Tickets to Me</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("TicketsCreated", "chats")">
+                                        <i class="fas fa-ticket-alt"></i>
+                                        <p>Tickets Created by Me</p>
+                                    </a>
+                                </li>
+                                @*<li>
+                                        <a href="@Url.Action("UserTicketGeneration", "Chats")">
+
+                                            <p>Generate Ticket</p>
+                                        </a>
+                                    </li>*@
+
+                            </ul>
+                        </li>
+
+                    }
+                    @if (User.IsInRole("Admin"))
+                    {
+                        // for all user write here showhideSurveysmenu
+
+                        <li>
+                            <a onclick="showhidebillingCodemenu()">
+                                <i class="fas fa-ticket-alt"></i>
+                                <p>Billing Codes <i class="fa fa-toggle-down pull-right"></i></p>
+                            </a>
+                            <ul class="nav collapse" id="BillingCodeul">
+
+
+
+                                <li>
+                                    <a href="@Url.Action("CategoryIndex","Billing")">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                        <p>Billing category</p>
+                                    </a>
+                                </li>
+                                @*<li>
+                                        <a href="@Url.Action("BillingPeriods","Billing")">
+                                            <i class="fa fa-list-ol"></i>
+                                            <p>Billing Periods </p>
+                                        </a>
+                                    </li>*@
+                                <li>
+                                    <a href="@Url.Action("BilingCodes","Billing")">
+                                        <i class="fas fa-ticket-alt"></i>
+                                        <p>CPT Codes</p>
+                                    </a>
+                                </li>
+
+
+
+
+
+
+
+                            </ul>
+                        </li>
+
+
+
+
+
+
+
+
+
+
+
+                        <li>
+                            <a onclick="showhideRpmMenu()">
+                                <i class="fas fa-laptop-medical "></i>
+                                <p>RPM <i class="fa fa-toggle-down pull-right"></i></p>
+                            </a>
+                            <ul class="nav collapse" id="Rpmul">
+
+                                <li>
+                                    <a href="@Url.Action("Service","RpmService")">
+                                        <i class="fa fa-cubes"></i>
+                                        <p>Service</p>
+                                    </a>
+                                </li>
+                                <li>
+
+                                    <a href="@Url.Action("Brands","RpmService")">
+                                        <i class=" fa fa-puzzle-piece"></i>
+                                        <p>Brands</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("DeviceModels","RpmService")">
+                                        <i class="fa fa-list-alt"></i>
+                                        <p>Device Models</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Vendors","RpmService")">
+                                        <i class="fa Example of truck fa-truck"></i>
+                                        <p>Vendors</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index","Device")">
+                                        <i class="fas fa-laptop-medical"></i>
+                                        <p>Devices</p>
+                                    </a>
+                                </li>
+
+
+                                <li>
+
+                                    <a href="@Url.Action("patients","Rpm")">
+                                        <i class=" fa fa-tasks"></i>
+                                        <p>Device Mapping</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="SyncBloodSugarDataBtn"  href="#" onclick="syncdata()">
+                                        <i class="fas fa-sync"></i>
+                                        <p>Blood Sugar Manual Sync</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+
+
+
+
+                    }
+
+
+                    @if (User.IsInRole("Physician") || User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup"))
+                    {
+                        <li>
+                            <a href="@Url.Action("Index", "PhysicianPortal")">
+                                <i class="fas fa-book-reader"></i>
+                                <p>Final Care Plan Que</p>
+                            </a>
+                        </li>
+
+                    }
+                    @*<li>
+                            <a onclick="gotochatdetails()">
+                                <i class="fas fa-comments"></i>
+                                <p>Group Chats</p>
+                                <label id="totalcountsmaingroupchat">No new msg</label>
+                            </a>
+                        </li>*@
+                </ul>
+            </div>
+        </div>
+    }
+
+
+    @* Body *@
+    <div class="container-fluid body-content">
+        <div class="col-md-12 no-padding">
+            <div class="col-md-2">
+
+
+
+            </div>
+            <div class="bodyarea col-md-10">
+
+            </div>
+        </div>
+        <div class="bodycontent">
+            @RenderBody()
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="clear"></div>
+        @* Footer *@
+        <div class="copyright text-center">
+
+            Made by
+            <a href="/">
+                @*CCM Health - &copy; @DateTime.Now.Year  Version: 4.0.13092019*@
+                CCM Health - Copyright © 2017-@DateTime.Now.Year Caretek Corporation. Patent Filed. Version: "ChangeSet Version".1.01052020
+                @*CCM Health - Copyright &copy; 2017-@DateTime.Now.Year Caretek Corporation. Patent Filed. Version: 4.0.27092019*@
+            </a>
+        </div>
+
+    </div>
+    <input type="hidden" id="currentcontroller" value="" />
+
+    <div id="receivecallsdiv">
+
+    </div>
+    <div class="modal fade" id="PatientConsentSendLinkModal" tabindex="-1" role="dialog" aria-labelledby="PatientConsentSendLinkModal" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="float:left;width:90%;display:contents">Mobile and Email link for signature</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+
+
+                <div class="modal-body">
+                    <div>
+                        <div class="col-md-12 pull-left" style="width:100%;">
+                            <div class="col-md-12">
+                                <input type="hidden" id="patientidconsent" value="@ViewBag.PatientId" />
+
+                                <div class="phonenumberlink col-md-12">
+                                    <label class="col-md-12">Mobile</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control border-input col-md-12" id="PatientPhoneNumber" />
+                                    </div>
+
+
+                                    <input type="button" value="Send Link" class="btn btn-success col-md-2" onclick="sendlinktophone()" />
+                                </div>
+                                <div class="emaillink  col-md-12 float-left">
+                                    <label class="col-md-12">Email</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control border-input col-md-12" id="PatientEmail" />
+                                    </div>
+                                    <input type="button" value="Send Link" class="btn btn-success col-md-2" onclick="sendlinktoemail()" />
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+
+
+                <div class="modal-footer">
+
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="PatientNotesModal" tabindex="-1" role="dialog" aria-labelledby="PatientNotesModal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+
+
+
+                <div class="modal-body">
+                    <div id="patientnotesmodalbody">
+                        <div class="col-md-12 pull-left maincontentdiv" style="width:100%;">
+                            <div class="col-md-12">
+                                <input type="hidden" id="patientidnotes" value="@ViewBag.PatientId" />
+                                <h3>Add Notes</h3>
+                                <label>Notes</label>
+                                @Html.TextArea("PatientNotes", new { @class = "form-control border-input", rows = "5" })
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <input type="button" value="Save" class="btn btn-success" onclick="addpatientnotes()" />
+                    <input type="button" value="Close" class="btn btn-danger" onclick="closepatientnotes()" />
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="totalgroups" value="0" />
+    <div class="modal fade" id="LiaisonRejectedereasonModel" tabindex="-1" role="dialog" aria-labelledby="LiaisonRejectedereasonModel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+
+
+
+                <div class="modal-body">
+                    <div>
+                        <div class="col-md-12 pull-left maincontentdiv" style="width:100%;">
+                            <div class="col-md-12">
+                                <input type="hidden" id="patientidnotes" value="@ViewBag.PatientId" />
+                                <h3>Add Reason</h3>
+                                <label>Reason</label>
+                                @Html.TextArea("LiaisonRejectedReasontxt", new { @class = "form-control border-input", rows = "5" })
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <input type="button" value="Save" class="btn btn-success" onclick="addliaisonrejection()" />
+                    <input type="button" value="Close" class="btn btn-danger" onclick="closeliaisonrejectionreason()" />
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="TwilioCallModalCallProgress" tabindex="-1" role="dialog" aria-labelledby="TwilioCallModalCallProgress" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+
+
+
+                <div class="modal-body">
+
+
+
+
+
+                </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="TwilioCallModal" tabindex="-1" role="dialog" aria-labelledby="TwilioCallModal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+
+
+
+                <div class="modal-body">
+                    <div id="twilliomodalbody">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="BADialogE" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" id="bamodaldialogE">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="BADetailsE">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" value="Close" class="btn btn-success" data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="groupchatcounts">
+
+    </div>
+    <div id="SingnalR">
+
+    </div>
+    <button onclick="topFunction()" id="myBtn" title="Go to top"></button>
+    @foreach (var item in EnrolledCcmCategories)
+    {
+        if (item.Name.ToLower() != BillingCodeHelper.ccm)
+        {
+            <input type="hidden" id="@("BillingCategoryactivityRecord" + item.BillingCategoryId)" value="" />
+            EnrolledIn.Add(item.BillingCategoryId);
+            <input class="GetBillingCodesForActivityRecord" type="hidden" data-billingcategoryid="@item.BillingCategoryId" id="@("ReviewId" + item.BillingCategoryId)" />
+        }
+
+    }
+    <input type="hidden" id="activityperformed" value="" />
+
+    <input type="hidden" id="billingcategoryidforccm" value="@BillingCodeHelper.cmmBillingCatagoryid" />
+    <input type="hidden" id="patientsId" value="@ViewBag.PatientId" />
+    <input type="hidden" id="ReviewIdTets" value="@ViewBag.ReviewId" />
+
+
+
+
+    @if ((!HelperExtensions.isTranslator(User.Identity.GetUserId()) && User.IsInRole("Liaison")) || (HelperExtensions.isTranslator(User.Identity.GetUserId()) && User.IsInRole("Liaison")) || User.IsInRole("Sales"))
+    {
+        <script type="text/javascript">
+            function get_browser() {
+                var ua = navigator.userAgent, tem, M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+                if (/trident/i.test(M[1])) {
+                    tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+                    return { name: 'IE', version: (tem[1] || '') };
+                }
+                if (M[1] === 'Chrome') {
+                    tem = ua.match(/\bOPR|Edge\/(\d+)/)
+                    if (tem != null) { return { name: 'Opera', version: tem[1] }; }
+                }
+                M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+                if ((tem = ua.match(/version\/(\d+)/i)) != null) { M.splice(1, 1, tem[1]); }
+                return {
+                    name: M[0],
+                    version: M[1]
+                };
+            }
+
+
+
+
+
+        </script>
+    }
+
+    @*@using (Html.BeginForm("ManualSyncPatientReading", "APIManulSyncReading", FormMethod.Post, new { }))
+    {
+        <div class="row" style="display:none">
+            <div style="float: right; margin-right: 50px;">
+                <button id="" style="margin-top: 17px;" type="button" onclick="syncdata()" class="btn btn-success">Patient Device Reading Manual Sync</button>
+            </div>
+        </div>
+    }*@
+
+    <script>
+        var BillingCategoryIdsListForActivityRecord=@Html.Raw(Json.Encode(EnrolledIn));
+        @*var ReviewIdForRecordActivity = "@ViewBag.ReviewId";*@
+        //alert(ReviewIdForRecordActivity);
+    </script>
+    <style>
+
+        .page-break {
+            page-break-after: always;
+            page-break-inside: avoid;
+            clear: both;
+        }
+
+        .page-break-before {
+            page-break-before: always;
+            page-break-inside: avoid;
+            clear: both;
+        }
+
+        #finalcareplanforpdf {
+        }
+    </style>
+    <script>
+        $("#GroupLayoutIcon").on("click", function () {
+            $("#ClickedByGroup").click();
+        });
+        $("#singalLayoutIcon").on("click", function () {
+            $("#ClickedBySingle").click();
+        });
+
+
+
+        function showappointmentpopupE() {
+            //initalizecalender();
+            //  $("#BADialog").modal("show");
+
+            $(".loader").show();
+            ////$.post('/Appointment/_BookAppointment', { PatientID: id }, function (response) {
+            ////    $('#BADetails').html(response)
+            ////});
+            $.ajax({
+                url: "/Appointment/_BookAppointment?PatientID=0&ForEnroller=Yes",
+                type: "POST",
+                async: true,
+                success: function (response) {
+                    $(".loader").hide();
+                    $("#bookappointmentE").html(response);
+                    //$('#BADetailsE').html(response);
+                    //setTimeout(function () {
+                    //    $("#BADialogE").modal("show");
+
+
+                    //}, 0);
+                },
+                complete: function () {
+                    $(".loader").hide();
+                },
+                error: function (error) {
+                    $(".loader").hide();
+                    Showerrormsg1(error.statusText);
+                }
+            });
+        }
+        function gotochatdetails() {
+            window.location = "/Chats";
+
+        }
+        function gettotalcountgroupsMain() {
+            if (window.location.pathname != "/GroupChats") {
+                try {
+                    $.ajax({
+                        type: "GET",
+                        url: "/GroupChats/GetTotalGroups",
+                        success: function (result) {
+                            var totalgroupsexits = $("#totalgroups").val();
+                            var newgroups = parseInt(result);
+                            if (totalgroupsexits != newgroups && totalgroupsexits > 0) {
+                                $("#totalgroups").val(result);
+                                if ($("#totalcountsmaingroupchat").text() != "New Msg") {
+
+                                    // $("#newmessagesound")[0].play();
+                                    $("#totalcountsmaingroupchat").text("New Msg");
+                                    //$(".msgnotify").text("1");
+                                    $("#totalcountsmaingroupchat").show();
+                                }
+                            }
+                            else {
+                                $("#totalgroups").val(result);
+                            }
+
+                            setTimeout(function () {
+                                gettotalcountgroupsMain();
+                            }, 1000);
+
+
+                        }, error: function (result) {
+                            setTimeout(function () {
+                                gettotalcountgroupsMain();
+                            }, 1000);
+                        }
+                    });
+                } catch (e) {
+                    setTimeout(function () {
+                        gettotalcountgroupsMain();
+                    }, 1000);
+                }}
+
+        }
+        function gettotalcountMainpage() {
+            if (window.location.pathname != "/GroupChats") {
+                try {
+                    $.ajax({
+                        type: "GET",
+                        url: "/GroupChats/GetGroupChatCountsAll",
+                        success: function (result) {
+                            $.each(result, function (k, v) {
+                             if ($("#groupchatmain" + v.GroupChatId).length) {
+                                        var oldvalue = parseInt($("#groupchatmain" + v.GroupChatId).val());
+                                    if (v.TotalCount > 0) {
+
+                                        if ($("#totalcountsmaingroupchat").text() != "New Msg") {
+
+                                           // $("#newmessagesound")[0].play();
+                                            $("#totalcountsmaingroupchat").text("New Msg");
+                                            //$(".msgnotify").text("1");
+                                            $("#totalcountsmaingroupchat").show();
+                                        }
+
+
+                                        }
+                                    }
+                                    else {
+                                        $("#groupchatcounts").append("<input type='hidden' id='groupchatmain" + v.GroupChatId + "' value='" + v.TotalCount + "' />");
+                                    }
+                            });
+
+                            setTimeout(function () {
+                                gettotalcountMainpage();
+                            }, 5000);
+
+
+                        }, error: function (result) {
+                            setTimeout(function () {
+                                gettotalcountMainpage();
+                            }, 5000);
+                        }
+                    });
+                } catch (e) {
+                    setTimeout(function () {
+                        gettotalcount();
+                    }, 5000);
+                }
+            }
+
+        }
+        function footer(doc, pageNumber, totalPages) {
+
+            var str = "Page " + pageNumber + " of " + totalPages
+
+            doc.setFontSize(10);
+            doc.text(str, margins.left, doc.internal.pageSize.height - 20);
+
+        };
+        function headerFooterFormatting(doc) {
+            var totalPages = doc.internal.getNumberOfPages();
+
+            for (var i = totalPages; i >= 1; i--) { //make this page, the current page we are currently working on.
+                doc.setPage(i);
+
+                header(doc);
+
+                footer(doc, i, totalPages);
+
+            }
+        };
+        imgToBase64('octocat.jpg', function (base64) {
+            base64Img = base64;
+        });
+        function imgToBase64(url, callback, imgVariable) {
+
+            if (!window.FileReade) {
+                callback(null);
+                return;
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'blob';
+            xhr.onload = function () {
+                var reader = new FileReader();
+                reader.onloadend = function () {
+                    imgVariable = reader.result.replace('text/xml', 'image/jpeg');
+                    callback(imgVariable);
+                };
+                reader.readAsDataURL(xhr.response);
+            };
+            xhr.open('GET', url);
+            xhr.send();
+        };
+        function header(doc) {
+            doc.setFontSize(30);
+            doc.setTextColor(40);
+            doc.setFontStyle('normal');
+
+            if (base64Img) {
+                doc.addImage(base64Img, 'JPEG', margins.left, 10, 40, 40);
+            }
+
+            doc.text("Report Header Template", margins.left + 50, 40);
+
+            doc.line(3, 70, margins.width + 43, 70); // horizontal line
+        };
+        function getPDF() {
+
+            var HTML_Width = $("#finalcareplanforpdf").width();
+            var HTML_Height = $("#finalcareplanforpdf").height();
+            var top_left_margin = 15;
+
+            var PDF_Width = HTML_Width + (top_left_margin * 2);
+            var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+            var canvas_image_width = HTML_Width;
+            var canvas_image_height = HTML_Height;
+
+            var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+            html2canvas($("#finalcareplanforpdf")[0], { allowTaint: true }).then(function (canvas) {
+                canvas.getContext('2d');
+
+                console.log(canvas.height + "  " + canvas.width);
+
+
+                var imgData = canvas.toDataURL("image/jpeg", 1.0);
+                var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+
+                for (var i = 1; i <= totalPDFPages; i++) {
+                    pdf.addPage(PDF_Width, PDF_Height);
+                    pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+                }
+
+                pdf.save("HTML-Document.pdf");
+            });
+        };
+        function generatepdfbypatientid(id) {
+            var base64Img = null;
+            margins = {
+                top: 70,
+                bottom: 40,
+                left: 30,
+                width: 550
+            };
+
+            $(".loader").show();
+            $.ajax({
+                type: "POST",
+
+                url: "/FinalCarePlan/GetHTMLForPDF",
+                data: {
+                    'patientId': id
+                },
+                success: function (result) {
+
+
+                    $("#finalcareplanforpdf").html(result).promise().done(function () {
+                        getPDF();
+                        $(".loader").hide();
+                    });
+
+
+
+                }, error: function (result) {
+                    $(".loader").hide();
+                }
+            });
+        }
+
+        function sendemail(patientid,cycle) {
+            $(".loader").show();
+            $.ajax({
+                type: "POST",
+
+                url: "/FinalCarePlan/EmailCarePlan",
+                data: {
+                    'PatientID': patientid, 'Cycle': cycle
+                },
+                success: function (result) {
+
+                    $(".loader").hide();
+                    if (result == "True") {
+                        swal({
+                            title: "Email Sent",
+                            text: "Email sent successfully.",
+                            icon: "success",
+                            button: "Ok",
+                            confirmButtonColor: "#1ab394",
+                        });
+                    }
+                    else {
+                        swal("Error!", "Error Accured :" + result, "error");
+                    }
+
+                }, error: function (result) {
+                    $(".loader").hide();
+                }
+            });
+        }
+        function firstLevelsort() {
+
+            var mylist = $('ul.leftmenu');
+            var listitems = mylist.children('li').get();
+
+            listitems.sort(function (a, b) {
+
+                var compA = $(a).children(0).children(1).text().toUpperCase();
+                var compB = $(b).children(0).children(1).text().toUpperCase();
+                return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+            });
+            $.each(listitems, function (idx, itm) {
+                mylist.append(itm);
+            });
+
+
+        }
+
+        //function closecalldialogandreload() {
+        //    $("#TwilioCallModal").modal("hide");
+        //    Twilio.Device.disconnectAll();
+        //    location.reload();
+        //}
+        function hidecalldialogandreload() {
+            $("#TwilioCallModal").modal("hide");
+
+            if (Twilio.Device.activeConnection() !=undefined && $("#TwilioCallModalR").is(':visible')==false) {
+                $("#callingprogress").show();
+            }
+        }
+        window.onscroll = function () { scrollFunction() };
+        function changeupperareafix() {
+            var distanceFromTop = $(this).scrollTop();
+            var winwidth = $(".bodycontent").width();
+
+            $('.uperareafix').css("width", winwidth + "px");
+            var margintop = ($('.uperareafix').height() + 15) + "px";
+            var showNarrativeAuto = $("#ViewNarrative").val();
+            if ((showNarrativeAuto && $("#NarrativeSurvey").css('display') == "block") || $("#NarrativeSurvey").css('display') == "block") {
+               $("#NarrativeSurvey").css('margin-top', margintop);
+                $("#patientDetails").css('margin-top', "0px");
+                $("#MultiLinksPartialViews").css('margin-top', "0px");
+                $("#care_plan").css('margin-top', "0px");
+                $("#OtherBillingCategoryDiv").css('margin-top', "0px");
+            }
+            else {
+                $("#NarrativeSurvey").css('margin-top', "0px");
+                $("#patientDetails").css('margin-top', margintop);
+                $("#MultiLinksPartialViews").css('margin-top', margintop);
+                $("#care_plan").css('margin-top', margintop);
+                $("#OtherBillingCategoryDiv").css('margin-top', margintop);
+
+            }
+            if (distanceFromTop >= 60) {
+                //$('.uperareafix').animate({
+
+                //    top:"74px"
+                //},1000);
+              // $('.uperareafix').addClass('uperareafixstick');
+
+
+
+            } else {
+                //$('.uperareafix').animate({
+
+                //    top: "0px"
+                //}, 1000);
+              // $('.uperareafix').removeClass('uperareafixstick');
+
+              //  $("#patientDetails").css('margin-top', "0px");
+            }
+        }
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                document.getElementById("myBtn").style.display = "block";
+            } else {
+                document.getElementById("myBtn").style.display = "none";
+            }
+            $('#sidebar').height($("html").height());
+
+            var distanceFromTop = $(this).scrollTop();
+            if (distanceFromTop >= $('#header').height()) {
+                $('#sticky').addClass('fixed');
+            } else {
+                $('#sticky').removeClass('fixed');
+            }
+            changeupperareafix();
+
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            //document.body.scrollTop = 0; // For Safari
+            //document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        }
+        function Showerrormsg1(msg) {
+            swal(msg);
+        }
+            localStorage.setItem("idleTime", "0");
+            localStorage.setItem("idleTimeoutafterpopup", "0");
+        localStorage.setItem("isTimer", "0");
+
+
+        var lastinputvalue = "";
+        var lastinputname = "";
+            var lastinputtype = "";
+            var idleInterval1;
+        $(window).on("beforeunload", function () {
+            //$(".loader").fadeIn("slow");
+           // $(".loader").show();
+        });
+        function showhideactivitymenu() {
+            $("#activityul").toggle();
+        }
+        function toggephysicians() {
+            $("#physiciansul").toggle();
+        }
+        function toggecouncelors() {
+            $("#councelorsul").toggle();
+        }
+        function showhideSurveysmenu() {
+            $("#surveyul").toggle();
+        }
+        function showhideticketmenu() {
+            $("#ticketul").toggle();
+        } function showhideRpmMenu() {
+            $("#Rpmul").toggle();
+        }
+
+        function showhidebillingCodemenu() {
+            $("#BillingCodeul").toggle();
+        }
+        function Shownotesmodal() {
+            $("#PatientNotesModal").modal("show");
+        }
+        function Showliaisonrejectionmodal(BillingId) {
+            $("#ShowliaisonrejectionHidden").val(BillingId);
+            $("#LiaisonRejectedereasonModel").modal("show");
+        }
+        function closepatientnotes() {
+            $("#PatientNotesModal").modal("hide");
+        }
+        function closeliaisonrejectionreason() {
+            $("#ShowliaisonrejectionHidden").val("");
+            $("#LiaisonRejectedereasonModel").modal("hide");
+        }
+        function showhidechatmenu() {
+            $("#chatul").toggle();
+        }
+        function addpatientnotes() {
+            if ($("#PatientNotes").val()=="") {
+                return false;
+            }
+                  $.ajax({
+                    type: 'POST',
+                    cache: false,
+                    url: '/Patient/AddNotes',
+                      data: {
+                          'patientId': $("#patientidnotes").val(), 'Notes': $("#PatientNotes").val(), 'Module': $("#currentcontroller").val() },
+                    success: function (data, textStatus, jqXHR) {
+                        $(".loader").hide();
+                        $("#PatientNotes").val("");
+                        swal({
+                            title: "Success",
+                            text: "Successfully Saved!",
+                            icon: "Success"
+                        });
+
+                        $("#PatientNotesModal").modal("hide");
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $(".loader").hide();
+                    }
+                });
+        }
+        function addliaisonrejection() {
+            if ($("#LiaisonRejectedReasontxt").val() == "") {
+                return false;
+            }
+            var BillingId = $("#ShowliaisonrejectionHidden").val();
+            var cycle=@CategoryCycleStatusHelper.GetPatientNewOrOldCycleByCategory((ViewBag.PatientId==null?0:ViewBag.PatientId), BillingCodeHelper.cmmBillingCatagoryid);
+            $.ajax({
+                type: 'POST',
+                cache: false,
+                url: '/CcmFlow/BacktoProgessbyLiaison',
+                data: {
+                    'patientId': $("#patientidnotes").val(), 'Reason': $("#LiaisonRejectedReasontxt").val(), 'Cycle': cycle, 'BillingcategoryId': BillingId
+                },
+                success: function (data, textStatus, jqXHR) {
+                    $(".loader").hide();
+                    $("#LiaisonRejectedReasontxt").val("");
+                    window.location = "/CcmStatus?status=Ready for Clinical Sign-Off";
+
+                    $("#LiaisonRejectedereasonModel").modal("hide");
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $(".loader").hide();
+                }
+            });
+        }
+
+        function toggleappointments() {
+            $("#appointmentsul").toggle();
+        }
+        function toggleActiveworkque() {
+            $("#activeworkquesul").toggle();
+        }
+        function toggleReadyToReviewByCounsoler() {
+            $("#ReadyToReviewByCounsolerul").toggle();
+        }
+        function toggleActiveworkquetranslator() {
+            $("#activeworkquesultranslator").toggle();
+        }
+
+        function toggleclaimsubmission() {
+            $("#claimsubmission").toggle();
+        }
+
+        function toggleclinical() {
+            $("#clinicalsignoff").toggle();
+        }
+        function toggeenrollers() {
+            $("#enrollersul").toggle();
+        }
+
+
+
+
+
+            var istimerrunning = false;
+        $(window).load(function () {
+            $(".loader").hide();
+            //$(".loader").fadeOut();
+
+            });
+            function timerincrementafterpopup() {
+                var istimer = localStorage.getItem("isTimer");
+                if (istimer == "1") {
+                    var idleTimeoutafterpopup = parseInt(localStorage.getItem("idleTimeoutafterpopup"));
+                    idleTimeoutafterpopup = idleTimeoutafterpopup + 1;
+
+                    if (idleTimeoutafterpopup >= 5) {
+                        localStorage.removeItem("idleTimeoutafterpopup");
+                        localStorage.removeItem("idleTime");
+                        localStorage.removeItem("isCallWindowOpen");
+                        try {
+                            receivecallwindow.close();
+                            contactwindow.close();
+                        } catch (e) {
+
+                        }
+
+                        document.getElementById('logoutForm').submit();
+                    }
+                    else {
+                        localStorage.setItem("idleTimeoutafterpopup", idleTimeoutafterpopup.toString());
+                    }
+                }
+
+            }
+        function timerIncrement() {
+            //var isopenwindow = parseInt(localStorage.getItem("isCallWindowOpen"));
+                var idleTime = parseInt(localStorage.getItem("idleTime"))
+                idleTime = idleTime + 1;
+                if (idleTime >= 40) {
+
+                    if (istimerrunning == false) {
+                        idleInterval1 = setInterval(timerincrementafterpopup, 60000);
+                        localStorage.setItem("isTimer", "1");// 1 minute
+                    }
+                    istimerrunning = true;
+                    // 20 minutes
+                    swal({
+                        title: "Logout",
+                        text: "No activity for last 40 minutes. Would you like to logout?",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    }).then((willDelete) => {
+                        if (willDelete) {
+                            localStorage.removeItem("idleTime");
+                            localStorage.removeItem("idleTimeoutafterpopup");
+                            localStorage.removeItem("isTimer");
+                            localStorage.removeItem("isCallWindowOpen");
+                            document.getElementById('logoutForm').submit();
+                        } else {
+                            clearInterval(idleInterval1);
+                            istimerrunning = false;
+                            localStorage.setItem("isTimer", "0");
+                            localStorage.setItem("idleTime", "0");
+                            localStorage.setItem("isCallWindowOpen", "0");
+                            localStorage.setItem("idleTimeoutafterpopup", "0");
+                            return false;
+                        }
+                    });
+
+                }
+                else {
+                    localStorage.setItem("idleTime", idleTime.toString());
+                }
+
+        }
+        function myFunction() {
+           // alert('Height changed to' + $('body').height());
+        }
+
+
+        var receivecallwindow;
+        var contactwindow;
+        function opencallreceivewindownew() {
+            $.ajax({
+                type: 'POST',
+                cache: false,
+                url: '/ContactPatient/ReceiveCallsNew',
+
+                success: function (data, textStatus, jqXHR) {
+                    $(".loader").hide();
+                    $("#receivecallsdiv").html(data).promise().done(function () {
+                        $(".hangupincomming").click(function () {
+                            log('Hanging up...');
+                            $(".acceptcall").hide();
+                            $(".rejectcall").hide();
+                            $(".hangupincomming").hide();
+                            clearInterval(receiveinterval);
+                            clearInterval(timerinterval);
+                            $("#time1Receive").html("00:00:00");
+                            seconds123 = 0; minutes123 = 0; hours123 = 0;
+                            Twilio.Device.disconnectAll();
+                        })
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $(".loader").hide();
+                }
+            });
+
+        }
+        function opencallreceivewindow() {
+              var w = 600;
+            var h = 400;
+            var left = Number((screen.width) - (w));
+            var tops = 0;
+           receivecallwindow= window.open('@Url.Action("ReceiveCalls", "ContactPatient",
+                  new { patientId = ViewBag.PatientId })',
+                'Receive Call', 'location=0,statusbar=0,menubar=0,resizable=1,height=400px,width=600px,top = ' + tops + ', left =' + left);
+        }
+        function opencontactwindow(id) {
+            $("#TwilioCallModalCallProgress").modal("hide");
+            //debugger;
+            if (!$.trim($('#twilliomodalbody').html()).length) {
+                $(".loader").show();
+                $.ajax({
+                    type: 'POST',
+                    cache: false,
+                    url: '/ContactPatient/IndexNew',
+                    data: { patientId: id },
+                    success: function (data, textStatus, jqXHR) {
+                        $(".loader").hide();
+                        $("#twilliomodalbody").html(data).promise().done(function () {
+                            /////function to be loaded
+                            $($.fn.dataTable.tables(true)).DataTable()
+                                .columns.adjust();
+                            ////
+                        });
+
+                        $("#TwilioCallModal").modal("show");
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $(".loader").hide();
+                    }
+                });
+            }
+            else {
+                $("#TwilioCallModal").modal("show");
+            }
+
+            @*$("#twilliomodalbody").load('@Url.Action("Index", "ContactPatient",
+                                                        new { patientId = ViewBag.PatientId })', function () {
+
+            });*@
+
+            //var w = 1300;
+            //var h = 600;
+            //var left = Number((screen.width / 2) - (w / 2));
+            //var tops = Number((screen.height / 2) - (h / 2));
+
+            //var urltoload = '/ContactPatient/Index?patientId=' + id;
+            //localStorage.setItem("isCallWindowOpen", "1");
+            //contactwindow = window.open(urltoload,
+            //    'Contact Patient', 'location=0,statusbar=0,menubar=0,resizable=1,height=600px,width=1300px,top = ' + tops + ', left =' + left);
+
+        }
+        function abc(id) {
+          //  $("#callHistoryPartialView").load('/ContactPatient/_CallHistoryPartial?patientId="+id');
+            $("#callHistoryPartialView").load('/ContactPatient/_CallHistoryPartial?patientId=16606');
+        }
+
+
+
+
+
+        $(window).resize(function () {
+            $('#sidebar').height($("html").height());
+
+        });
+            function initializetwilio() {
+
+        }
+        function reopenpatientwindow() {
+            var w = 600;
+            var h = 400;
+            var left = Number((screen.width) - (w));
+            var tops = 0;
+            if (receivecallwindow && receivecallwindow.closed) {
+                if (callerpatientid != "" && window.location.pathname != "/Patient/Details/" + callerpatientid) {
+
+                    receivecallwindow = window.open('/Patient/Details?id=' + callerpatientid + '&HideDataforCallReceive=Yes',
+                        'Patient Details', 'location=0,statusbar=0,menubar=0,resizable=1,height=600px,width=1300px,top = ' + tops + ', left =' + left);
+                }
+                else {
+
+                    receivecallwindow = window.open('/Patient/TotalPatients?HideDataforCallReceive=Yes',
+                        'Total Patients', 'location=0,statusbar=0,menubar=0,resizable=1,height=600px,width=1300px,top = ' + tops + ', left =' + left);
+
+                }
+            }
+            else {
+                receivecallwindow.focus();
+            }
+        }
+        var id = '@User.Identity.GetUserId()';
+        $(document).ready(function () {
+        //$(".uperareafix").css("display", "contents");
+            //if ($("#patientDetails").css("margin-top") == "190px") {
+            //    $("#patientDetails").css("margin-top", "0px");
+            //}
+            $.ajax({
+                url: "/Chats/_SingleChat",
+                type: 'GET',
+                success: function (result) {
+                    $('#SingnalR').html();
+                    $('#SingnalR').html(result);
+                }
+            });
+                $.ajax({
+                url: "/Chats/getTicketNotification",
+                type: "Get"
+                }).done(function (res) {
+
+
+                    if (res.length > 0) {
+                        var HtmltoAppend = "";
+                    var userid='@User.Identity.GetUserId()';
+                    //for (var i = 0; i < res.length; i++) {
+                    //    //var newNotificationHtml = "<li class='searchablediv clearNotifactionsLink " + userid + "' > <a  href='# class='d-table w-100 px-2 py-2 text-dark hover-white' > <div class='d-table-cell align-middle status status-indicator status-sm '>  </div> <div class='d-table-cell w-100 align-middle pl-2 pr-2'> <div class='text-truncate  text-truncate-md ticketnotifycount ' " + userid + " ' > <b>" + res[i].AssigneeName + "</b> Assigned You a ticket <span class='newchatMsgicon'></span> <small class='d-block font-italic text-success fs-xs'> Type :" + res[i].TicketType + " </small> <small class='d-block font-italic text-success fs-xs'> Priority : " + res[i].Priority + " </small> <small class='d-block font-italic text-success fs-xs'> PatientId :" + res[i].patientId + " </small> <small class='d-block font-italic text-success fs-xs' style='float: left;white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 180px;'> Creator Notes :" + res[i].CreatorNotes+" </small> <small class='d-block font-italic text-success fs-xs' style='width: max-content; float: right;'>" + res[i].Time + " min ago</small> </div> </div> </a> </li>";
+                    //    var newNotificationHtml = "<li class='searchablediv  '" + userid + "'> <a href='#' onClick='clearNotifcations()' class='clearTicketNotifications d-table w-100 px-2 py-2 text-dark hover-white'> <div class='d-table-cell align-middle status status-indicator status-sm '>  </div> <div class='d-table-cell w-100 align-middle pl-2 pr-2'> <div class='text-truncate  text-truncate-md ticketnotifycount '> <b>" + res[i].AssigneeName + "</b> Assigned You a ticket <div class='row'> <table id='ticketnotifyTable'> <tr> <td> <small class='font-italic'> <b>TicketId</b> : " + res[i].TicketId + " </small> </td> <td> <small class='font-italic'> <b>Type</b> : " + res[i].TicketType + " </small> </td> <td> <small class='font-italic'> <b>Priority</b> : " + res[i].Priority + " </small> </td> </tr> <tr> <td> <small class='font-italic'> <b>PatientId</b> : " + res[i].patientId + " </small> </td> <td> <small class='font-italic'> <b>Status</b> : " + res[i].Status + " </small> </td> </tr> <tr> <td colspan='2'> <small class='font-italic' style='float: left;white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 190px;'> <b>Creator Notes</b> : " + res[i].CreatorNotes + "</small> </td> <td style='text-align: left;'> <small class='font-italic text-success'>" + res[i].Time +"</small> </td> </tr> </table> </div> </div> </div> </a> </li>";
+                    //    HtmltoAppend += newNotificationHtml;
+                    //    if (res[i + 1] != null) {
+                    //        HtmltoAppend += "<li><div class='Notifyspacer'></div></li>";
+                    //    }
+                    //}
+
+                    //    $(".UserNotificationList." + userid).html('');
+                    //$(".UserNotificationList." + userid).append(HtmltoAppend);
+                        //$(".ticketnotifycount." + id).text(res.length);
+                        $(".ticketnotifycount." + id).text(res);
+                        $("#ticketNotificationCount").show();
+                        $("#viewAllNotifications").show();
+                    } else {
+
+                    }
+                });
+
+            $(".commingSoonAlert").click(function () {
+                swal("info", "Comming Soon", "info");
+            })
+
+            $("#SyncBloodSugarDataBtn").click(function () {
+                    $(".loader").show("");
+                    $.ajax({
+                        type: "GET",
+                        url: "/APIManulSyncReading/ManualSyncPatientReading",
+                        success: function (data) {
+                            $(".loader").hide();
+                            swal({
+                                title: 'Patient Device Reading Manul Sync',
+                                text: 'Syncing Completed Sucessfully!',
+                                type: 'warning',
+                                showCancelButton: true,
+
+                            });
+                        },
+                        error: function (error) {
+                            $(".loader").hide();
+                            alert("Error");
+                        }
+                    })
+            })
+      
+
+
+             $("#hide-OtherCategoies").click(function () {
+                var ActivityListSterilized;
+                var ActivitesList = [];
+
+                var BillingCategoryId = '@BillingCodeHelper.G0506BillingCatagoryid';
+                var reviewid = $("#ReviewId" + BillingCategoryId).val();
+                console.log(reviewid);
+                if (reviewid != null && reviewid != "") {
+                    var Activity = $("#BillingCategoryactivityRecord" + BillingCategoryId).val();
+                    if (Activity == null || Activity == "") {
+                        Activity = "";
+                    }
+
+                    var obj = {
+                        ReviewId: reviewid,
+                        BillingCategoryId: BillingCategoryId,
+                        Activity: Activity
+                    }
+                    ActivitesList.push(obj);
+
+                }
+
+                console.log(ActivitesList);
+
+                ActivityListSterilized = JSON.stringify(ActivitesList);
+                if (ActivitesList.length > 0) {
+                    $.ajax({
+                        url: "/PatientProfile/ReviewTimePostOtherCategories",
+                        data: { "reviewId": reviewid, "activity": ActivityListSterilized },
+                        type: "POST",
+                    });
+                }
+                })
+
+
+            $(".selectMenuTab").click(function () {
+                debugger;
+                if ($("#OtherBillingCategoryDiv").css("display") == "block") {
+                    $("#ControlTimerHidden").val('@BillingCodeHelper.G0506');
+                    $("#ControlTimerHidden").data("value",'@BillingCodeHelper.G0506BillingCatagoryid');
+                }
+                else if ($(this).data('id').toLowerCase() != "@BillingCodeHelper.ccm") {
+                    $("#ControlTimerHidden").val($(this).data('id'));
+                    $("#ControlTimerHidden").data("value", $(this).data('value'));
+
+                } else {
+                    $("#ControlTimerHidden").val($(this).data('id'));
+                    $("#ControlTimerHidden").data("value",'');
+                }
+
+
+                //        $("#PreviousCategory").val($("#SelectedCategory").val());
+                //$("#PreviousCategory").data('id', $("#SelectedCategory").data('id'));
+                //$("#PreviousCategory").data('value', $("#SelectedCategory").data('value'));
+                //$("#SelectedCategory").val($(this).data('id'));
+                @*var IsLiaison = '@User.IsInRole("Liaison")';
+                $("#PreviousCategory").val($("#SelectedCategory").val());
+                $("#PreviousCategory").data('id', $("#SelectedCategory").data('id'));
+                $("#PreviousCategory").data('value', $("#SelectedCategory").data('value'));
+                $("#SelectedCategory").val($(this).data('id'));
+                var current = $("#SelectedCategory").val();
+                var previous = $("#PreviousCategory").val();
+                if (IsLiaison == true || IsLiaison == "True") {
+                    $("#PreviousCategory").val($("#SelectedCategory").val());
+                    $("#PreviousCategory").data('id', $("#SelectedCategory").data('id'));
+                    $("#PreviousCategory").data('value', $("#SelectedCategory").data('value'));
+                    $("#SelectedCategory").val($(this).data('id'));
+                    var current = $("#SelectedCategory").val();
+                    var previous = $("#PreviousCategory").val();
+
+                    if (current != previous) {
+
+                        if (previous.toLowerCase() != "ccm") {
+                            //alert("about to save");
+                            var reviewid = $("#PreviousCategory").data('id');
+
+                            var Categoryid = $("#PreviousCategory").data('value');
+                            var BillingCategoryId = Categoryid;
+                            var Activity = $("#BillingCategoryactivityRecord" + Categoryid).val();
+                            if (Activity == null || Activity == "") {
+                                Activity = "";
+                            }
+                            var obj = {
+                                BillingCategoryId: BillingCategoryId,
+                                Activity: Activity
+                            }
+                            var ActivityListSterilized = JSON.stringify(obj);
+                            $.ajax({
+                                url: "/PatientProfile/ReviewTimePostOtherCategories",
+                                data: { "reviewId": reviewid, "activity": ActivityListSterilized },
+                                type: "POST",
+                            });
+                        }
+                    }
+                }*@
+            });
+
+
+
+            function toSeconds(s) {
+                var p = s.split(':');
+                return parseInt(p[0], 10) * 3600 + parseInt(p[1], 10) * 60 + parseInt(p[2], 10);
+            }
+
+            $(".dropdownBtns").click(function () {
+
+            var MinimumValueForSubmit= $(this).data('id');
+            var CategoryNameForSubmit = $(this).data('value');
+                var PreviousWorkTime = 0;
+                var currentWorkTime = 0;
+                var TotalTimeForComparison = 0;
+                var ValidationTime = 0;
+
+                ValidationTime = $(this).data('id');
+                ValidationTime = Number(ValidationTime);
+                ValidationTime = ValidationTime * 60;
+                currentWorkTime = toSeconds($("#time").children().text());
+                PreviousWorkTime = toSeconds($("#totalReviewTime").text());
+                TotalTimeForComparison = Number(currentWorkTime) + Number(PreviousWorkTime);
+                var BillingId = $(this).data('billingcategoryid');
+
+                var G0506secondsdb = "";
+                var totaltimeforg0506 = 0;
+                if (BillingId != $("#billingcategoryidforccm").val()) {
+
+                    $(".loader").show();
+              $.ajax({
+                        type:"Post",
+                        url: "/PatientProfile/GetTotalReviewTime",
+                        data: { patientId: '@ViewBag.PatientId', BillingCategoryId: BillingId},
+                        success: function (result) {
+
+                            G0506secondsdb = result;
+
+                            G0506secondsdb = toSeconds(G0506secondsdb);
+                            var G0506secondscurrent;
+
+                            if (BillingId == '@BillingCodeHelper.G0506BillingCatagoryid') {
+                                if ($("#OtherBillingCategoryDiv").css("display") == "block") {
+                                    G0506secondscurrent = toSeconds($("#timeG0506").children().text());
+                                    //alert(G0506secondscurrent);
+                                } else {
+                                    G0506secondscurrent = 0;
+                                }
+                            }
+
+                              if (BillingId == '@BillingCodeHelper.RPMBillingCatagoryid') {
+                                  var isRpmOpen = $('Rpmtimer').html();
+                                  if (isRpmOpen != null) {
+                                      G0506secondscurrent = toSeconds($("#RpmRuntimeTimer").children().text());
+                                      //alert(G0506secondscurrent);
+
+                                  } else {
+                                          G0506secondscurrent = 0;
+                                      }
+
+                                 }
+
+                            totaltimeforg0506 = Number(G0506secondsdb) + Number(G0506secondscurrent);
+
+                    if (totaltimeforg0506 >= ValidationTime) {
+                        window.location.href = "/CcmFlow/ClinicalSignOff?patientId=@ViewBag.PatientId&BillingcategoryId=" + BillingId;
+                    }
+                    else {
+                        swal("", "You Have to Work at least " + MinimumValueForSubmit + " Minutes for " + CategoryNameForSubmit  + " Clinical Sign-Off", "info");
+                        $(".loader").hide();
+                    }
+
+                        }
+                    });
+
+
+                }
+                else {
+
+                if (TotalTimeForComparison >= ValidationTime) {
+                    window.location.href = "/CcmFlow/ClinicalSignOff?patientId=@ViewBag.PatientId&BillingcategoryId=" + $(this).data('billingcategoryid');
+
+                } else {
+                    swal("", "You Have to Work at least " + $(this).data('id') + " Minutes for " + $(this).data('value')  + " Clinical Sign-Off", "info");
+                }
+                }
+
+            })
+
+            $(".dropdownBtns2").click(function () {
+
+                    window.location.href = "/CcmFlow/ReadyClinicalSignOff?patientId=@ViewBag.PatientId&BillingcategoryId=" + $(this).data('billingcategoryid');
+
+
+            })
+     //});
+
+
+
+         //   $("#ticketnotifycountid").click(function () {
+         //       debugger;
+
+         //       $.ajax({
+         //           url: "/Chats/clearTicketNotification",
+         //           type: "get"
+         //       }).done(function (res) {
+         //           if (res === "True") {
+         //               $(".ticketnotifycount." + id).text("");
+         //               window.location.href = "/Chats/ListViewTicket";
+         //           } else {
+         //               swal("Error!", "Error Accured :" + res, "error");
+         //           }
+         //       });
+         //});
+
+
+
+
+
+
+            //$.ajax({
+            //    type: "GET",
+            //    url: "/GroupChats/GetTotalGroups",
+            //    success: function (result) {
+            //        $("#totalgroups").val(result);
+
+
+
+            //    }, error: function (result) {
+
+            //    }
+            //});
+            //gettotalcountMainpage();
+            //gettotalcountgroupsMain();
+            $(".hideshowsidebar").click(function () {
+                showhidemenu();
+            });
+            function showhidemenu() {
+
+                if ($("#sidebar").css("display") == "none") {
+                    $("#sidebar").css("display", "block");
+                    $("html, body").css("margin-left", "110px");
+                }
+                else {
+                    $("#sidebar").css("display", "none");
+                    $("html, body").css("margin-left", "0");
+                }
+                setTimeout(function () {
+                    changeupperareafix();
+                }, 200);
+
+            }
+            $("#callingprogress").click(function () {
+                $("#TwilioCallModal").modal("show");
+                $("#callingprogress").hide();
+            });
+            var userroleforcallreceive = '@User.IsInRole("Liaison")';
+
+            if (userroleforcallreceive == "True") {
+                opencallreceivewindownew();
+            }
+
+                firstLevelsort();
+            $(window).resize()
+            //$('.sidebar').css('height', $(window).height());
+            //Increment the idle time counter every minute.
+                var idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+
+                var iscallwindowopen = localStorage.getItem("isCallWindowOpen");
+                if (iscallwindowopen == "") {
+                    localStorage.setItem("isCallWindowOpen", "0");
+                }
+
+
+            //Zero the idle timer on mouse movement.
+            $(this).mousemove(function (e) {
+               localStorage.setItem("idleTime","0");
+                localStorage.setItem("idleTimeoutafterpopup", "0");
+
+                istimerrunning = false;
+            });
+            $(this).keypress(function (e) {
+                localStorage.setItem("idleTime", "0");
+                localStorage.setItem("idleTimeoutafterpopup", "0");
+                istimerrunning = false;
+            });
+
+
+            $('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $($.fn.dataTable.tables(true)).DataTable()
+                    .columns.adjust();
+
+                });
+            //    ////SCript for Twilio
+
+            if (($("#HideDataforCallRecive").val() == "No" || $("#HideDataforCallRecive").val()==undefined)) {
+
+                var incommingSid = "";
+                $(function () {
+
+                  //  log('Requesting Capability Token...');
+
+                    $.getJSON('/token?CallerName=empty')
+                        .done(function (data) {
+
+                         //   log('Got a token.');
+                            console.log('Token: ' + data.token);
+                            //document.getElementById('call-controls').style.display = 'block';
+                            // Setup Twilio.Device
+                            Twilio.Device.setup(data.token, { closeProtection: "Call is in progress, if you navigate from this page call will be disconnected.", allowIncomingWhileBusy: false });
+
+                            Twilio.Device.ready(function (device) {
+                             //   log('Twilio.Device Ready!');
+                                //  document.getElementById('call-controls').style.display = 'block';
+                            });
+                            Twilio.Device.cancel(function (conn) {
+                                $(".hangupincomming").hide();
+                                //$("#TwilioCallModalR").modal("hide");
+                                $(".acceptcall").hide();
+                                $(".rejectcall").hide();
+                                $(".closedialog").show();
+                                $(".reopenwindow").hide();
+                              // clearInterval(timerinterval);
+                                $("#time1Receive").html("00:00:00");
+                                seconds123 = 0; minutes123 = 0; hours123 = 0;
+                                //Twilio.Device.disconnectAll();
+                            });
+                            Twilio.Device.error(function (error) {
+                                log('Twilio.Device Error: ' + error.message);
+                            });
+
+                            Twilio.Device.connect(function (conn) {
+                                log('Successfully established call!');
+
+                                try {
+                                    if (selectedbuttonid != "") {
+                                        $("#" + selectedbuttonid + "call").hide();
+                                        $("#" + selectedbuttonid + "hang").show();
+                                        $("#" + selectedbuttonid + "mute").show();
+                                        $("#" + selectedbuttonid + "unmute").show();
+                                    }
+                                } catch (e) {
+
+                                }
+
+
+
+                                //document.getElementById('button-call').style.display = 'none';
+                                //document.getElementById('button-hangup').style.display = 'inline';
+                            });
+                            if (userroleforcallreceive == "True") {
+                                Twilio.Device.incoming(function (conn) {
+                                    $("#time1Receive").html("00:00:00");
+                                    $(".closedialog").hide();
+                                    $(".reopenwindow").hide();
+                                    var w = 600;
+                                    var h = 400;
+                                    var left = Number((screen.width) - (w));
+                                    var tops = 0;
+                                    receiveinterval = setInterval(checktime, 1000);
+                                    //incommingSid = conn.parameters.callSid;
+                                    //log("Incoming call from " + conn.parameters.From);
+                                    getnamefromnumber(conn.parameters.From);
+                                    $("#TwilioCallModalR").modal("show");
+                                    // Set a callback to be executed when the connection is accepted
+                                    conn.accept(function () {
+                                        // log("In call with customer");
+                                    });
+
+                                    // Set a callback on the answer button and enable it
+                                    $(".acceptcall").click(function () {
+                                        clearInterval(receiveinterval);
+                                        conn.accept();
+                                        timer123();
+                                        if (callerpatientid != "" && window.location.pathname != "/Patient/Details/" + callerpatientid) {
+
+                                            receivecallwindow = window.open('/Patient/Details?id=' + callerpatientid + '&HideDataforCallReceive=Yes',
+                                                'Patient Details', 'location=0,statusbar=0,menubar=0,resizable=1,height=600px,width=1300px,top = ' + tops + ', left =' + left);
+                                        }
+                                        else {
+
+                                            receivecallwindow = window.open('/Patient/TotalPatients?HideDataforCallReceive=Yes',
+                                                'Total Patients', 'location=0,statusbar=0,menubar=0,resizable=1,height=600px,width=1300px,top = ' + tops + ', left =' + left);
+
+                                        }
+
+
+                                        $(".acceptcall").hide();
+                                        $(".rejectcall").hide();
+                                        $(".hangupincomming").show();
+                                       $(".reopenwindow").show();
+
+                                    });
+                                    $(".closedialog").click(function () {
+                                        $("#TwilioCallModalR").modal("hide");
+                                        $(".closedialog").hide();
+                                    });
+                                    $(".reopenwindow").click(function () {
+                                        reopenpatientwindow();
+                                    });
+                                    $(".rejectcall").click(function () {
+                                        clearInterval(receiveinterval);
+                                        clearInterval(timerinterval);
+                                        $("#time1Receive").html("00:00:00");
+                                        seconds123 = 0; minutes123 = 0; hours123 = 0;
+                                        //log("Call rejected");
+                                        conn.reject();
+                                        $("#TwilioCallModalR").modal("hide");
+                                        $(".acceptcall").hide();
+
+                                        $(".rejectcall").hide();
+                                        $(".closedialog").hide();
+                                        $(".reopenwindow").hide();
+                                        Twilio.Device.disconnectAll();
+                                    });
+                                    $(".acceptcall").show();
+                                    $(".rejectcall").show();
+                                    console.log('Incoming connection from ' + conn.parameters.From);
+                                    // accept the incoming connection and start two-way audio
+                                    // conn.accept();
+                                });
+                            }
+
+                            Twilio.Device.disconnect(function (conn) {
+                                try {
+                                    $(".closedialog").hide();
+                                    $(".reopenwindow").hide();
+                                    $("#callingprogress").hide();
+                                    clearInterval(receiveinterval);
+                                    clearInterval(timerinterval);
+                                    $("#time1Receive").html("00:00:00");
+                                    $(".hangupincomming").hide();
+                                    //receivecallwindow.close();
+                                    $("#" + selectedbuttonid + "call").show();
+                                    $("#" + selectedbuttonid + "hang").hide();
+                                    $("#" + selectedbuttonid + "mute").hide();
+                                    $("#" + selectedbuttonid + "unmute").hide();
+                                    document.getElementById('button-call').style.display = 'inline';
+                                    document.getElementById('button-hangup').style.display = 'none';
+                                    document.getElementById('button-mute').style.display = 'none';
+                                    document.getElementById('button-unmute').style.display = 'none';
+                                    selectedbuttonid = "";
+                                    seconds123 = 0; minutes123 = 0; hours123 = 0;
+
+
+
+                                } catch (e) {
+
+                                }
+
+                                $("#TwilioCallModalR").modal("hide");
+
+
+                                //$(".loader").show();
+                                //log('Please wait Your call is saving now.');
+                                  //var callid = conn.mediaStream.callSid;
+                                //var callto = conn.message.To;
+                                //setTimeout(function () {
+                                //   // savecall(callid, callto);
+                                //    log('Call ended.');
+
+                                //    location.reload();
+                                //}, 3000);
+
+
+
+
+                            });
+
+                        })
+
+                        .fail(function (data) {
+                            //  log('Could not get a token from server!' + data);
+                        });
+
+                });
+            }
+            //    ////
+        });
+        // Activity log
+        function log(message) {
+            try {
+
+
+            var logDiv = document.getElementById('log');
+            if (logDiv != null) {
+
+
+            logDiv.innerHTML += '<p>&gt;&nbsp;' + message + '</p>';
+                logDiv.scrollTop = logDiv.scrollHeight;
+                }
+            } catch (e) {
+
+            }
+        }
+            //
+            //
+    </script>
+
+    @* User Ticket Generation Form Script  Start*@
+
+
+
+    <script src="~/Content/BootToast/bootoast.js"></script>
+    <!--Reference the autogenerated SignalR hub script. -->
+    @* SignalR releated *@
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/imageuploadify.min.js" type="text/javascript"></script>
+    @* Auto Complete Plugin For Auto Suggestion From DB *@
+
+    <script src="~/Scripts/jquery.autocomplete.js"></script>
+    <script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.js"></script>
+
+    <script type="text/javascript">
+        // Ticket
+        $(function () {
+            var ticket = $.connection.ticketHub;
+            ticket.client.frnotify2 = function (receiverId, NotificationViewMidal) {
+                debugger;
+                var res = JSON.parse(NotificationViewMidal.AssigneeName)
+
+                var notifCount=  $(".ticketnotifycount." + receiverId).text();
+
+                $(".ticketnotifycount." + receiverId).text(res.length + Number(notifCount));
+
+                if (res.length > 0) {
+                    $(".ticketnotifycount." + receiverId).text(res.length);
+                    $("#ticketNotificationCount").show();
+
+                }
+
+                if (notifCount == null) {
+                    $(".ticketnotifycount." + receiverId).text(res.length);
+                } else {
+                    $(".ticketnotifycount." + receiverId).text(res.length + Number(notifCount));
+                }
+                   var HtmltoAppend = "";
+                    var userid='@User.Identity.GetUserId()';
+                for (var i = 0; i < res.length; i++) {
+                    //var newNotificationHtml = "<li class='searchablediv clearNotifactionsLink  '" + userid + "'> <a href='#'  onClick='clearNotifcations(" + res[i].TicketId +" )'  class='clearTicketNotifications d-table w-100 px-2 py-2 text-dark hover-white'> <div class='d-table-cell align-middle status status-indicator status-sm '>  </div> <div class='d-table-cell w-100 align-middle pl-2 pr-2'> <div class='text-truncate  text-truncate-md ticketnotifycount '> <b>" + res[i].AssigneeName + "</b> Assigned You a ticket <div class='row'> <table id='ticketnotifyTable'> <tr> <td> <small class='font-italic'> <b>TicketId</b> : " + res[i].TicketId + " </small> </td> <td> <small class='font-italic'> <b>Type</b> : " + res[i].TicketType + " </small> </td> <td> <small class='font-italic'> <b>Priority</b> : " + res[i].Priority + " </small> </td> </tr> <tr> <td> <small class='font-italic'> <b>PatientId</b> : " + res[i].patientId + " </small> </td> <td> <small class='font-italic'> <b>Status</b> : " + res[i].Status + " </small> </td> </tr> <tr> <td colspan='2'> <small class='font-italic' style='float: left;white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 190px;'> <b>Creator Notes</b> : " + res[i].CreatorNotes + "</small> </td> <td style='text-align: left;'> <small class='font-italic text-success'>" + res[i].Time + "</small> </td> </tr> </table> </div> </div> </div> </a> </li>";
+                    if (res[i].ChangingType == "Comment") {
+
+                        var newNotificationHtml = "<li class='searchablediv clearNotifactionsLink '" + userid + "' style='padding: 8px 0px 0px 0px;background-color: #0364bd2b;margin-right: -4px;' > <a href='#' onClick='clearNotifcations(" + res[i].TicketId + ")' class='clearTicketNotifications d-table w-100 px-2 py-2 text-dark hover-white' style='padding: 4px 0px;'> <div class='d-table-cell align-middle status status-indicator status-sm ' style='vertical-align: top;padding: 0px 0px 0px 5px;'> <span class='profile-image-md rounded-circle d-block ' style='background-image: url(" + "/images/avatar-m.png" + "); background-size: cover;'></span> </div> <div class='d-table-cell align-middle status status-indicator status-sm '>  </div> <div class='d-table-cell w-100 align-middle pl-2 pr-2'> <div class='col-md-11' style='padding:0px 0px 0px 5px;'> <div @*class='text-truncate  text-truncate-md ticketnotifycount '*@ style='width: 244px; color: black; font-size: 12px;'> <b> " + res[i].AssigneeName + "</b> commented on ticket (" + res[i].TicketId+")<div class='row'> <table id='ticketnotifyTable'> <td style='text-align: left;'> <small class='font-italic text-success'>" + res[i].Time + "</small> </td> </tr> </table> </div> </div> </div> <div class='col-md-1' style='float:right'> <div class='unread-Btn'></div> </div> </div> </a> </li>";
+
+                    } else if (res[i].ChangingType == "Status") {
+                        var newNotificationHtml = "<li class='searchablediv clearNotifactionsLink '" + userid + "' style='padding: 8px 0px 0px 0px;background-color: #0364bd2b;margin-right: -4px;'> <a href='#' onClick='clearNotifcations(" + res[i].TicketId + ")' class='clearTicketNotifications d-table w-100 px-2 py-2 text-dark hover-white' style='padding: 4px 0px;'> <div class='d-table-cell align-middle status status-indicator status-sm ' style='vertical-align: top;padding: 0px 0px 0px 5px;'> <span class='profile-image-md rounded-circle d-block ' style='background-image: url(" + "/images/avatar-m.png" + "); background-size: cover;'></span> </div> <div class='d-table-cell align-middle status status-indicator status-sm '>  </div> <div class='d-table-cell w-100 align-middle pl-2 pr-2'> <div class='col-md-11' style='padding:0px 0px 0px 5px;'> <div @*class='text-truncate  text-truncate-md ticketnotifycount '*@ style='width: 244px; color: black; font-size: 12px;'> <b> " + res[i].AssigneeName + "</b> Changed the status ticket to " + res[i].Status+" (" + res[i].TicketId +")<div class='row'> <table id='ticketnotifyTable'> <td style='text-align: left;'> <small class='font-italic text-success'>" + res[i].Time + "</small> </td> </tr> </table> </div> </div> </div> <div class='col-md-1' style='float:right'> <div class='unread-Btn'></div> </div> </div> </a> </li>";
+
+                    }
+                    else {
+                        var newNotificationHtml = "<li class='searchablediv clearNotifactionsLink '" + userid + "' style='padding: 8px 0px 0px 0px;background-color: #0364bd2b;margin-right: -4px;' > <a href='#' onClick='clearNotifcations(" + res[i].TicketId + ")' class='clearTicketNotifications d-table w-100 px-2 py-2 text-dark hover-white' style='padding: 4px 0px;'> <div class='d-table-cell align-middle status status-indicator status-sm ' style='vertical-align: top;padding: 0px 0px 0px 5px;'> <span class='profile-image-md rounded-circle d-block ' style='background-image: url(" + "/images/avatar-m.png" + "); background-size: cover;'></span> </div> <div class='d-table-cell align-middle status status-indicator status-sm '>  </div> <div class='d-table-cell w-100 align-middle pl-2 pr-2'> <div class='col-md-11' style='padding: 0px 0px 0px 5px;'> <div @*class='text-truncate  text-truncate-md ticketnotifycount '*@ style='width: 244px; color: black; font-size: 12px;'> <b> " + res[i].AssigneeName + "</b> assigned you a ticket (" + res[i].TicketId +") <div class='row'> <table id='ticketnotifyTable'> <td style='text-align: left;'> <small class='font-italic text-success'>" + res[i].Time + "</small> </td> </tr> </table> </div> </div> </div> <div class='col-md-1' style='float:right'> <div class='unread-Btn'></div> </div> </div> </a> </li>";
+
+                    }
+
+                    HtmltoAppend += newNotificationHtml;
+                    if (notifCount != null) {
+                            HtmltoAppend += "<li><div class='Notifyspacer'></div></li>";
+                        }
+                    }
+                //$("#UserNotificationList").html("");
+
+                if ($(".ticketnotifycount." + receiverId).text() != "1") {
+                    var prevousHtml = $("#UserNotificationList").html();
+                    $("#UserNotificationList").html("");
+                    $("#UserNotificationList").prepend(prevousHtml);
+                    $("#UserNotificationList").prepend(HtmltoAppend);
+
+
+                } else {
+                    $("#UserNotificationList").html("");
+                    $("#UserNotificationList").append(HtmltoAppend);
+                }
+
+            }
+
+            $('#UploadImagesforTickets').imageuploadify();
+
+            //$('#DropDownAssignee').multiselect({
+            //    includeSelectAllOption: false,
+            //    enableCaseInsensitiveFiltering: true,
+            //    enableFiltering: true,
+            //    buttonWidth: '220px',
+            //    maxHeight: 200,
+
+            //});
+
+            $("#DropDownAssignee").select2({
+               placeholder: {
+                   id: '-1', // the value of the option
+                   text: 'Select an option'
+                 },
+                allowClear: true
+            });
+
+
+            $.connection.hub.start().done(function () {
+
+                $("#ticketCreateButton").click(function (e) {
+                    debugger;
+                    var vallidHtml = $("#PhyId").attr('name');
+
+                    var Form = 'UserTicketGenerationForm';
+                    var AddUpdate = 'Save';
+                    var toUserId = $("#DropDownAssignee").val();
+                    $("#uploadFiles").val("");
+                    var form = $("#" + Form);
+                    if ($("#TicketGenerationId").val() == "" || $("#TicketGenerationId").val() == null) {
+                        swal("Warning", "Please select ticket subject", "warning");
+                        e.preventDefault();
+                        return false;
+                    }
+                    if ($("#TypeId").val() == "" || $("#TypeId").val() == null) {
+                        swal("Warning", "Please select ticket type", "warning");
+                        e.preventDefault();
+                        return false;
+                    }
+                    if ($("#PriorityId").val() == "" || $("#PriorityId").val() == null) {
+                        swal("Warning", "Please select Ticket priority", "warning");
+                        e.preventDefault();
+                        return false;
+                    }
+                    if ($("#StatusId").val() == "" || $("#StatusId").val() == null) {
+                        swal("Warning", "Please select ticket status", "warning");
+                        e.preventDefault();
+                        return false;
+                    }
+                    if (vallidHtml != null) {
+                        if ($("#PhyId").val() == "" || $("#PhyId").val() == null) {
+                            swal("Warning", "Please select ticket owner", "warning");
+                            e.preventDefault();
+                            return false;
+                        }
+                    }
+                    if ($("#DropDownAssignee").val() == "" || $("#DropDownAssignee").val() == null) {
+                        swal("Warning", "Please select assignee user", "warning");
+                        e.preventDefault();
+                        return false;
+                    }
+                    form.validate();
+
+
+                    var formdata = false;
+                    $('.imageuploadify-container').each(function () {
+                        var src = $(this).find('img').attr("src");
+                        if ($("#uploadFiles").val() == "")
+                    $("#uploadFiles").val(src);
+                else {
+                    var oldstr = $("#uploadFiles").val();
+                    src = oldstr + "|" + src;
+                    $("#uploadFiles").val(src);
+                }
+            });
+
+
+            if (window.FormData) {
+                formdata = new FormData(form[0]);
+            }
+            if (form.valid() == false) {
+                return false;
+            }
+
+            var urltosend = form.attr('action');
+                    var datatosend = formdata ? formdata : form.serialize();
+                    debugger;
+            $(".loader").show();
+
+            $.ajax({
+                type: 'POST',
+                url: urltosend,
+                data: datatosend,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (json) {
+
+                    $(".loader").hide();
+
+
+                    if (json == "True") {
+                        ticket.server.ticketnotify(toUserId, '@User.Identity.GetUserId()' ,"");
+                        $("#TicketCreationForEveryOne").modal("hide");
+                        $("#TicketCreationListView").modal("hide");
+                        var msg = "Saved Successfully";
+                        var titl = "Ticket";
+                        //if (AddUpdate == "Update") {
+                        //    titl = "Updated!";
+                        //    msg = "Updated Successfully!";
+                        //}
+                        //else
+                        clear2();
+
+                        swal({
+                            title: titl,
+                            text: msg,
+                            icon: "success",
+                            button: "Ok",
+                            confirmButtonColor: "#1ab394",
+                        });
+                        //$("#s2id_TicketGenerationId, #s2id_TypeId, #s2id_PriorityId,#s2id_StatusId,#s2id_patient,#TAT,#s2id_DropDownAssignee,#creatorNotes").trigger('refresh');
+                       // $("#ticketHonorId,#s2id_TicketGenerationId, #s2id_TypeId, #s2id_PriorityId,#s2id_StatusId,#s2id_patient,#s2id_DropDownAssignee,#creatorNotes,,#s2id_PhyId").select2("val", "");
+                        //$("#TAT,#creatorNotes").val("");
+                        $('.close-custom-button').click();
+                        window.location.href = "TicketsCreated";
+
+                        //window.location.href = "/Chats/AdminListViewTicket";
+                    }
+                    else {
+                        swal("Error!", "Error Accured :" + json, "error");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $(".loader").hide();
+                    var err = eval("(" + xhr.responseText + ")");
+                    swal("Error!", "Error Accured :" + err.Message, "error");
+                }
+            });
+                 return false;
+                });
+            });
+
+        });
+
+
+
+
+
+        //$('#PriorityId').change(function () {
+        //    var id = $(this).val();
+        //    console.log("VP1 Call");
+
+        //    $.ajax({
+        //        url: "/Chats/getPriorityTime?id=" + id,
+        //        type: "get"
+        //    }).done(function (response) {
+        //        debugger;
+        //        if (response) {
+        //            $("#TAT").attr('value', response);
+        //        } else {
+        //            $("#TAT").attr('value', 'Not Found');
+        //        }
+        //    });
+
+        //});
+
+        //$('#DropDownAssignee').change(function () {
+        //    var userId = $(this).val();
+
+        //    $.ajax({
+        //        url: "/Chats/getPatient?userId=" + userId,
+        //        type: "get"
+        //    }).done(function (response) {
+        //        if (response === "error") {
+        //            swal("Error!", "Error Accured :" , "error");
+        //        } else {
+        //            $("#patientDiv").html(response);
+        //            $("#PatientId").multiselect({
+        //                includeSelectAllOption: false,
+        //                enableCaseInsensitiveFiltering: true,
+        //                enableFiltering: true,
+        //                buttonWidth: '540px',
+        //                maxHeight: 200,
+        //            });
+        //        }
+        //    });
+
+        //});
+
+        $("#resetticketcreatebutton").click(function () {
+            clear2();
+
+        });
+
+        function clear2() {
+            debugger;
+            //$('#DropDownAssignee').val(['Select Assignee User']).multiselect('refresh')
+            $('#UserTicketGenerationForm').trigger("reset");
+            $(".imageuploadify-container").remove();
+            //$("#patientDiv").html("");
+
+        }
+
+
+        function myFunctionDropdown() {
+            $(".loader").show();
+            var val = Number($(".patId").val());
+
+            $.ajax({
+                type: "POST",
+                url: "/CcmFlow/CheckHospitalVisit?patientId=" +val,
+                success: function (result) {
+                    debugger;
+                    if (result == "NotVisited") {
+                        $(".loader").hide();
+
+                        swal("Warning", "You must enter the Hospital Visits for patient !", "warning");
+                        return false;
+
+                    }
+
+                    else {
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/CcmFlow/CheckAdditionProviders?patientId=" + val,
+                            success: function (result) {
+                                debugger;
+                                if (result == "NotVisited") {
+                                    $(".loader").hide();
+
+                                    swal("Warning", "You must Add  New Additional Provider for patient !", "warning");
+                                    return false;
+
+                                }
+                                else {
+
+                                    $(".loader").hide();
+                                    document.getElementById("myDropdown").classList.toggle("show");
+                                }
+
+
+                            },
+                            error: function () {
+                                $(".loader").hide();
+
+                            }
+
+                        });
+
+
+                    }
+
+                },
+                error: function () {
+                    $(".loader").hide();
+
+                }
+
+            });
+
+
+
+
+        }
+
+        function DropdownRejectDropdown() {
+
+            document.getElementById("DropdownReject").classList.toggle("show");
+
+        }
+
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+        $(".nav-link").click(function () {
+            $(".uperareafix").css("display", "grid");
+        })
+    </script>
+
+
+
+    @* User Ticket Generation Form Script  End*@
+
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>*@
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.colVis.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/colreorder/1.5.1/js/dataTables.colReorder.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/Scripts/html2canvas.js"></script>
+    <script src="~/Scripts/ImageMinifier.js"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+
+
+</body>
+</html>

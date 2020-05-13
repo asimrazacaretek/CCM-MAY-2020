@@ -1,0 +1,36 @@
+﻿@model CCM.Models.NewMessageViewModel
+
+
+
+@using (Html.BeginForm("SendMessage", "MessageNotifications")) 
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.PatientId)
+
+    <div class="form-horizontal">       
+        
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+        <div class="form-group">
+            <div class="col-md-12">
+                @Html.TextAreaFor(model => model.MessageBody, new { @class = "form-control border-input", rows = "5", placeholder="Write Your Message here..." })
+                @Html.ValidationMessageFor(model => model.MessageBody, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-12">
+                <input type="submit" value="Send Message" class="btn btn-success" />
+            </div>
+        </div>
+
+    </div>
+}
+
+
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>

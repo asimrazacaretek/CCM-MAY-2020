@@ -1,0 +1,16 @@
+﻿@model IEnumerable<CCM.Models.ViewModels.BulkChangesViewModel>
+@{ 
+    Layout = null;
+}
+
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.id</td>
+        <td>@item.Title</td>
+        <td>@item.CreatedBy</td>
+        <td>@item.CreatedOn</td>
+        <th style="background:white;text-align: center;"><a class="btn btn-success btn-sm" onclick="OpenBulkLogsModel(@item.id)"><i class="fa fa-eye" aria-hidden="true"></i>Details</a></th>
+    </tr>
+}

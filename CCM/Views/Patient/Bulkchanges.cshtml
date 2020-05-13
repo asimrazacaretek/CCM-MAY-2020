@@ -1,0 +1,177 @@
+﻿@model IEnumerable<CCM.Models.ViewModels.BulkChangesViewModel>
+    <style>
+        .BulkLogTable_wrapper {
+            width: fit-content;
+        }
+
+        .multiselect-container {
+            overflow: auto;
+            max-height: 600px
+        }
+    </style>
+
+
+
+
+    <div class="container-fluid">
+        <h3>Bulk Changing Logs</h3>
+    </div>
+    <div class="searchbox" style="margin:13px 0px 35px 16px">
+        <div class="seachboxdiv">
+            <label>From</label>
+            <input type="date" id="DateFrom" class="form-control border-input datefield" />
+        </div>
+        <div class="seachboxdiv">
+            <label>To</label>
+            <input type="date" id="DateTo" class="form-control border-input datefield" />
+        </div>
+        @*<div class="seachboxdiv">
+            <label>
+                Counselor
+            </label>
+
+            @Html.DropDownList("Liaisons",
+            ViewBag.Liaisons as SelectList,
+            "Counselors", new { @class = "form-control border-input select2 search_combo", id = "CounselorsDD" })
+        </div>
+        <div class="seachboxdiv">
+            <label>
+                Translater
+            </label>
+            @Html.DropDownList("Liaisons",
+            ViewBag.Translater as SelectList,
+            "Translater", new { @class = "form-control border-input select2 search_combo", id = "TranslaterDD" })
+        </div>*@
+
+
+
+    </div>
+
+    <section>
+        <table id="BulkChangesTable" @*style="margin-left: 15px;"*@>
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th>Title </th>
+                    <th>Created On</th>
+                    <th>Created By</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            @{ try
+                {
+                    <tbody id="BulkLogDataDiv">
+                        @foreach (var item in Model)
+                        {
+                        <tr>
+                            <td>@item.id</td>
+                            <td>@Html.Raw(item.Title)</td>
+                            <td>@item.CreatedBy</td>
+                            <td>@item.CreatedOn</td>
+                            <th style="background:white;text-align: center;"><a class="btn btn-success btn-sm" onclick="OpenBulkLogsModel(@item.id)"><i class="fa fa-eye" aria-hidden="true"></i>Details</a></th>
+                        </tr>
+                        }
+                    </tbody>
+                }
+                catch (Exception ex) { }
+            }
+
+
+        </table>
+    </section>
+
+    <script>
+
+        $(document).ready(function () {
+            $("#CounselorsDD").hide();
+            $("#TranslaterDD").hide();
+            $('#CounselorsDD, #TranslaterDD').multiselect({
+                includeSelectAllOption: false,
+                enableCaseInsensitiveFiltering: true,
+                enableFiltering: true
+            });
+            var table = $('#BulkChangesTable').DataTable({
+                pageLength: 10,
+                "order":[[0,"desc"]]
+            });
+         $('#BulkLogTable').DataTable({
+             pageLength: 10,
+             "order": [[0, "desc"]]
+            });
+
+            $("#DateTo,#DateFrom").change(function () {
+
+                var toDate = $("#DateTo").val();
+                var fromDate = $("#DateFrom").val();
+                $(".loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: "/Patient/GetBulkchangesData",
+                    data: { 'to': toDate, 'from': fromDate },
+                    success: function (result) {
+                        table.destroy();
+                        $("#BulkLogDataDiv").html("");
+                        $("#BulkLogDataDiv").html(result);
+
+                        table = $('#BulkChangesTable').DataTable({
+                            pageLength: 10,
+                            "order": [[0, "desc"]]
+                        });
+                        $(".loader").hide();
+                    },
+                    error: function () {
+                        $(".loader").hide();
+
+                    }
+                })
+
+            })
+        })
+
+        var OpenBulkLogsModel = function (id) {
+            $(".loader").show();
+            $.ajax({
+                type: "POST",
+                url: "/Patient/BulkchangesLogs",
+                data: { 'Id': id },
+                success: function (result) {
+                    $("#LogDataDiv").html("");
+                    $("#LogDataDiv").html(result);
+                   $('#BulkLogTable').DataTable({
+                       pageLength: 10,
+                       "order": [[0, "desc"]]
+                    });
+                    $(".loader").hide();
+                    $('#BillingCategoryModal').modal('show');
+                },
+                error: function () {
+                    $(".loader").hide();
+                }
+            })
+        }
+    </script>
+
+
+    <div id="modal-container">
+        <div class="modal-background">
+            <div class="modal fade" id="BillingCategoryModal" role="dialog" data-backdrop="static" data-keyboard="false" style="position:absolute">
+                <div class="modal-dialog modal-xl" style="width: 100%; margin-top: 10px; position: fixed; margin-left: -42%;">
+
+                    <div class="modal-content" style="WIDTH: 85%;">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Bulk Change Log Details</h4>
+                            <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body" style="max-height: 565px; overflow: auto;">
+                            <div class="row" id="LogDataDiv">
+
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="padding: 1px 31px 18px;">
+                            <button type="button" style="background: #0364bd; width: 7%; color: white; font-size: 14px; border: none;" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

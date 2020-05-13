@@ -1,0 +1,210 @@
+﻿@model CCM.Models.DashBoardViewModel
+@if (User.IsInRole("PhysiciansGroup") || User.IsInRole("Admin") || User.IsInRole("LiaisonGroup"))
+{
+    <ul class="nav nav-tabs">
+        @if (User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup") || User.IsInRole("LiaisonGroup"))
+        {
+            if (User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup") || User.IsInRole("LiaisonGroup"))
+            {
+                <li class="dropdown">
+
+                    @Html.DropDownListFor(liaison => Model.UserId,
+                        new SelectList(ViewBag.Liaisons, "Value", "Text", Model),
+                        "---Liaisons---", new {@class = "form-control border-input search_combo", id = "ddlLiaisons1" })
+                </li>
+            }
+            if (User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup") || User.IsInRole("LiaisonGroup"))
+            {
+                <li class="dropdown">
+                    @Html.DropDownListFor(physiciansGroup => Model.UserId,
+                        new SelectList(ViewBag.physiciansGroups, "Value", "Text", Model),
+                        "---Physicians Groups---", new { @class = "form-control border-input search_combo", id = "ddlPhysiciansGroups1" })
+                </li>
+            }
+
+        }
+
+        <li class="dropdown">
+            @Html.DropDownListFor(physician => Model.UserId,
+                new SelectList(ViewBag.Physicians, "Value", "Text", Model),
+                "---Physicians---", new { @class = "form-control border-input search_combo", id = "ddlPhysicians1" })
+        </li>
+        <li>
+            <input type="date" value="@DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")" id="datefrom" class="form-control" />
+        </li>
+        <li>
+            <input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" id="dateto" class="form-control" />
+        </li>
+    </ul>
+}
+<style>
+    .form-control {
+        background-color: #eaeaea;
+    }
+
+    .nav-tabs > li {
+        float: left;
+        margin-bottom: -1px;
+        margin-right: 10px;
+    }
+
+    .nav-tabs {
+        border-bottom: 0px solid #ddd;
+        margin-left: 29px;
+    }
+    /*Date Picker**/
+    li .form-control {
+        margin: 0px !important;
+    }
+    .form-control {
+        border: 2px solid !important;
+        border-radius: 3px !important;
+        padding: 5px !important;
+    }
+    /*Date Picker **/
+    .search_combo {
+        display: none;
+    }
+
+    .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+        background-color: #dcdcdc !important;
+    }
+
+    .multiselect-container {
+        max-height: 300px;
+        overflow: auto;
+    }
+</style>
+<br />
+<div id="dashboardPartialView1">
+    <p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>
+</div>
+<br /><br /><br />
+
+
+
+
+@*@if (User.IsInRole("PhysiciansGroup") || User.IsInRole("Admin"))
+    {
+        <ul class="nav nav-tabs">
+            @if (User.IsInRole("Admin"))
+            {
+                <li class="dropdown">
+                    @Html.DropDownListFor(liaison => Model.UserId,
+                        new SelectList(ViewBag.Liaisons, "Value", "Text", Model),
+                        "Liaisons", new {@class = "form-control border-input", id = "ddlLiaisons" })
+                </li>
+                <li class="dropdown">
+                    @Html.DropDownListFor(physiciansGroup => Model.UserId,
+                        new SelectList(ViewBag.physiciansGroups, "Value", "Text", Model),
+                        "Physicians Groups", new { @class = "form-control border-input", id = "ddlPhysiciansGroups" })
+                </li>
+            }
+
+            <li class="dropdown">
+                @Html.DropDownListFor(physician => Model.UserId,
+                    new SelectList(ViewBag.Physicians, "Value", "Text", Model),
+                    "Physicians", new { @class = "form-control border-input", id = "ddlPhysicians" })
+            </li>
+        </ul>
+    }
+
+    <br />
+    <div id="dashboardPartialView">
+        <p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>
+    </div>
+    <br /><br /><br />*@
+
+
+@section Scripts {
+    @*<script src="~/dashboard/assets/js/chartist.min.js"></script>
+        <script src="~/dashboard/assets/js/demo.js"></script>*@
+    <script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            //Combo Search
+            $('#ddlLiaisons1, #ddlPhysiciansGroups1, #ddlPhysicians1').multiselect({
+                includeSelectAllOption: false,
+                buttonWidth: 175,
+                enableCaseInsensitiveFiltering: true,
+                enableFiltering: true
+            });
+
+            //demo.initChartist();
+            //NewStatus
+            $('#dashboardPartialView1').load("/Home/_DashBoardPartialNew?From=" + $("#datefrom").val() + "&To=" + $("#dateto").val());
+            $('#ddlLiaisons1, #ddlPhysicians1, #ddlPhysiciansGroups1').val("");
+
+            $("#ddlLiaisons1").change(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardPartialNew?userId=" + $(this).val() + "&From=" + $("#datefrom").val() + "&To=" + $("#dateto").val());
+                $('#ddlPhysicians1, #ddlPhysiciansGroups1').val("");
+            });
+
+            $("#ddlPhysicians1").change(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardPartialNew?userId=" + $(this).val() + "&From=" + $("#datefrom").val() + "&To=" + $("#dateto").val());
+                $('#ddlLiaisons1, #ddlPhysiciansGroups1').val("");
+            });
+
+            $("#ddlPhysiciansGroups1").change(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardPartialNew?userId=" + $(this).val() + "&From=" + $("#datefrom").val() + "&To=" + $("#dateto").val());
+                $('#ddlLiaisons1, #ddlPhysicians1').val("");
+            });
+            $("#datefrom,#dateto").change(function () {
+                if ($('#ddlLiaisons1').val() != "") {
+                    $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                    $('#dashboardPartialView1').load("/Home/_DashBoardPartialNew?userId=" + $('#ddlLiaisons1').val() + "&From=" + $("#datefrom").val() + "&To=" + $("#dateto").val());
+                }
+                else {
+                    if ($('#ddlPhysicians1').val() != "") {
+                        $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                        $('#dashboardPartialView1').load("/Home/_DashBoardPartialNew?userId=" + $('#ddlPhysicians1').val() + "&From=" + $("#datefrom").val() + " &To=" + $("#dateto").val());
+                    }
+                    else {
+                        if ($('#ddlPhysiciansGroups1').val() != "") {
+                            $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                            $('#dashboardPartialView1').load("/Home/_DashBoardPartialNew?userId=" + $('#ddlPhysiciansGroups1').val() + "&From=" + $("#datefrom").val() + "&To=" + $("#dateto").val());
+                        }
+                        else {
+                            if ($("#datefrom").val() != "" && $("#dateto").val() != "") {
+                                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                                $('#dashboardPartialView1').load("/Home/_DashBoardPartialNew?From=" + $("#datefrom").val() + "&To=" + $("#dateto").val());
+                            }
+
+                        }
+                    }
+                }
+
+            });
+            //
+            //$('#dashboardPartialView').load("/Home/_DashBoardPartial");
+            //$('#ddlLiaisons, #ddlPhysicians, #ddlPhysiciansGroups').val("");
+
+            //$("#ddlLiaisons").change(function () {
+            //    $('#dashboardPartialView').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+            //    $('#dashboardPartialView').load("/Home/_DashBoardPartial?userId=" + $(this).val());
+            //    $('#ddlPhysicians, #ddlPhysiciansGroups').val("");
+            //});
+
+            //$("#ddlPhysicians").change(function () {
+            //    $('#dashboardPartialView').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+            //    $('#dashboardPartialView').load("/Home/_DashBoardPartial?userId=" + $(this).val());
+            //    $('#ddlLiaisons, #ddlPhysiciansGroups').val("");
+            //});
+
+            //$("#ddlPhysiciansGroups").change(function () {
+            //    $('#dashboardPartialView').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+            //    $('#dashboardPartialView').load("/Home/_DashBoardPartial?userId=" + $(this).val());
+            //    $('#ddlLiaisons, #ddlPhysicians').val("");
+            //});
+        });
+    </script>
+}
+
+
+
+
+

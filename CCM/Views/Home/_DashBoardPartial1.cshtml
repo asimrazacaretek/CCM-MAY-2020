@@ -1,0 +1,374 @@
+﻿@model CCM.Models.DashBoardViewModel
+@{
+    var totalBillingCodes = Model.Code99490 + Model.Code99487 + Model.Code99489;
+    var discrepancies = Model.InClaimSubmission - totalBillingCodes;
+
+    var percent = 100;
+    double total = 0;
+}
+
+
+<style>
+    a:focus, a:hover {
+        color: green;
+    }
+
+    .statsreasons {
+        margin-left: 10px;
+    }
+
+    .totcount {
+    }
+
+    .card {
+        box-shadow: 0 2px 13px rgb(12, 43, 150);
+        height: 230px;
+        background-color: #fff;
+        border: 1px solid #0364bd;
+        padding: 0px;
+        border-radius: 0px;
+    }
+
+        .card a {
+        }
+
+    .totalpatients {
+        float: left;
+        margin-bottom: 20px;
+    }
+
+    .itemname {
+        width: 70%;
+        float: left;
+        text-align: left;
+        margin-bottom: 0px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 21px;
+        width: 68%;
+    }
+
+    .col-xs-12 {
+        padding: 0px;
+    }
+
+    p {
+        font-size: 14px;
+        line-height: 1.4em;
+    }
+
+    .itemcount {
+        width: 30%;
+        float: right;
+        text-align: right;
+        margin-bottom: 0px;
+    }
+
+    .card .content {
+        padding: 0;
+    }
+
+    .card .stats {
+        float: left;
+        width: 100%;
+        font-weight: normal;
+        padding: 5px 15px;
+    }
+
+    .card .numbers {
+        font-size: 2em;
+        text-align: right;
+        border-bottom: 1px solid #ccc;
+        float: left;
+        width: 100%;
+        margin-bottom: 5px;
+        background: #0364bd;
+        color: white;
+        padding: 5px 15px;
+    }
+
+        .card .numbers p {
+            margin: 0;
+            font-size: 15px;
+            height: 25px;
+        }
+    .newItemCount {
+        width: fit-content;
+        display: table-cell;
+    }
+    .OuterDiv {
+        width: 88px;
+        float: right;
+        display: inline-flex;
+        font-size: 13px;
+    }
+    .innerRight {
+        width: fit-content;
+        margin-left: 12px;
+    }
+    .innerLeft {
+        width: 100%;
+    }
+    .small-left-1 {
+        position: absolute;
+        top: 116px;
+        left: 235px;
+    }
+
+    .small-left-2 {
+        position: absolute;
+        top: 136px;
+        left: 235px;
+    }
+</style>
+<div class="row">
+
+
+    <div class="col-md-12 totalpatients">
+
+
+
+        <div class="col-lg-6 col-sm-6 col-md-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="col-xs-12">
+
+                                <a href="@Url.Action("TotalPatients", "Patient", new { userId = Model.UserId })">
+                                    <div class="numbers">
+                                        <p class="itemname mainstatus">Total Patients</p>
+                                        <p class="itemcount"> @Model.TotalPatients.ToString("N0")</p>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-xs-12">
+
+                                <a href="@Url.Action("Index", "Patient", new { userId = Model.UserId })">
+                                    <div class="numbers">
+                                        <p class="itemname mainstatus">Total Patients</p>
+                                        <p class="itemcount"> @Model.TotalPatients.ToString("N0")</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                        }
+                        <div class="col-xs-12">
+                            <div class="stats">
+                                <u class="text-warning">Calls Due</u> <br />
+                                <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, date = DateTime.Today.Date })">Today: <b>@Model.CallsDueToday</b></a><br />
+                                <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, date = DateTime.Today.Date.AddDays(1) })">Tomorrow: <b>@Model.CallsDueTomorrow</b></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, date = DateTime.Today.Date.AddDays(-1) })">Past Due: @Model.PastCallDues</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @foreach (var item in Model.newDashBoardViewModels.Where(x => x.StatusName.Contains( "Active Enrolled Ques")).ToList())
+        {
+            <div class="col-lg-6 col-sm-6">
+                <div class="card">
+                    <div class="content">
+                        <div class="row">
+                            @if (item.SubStatuses != null && item.SubStatuses.Count > 0 && item.StatusName.Contains("Active Enrolled Ques"))
+                            {
+                                <div class="col-xs-12">
+
+                                    <div class="numbers">
+                                        <p class="itemname mainstatus">Post @item.StatusName</p>
+                                        <div class="OuterDiv"><div class="innerLeft" style="margin-right: 12px;font-size:17px">@item.Totalcount.ToString("N0") </div> <div class="innerRight" style="font-size: 17px; margin-left: 0px;"> @(item.Totalcount != 0 ? item.Totalcount / item.Totalcount * 100 : 0)%</div></div><br />
+
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-12">
+                                    @if (1 == 1)
+                                    {
+                                        <div class="stats">
+                                            @foreach (var substatus in item.SubStatuses)
+                                            {
+
+                                                if (substatus.SubStatuses != null)
+                                                {
+                                                    total = substatus.Totalcount;
+
+                                                    total = (total / item.Totalcount) * 100;
+                                            <a>
+                                                <p class="itemname">  @(substatus.StatusName == "Enrolled" ? "Active Work Que" : substatus.StatusName) </p>
+                                                <div class="OuterDiv"><div class="innerLeft">@substatus.Totalcount.ToString("N0") </div> <div class="innerRight"> @(total.ToString("N2") == "NaN" ? "0" : total.ToString("N2"))%</div></div><br />
+
+                                            </a>
+                                                    <div class="statsreasons">
+                                                        <a style="color:#42a5ff;float:left;width:100%"  href="@Url.Action("Index", "CcmStatus", new { status = "Enrolled", fromDashBaord = true,BillingcategoryId=substatus.BillingCategoryID })">
+                                                            @{ total = substatus.SubStatuses.FirstOrDefault().Totalcount;
+
+                                                                total = (total / substatus.Totalcount) * 100;
+
+                                                            }
+                                                            <p class="itemname">  @(substatus.SubStatuses.FirstOrDefault().StatusName) </p>
+                                                            <div class="OuterDiv"><div class="innerLeft">@substatus.SubStatuses.FirstOrDefault().Totalcount.ToString("N0") </div> <div class="innerRight"> @(total.ToString("N2") == "NaN" ? "0" : total.ToString("N2"))%</div></div><br />
+
+                                                        </a>
+                                                        <a style="color:#42a5ff;float:left;width:100%" href="@Url.Action("Index", "CcmStatus", new { status = "Enrolled", fromDashBaord = true, forTranslator = "True",BillingcategoryId=substatus.BillingCategoryID })">
+                                                            @{ total = substatus.SubStatuses.LastOrDefault().Totalcount;
+
+                                                                total = (total / substatus.Totalcount) * 100;
+
+                                                            }
+
+                                                            <p class="itemname">  @(substatus.SubStatuses.LastOrDefault().StatusName) </p>
+                                                            <div class="OuterDiv"><div class="innerLeft">@substatus.SubStatuses.LastOrDefault().Totalcount.ToString("N0") </div> <div class="innerRight"> @(total.ToString("N2") == "NaN" ? "0" : total.ToString("N2"))%</div></div><br />
+
+                                                        </a>
+
+
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("Index", "CcmStatus", new { status = substatus.StatusName, fromDashBaord = true ,BillingcategoryId=substatus.BillingCategoryID })">
+                                                        @*<p class="itemname">  @(substatus.StatusName == "Enrolled" ? "Active Work Que" : substatus.StatusName) </p><p class="itemcount">@substatus.Totalcount.ToString("N0")</p><br />*@
+                                                        @{ if (substatus.StatusName == "Enrolled")
+                                                            {
+
+                                                                substatus.StatusName = "Active Work Que";
+                                                                <p class="itemname"> @substatus.StatusName     </p>
+                                                            }
+                                                            else if (substatus.StatusName == "Ready for Clinical Sign-Off")
+                                                            {
+                                                                // substatus.StatusName = "Ready For Review By Counselor Que";
+                                                                <p class="itemname" style="overflow:inherit"> Ready For Review By Counselor Que    </p>
+                                                            }
+                                                            else
+                                                            {
+                                                                <p class="itemname">  @substatus.StatusName     </p>
+                                                            }
+
+
+                                                        }
+                                                        @{
+                                                            total = substatus.Totalcount;
+
+                                                            total = (total / item.Totalcount) * 100;
+
+                                                        }
+                                                        <div class="OuterDiv"><div class="innerLeft">@substatus.Totalcount.ToString("N0") </div> <div class="innerRight"> @(total.ToString("N2") == "NaN" ? "0" : total.ToString("N2"))%</div></div><br />
+
+                                                    </a>
+                                                }
+                                            }
+
+
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="icon-big icon-danger text-center">
+                                            <i class="ti-pulse"></i>
+                                        </div>
+                                    }
+                                </div>
+
+                            }
+
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+       
+    </div>
+</div>
+<div class="row">
+   
+    @foreach (var item in Model.newDashBoardViewModels.Where(x => !x.StatusName.Contains("Active Enrolled Ques")).ToList())
+    {
+        <div class="col-lg-4 col-sm-6">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        @if (item.SubStatuses != null && item.SubStatuses.Count > 0 && !item.StatusName.Contains("Active Enrolled Ques"))
+                        {
+                            <div class="col-xs-12">
+                                <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, status = item.StatusName })">
+                                    <div class="numbers">
+                                        <p class="itemname mainstatus">@item.StatusName</p>
+                                        <p class="itemcount">@item.Totalcount.ToString("N0")</p>
+
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xs-12">
+                                @if (1 == 1)
+                                {
+                                    <div class="stats">
+                                        @foreach (var substatus in item.SubStatuses)
+                                        {
+                                            <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, substatus = substatus.StatusName })">
+                                                <p class="itemname">  @substatus.StatusName </p><p class="itemcount">@substatus.Totalcount.ToString("N0")</p><br />
+                                                @if (substatus.SubStatuses != null)
+                                                {
+                                                    <div class="statsreasons">
+
+
+                                                        @foreach (var substatusthird in substatus.SubStatuses)
+                                                        {
+                                                            <p class="itemname">
+                                                                @substatusthird.StatusName
+                                                            </p><p class="itemcount">@substatusthird.Totalcount.ToString("N0")</p><br />
+                                                        }
+                                                    </div>
+                                                }
+                                            </a>
+                                        }
+
+
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="icon-big icon-danger text-center">
+                                        <i class="ti-pulse"></i>
+                                    </div>
+                                }
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="col-xs-12">
+                                <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, status = item.StatusName })">
+                                    <div class="numbers">
+                                        <p class="itemname mainstatus">@item.StatusName</p>
+                                        <p class="itemcount">@item.Totalcount.ToString("N0")</p>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+
+</div>

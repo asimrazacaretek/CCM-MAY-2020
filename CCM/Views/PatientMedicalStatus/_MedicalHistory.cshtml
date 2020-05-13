@@ -1,0 +1,127 @@
+﻿<style>
+    .nav-tabs > li > a {
+        margin-right: 2px;
+        line-height: 1.428571429;
+        border: 1px solid transparent;
+        border-radius: 4px 4px 0 0;
+    }
+
+
+    .tab-content {
+        padding: 15px 10px;
+        margin: 0px 0 20px 0px;
+        box-shadow: 0px 0px 5px #393939;
+        background: #ddd;
+    }
+
+    .nav > li > a {
+        position: relative;
+        display: block;
+        /*padding: 10px 15px;*/
+    }
+
+    .contact-custom-nav-item > a {
+        /* background: #3c4e5e; */
+        background: #3c4e5e;
+        background: -moz-linear-gradient(top, #3c4e5e 1%, #5a646c 100%);
+        background: -webkit-linear-gradient(top, #3c4e5e 1%,#5a646c 100%);
+        background: linear-gradient(to bottom, #3c4e5e 1%,#5a646c 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3c4e5e', endColorstr='#5a646c',GradientType=0 );
+        color: #fff;
+        border-color: #7AC29A;
+        border-radius: 5px;
+    }
+
+    .contact-custom-tabs > li > a:hover, .contact-custom-tabs > li > a:focus {
+        background: #000;
+    }
+
+    /*.nav > li > a:hover, .nav > li > a:focus {
+        background-color: transparent;
+    }*/
+
+    .nav-tabs > li > a:hover {
+        border-color: #eee #eee #ddd;
+    }
+
+    .nav > li > a:hover, .nav > li > a:focus {
+        text-decoration: none;
+        /*background-color: #eee;*/
+    }
+
+    .patient-detail-tabs .nav-tabs > li.active > a, .patient-detail-tabs .nav-tabs > li.active > a:hover, .patient-detail-tabs .nav-tabs > li.active > a:focus {
+        /* background: #034b22; */
+        background: #034b22;
+        background: -moz-linear-gradient(top, #034b22 1%, #1e894c 100%);
+        background: -webkit-linear-gradient(top, #034b22 1%,#1e894c 100%);
+        background: linear-gradient(to bottom, #034b22 1%,#1e894c 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#034b22', endColorstr='#1e894c',GradientType=0 );
+        color: #fff;
+    }
+
+    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+        cursor: default;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-bottom-color: transparent;
+    }
+
+        .contact-custom-tabs > li.active > a, .contact-custom-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+            /* background: #034b22; */
+            background: #034b22;
+            background: -moz-linear-gradient(top, #034b22 1%, #1e894c 100%);
+            background: -webkit-linear-gradient(top, #034b22 1%,#1e894c 100%);
+            background: linear-gradient(to bottom, #034b22 1%,#1e894c 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#034b22', endColorstr='#1e894c',GradientType=0 );
+            color: #fff;
+            border-color: #7AC29A;
+        }
+</style>
+
+<div class="tab-content" style="width:100%;">
+    <div id="medical-history">
+        <div class="tabs-list">
+            <ul class="nav nav-tabs contact-custom-tabs">
+                <li class="nav-item contact-custom-nav-item active">
+                    <a class="nav-link" data-toggle="tab" href="#general-medical">General Medical Status</a>
+                </li>
+                <li class="nav-item contact-custom-nav-item" style="display:none;">
+                    <a class="nav-link" data-toggle="tab" href="#medical-condition">Medical Conditions</a>
+                </li>
+                <li class="nav-item contact-custom-nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#family-history">Family History</a>
+                </li>
+                <li class="nav-item contact-custom-nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#food-drug">Food, Drug & Other Allergies</a>
+                </li>
+
+                <li class="nav-item contact-custom-nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#current-medication">Current Medications</a>
+                </li>
+            </ul>
+        </div>
+        <!-- tabs list -->
+        <div class="tab-content">
+            <div id="general-medical" class="container-fluid custom-tab-pane tab-pane fade active in">
+            </div>
+            <!-- general medical-status -->
+
+            <div id="medical-condition" class="container-fluid custom-tab-pane tab-pane fade">
+            </div>
+            <!-- medical condition -->
+            <div id="family-history" class="container-fluid custom-tab-pane tab-pane fade">
+            </div>
+            <!-- family history section -->
+
+            <div id="food-drug" class="container-fluid custom-tab-pane tab-pane fade">
+            </div>
+            <!-- food drug others -->
+
+            <div id="current-medication" class="container-fluid custom-tab-pane tab-pane fade">
+            </div>
+            <!-- current medicaiton -->
+
+        </div>
+        <!-- tab contents -->
+    </div>
+</div>

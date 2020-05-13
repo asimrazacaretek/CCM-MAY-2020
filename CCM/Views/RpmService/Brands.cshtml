@@ -1,0 +1,260 @@
+﻿@model CCM.Models.DataModels.Devices.Devices_Brand
+@using CCM.Models.DataModels.Devices;
+<link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" type="text/javascript"></script>
+@{
+    ViewBag.Title = "AddBrands";
+}
+
+
+<style>
+    #BillingCategoryModal {
+        overflow: auto;
+    }
+
+    .mt-4 {
+        margin-top: 15px;
+    }
+
+    .savebtnsforBillingCategory {
+        float: right;
+        margin-right: 60px;
+        margin-top: 10px;
+    }
+
+    .field-validation-error {
+        margin-left: -229px;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" data-toggle="modal" data-target="#BillingCategoryModal" id="ButonOpen" class="ModelOpenBtn btn btn-success"><span class="fas fa-fw fa-floppy-o"></span> Add New Brand</button>
+    </div>
+</div>
+<div class="mt-4" id="CurrentPageParial" >
+    <table class="table" style=" width: 700px; margin-left: 15px;">
+        <thead>
+            <tr>
+                <th scope="col">Brand Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Is Active</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        @{ try
+            {
+        <tbody>
+            @foreach (var item in ViewBag.DevicesBrands as List<Devices_Brand>)
+            {
+                var ClasstoAppend = item.IsActive == 1 ? "isActive" : "isNotActive";
+                <tr class="@ClasstoAppend">
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+
+                    <td>
+                        @if (@item.IsActive == 1)
+                        {
+                            @Html.Raw("Active")
+                        }
+                        else
+                        {
+                            @Html.Raw(" Deactive Active")
+                        }
+                    </td>
+                    <td data-id="@item.Id">
+                        <span style="font-size: 16px;cursor:pointer" value="@item.Name" onclick="EditCategory('@item.Name','@item.Id','@item.IsActive','@item.Description')" id="EditResolution" class=" fa fa-edit text-primary"></span> @*|*@
+
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+            }
+            catch (Exception ex) { }
+        }
+
+
+    </table>
+</div>
+<div id="modal-container">
+    <div class="modal-background">
+        <div class="modal fade" id="BillingCategoryModal" role="dialog" data-backdrop="static" data-keyboard="false" style="position:absolute">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Brand Form</h4>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form id="AddBrandForm">
+                                @Html.HiddenFor(x => x.Id, new { @id = "HiddenId" })
+                                <div class="form-group">
+                                    @Html.Label("Brand Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(x => x.Name, new { htmlAttributes = new { @id = "BrandName", @required = "required", @placeholder = "Brand Name", @class = "form-control" } })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(x => x.Description, htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(x => x.Description, new { htmlAttributes = new {  @required = "required", @placeholder = "Description", @class = "form-control" } })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    @Html.Label("Is Active", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.DropDownListFor(x => x.IsActive, new SelectList(ViewBag.IsAvtiveStatus, "Value", "Text"), "--Select--", new { @class = "IsActive form-control", @id = "IsActive" })
+
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="form-group">
+                                <div class="savebtnsforBillingCategory">
+                                    <button style="margin-left: 5px;" id="SaveBrandForm" type="button" class="btn">Save</button>
+                                    <button type="button" class=" btn btn-default close-custom-button" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="check" value="0" />
+
+
+<script>
+
+    $(document).ready(function () {
+        $('#table').DataTable();
+
+        $("#DeactivateResonRow").hide();
+
+        $(window).keydown(function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+
+        });
+
+        $("#BrandName").keyup(function () {
+            if ($("#BrandName").val().trim() != '' && $("#IsActive :selected").val() != '') {
+
+                $("#SaveBrandForm").attr("disabled", false);
+            } else {
+                $("#SaveBrandForm").attr("disabled", true);
+            }
+
+        })
+
+
+
+
+        $("#IsActive").change(function () {
+            var value = $("#IsActive :selected").val();
+            if (value != '' && $("#BrandName").val().trim() != '') {
+                $("#SaveBrandForm").attr("disabled", false);
+            } else {
+                $("#SaveBrandForm").attr("disabled", true);
+            }
+
+
+        })
+    });
+    $('#ButonOpen').click(function () {
+        $('#modal-container').removeAttr('class').addClass("ButonOpen");
+        $('body').addClass('modal-active');
+        $("#HiddenId").val('0');
+        $("#BrandName").val('');
+        $("#Description").val('');
+        $("#IsActive").val('');
+        $("#check").val("0");
+        $("#BrandName").attr("readonly", false);
+        $("#SaveBrandForm").attr("disabled", true);
+    });
+    $('.close-custom-button').click(function () {
+
+        $('#modal-container').addClass('out');
+        $('body').removeClass('modal-active');
+    });
+    function EditCategory(value, id, status, Description) {
+        $(".ModelOpenBtn").click();
+        $("#BrandName").val(value);
+        $("#Description").val(Description);
+        $("#HiddenId").val(id);
+        $("#IsActive").val(status);
+        $("#BrandName").attr("readonly", true);
+        //  $("#BrandName").attr("disabled", true)
+        $("#SaveBrandForm").attr("disabled", false);
+        $("#check").val("edit");
+
+    }
+    function AddOrEdit(valdata) {
+        $.ajax({
+            type: "POST",
+            data: valdata,
+            url: "/RpmService/AddBrands",
+            success: function (result) {
+                if (result == "added") {
+                    $("#BrandName").val('');
+                    $("#Description").val('');
+
+
+                    swal({
+                        title: "Saved",
+                        text: "Saved Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    $("#CurrentPageParial").load(window.location + " #CurrentPageParial");
+                }
+                else if (result == "updated") {
+                    $("#BrandName").val('');
+                    swal({
+                        title: "Update",
+                        text: "Updated Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    $("#CurrentPageParial").load(window.location + " #CurrentPageParial");
+                }
+                else if (result == "exists") {
+                    var s = $("#BrandName").val();
+                    swal("Warning!", s + " Already exists as a Brand", "warning");
+                }
+                else {
+                    $('.close-custom-button').click();
+                    swal("Error!", "Error Accured", "error");
+
+                }
+            }
+        });
+    }
+    $("#SaveBrandForm").on("click", function () {
+        if ($("#BrandName").val().trim() != "") {
+            var valdata = $("#AddBrandForm").serialize();
+            AddOrEdit(valdata);
+        }
+
+    });
+
+</script>
+
+

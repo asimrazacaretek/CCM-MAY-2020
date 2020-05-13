@@ -1,0 +1,153 @@
+﻿@model List<CCM.Models.PatientProfile_HospitalDetails>
+    <style>
+        .panel-body {
+            width: 100% !important;
+            overflow-x: scroll;
+        }
+        .lblbold1 {
+            text-align: left;
+            font-weight: bold;
+            color: green;
+            font-size: 16px;
+        }
+    </style>
+    <div id="divAddHospital" style="display:none;"></div>
+    <div class="panel-body" id="divhospitalvisitdetails">
+        <div class="row"><button id="btnAddHospital" class="btn btn-success logdetails"><i class="fa fa-plus-square"></i>Add Visit</button></div>
+        <br />
+        <div class="row">
+            <div class="col-md-4">
+                <label>Last 365 Days Cost: </label>
+                <span class="lblbold1"> @{var OneYearCost = Convert.ToInt32(ViewBag.yearlCost) * Convert.ToInt32(1500);} @OneYearCost</span>
+            </div>  
+            <div class="col-md-4">
+                <label>January 1st to Now Cost: </label>
+                <span class="lblbold1"> @{var FirstjantoNow = Convert.ToInt32(ViewBag.JanToNow) * Convert.ToInt32(1500);} @FirstjantoNow</span>
+            </div>
+            <div class="col-md-4">
+                <label>Total Admissions of Last 365 Days: </label>
+                <span class="lblbold1"> @ViewBag.TotalAdmofYear </span>
+            </div>
+        </div>
+        <hr />
+        <table class="table" id="patientHospitals">
+            <thead>
+                <tr>
+                    @*
+                    <th>
+                        @Html.DisplayNameFor(model => model.PatientId)
+                    </th>*@
+                    <th>
+                        Hospital Name
+                    </th>
+                    <th>
+                        Department
+                    </th>
+                    <th>
+                        Doctors
+                    </th>
+
+                    <th>
+                        ICD10Codes
+                    </th>
+                    <th>
+                        Stay Type
+                    </th>
+
+                    <th>
+                        Date Of Admission
+                    </th>
+                    <th>
+                        Discharge Date
+                    </th>
+
+                    <th>
+                        Reason
+                    </th>
+                    <th>
+                        Rate
+                    </th>
+                    <th>
+                        Days
+                    </th>
+                    <th>
+                        CreatedOn
+                    </th>
+                    <th>
+                        UpdatedOn
+                    </th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        @*
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PatientId)
+                        </td>*@
+                        <td>
+                            @Html.DisplayFor(modelItem => item.HospitalName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Department)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FullName)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ICD10Codes)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StayType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AdmitDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DischargeDate)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Reason)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Rate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TotalDays)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedOn)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UpdatedOn)
+                        </td>
+                        <td nowrap>
+                            <a class="btn btn-sm btn-success logdetails btnHospitalEdit" style="margin: 0px !important;" onclick="EditAjaxAction('PatientProfile','_EditHospitalDetails', @item.Id)">Edit</a>
+                            <a class="btn btn-sm btn-danger logdetails" onclick="AjaxActionReturns('PatientProfile','_DeleteHospitalDetails', @item.Id)">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#patientHospitals').DataTable({
+                responsive: true
+            });
+            $("#btnAddHospital").click(function () {
+                var patientid = $("#patientidh").val();
+                //GetAjaxView("/PatientProfile/_PatientProfile_AddHospitalDetails", patientid, "divAddHospital");
+                $("#divAddHospital").load('/PatientProfile/_PatientProfile_AddHospitalDetails', { patientId: patientid });
+                $("#divAddHospital").css("display", "block");
+                $("#btnAddHospital").css("display", "None");
+            });
+        });
+
+
+    </script>

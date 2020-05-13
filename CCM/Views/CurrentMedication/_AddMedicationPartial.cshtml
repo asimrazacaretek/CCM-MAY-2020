@@ -1,0 +1,386 @@
+﻿@model CCM.Models.PatientMedicalHistory_MedicationRx
+
+<link href="https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions/15.1.0/autocomplete-lhc_jQueryUI.min.css" rel="stylesheet">
+<style>
+    #divAddNew {
+        margin-top: -15px;
+    }
+
+    #line {
+        margin-top: -10px;
+    }
+
+    .lblinline {
+        padding-left: 13px;
+    }
+
+    .lblmedicn {
+        padding-left: 5px;
+    }
+
+    .lbldrug {
+        padding: 0px;
+        padding-left: 12px;
+    }
+
+    .lblpermanent {
+        padding: 0;
+        padding-left: 15px;
+    }
+
+    .close-btn {
+        color: #3c4e5e;
+        font-size: 20px;
+        position: absolute;
+        bottom: 20px;
+    }
+
+    #hide-Drug:hover {
+        cursor: pointer;
+        color: #0b64b5;
+    }
+    .error{color:red;}
+</style>
+
+@*@using (Html.BeginForm("_AddMedication", "CurrentMedication"))*@
+@using (Html.BeginForm("_AddMedication", "CurrentMedication", FormMethod.Post, new { id = "form_AddMedication" }))
+{
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.PatientId)
+
+    <div id="divDrugInteractionAdd" style="max-height: 650px; overflow-y: auto"></div>
+    <span id="btnDrugCancel" style="display:none;position:relative"><i class="fas fa-window-close close-btn" id="hide-Drug"></i></span>
+    @*<button class="btn btn-secondary" style="display:none;">Close</button>*@
+
+    <div class="form-horizontal" id="divAddNew">
+        @*<h4>Add New Medication</h4>
+            <hr id="line" />*@
+        <div class="row">
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DrugName, "Prescription/Drug Name", htmlAttributes: new { @class = "col-md-12 lbldrug" })
+                    <div class="col-md-12">
+                        <input type="text" class="form-control border-input" id="DrugName" name="DrugName" required="required">
+                        @Html.ValidationMessageFor(model => model.DrugName, "", new { @class = "text-danger", })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DailyDose, "Strength", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        <input type="text" class="form-control border-input" id="drug_strengths" name="DailyDose">
+                        @Html.ValidationMessageFor(model => model.DailyDose, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RxCuis, "RxCUIS", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        <input type="text" class="form-control border-input" id="rxcuis" name="RxCuis">
+                        @Html.ValidationMessageFor(model => model.RxCuis, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RateQuantity, "Direction/Rate", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.RateQuantity, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.RateQuantity, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Route, "Route", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.Route,
+                            new SelectList(ViewBag.MedicationRoute, "Value", "Text", Model),
+                            "---Select Route---", new { @class = "form-control border-input" })
+                        @Html.ValidationMessageFor(model => model.Route, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UseReason, "Notes", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.UseReason, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.UseReason, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+
+                    @*<label>Dose Repetition Time</label>*@
+                    @Html.LabelFor(model => model.DoseRepetitionTime, htmlAttributes: new { @class = "col-md-12 lblinline" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.DoseRepetitionTime,
+                       new SelectList(ViewBag.MedicineRepitinDose, "Value", "Text", Model), new { @class = "form-control border-input" })
+                        @Html.ValidationMessageFor(model => model.DoseRepetitionTime, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IssuesIdentified, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(item => item.IssuesIdentified,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "true",  Text = "Yes"},
+                                    new {Value = "false", Text = "No"}
+                                },
+                                "Value", "Text", Model), new { @class = "form-control border-input", id = "issues" })
+                        @Html.ValidationMessageFor(model => model.IssuesIdentified, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @*<label>Prescribe by</label>*@
+                    @Html.LabelFor(model => model.PrescribeBy, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.PrescribeBy,
+                            new SelectList(ViewBag.Physicians, "Value", "Text", Model),"DOCTOR", new { @class = "form-control border-input" })
+                        @Html.ValidationMessageFor(model => model.PrescribeBy, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-6 col-lg-6">
+                <div class="form-group" id="comment">
+                    @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ForHowLong, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.ForHowLong, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.ForHowLong, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsPermanentMedicine, htmlAttributes: new { @class = "col-md-12 lblpermanent" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(item => item.IsPermanentMedicine,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "true",  Text = "Yes"},
+                                    new {Value = "false", Text = "No"}
+                                },
+                                "Value", "Text", Model)
+                            , new { @class = "form-control border-input", id = "issues" })
+                        @Html.ValidationMessageFor(model => model.IsPermanentMedicine, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-6 col-lg-6">
+                <div class="form-group">
+                    <div class="col-md-12" style="margin-top:18px">
+                        <input type="button" value="Add New Medication" id="AddBtn" class="btn btn-success logdetails"  onclick="SubmitForm('form_AddMedication','Saved')" />
+                        <input type="button" value="Cancel" id="btnCancel" class="btn btn-danger logdetails" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <br />
+        <hr id="line">
+}
+
+
+
+
+@* Show/Hide Comment TextBox *@
+<script type="text/javascript">
+    $(function () {
+        $('#StartDate').datepicker().datepicker('setDate', 'today');
+        $("#issues").change(function () {
+            if ($(this).val() === "true") {
+                $("#comment").show();
+            } else {
+                $("#comment").hide();
+            }
+        });
+        $("#btnCancel").on("click", function () {
+            $("#divAddMedication").css("display", "none");
+            $("#btnAddMedication").show();
+        });
+
+        $("#btnDrugCancel").on("click", function () {
+            debugger;
+            $("#divDrugInteractionAdd").hide().text('');
+            $(this).css("display", "none");
+            $('#divAddNew input[type=text]').val('');
+            $("#AddBtn").attr("disabled", false);
+            return false;
+        });
+    });
+</script>
+
+@* Drug lookup - Auto Fill *@
+<script>
+    new Def.Autocompleter.Prefetch('rxcuis', []);
+    new Def.Autocompleter.Prefetch('drug_strengths', []);
+
+    new Def.Autocompleter.Search('DrugName', 'https://clin-table-search.lhc.nlm.nih.gov/api/rxterms/v3/search?ef=STRENGTHS_AND_FORMS,RXCUIS',
+        {
+            tableFormat: true, valueCols: [0], colHeaders: ['DrugName']
+        });
+
+    Def.Autocompleter.Event.observeListSelections('DrugName', function () {
+
+        var drugField = $('#DrugName')[0];
+        var drugFieldVal = drugField.value;
+        var autocomp = drugField.autocomp;
+        var strengths =
+            autocomp.getItemExtraData(drugFieldVal)['STRENGTHS_AND_FORMS'];
+        if (strengths)
+            $('#drug_strengths')[0].autocomp.setListAndField(strengths, '');
+        var rxcuis =
+            autocomp.getItemExtraData(drugFieldVal)['RXCUIS'];
+        if (rxcuis)
+            $('#rxcuis')[0].autocomp.setListAndField(rxcuis, '');
+
+        CheckDrugInteraction();
+    });
+
+
+
+
+    function CheckDrugInteraction() {
+        // Get Drug Interaction
+        //$("#rxcuis").change(function () {
+        $("#divDrugInteractionAdd").show().text('');
+        debugger;
+        var rxcuis = $('#ListRxCuis').val();
+        rxcuis += $("#rxcuis").val() + '+'
+        debugger;
+
+        $.getJSON("https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=" + rxcuis.substring(0, rxcuis.length - 1), function (result) {
+
+            $("#divDrugInteractionAdd").css("padding", "15px").css("color", "navy").css("margin-bottom", "15px")
+                .css("background", "lightgreen").css("border-radius", "15px");
+
+            if (result.fullInteractionTypeGroup != null) {
+                for (var i = 0; i < result.fullInteractionTypeGroup.length; i++) {
+                    for (var j = 0; j < result.fullInteractionTypeGroup[i].fullInteractionType.length; j++) {
+                        var counter = 0;
+                        for (var k = 0; k < result.fullInteractionTypeGroup[i].fullInteractionType[j].minConcept.length; k++)
+                            $("#divDrugInteractionAdd").append("<b>Drug " + ++counter + ":</b> " + result.fullInteractionTypeGroup[i].fullInteractionType[j].minConcept[k].name + "<br />");
+
+                        $("#divDrugInteractionAdd").append("<b>Severity:</b>    " + result.fullInteractionTypeGroup[i].fullInteractionType[j].interactionPair[0].severity + "<br />");
+                        $("#divDrugInteractionAdd").append("<b>Description:</b> " + result.fullInteractionTypeGroup[i].fullInteractionType[j].interactionPair[0].description);
+
+                        if (j !== result.fullInteractionTypeGroup[i].fullInteractionType.length - 1)
+                            $("#divDrugInteractionAdd").append("<hr />");
+                    }
+                }
+                $("#btnDrugCancel").css("display", "block");
+                debugger;
+                //$("#.").attr("disabled", true);
+            } else {
+                $("#divDrugInteractionAdd").append("- No Drug Interaction.");
+                $("#AddBtn").attr("disabled", false);
+            }
+
+        });
+        //});
+    }
+
+</script>
+
+@*<script type="text/javascript">
+        //$("#form_AddMedication").submit(function () {
+        //    debugger;
+        //    var form = $(this);
+        //    var formdata = false;
+        //    if (window.FormData) {
+        //        formdata = new FormData(form[0]);
+        //    }
+        //    if (form.valid() == false) {
+        //        return false;
+        //    }
+        //    var urltosend = form.attr('action');
+        //    //var datatosend = $("#createform").serialize();
+        //    var datatosend = formdata ? formdata : form.serialize();
+        //    $(".loader").show();
+        //    $.ajax({
+        //        type: 'POST',
+        //        url: urltosend,
+        //        data: datatosend,
+        //        cache: false,
+        //        contentType: false,
+        //        processData: false,
+        //        success: function (json) {
+        //            debugger;
+        //            $(".loader").hide();
+        //            if (json == "True") {
+
+        //                //var msg = "Saved Successfully";
+        //                //var titl = "Saved!";
+        //                //if (AddUpdate == "Update") {
+        //                //    titl = "Updated!";
+        //                //    msg = "Updated Successfully!";
+        //                //}
+        //                //else
+        //                //    clear();
+
+        //                swal({
+        //                    title: "Saved!",
+        //                    text: "Medication Added Successfully",
+        //                    icon: "success",
+        //                    button: "Ok",
+        //                    confirmButtonColor: "#1ab394",
+        //                });
+        //            }
+        //            else {
+        //                if (json == "False")
+        //                    json = "Somthing Wrong With Data!"
+        //                swal("Error!", "Error Accured :" + json, "error");
+        //            }
+        //        },
+        //        error: function (xhr, status, error) {
+        //            $(".loader").hide();
+        //            var err = eval("(" + xhr.responseText + ")");
+        //            //;
+        //            swal("Error!", "Error Accured :" + err.Message, "error");
+        //        }
+        //    });
+
+        //    return false;
+        //});
+
+    </script>*@
+
+
+

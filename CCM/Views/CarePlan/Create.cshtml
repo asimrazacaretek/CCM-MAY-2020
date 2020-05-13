@@ -1,0 +1,156 @@
+﻿@model CCM.Models.CarePlan
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })
+
+<div class="container">
+    <h3 class="text-info pageTitle">CARE PLAN NOTES</h3>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        <input type="hidden" value="@Model.Id" name="Id" />
+
+        <br/>
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-12">Note To Physician (Dr. @ViewBag.PhysicianName)</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.NoteToPhysician, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.NoteToPhysician, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Medication, "Medications", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.Medication, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.Medication, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Allergy, "Allergies", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.Allergy, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.Allergy, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Lab, "Labs", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.Lab, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.Lab, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.HPI, "History of Present Illness", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.HPI, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.HPI, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Plan, "Care Plan Objective", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.Plan, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.Plan, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SurgicalHistory, "Surgical History", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.SurgicalHistory, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.SurgicalHistory, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FamilyHistory, "Family History", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.FamilyHistory, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.FamilyHistory, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SocialHistory, "Social History", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.SocialHistory, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.SocialHistory, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CurrentRequest, "Current Requests", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.CurrentRequest, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.CurrentRequest, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Reminders, "Reminders", htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.Reminders, new { @class = "form-control border-input", rows = "5" })
+                            @Html.ValidationMessageFor(model => model.Reminders, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Save Care Plan" class="btn btn-success logdetails" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+                
+            }
+        </SCRIPT>
+    }
+}

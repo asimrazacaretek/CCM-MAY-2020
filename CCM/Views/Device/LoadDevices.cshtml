@@ -1,0 +1,65 @@
+﻿@model IEnumerable<CCM.Models.DataModels.Device>
+@using CCM.Helpers;
+@{
+    Layout = null;
+}
+@functions {
+    string GetTime(DateTime? Date)
+    {
+        var date = Convert.ToDateTime(Date);
+        var day = date.Day;
+        var month = date.Month;
+        var year = date.Year;
+        string datestr = date.ToString("mm/dd/yyyy");
+        if (datestr == "00/01/0001")
+        {
+            return "";
+        }
+        datestr = month + "/" + day + "/" + year;
+        return datestr;
+    }
+}
+
+@{ try
+    {
+
+        foreach (var item in Model)
+        {
+            var ClasstoAppend = item.IsActive == 1 ? "isActive" : "isNotActive";
+            <tr class="@ClasstoAppend">
+                <td hidden>@item.CreatedDate</td>
+                <td>@item.Devices_Brand.Name</td>
+                <td>@item.RPMService.ServiceName</td>
+                <td>@Enum.GetValues(typeof(DeviceStatus)).GetValue(item.DeviceStatusId)  </td>
+                <td>
+                    @item.Device_BrandModel.Name
+                <br /> @item.SerialNumber
+            </td>
+            <td>
+                @item.Device_Vendor.Name
+            <br /> @GetTime(item.DatePurchase)
+        </td>
+
+        <td>
+            @Enum.GetValues(typeof(IsActiveStatus)).GetValue(item.IsActive)
+        </td>
+        <td>
+            @HelperExtensions.GetUserNamebyID(item.CreatedBy)
+        <br /> @GetTime(item.CreatedDate)
+    </td>
+    <td>
+        @HelperExtensions.GetUserNamebyID(item.ModifiedBy)
+    <br /> @GetTime(item.ModifiedDate)
+</td>
+<td data-id="@item.Id">
+    <span style="font-size: 16px;cursor:pointer" value="@item.Devices_Brand.Name" onclick="EditCategory('@item.Devices_BrandId','@item.Id','@item.RPMServiceId','@item.DeviceStatusId','@item.Device_BrandModelId','@item.SerialNumber','@item.VendorId','@item.DatePurchase','@item.IsActive','@item.ReasonForDeactivate')" id="EditResolution" class=" fa fa-edit text-primary"></span> @*|*@
+    @*<span style="font-size: 16px;cursor:pointer" value="@item.Devices_Brand.Name" onclick="EditCategory('@item.Devices_BrandId','@item.Id','@item.RPMServiceId','@item.DeviceStatusId','@item.Device_BrandModelId','@item.SerialNumber',@item.VendorId','@item.DatePurchase','@item.IsActive','@item.ReasonForDeactivate')" id="EditResolution" class=" fa fa-edit text-primary"></span>*@ @*|*@
+
+</td>
+</tr>
+}
+
+
+}
+catch (Exception ex) { }
+}

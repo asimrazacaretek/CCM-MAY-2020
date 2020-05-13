@@ -1,0 +1,554 @@
+﻿@model  IEnumerable<CCM.Models.LiasionCallHistory>
+@{
+
+}
+
+<style>
+    .patientname {
+        width: 10%;
+        float: left;
+        padding: 9px;
+    }
+
+    .allmontnames {
+        width: 90%;
+        float: left;
+    }
+
+    .monthtypedata {
+        width: 8.33%;
+        float: left;
+        text-align: center;
+    }
+
+    .calltypeitem {
+        float: left;
+        width: 25%;
+    }
+
+    .headername {
+        background-color: #0364bd !important;
+        color: white;
+        text-align: center;
+    }
+     .call-detail-table td {
+       padding:5px !important;
+    }
+    .call-detail-table, .inner-table {
+        border-collapse: collapse;
+    }
+        .inner-table, .inner-table td {
+            border: none !important;
+
+        }
+    .greenclrcal {
+        color: #0a747d;
+    }
+
+    .redclrcal {
+        color:  #a01212;
+    }
+
+    .blueclrcal {
+        color: darkblue;
+    }
+    .greenclr {
+        color: white;
+    }
+    .redclr {
+        color: white;
+    }
+    .blueclr {
+        color: white;
+    }
+    .inner-table label{
+        float:left;
+        width:100%;
+        font-weight:normal;
+        font-size:1em;
+    }
+    .inner-table{
+        text-align:center;
+    }
+    .darkblue {
+        color: white;
+    }
+    .darkbluecal {
+        color: darkblue;
+    }
+    .twentymincolor {
+        color: darkblue;
+    }
+
+    .sixtymincolor {
+        color: darkblue;
+    }
+
+    .nintymincolor {
+        color: darkblue;
+    }
+    .legenditem {
+        margin-left: 10px;
+        float: left;
+    }
+    .legends {
+        width: 100%;
+        float: left;
+        box-shadow: 0 2px 7px rgb(12, 43, 150);
+        padding: 11px;
+        margin: 10px 0px;
+    }
+    .orangeclr{
+
+    }
+    #callhistoryandactivitydetail .modal-dialog {
+        width: 90%;
+    }
+    #callhistoryandactivitydetail .modal-footer {
+        display: inline-block;
+        width: 100%;
+    }
+    #callhistoryandactivitydetail .modal-header {
+        background-color: #0364bd;
+        color: white;
+        border-radius: 5px 5px 0px 0px;
+    }
+    #callhistoryandactivitydetail .modal-body {
+       padding:0;
+    }
+    .orangeclr {
+        color: orange !important;
+    }
+    th, td {
+        white-space: nowrap;
+    }
+    .iconsheader{
+        text-align:center;
+    }
+    .bold{
+        transition:all .2s ease-in-out;
+    }
+        .bold:hover {
+            font-size: 1.3em;
+            cursor: pointer;
+       
+        }
+    th {
+        text-align: center;
+        z-index: -1 !important;
+    }
+    /*.tooltip > .tooltip-inner, .tooltip-arrow {
+        background-color: #0364BD;
+    }*/
+   
+    td {
+        z-index: 1 !important;
+    }
+    .tooltip {
+        position: fixed;
+    }
+</style>
+<h2>@ViewBag.Error</h2>
+<div class="mainwrapperdata">
+
+
+    <table id="yearlyhistory" class="table call-detail-table display nowrap stripe row-border order-column" style="width:100%">
+
+
+        <thead>
+            <tr>
+
+                @foreach (var item in Model.Where(x => x.PatientName == "").ToList())
+                {
+                    <th rowspan="2" style="text-align:center">ID</th>
+                    <th rowspan="2" style="text-align:center">
+                        Patient Name (Counselor Name)
+                    </th>
+
+
+                    foreach (var monthnames in item.MonthNames)
+                    {
+                        <th colspan="5" style="text-align:center">
+                            @monthnames.MonthName
+                        </th>
+
+
+
+                    }
+
+
+
+                }
+            </tr>
+            <tr>
+
+                @foreach (var item in Model.Where(x => x.PatientName == "").ToList())
+                {
+
+
+
+                    foreach (var monthnames in item.MonthNames)
+                    {
+                        <th>
+                            <i class="fas fa-phone-volume greenclr"></i>
+                        </th>
+
+                        <th class="iconsheader">
+
+                            <i class="fas fa-headset redclr"></i>
+                        </th>
+                        <th class="iconsheader">
+                            <i class="far fa-clock blueclr"></i>
+                        </th>
+                        <th class="iconsheader">
+                            <i class="fas fa-thumbs-up redclr"></i>
+                        </th>
+                        <th class="iconsheader">
+                            <i class="fas fa-calendar-alt redclr"></i>
+                        </th>
+
+                    }
+
+
+
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Where(x => x.PatientName != "").ToList())
+            {
+                <tr>
+                    <td class="headername">
+                        @item.PatientId
+                    </td>
+                    <td class="headername">
+                        @item.PatientName
+                    </td>
+                    @foreach (var monthnames in item.MonthNames.Where(x => x.callDurationandTypes != null).ToList())
+                    {
+                        foreach (var types in monthnames.callDurationandTypes)
+                        {
+                            <td class="iconsheader bold" onclick="getdetails(@item.PatientId,@monthnames.MonthName,@monthnames.YearName)" style="cursor:pointer" title="Click to View Details!">
+                                @if (types.CallType != "Appointment")
+
+                                {
+
+                                    <label  data-toggle="tooltip" title="Click to View Details!" data-placement="top" style="cursor:pointer;"> 
+                                        @types.CallDuration
+                                    </label>
+                                    <i class="@types.ClassName"   data-toggle="tooltip" data-placement="top" title="Click to View Details!"></i>
+                                }
+                                else
+                                {
+                                    if (types.CallDuration != null)
+                                    { <i class="@types.ClassName" title="@types.CallDuration Click to View Details!"  data-toggle="tooltip" data-placement="top"></i>
+                                        <label style="display:none" style="cursor:pointer;" data-toggle="tooltip" data-placement="top" title="Click to View Details!">@types.CallDuration</label>
+                                    }
+                                }
+
+
+                            </td>
+                        }
+                        @*<td>
+                                <table class="inner-table">
+                                    <tr onclick="getdetails(@item.PatientId,@monthnames.MonthName,@monthnames.YearName)" style="cursor:pointer"></tr>
+                                </table>
+
+
+
+                            </td>*@
+                    }
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    @{
+       // int i;
+        int maxPageNumber = Convert.ToInt32(ViewBag.totalPage);
+        int totalRecord = Convert.ToInt32(ViewBag.totalRecord);
+        int pageSize = Convert.ToInt32(ViewBag.pageSize);
+        int pageNo = Convert.ToInt32(ViewBag.pageNo);
+        
+        <input type="hidden" value="@maxPageNumber" id="hiddenMaxPageNumber" />
+        <input type="hidden" value="@pageSize" id="hiddenpageSize" />
+        <input type="hidden" value="@totalRecord" id="hiddenTotalRecord" />
+        <input type="hidden" value="@pageNo" id="hiddenPageNo" />
+    }
+   
+</div>
+<div class="row">
+    <div class="col-sm-8 pull-right text-right">
+        <nav>
+            <ul class="pagination justify-content-center pagination-lg">
+                <li id="previous-page" class="page-item">
+                    <a class="page-link" href="javascript:void(0)">Prev</a>
+                </li>
+            </ul>
+
+        </nav>
+    </div>
+    <div class="col-sm-4 pull-left text-primary" style="margin-top:30px;font-weight:bold;">
+        <p id="pinfo"></p>
+    </div>
+</div>
+
+<br />
+
+
+<div class="modal fade" id="callhistoryandactivitydetail" tabindex="-1" role="dialog" aria-labelledby="callhistoryandactivitydetail" aria-hidden="true" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Call History and Activity</h4>
+            </div>
+
+            <div class="modal-body">
+                <div id="callhistorybody">
+
+
+                </div>
+
+
+
+
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+            </div>
+
+           
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var p = $('#hiddenMaxPageNumber').val();
+        var r = $('#hiddenTotalRecord').val();
+
+        $('[data-toggle="tooltip"]').tooltip();   
+        //alert(r);
+    });  
+    var p = $('#hiddenMaxPageNumber').val();
+    var s = $('#hiddenpageSize').val();
+    var r = $('#hiddenTotalRecord').val();
+    var pno = $('#hiddenPageNo').val();
+    function getPageList(totalPages, page, maxLength) {
+        if (maxLength < 5) throw "maxLength must be at least 5";
+
+        function range(start, end) {
+            return Array.from(Array(end - start + 1), (_, i) => i + start);
+        }
+
+        var sideWidth = maxLength < 9 ? 1 : 2;
+        var leftWidth = (maxLength - sideWidth * 2 - 3) >> 1;
+        var rightWidth = (maxLength - sideWidth * 2 - 2) >> 1;
+        if (totalPages <= maxLength) {
+            // no breaks in list
+            return range(1, totalPages);
+        }
+        if (page <= maxLength - sideWidth - 1 - rightWidth) {
+            // no break on left of page
+            return range(1, maxLength - sideWidth - 1)
+                .concat([0])
+                .concat(range(totalPages - sideWidth + 1, totalPages));
+        }
+        if (page >= totalPages - sideWidth - 1 - rightWidth) {
+            // no break on right of page
+            return range(1, sideWidth)
+                .concat([0])
+                .concat(
+                    range(totalPages - sideWidth - 1 - rightWidth - leftWidth, totalPages)
+                );
+        }
+        // Breaks on both sides
+        return range(1, sideWidth)
+            .concat([0])
+            .concat(range(page - leftWidth, page + rightWidth))
+            .concat([0])
+            .concat(range(totalPages - sideWidth + 1, totalPages));
+    }
+
+    $(function () {
+        // Number of items and limits the number of items per page
+        var numberOfItems = r;
+        var limitPerPage = s;
+        // Total pages rounded upwards
+        var totalPages = Math.ceil(numberOfItems / limitPerPage);
+        //alert(totalPages);
+        //alert(limitPerPage);
+        var currentRecord = pno * limitPerPage;
+        
+        // Number of buttons at the top, not counting prev/next,
+        // but including the dotted buttons.
+        // Must be at least 5:
+        $('#pinfo').html("<span>Showing "+ (currentRecord - limitPerPage + 1) +" to " + currentRecord +" of " + numberOfItems + " entries")
+        var paginationSize = 10;
+        var currentPage;
+       // alert(pno);
+
+        function showPage(whichPage) {
+            if (whichPage < 1 || whichPage > totalPages) return false;
+            currentPage = whichPage;
+            
+            //$("#jar .content")
+            //    .hide()
+            //    .slice((currentPage - 1) * limitPerPage, currentPage * limitPerPage)
+            //    .show();
+            // Replace the navigation items (not prev/next):
+            $(".pagination li").slice(1, -1).remove();
+            getPageList(totalPages, currentPage, paginationSize).forEach(item => {
+                $("<li>")
+                    .addClass(
+                        "page-item " +
+                        (item ? "current-page " : "") +
+                        (item === currentPage ? "active " : "")
+                    )
+                    .append(
+                        $("<a>")
+                            .addClass("page-link")
+                            .attr({
+                                href: "javascript:void(0)",
+                                id:"linkpage"
+                            })
+                            .text(item || "...")
+                    )
+                    .insertBefore("#next-page");
+            });
+            return true;
+        }
+
+        // Include the prev/next buttons:
+        $(".pagination").append(
+            $("<li>").addClass("page-item").attr({ id: "previous-page" }).append(
+                $("<a>")
+                    .addClass("page-link")
+                    .attr({
+                        href: "javascript:void(0)",
+                        
+                        
+                    })
+                    .text("Prev")
+            ),
+            $("<li>").addClass("page-item").attr({ id: "next-page" }).append(
+                $("<a>")
+                    .addClass("page-link")
+                    .attr({
+                        href: "javascript:void(0)",
+                        
+                    })
+                    .text("Next")
+            )
+        );
+       
+        showPage(parseInt(pno));
+        // Show the page links
+        //$("#jar").show();
+        //if (pno == 1) {
+        //    showPage(1)
+        //}
+        //else {
+        //    showPage(pno);
+        //}
+        
+
+        // Use event delegation, as these items are recreated later
+        $(
+            document
+        ).on("click", ".pagination li.current-page:not(.active)", function () {
+            return showPage(+$(this).text());
+        });
+        //$("#next-page").on("click", function () {
+        //    alert('next');
+        //});
+
+        $("#previous-page").on("click", function () {
+            return showPage(parseInt(pno) - 1);
+        });
+        $(".pagination").on("click", function () {
+            $("html,body").animate({ scrollTop: 0 }, 0);
+        });
+    });
+   
+    $('#callhistoryandactivitydetail').on('shown.bs.modal', function () {
+        $($.fn.dataTable.tables(true)).DataTable()
+            .columns.adjust();
+                                        });
+    function getdetails(id, month,year) {
+        $(".loader").show();
+        $.ajax({
+                                                type: 'GET',
+            cache: false,
+            url: "/Home/TotalCallsandReviewTime?PatientId=" + id + "&Month=" + month + "&Year="+ year,
+
+            success: function (data, textStatus, jqXHR) {
+                $(".loader").hide();
+                $("#callhistorybody").html(data, function () {
+                  //  $("#patientname").val(patientid + " " + patientname);
+                                                    });
+              
+                $("#callhistoryandactivitydetail").modal("show");
+                $($.fn.dataTable.tables(true)).DataTable()
+                    .columns.adjust();
+
+
+
+
+                                                },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $(".loader").hide();
+                                                }
+                                            });
+    }
+    
+        $('#yearlyhistory').DataTable({
+            defaultLength: 10,
+            searching: false,
+            paging: false,
+            bInfo:false,
+            scrollX: true,
+            scrollCollapse: true,
+            scrollY: "400px",
+            fixedColumns: true,
+            fixedColumns: {
+                leftColumns: 2
+            },
+            lengthMenu: [
+                [10, 25, 50],
+                ['10 rows', '25 rows', '50 rows']
+            ],
+        });
+   
+   
+</script>
+    @*<div class="col-md-12 nopadding">
+            <div class="patientname headername">
+
+            </div>
+            <div class="allmontnames">
+                @foreach (var monthnames in item.MonthNames.Where(x => x.callDurationandTypes != null).ToList())
+                {
+                    <div class="monthtypedata">
+
+
+                        @foreach (var types in monthnames.callDurationandTypes)
+                        {
+                            <div class="calltypeitem">
+                                <i class="fa fa-phone"></i>
+                                @types.CallDuration
+                            </div>
+                        }
+                        <div class="clearfix"></div>
+                    </div>
+                }
+            </div>
+
+        </div>
+                    <div class="row">
+
+                    </div>
+                    </div>*@

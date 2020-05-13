@@ -1,0 +1,102 @@
+﻿@model IEnumerable<CCM.Models.Icd10Codes>
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = ViewBag.patientId })*@
+
+@*<p>
+        @Html.ActionLink("Details", "Details", "Patient", new { id = ViewBag.patientId }, new { @class = "btn btn-warning" })
+    </p>
+    <br />*@
+
+<div class="custom-title">
+    <h4>
+       Diagnosis
+    </h4>
+</div>
+<p>
+    <a class="btn btn-success logdetails" onclick="AjaxRefresh('Icd','_Create', '@ViewBag.PatientId')"> Create New</a>
+    @*@Html.ActionLink("Create New", "Create", new { patientId = ViewBag.patientId }, new { @class = "btn btn-success logdetails" })*@
+</p>
+<table class="table" id="lcdDatatable">
+    <thead>
+        <tr>
+            <th>
+                Diagnosis
+            </th>
+            <th>
+                ICD-9 Codes
+            </th>
+            <th>Disease State</th>
+            <th>Disease Type</th>
+            <th>Disease History</th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateCreated)
+            </th>
+            <th>Options</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Code10)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Code9)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DiseaseState)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DiseaseType)
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DiseaseHistory)
+
+                </td>
+                <td>
+                    @if (item.DateCreated != null)
+                    {
+                        var str = item.DateCreated.Value.ToString("MM/dd/yyyy");
+                        @str
+                    }
+                </td>
+                <td>
+                    @*@Html.ActionLink("Edit", "Edit", new { id = item.Id, patientId = item.PatientId }, new { @class = "logdetails" })*@
+
+                    <a onclick="AjaxRefreshMulti('Icd','_Edit',@item.Id,@item.PatientId)" class="logdetails">Edit</a>
+                    |
+                    <a onclick="AjaxActionReturns('Icd','_Delete',@item.Id)" class="logdetails">Delete</a>
+                    @*@Html.ActionLink("Delete", "Delete", new { id = item.Id, patientId = item.PatientId }, new { @class = "logdetails" })*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    $('#lcdDatatable').DataTable({
+        pageLength: 25,
+        "order": []
+    });
+</script>
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+    </SCRIPT>
+}

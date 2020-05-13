@@ -1,0 +1,38 @@
+﻿
+@{
+    Layout = null;
+}
+
+<table class="table" id="AdditionalProviderG0506">
+    <thead>
+        <tr>
+            <th>Doctor's Full Name</th>
+            <th>Speciality</th>
+            <th>DoctorType</th>
+
+            <th>Last Visited</th>
+            <th>Next Appointment</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Share Care Plan</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.AdditionalProviders as List<CCM.Models.DataModels.G0506_AdditionalProviders>)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Speciality)</td>
+                <td>@Html.DisplayFor(modelItem => item.DoctorType)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.LastVisit)</td>
+                <td>@Html.DisplayFor(modelItem => item.NextAppointment)</td>
+                <td>@Html.DisplayFor(modelItem => item.MobilePhoneNumber)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@item.IsShareCarePlan</td>
+
+            </tr>
+        }
+    </tbody>
+</table>

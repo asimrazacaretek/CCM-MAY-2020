@@ -1,0 +1,374 @@
+﻿@model  IEnumerable<CCM.Models.LiaisonHourlyPerformance>
+<style>
+    .pageitemactivity {
+        margin: 14px;
+        box-shadow: 0 2px 13px rgba(44, 49, 66, 0.85);
+        height: 90px;
+        border: 0px;
+        border-radius: 5px;
+        width: 12%;
+        float: left;
+    }
+
+    .pagename {
+        white-space: nowrap;
+        width: 100%;
+        text-align: center;
+        color: white;
+        background-color: #0364bd;
+        padding: 10px 7px;
+        font-size: 13px;
+        height: 35px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .pageTime {
+        width: 100%;
+        text-align: center;
+        font-size: 20px !important;
+    }
+
+    .jqplot-table-legend {
+        top: 16px !important;
+        right: 42px !important;
+    }
+
+        .jqplot-table-legend td {
+            border: 0px solid !important;
+        }
+
+    .nav-tabsnew {
+        margin-left: 0px !important;
+    }
+
+    .tab-content {
+        border: 1px solid #ddd;
+        float: left;
+        width: 100%;
+        background-color: white;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+    .nopadding {
+        padding: 0px !important
+    }
+
+    .nav-tabsnew a {
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .hourname {
+        width: 156px;
+        text-align: center;
+        padding: 8px 3px;
+        background: #0364bd;
+        color: white;
+        outline: 1px solid #ddd;
+        font-size:11px;
+    }
+
+    .numbercol {
+        width: 1.67%;
+        outline: 1px solid #ddd;
+        text-align: center;
+        padding-top: 6px;
+    }
+
+    .maincontainer {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .Red {
+        background: rgba(255, 4, 0, 0.9);
+        color: white;
+    }
+
+    .Yellow {
+        background: #ffff00;
+    }
+
+    .Orange {
+        background-color: orange;
+    }
+
+    .DarkGreen {
+        background: rgba(25, 148, 117, 0.9);
+    }
+
+    .Green {
+        background: rgba(170, 202, 91, 0.9);
+    }
+
+    .Blue {
+        background: rgba(0, 43, 255, 0.9);
+        color: white !important;
+    }
+    .SkyBlue {
+        background: rgb(0, 208, 255);
+       
+    }
+    .DarkBlue {
+        background: rgb(25, 18, 82);
+        color: white !important;
+    }
+    .numberhead {
+        background: #0364bd;
+        color: white;
+    }
+
+    .colordefination {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .colordef {
+        padding: 5px 10px;
+        text-align: center;
+        width: 13%;
+        font-weight: bold;
+        font-size: 14px;
+        color: black;
+        border: 1px solid;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin:2px;
+    }
+        .colordef span{
+            vertical-align:middle;
+        }
+        .typedef {
+        }
+
+    .status-parent {
+        display: flex;
+        flex-direction: row;
+    }
+
+        .status-parent .typedef {
+            width: 60px;
+            text-align: center;
+            outline: 1px solid #ccc;
+            /*padding-top: 5px;*/
+        font-size: 11px;
+        text-align: center;
+        outline: 1px solid #ccc;
+        /*padding-top: 6px;*/
+    }
+
+    .datestr {
+        width: 100%;
+        font-size: 20px;
+        font-family: Calibri;
+    }
+    .mintuepercent, .minutesonly {
+        float: left;
+        width: 50%;
+        height:100%;
+    }
+        .mintuepercent:first-child {
+            border-right:1px solid #000;
+            padding-top:7px;
+        }
+    .minute-div {
+        padding-top: 7px;
+       
+    }
+        p {
+            margin: 0;
+            font-size:11px;
+        }
+        .Blue p,.SkyBlue p,.DarkBlue p{
+            padding-top:6px;
+        }
+</style>
+<div class="col-md-12 nopadding">
+    @{
+        if (ViewBag.Message != null)
+        {
+            <h2>@ViewBag.Message</h2>
+        }
+        else
+        {
+            <label class="datestr">
+                @ViewBag.DateStr
+            </label>
+            <label class="datestr">
+                Business Hours: @ViewBag.Bussinesshours
+            </label>
+            <div class="colordefination">
+                <div class="Red colordef">
+                    <span>Not Login</span>
+                    
+                </div>
+                <div class="Orange colordef">
+                    <span>Idle</span>
+                    
+                </div>
+                <div class="Yellow colordef">
+                    <span>Less than 2 minutes idle</span>
+                    
+                </div>
+                <div class="Green colordef">
+                    <span>Patient Profile</span>
+                    
+                </div>
+                <div class="DarkGreen colordef">
+                    <span>Patient Profile + Phone Call</span>
+                    
+                </div>
+                <div class="Blue colordef">
+                    <span>Careplan Submitted</span>
+                    
+                </div>
+                <div class="DarkBlue colordef">
+                    <span>Careplan Resubmitted</span>
+                    
+                </div>
+                <div class="SkyBlue colordef">
+                    <span>Ready for Counsler Reiview</span>
+                    
+                </div>
+            </div>
+            <div class="maincontainer">
+                <div class="hourname">Time</div>
+                @for (int i = 0; i <= 59; i++)
+                {
+                    <div class="numbercol numberhead">
+                        @((i + 1).ToString("00"))
+
+
+                    </div>
+                }
+                <div class="status-parent">
+                    @foreach (var item in Model.FirstOrDefault().minuteandTypesPercent)
+                    {
+                        <div class="typedef @item.Type">
+                            <p>
+                                @item.Type
+                            </p>
+                            @if (item.Type != "Blue" && item.Type != "SkyBlue" && item.Type !="DarkBlue")
+                            {
+                                <div class="mintuepercent">
+                                    %
+                                </div>
+                                <div class="minutesonly">
+                                    min
+                                </div>
+                            }
+                            else
+                            {
+                                <p style="padding-top:0">Count</p>
+                            }
+
+                        </div>
+                    }
+                </div>
+            </div>
+            foreach (var item in Model)
+            {
+                <div class="maincontainer">
+                    <div class="hourname">@item.HourName</div>
+                    @foreach (var item2 in item.minuteandTypes)
+                    {
+                        <div class="@item2.Type numbercol">
+                            @if (item2.isCarePlanSubmitted == "")
+                            {
+                                @((item2.Minute + 1).ToString("00"))
+                            }
+                            else
+                            {
+                                var min = (item2.Minute + 1).ToString("00") + "*";
+                                @min
+                            }
+
+                        </div>
+                    }
+                    <div class="status-parent">
+                        @foreach (var item3 in item.minuteandTypesPercent)
+                        {
+                            <div class="typedef @item3.Type">
+                                @{
+                                    var minutetoshow = "";
+                                    if (item3.Type != "Blue" && item3.Type != "SkyBlue" && item3.Type !="DarkBlue")
+                                    {
+                                        minutetoshow = item3.Minute.ToString();
+                                        <div class="mintuepercent">
+                                            @minutetoshow
+                                        </div>
+                                        <div class="minutesonly minute-div">
+                                            @item3.MinutesOnly
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        minutetoshow = item3.Minute.ToString();
+                                        <p>
+                                            @minutetoshow
+                                        </p>
+
+                                    }
+
+
+                                }
+
+
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+            }
+            <div class="maincontainer">
+                <div class="hourname">Total</div>
+                @for (int i = 0; i <= 59; i++)
+                {
+                    <div class="numbercol numberhead">
+                        @((i + 1).ToString("00"))
+                    </div>
+                }
+                <div class="status-parent">
+                    @{
+                        var lstaverage = ViewBag.Totals as List<CCM.Models.MinuteandType>;
+                        foreach (var item in ViewBag.Totals)
+                        {
+                            <div class="typedef @item.Type">
+                                @{ string averagestr = "";
+                                    if (item.Type != "Blue" && item.Type != "SkyBlue" && item.Type !="DarkBlue")
+                                    {
+                                        decimal average = Convert.ToDecimal(item.Minute) / (Convert.ToDecimal(Model.Count()));
+                                        averagestr = average.ToString("N0");
+                                        <div class="mintuepercent">
+                                            @averagestr %
+                                        </div>
+                                        <div class="minutesonly minute-div">
+                                            @item.MinutesOnly min
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        averagestr = item.Minute.ToString();
+                                        <p>
+                                            @averagestr
+                                        </p>
+
+                                    }
+
+                                }
+
+
+                            </div>
+                        }
+                    }
+
+                </div>
+            </div>
+        }
+    }
+
+</div>

@@ -1,0 +1,684 @@
+﻿@model CCM.Models.Patient
+
+<link href="~/Content/Plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" />
+<link href="~/Content/Plugins/magiczoomplus/magiczoomplus.module.css" rel="stylesheet" />
+<script src="~/Content/Plugins/magiczoomplus/magiczoomplus.js"></script>
+<style>
+    .imagandlabeldetails {
+        float: left;
+        width: 100%;
+        border-radius: 2px;
+        border: 1px solid;
+        margin: 6px 0px;
+        box-shadow: 0 2px 2px rgba(21, 27, 45, 0.85);
+        max-height: 116px;
+        overflow: hidden;
+    }
+
+        .imagandlabeldetails label {
+            float: left;
+            width: 100%;
+            color: white;
+            background-color: #0364bd;
+            padding: 5px;
+            margin-bottom: 0px;
+        }
+
+    .close-large-img {
+        position: absolute;
+        right: 33px;
+        left: auto;
+        margin-top: 3px;
+        color: white;
+        font-size: 15px;
+    }
+</style>
+@using (Html.BeginForm("LaboratoryResult", "PatientProfile", FormMethod.Post, new { @class = "form-horizontal frmStyle", id = "frmpatientLaboratory", role = "form", enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+    <div class="row card" style="padding:0;">
+        <div class="custom-title">
+            <h4 data-toggle="collapse" href="#collapseExample2" role="button" aria-expanded="true" aria-controls="collapseExample2" class="expand-section collapse in">
+                LAB RECORDS ADD/UPDATE
+                <i class="fa fa-caret-down pull-right"></i>
+            </h4>
+        </div>
+        <div class="expand-section collapse in  " id="collapseExample2" style="height: 276px;">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>LAB Records</label>
+                    <input type="file" name="PhotoEmrRecords1" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>LAB Records 2</label>
+                    <input type="file" name="PhotoEmrRecords2" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>LAB Records 3</label>
+                    <input type="file" name="PhotoEmrRecords3" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>LAB Records 4</label>
+                    <input type="file" name="PhotoEmrRecords4" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+
+                <div class="col-md-3">
+                    <label>LAB Records 5</label>
+                    <input type="file" name="PhotoEmrRecords5" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+
+                <div class="col-md-3">
+                    <label>LAB Records 7</label>
+                    <input type="file" name="PhotoEmrRecords7" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>LAB Records 8</label>
+                    <input type="file" name="PhotoEmrRecords8" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>LAB Records 9</label>
+                    <input type="file" name="PhotoEmrRecords9" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label>LAB Records 10</label>
+                    <input type="file" name="PhotoEmrRecords10" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>LAB Records 11</label>
+                    <input type="file" name="PhotoEmrRecords11" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>LAB Records 12</label>
+                    <input type="file" name="PhotoEmrRecords12" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>LAB Records 13</label>
+                    <input type="file" name="PhotoEmrRecords13" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label>LAB Records 14</label>
+                    <input type="file" name="PhotoEmrRecords14" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>LAB Records 15</label>
+                    <input type="file" name="PhotoEmrRecords15" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>LAB Records 6 (PDF Only)</label>
+                    <input type="file" name="PhotoEmrRecords6" id="fileUpload" class="form-control border-input" accept=".pdf" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Upload Photo</label>
+                    <input type="file" name="Photo" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        <br /><button type="button" id="_Save" class="btn btn-success logdetails">Update / Save</button>
+    </div>
+
+
+
+    @Html.HiddenFor(patient => patient.Id)
+    @Html.HiddenFor(patient => patient.CreatedOn)
+    @Html.HiddenFor(patient => patient.CreatedBy)
+
+    @Html.HiddenFor(patient => patient.Prefix)
+    @Html.HiddenFor(patient => patient.FirstName)
+    @Html.HiddenFor(patient => patient.MiddleName)
+    @Html.HiddenFor(patient => patient.LastName)
+    @Html.HiddenFor(patient => patient.Suffix)
+    @Html.HiddenFor(patient => patient.BirthDate)
+    @Html.HiddenFor(patient => patient.Gender)
+
+    @Html.HiddenFor(patient => patient.MobilePhoneNumber)
+    @Html.HiddenFor(patient => patient.HomePhoneNumber)
+    @Html.HiddenFor(patient => patient.HomePhoneNumber)
+    @Html.HiddenFor(patient => patient.WorkPhoneNumber)
+    @Html.HiddenFor(patient => patient.EmergencyNumber)
+    @Html.HiddenFor(patient => patient.BestContactTime)
+    @Html.HiddenFor(patient => patient.AllowText)
+    @Html.HiddenFor(patient => patient.AllowEmail)
+    @Html.HiddenFor(patient => patient.BuildingType)
+    @Html.HiddenFor(patient => patient.DeliveryPermisison)
+    @Html.HiddenFor(patient => patient.DeliveryInstruction)
+
+    @Html.HiddenFor(patient => patient.LiaisonId)
+    @Html.HiddenFor(patient => patient.MedicaidIdNumber)
+    @Html.HiddenFor(patient => patient.MedicareIdNumber)
+    @Html.HiddenFor(patient => patient.OtherInsuranceIdNumber)
+    <input type="hidden" id="EnrollmentStatushiden" name="EnrollmentStatushiden" value="@Model.EnrollmentStatus" />
+    <input type="hidden" id="EnrollmentSubStatushiden" name="EnrollmentSubStatushiden" value="@Model.EnrollmentSubStatus" />
+    <input type="hidden" id="EnrollmentSubStatusReasonhiden" name="EnrollmentSubStatusReasonhiden" value="@Model.EnrollmentSubStatusReason" />
+    <input type="hidden" id="patientEnrollmentOldsubstatus" name="EnrollmentSubStatusReasonhiden" value="@ViewBag.patientOldSubStatus" />
+    @Html.HiddenFor(patient => patient.CcmStatus)
+    @Html.HiddenFor(patient => patient.CCMEnrolledBy)
+    @Html.HiddenFor(patient => patient.CCMEnrolledOn)
+    @Html.HiddenFor(patient => patient.CcmClinicalSignOffDate)
+    @Html.HiddenFor(patient => patient.CcmClaimSubmissionDate)
+    @Html.HiddenFor(patient => patient.CcmReconciliationDate)
+    @Html.HiddenFor(patient => patient.CcmBillingCode)
+    @Html.HiddenFor(patient => patient.CcmBillingCode2)
+    @Html.HiddenFor(patient => patient.Cycle)
+    @Html.HiddenFor(patient => patient.FinalCarePlanPdf)
+
+    @Html.HiddenFor(patient => patient.CaretakerFirstName)
+    @Html.HiddenFor(patient => patient.CaretakerLastName)
+    @Html.HiddenFor(patient => patient.CaretakerPhoneNumber)
+    @Html.HiddenFor(patient => patient.CaretakerRelationship)
+
+    // Profile
+    @Html.HiddenFor(patient => patient.ProfileId)
+    @Html.HiddenFor(patient => patient.ContactId)
+    @Html.HiddenFor(patient => patient.AddressId)
+    @Html.HiddenFor(patient => patient.UrgencyContactId)
+    @Html.HiddenFor(patient => patient.InsuranceId)
+
+    // Medical History
+    @Html.HiddenFor(patient => patient.MedicalStatusId)
+    @Html.HiddenFor(patient => patient.MedicalConditionId)
+    @Html.HiddenFor(patient => patient.FamilyHistoryId)
+    @Html.HiddenFor(patient => patient.AllergyId)
+    @Html.HiddenFor(patient => patient.MedicationOtcId)
+
+    // Lifestyle
+    @Html.HiddenFor(patient => patient.WorkAndRelationshipId)
+    @Html.HiddenFor(patient => patient.DietAndHabitId)
+    @Html.HiddenFor(patient => patient.LifeStressId)
+    @Html.HiddenFor(patient => patient.NutritionalSupplementId)
+    @Html.HiddenFor(patient => patient.LiasionAssignedBy)
+    @Html.HiddenFor(patient => patient.LiasionAssignedOn)
+    @Html.HiddenFor(patient => patient.TranslatorId)
+    @Html.HiddenFor(patient => patient.TranslatorAssignedOn)
+    @Html.HiddenFor(patient => patient.TranslatorAssignedBy)
+    @Html.HiddenFor(patient => patient.PhysicianId)
+}
+
+<div class="row" style="margin-top:100px;">
+
+    @foreach (var labResult in ViewBag.MyList)
+    {
+        <div class="col-md-3" style="display:grid">
+            <div class="imagandlabeldetails">
+                <label>EMR Records 9</label>
+                <button type="button" style="position: absolute;left: 84%;position: absolute; z-index: 2; padding: 4px; top: 9px; z-index: 3;" class="delete-btn btn btn-danger glyphicon glyphicon-trash DeleteFile" data-id="@labResult.Id" onclick="AjaxActionReturns('PatientProfile','_DeleteLabRes', @labResult.Id)"></button>
+
+                <div class="close-large-img"><img style="width: 8%; float: right; filter: invert(1); margin-top: 2px;" src="~/images/Minimize.png"/></div>
+                <a class="MagicZoom" style="height: 129px; overflow: hidden;" data-options="expand: off;zoomCaption:off;zoomPosition: inner;rightClick:false;hint:off" href="@labResult.FilePath">
+
+                    <img src="@labResult.FilePath" alt="" />
+                </a>
+                <div class="imageuploadify-details1" style="opacity: 0;">
+                    <span>Last images</span>
+                    <span>@labResult.PatientId</span>
+                    <span>@labResult.Id</span>
+                </div>
+            </div>
+        </div>
+
+        @*<div class="col-md-2">
+                <div class="imageuploadify-container1" style="margin-left: 6px; margin-right: 0px;">
+
+                    <button type="button" style="position: absolute; z-index: 2; left: 133px;" class="btn btn-danger glyphicon glyphicon-remove DeleteFile" data-id="@labResult.Id" onclick="AjaxActionReturns('PatientProfile','_DeleteLabRes', @labResult.Id)"></button>
+                    <a class="MagicZoom" style="height: 129px; overflow: hidden;" data-options="zoomMode: off;zoomCaption:off;rightClick:false;hint:off" href="@labResult.FilePath">
+
+                        <img src="@labResult.FilePath" onclick="openLargeImage(this)" data-name="@labResult.FileName" data-toggle="tooltip" data-placement="top" title="Click to View Details!" data-original-title="Click to View Details!">
+                    </a>
+                    <div class="imageuploadify-details1" style="opacity: 0;">
+                        <span>Last images</span>
+                        <span>@labResult.PatientId</span>
+                        <span>@labResult.Id</span>
+                    </div>
+                </div>
+            </div>*@
+    }
+
+</div>
+
+
+
+<script>
+
+    $("figure img").click(function () {
+
+        $(this).parent().parent().parent().parent().addClass("col-md-12", { duration: 500 });
+        $(this).parent().parent().parent().parent().css("width", "max");
+        $(this).parent().parent().parent().parent().removeClass("col-md-3");
+        $(this).parent().parent().parent().css("max-height", "initial");
+        $(this).parent().parent().css("height", "auto");
+        $(this).parent().parent().parent().find(".close-large-img").show();
+        $(this).parent().parent().parent().find(".delete-btn").css("left","92%");
+
+    })
+    $(".close-large-img ").click(function () {
+        $(this).parent().css("max-height: 116px;");
+        $(this).parent().parent().addClass("col-md-3", { duration: 500 });
+
+        $(this).parent().parent().removeClass("col-md-12", { duration: 500 });
+        $(this).next().animate({ height: '86px' }, { duration: 500 })
+        $(this).prev().css("left", "84%");
+        $(this).hide();
+    });
+    $("#Save, #_Save").click(function () {
+        if ($("#EMRNumber").val() == "") {
+            swal("Please enter EMR number");
+            $("#EMRNumber").focus();
+            return false;
+        }
+        if ($("#CapitatedPatient").val() == "Yes") {
+            debugger;
+            if ($("#CapitatedFrom").val() == "" && $("#CapitatedTo").val() == "") {
+                swal("Please select Capitated dates.");
+                return false;
+            }
+            swal({
+                title: "Capitated",
+                text: "Do you want to move patient to Capitated as it will move to (Not Qualifified under Capitated) ?",
+                icon: "warning",
+                buttons: true,
+                showCancelButton: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $(".loader").show();
+
+                        $("#EnrollmentStatushiden").val("Not Qualified");
+                        $("#EnrollmentSubStatushiden").val("NQ - Capitated");
+                        debugger;
+                        SubmitForm("frmpatientLaboratory", "Update");
+                        //$('#patientupdate').submit(function () {
+                        //        $.ajax({
+                        //            url: $('#patientupdate').attr('action'),
+                        //            type: 'POST',
+                        //            data: $('#patientupdate').serialize(),
+                        //            success: function (response) {
+                        //                Swal('Good job!', "The server says: " + response,                   'success')
+                        //            }
+                        //        });
+                        //        return false;
+                        //    });
+
+                        //var a = $("#patientupdate").submit();
+
+                    } else {
+                        return false;
+                    }
+                });
+        }
+        else {
+            //$("#patientupdate").submit();
+            SubmitForm("frmpatientLaboratory", "Update");
+        }
+    });
+
+    //$("#Narrrative").click(function() {
+
+    //});
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var patientid =@Model.Id;
+        var error = '@ViewBag.Msg';
+
+
+        $(".close-large-img").hide();
+
+
+        $(".loader").hide();
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*@model CCM.Models.Patient_Images*@
+
+@*<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">*@
+@*<style>
+        .imageuploadify {
+            border: 2px dashed #d2d2d2;
+            position: relative;
+            min-height: 250px;
+            min-width: 250px;
+            max-width: 100% !important;
+            margin: auto;
+            display: flex;
+            padding: 0;
+            flex-direction: column;
+            text-align: center;
+            background-color: #fff;
+            color: #3AA0FF
+        }
+
+        .imageuploadify-overlay {
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            flex-direction: column;
+            top: 0;
+            left: 0;
+            display: none;
+            font-size: 7em;
+            background-color: rgba(242,242,242,.7);
+            text-align: center;
+            pointer-events: none
+        }
+
+            .imageuploadify-overlay i {
+                z-index: 10;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%);
+                pointer-events: none
+            }
+
+        .imageuploadify-images-list {
+            display: inline-block
+        }
+
+            .imageuploadify-images-list i {
+                display: block;
+                font-size: 5em;
+                text-align: center;
+                margin: .5em auto;
+                margin-bottom: 7px;
+                /*padding-bottom: 12px*/
+            }
+
+        span.imageuploadify-message {
+            font-size: 24px;
+            border-top: 1px solid #3AA0FF;
+            border-bottom: 1px solid #3AA0FF;
+            padding: 10px;
+            display: inline-block
+        }
+
+        .imageuploadify-images-list button.btn-default {
+            display: block;
+            color: #3AA0FF;
+            border-color: #3AA0FF;
+            border-radius: 1em;
+            margin: 25px auto;
+            width: 100%;
+            max-width: 500px;
+            cursor: pointer;
+        }
+
+        .imageuploadify-container {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            overflow: hidden;
+            float: left;
+            margin: 0 1em 1em 1em !important;
+            border-radius: 12px;
+            box-shadow: 0 0 4px 0 #888
+        }
+
+            .imageuploadify-container button.btn-danger {
+                position: absolute;
+                top: 3px;
+                right: 3px;
+                width: 20px;
+                height: 20px;
+                border-radius: 15px;
+                font-size: 10px;
+                line-height: 1.42;
+                padding: 0;
+                text-align: center;
+                z-index: 3
+            }
+
+            .imageuploadify-container img {
+                height: 100px;
+                left: 50%;
+                position: absolute;
+                top: 50%;
+                transform: translate(-50%,-50%);
+                width: auto
+            }
+
+            .imageuploadify-container .imageuploadify-details {
+                position: absolute;
+                top: 0;
+                padding-top: 20px;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                background: rgba(255,255,255,.5);
+                z-index: 2;
+                opacity: 0
+            }
+
+                .imageuploadify-container .imageuploadify-details span {
+                    display: block
+                }
+
+        /*//////*/
+        .imageuploadify-container1 {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            overflow: hidden;
+            float: right;
+            margin: 0 1em 1em 1em !important;
+            border-radius: 12px;
+            box-shadow: 0 0 4px 0 #888;
+            top: 20px;
+        }
+
+            .imageuploadify-container1 img {
+                height: 100px;
+                left: 50%;
+                position: absolute;
+                top: 50%;
+                transform: translate(-50%,-50%);
+                width: 100px;
+                cursor: pointer;
+            }
+
+            .imageuploadify-container1 .imageuploadify-details {
+                position: absolute;
+                top: 0;
+                padding-top: 20px;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                background: rgba(255,255,255,.5);
+                z-index: 2;
+                opacity: 0
+            }
+
+                .imageuploadify-container1 .imageuploadify-details span {
+                    display: block
+                }
+
+        .filname {
+            text-align: center;
+            z-index: 1;
+            position: absolute;
+            top: 1px;
+            padding: 7px;
+            display: block;
+            font-size: 1em;
+            text-align: center;
+            /*margin: .5em auto;*/
+            margin-bottom: 7px;
+        }
+
+        .imageuploadify-container1 button.btn-danger {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 20px;
+            height: 20px;
+            border-radius: 15px;
+            font-size: 10px;
+            line-height: 1.42;
+            padding: 0;
+            text-align: center;
+            z-index: 3;
+            padding-right: 0 !important;
+        }
+        .loader {
+            position: unset;
+        }
+    </style>
+    <script type="text/javascript">
+        function openLargeImage(imgpath) {
+            debugger;
+            var name = imgpath.attributes[2].value;
+            var src = imgpath.src;
+
+            $("#imgLargeBox").attr("src", src);
+            $("#exampleModalLongTitle").text(name)
+            $('#imgbox').modal('show');
+        }
+
+    </script>
+    @using (Html.BeginForm("LaboratoryResult", "PatientProfile", FormMethod.Post,
+            new { id = "frmpatientLaboratory", @class = "frmStyle", enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.Hidden("patientId", Model.PatientId, new { @id = "patientId" })*@
+@*old and already commented <input type="hidden" name="Files" id="uploFilesadFiles" />*@
+@*  <div class="custom-title">
+            <h3>Patient Laboratory Results</h3>
+        </div>
+       <input type="file" name="upload" accept="image/*" multiple>
+        <input type="hidden" name="uploadFiles" id="uploadFiles" />
+
+        <button class="btn btn-success" type="button" id="btnUpdateLaboratory">Update Laboratory Result</button>
+
+        foreach (var labResult in ViewBag.MyList)
+        {
+            <div class="imageuploadify-container1" style="margin-left: 6px; margin-right: 0px;">
+                <button type="button" class="btn btn-danger glyphicon glyphicon-remove DeleteFile" data-id="@labResult.Id" onclick="AjaxActionReturns('PatientProfile','_DeleteLabRes', @labResult.Id)"></button>
+                <span class="filname">@labResult.FileName</span>
+                <img src="@labResult.FilePath" onclick="openLargeImage(this)" data-name="@labResult.FileName" data-toggle="tooltip" data-placement="top" title="Click to View Details!" data-original-title="Click to View Details!">
+                <div class="imageuploadify-details1" style="opacity: 0;">
+                    <span>Last images</span>
+                    <span>@labResult.PatientId</span>
+                    <span>@labResult.Id</span>
+                </div>
+            </div>
+        }
+    }
+
+    <script src="~/Scripts/imageuploadify.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('input[type="file"]').imageuploadify();
+            $(".loader").hide();
+        });
+
+        $("#btnUpdateLaboratory").click(function () {
+            debugger;
+            uploadFiles = [];
+            $('.imageuploadify-container').each(function () {
+                var src = $(this).find('img').attr("src");
+                if ($("#uploadFiles").val() == "")
+                    $("#uploadFiles").val(src);
+                else {
+                    var oldstr = $("#uploadFiles").val();
+                    src = oldstr + "|" + src;
+                    $("#uploadFiles").val(src);
+                }
+            });
+            // Outputs: "Hello World!"
+            var patientId = $('#patientId').val();
+            if ($("#uploadFiles").val() == "")
+                return false;
+
+            $(".loader").show();
+
+            var form = $("#frmpatientLaboratory");
+            var formdata = false;
+            if (window.FormData) {
+                formdata = new FormData(form[0]);
+            }
+            if (form.valid() == false) {
+                return false;
+            }
+            var urltosend = form.attr('action');
+            //var datatosend = $("#createform").serialize();
+            var datatosend = formdata ? formdata : form.serialize();
+            $.ajax({
+                type: 'POST',
+                //url: "/PatientProfile/LaboratoryResult?patientId=" + patientId + "&uploadFiles=" + uploadFiles,
+                url: urltosend,
+                data: datatosend,
+                traditional: true,
+                processData: false,
+                contentType: false,
+                //data: { 'patientId': patientId, 'uploadFiles': $("#uploadedfiles").val() },
+                //dataType: "json",
+                success: function (json) {
+                    debugger;
+                    $(".loader").hide();
+                    if (json == "True") {
+                        $("#Laboratory a").trigger("click");
+                        //swal({ title: "Update!", text: "Updated Successfully!", type: "success" }, function () {
+
+                        //    $(".imageuploadify-container").remove();
+                        //    $("#Laboratory a").trigger("click");
+                        //    $("#Files").val('');
+                        //});
+                    }
+                    else {
+                        swal("Error!", "Error Accured :" + json, "error");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $(".loader").hide();
+                    var errorMessage = xhr.status + ': ' + xhr.statusText;
+                    swal("Error!", "Error Accured :" + errorMessage, "error");
+                    $(".imageuploadify-container").remove();
+                    $("#uploadFiles").val('');
+                }
+            });
+        });
+
+        $(".loader").hide();
+    </script>*@

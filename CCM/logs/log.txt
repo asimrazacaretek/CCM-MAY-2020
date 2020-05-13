@@ -1,0 +1,193 @@
+
+
+
+
+
+
+
+
+
+
+
+2019-12-20 18:14:32,424 [10] ERROR CCM.Controllers.PatientWorkAndRelationshipController - 
+bcbfb545-1d9e-40a5-b823-3616c5fc4050-------------Store update, insert, or delete statement affected an unexpected number of rows (0). Entities may have been modified or deleted since entities were loaded. See http://go.microsoft.com/fwlink/?LinkId=472540 for information on understanding and handling optimistic concurrency exceptions.-------------   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at CCM.Controllers.PatientWorkAndRelationshipController.<_Create>d__5.MoveNext() in C:\WorkSpace\CCM\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\PatientWorkAndRelationshipController.cs:line 141--------------------------------------------------END----------------------------------------------
+2019-12-20 18:15:00,180 [85] ERROR CCM.Controllers.PatientWorkAndRelationshipController - 
+bcbfb545-1d9e-40a5-b823-3616c5fc4050-------------Store update, insert, or delete statement affected an unexpected number of rows (0). Entities may have been modified or deleted since entities were loaded. See http://go.microsoft.com/fwlink/?LinkId=472540 for information on understanding and handling optimistic concurrency exceptions.-------------   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at CCM.Controllers.PatientWorkAndRelationshipController.<_Create>d__5.MoveNext() in C:\WorkSpace\CCM\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\PatientWorkAndRelationshipController.cs:line 141--------------------------------------------------END----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2020-01-27 20:05:53,492 [27] ERROR CCM.Controllers.AppointmentController - 
+stanadmin@gmail.com-------bcbfb545-1d9e-40a5-b823-3616c5fc4050
+String was not recognized as a valid DateTime.-----   at System.DateTimeParse.Parse(String s, DateTimeFormatInfo dtfi, DateTimeStyles styles)
+   at System.Convert.ToDateTime(String value)
+   at CCM.Controllers.AppointmentController.<DoctorTime>d__22.MoveNext() in C:\tfs_workspace1\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\AppointmentController.cs:line 1127
+2020-01-27 20:05:54,251 [6] ERROR CCM.Controllers.AppointmentController - 
+stanadmin@gmail.com-------bcbfb545-1d9e-40a5-b823-3616c5fc4050
+String was not recognized as a valid DateTime.-----   at System.DateTimeParse.Parse(String s, DateTimeFormatInfo dtfi, DateTimeStyles styles)
+   at System.Convert.ToDateTime(String value)
+   at CCM.Controllers.AppointmentController.<DoctorTime>d__22.MoveNext() in C:\tfs_workspace1\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\AppointmentController.cs:line 1127
+2020-01-27 20:05:54,762 [21] ERROR CCM.Controllers.AppointmentController - 
+stanadmin@gmail.com-------bcbfb545-1d9e-40a5-b823-3616c5fc4050
+String was not recognized as a valid DateTime.-----   at System.DateTimeParse.Parse(String s, DateTimeFormatInfo dtfi, DateTimeStyles styles)
+   at System.Convert.ToDateTime(String value)
+   at CCM.Controllers.AppointmentController.<DoctorTime>d__22.MoveNext() in C:\tfs_workspace1\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\AppointmentController.cs:line 1127
+2020-01-27 20:05:54,937 [10] ERROR CCM.Controllers.AppointmentController - 
+stanadmin@gmail.com-------bcbfb545-1d9e-40a5-b823-3616c5fc4050
+String was not recognized as a valid DateTime.-----   at System.DateTimeParse.Parse(String s, DateTimeFormatInfo dtfi, DateTimeStyles styles)
+   at System.Convert.ToDateTime(String value)
+   at CCM.Controllers.AppointmentController.<DoctorTime>d__22.MoveNext() in C:\tfs_workspace1\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\AppointmentController.cs:line 1127
+2020-01-27 20:05:55,306 [21] ERROR CCM.Controllers.AppointmentController - 
+stanadmin@gmail.com-------bcbfb545-1d9e-40a5-b823-3616c5fc4050
+String was not recognized as a valid DateTime.-----   at System.DateTimeParse.Parse(String s, DateTimeFormatInfo dtfi, DateTimeStyles styles)
+   at System.Convert.ToDateTime(String value)
+   at CCM.Controllers.AppointmentController.<DoctorTime>d__22.MoveNext() in C:\tfs_workspace1\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\AppointmentController.cs:line 1127
+2020-01-27 20:05:55,723 [10] ERROR CCM.Controllers.AppointmentController - 
+stanadmin@gmail.com-------bcbfb545-1d9e-40a5-b823-3616c5fc4050
+String was not recognized as a valid DateTime.-----   at System.DateTimeParse.Parse(String s, DateTimeFormatInfo dtfi, DateTimeStyles styles)
+   at System.Convert.ToDateTime(String value)
+   at CCM.Controllers.AppointmentController.<DoctorTime>d__22.MoveNext() in C:\tfs_workspace1\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\AppointmentController.cs:line 1127
+2020-01-27 20:05:56,095 [21] ERROR CCM.Controllers.AppointmentController - 
+stanadmin@gmail.com-------bcbfb545-1d9e-40a5-b823-3616c5fc4050
+String was not recognized as a valid DateTime.-----   at System.DateTimeParse.Parse(String s, DateTimeFormatInfo dtfi, DateTimeStyles styles)
+   at System.Convert.ToDateTime(String value)
+   at CCM.Controllers.AppointmentController.<DoctorTime>d__22.MoveNext() in C:\tfs_workspace1\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\AppointmentController.cs:line 1127
+2020-01-27 20:05:56,380 [10] ERROR CCM.Controllers.AppointmentController - 
+stanadmin@gmail.com-------bcbfb545-1d9e-40a5-b823-3616c5fc4050
+String was not recognized as a valid DateTime.-----   at System.DateTimeParse.Parse(String s, DateTimeFormatInfo dtfi, DateTimeStyles styles)
+   at System.Convert.ToDateTime(String value)
+   at CCM.Controllers.AppointmentController.<DoctorTime>d__22.MoveNext() in C:\tfs_workspace1\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\AppointmentController.cs:line 1127
+2020-01-27 20:06:02,681 [27] ERROR CCM.Controllers.AppointmentController - 
+stanadmin@gmail.com-------bcbfb545-1d9e-40a5-b823-3616c5fc4050
+String was not recognized as a valid DateTime.-----   at System.DateTimeParse.Parse(String s, DateTimeFormatInfo dtfi, DateTimeStyles styles)
+   at System.Convert.ToDateTime(String value)
+   at CCM.Controllers.AppointmentController.<DoctorTime>d__22.MoveNext() in C:\tfs_workspace1\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\AppointmentController.cs:line 1127
+2020-01-27 20:06:06,892 [6] ERROR CCM.Controllers.AppointmentController - 
+stanadmin@gmail.com-------bcbfb545-1d9e-40a5-b823-3616c5fc4050
+String was not recognized as a valid DateTime.-----   at System.DateTimeParse.Parse(String s, DateTimeFormatInfo dtfi, DateTimeStyles styles)
+   at System.Convert.ToDateTime(String value)
+   at CCM.Controllers.AppointmentController.<DoctorTime>d__22.MoveNext() in C:\tfs_workspace1\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\AppointmentController.cs:line 1127
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

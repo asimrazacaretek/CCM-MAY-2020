@@ -1,0 +1,75 @@
+﻿@model CCM.Models.PhysiciansGroup
+
+
+<div class="container">
+    <h3>Create New Physicians Group</h3>
+    <hr />
+
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        <div class="row">
+            <div class="col-sm-9 text-center" style="background-color: azure">
+                <h3>@ViewBag.Message</h3>
+
+                @if (!string.IsNullOrEmpty(ViewBag.Password))
+                {
+                    <p>Login Id: @Model.Email</p>
+                    <p>Temporary Password: @ViewBag.Password</p>
+                }
+            </div>
+        </div>
+        <br />
+    }
+
+    <br />
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.GroupName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.GroupName, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "Required" } })
+                    @Html.ValidationMessageFor(model => model.GroupName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MainPhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.MainPhoneNumber, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "Required" } })
+                    @Html.ValidationMessageFor(model => model.MainPhoneNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "Required" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NPI, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.NPI, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "Required" } })
+                    @Html.ValidationMessageFor(model => model.NPI, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create New Physicians Group" class="btn btn-success" />
+                    @Html.ActionLink("Back to List", "Index", null, null, new { @class = "btn btn-success" })
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@Scripts.Render("~/bundles/jqueryval")

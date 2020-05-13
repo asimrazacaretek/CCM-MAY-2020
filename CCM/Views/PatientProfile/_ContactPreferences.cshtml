@@ -1,0 +1,189 @@
+﻿<style>
+    .nav-tabs > li > a {
+        margin-right: 2px;
+        line-height: 1.428571429;
+        border: 1px solid transparent;
+        border-radius: 4px 4px 0 0;
+    }
+
+
+    .tab-content {
+        padding: 15px 10px;
+        margin: 0px 0 20px 0px;
+        box-shadow: 0px 0px 5px #393939;
+        
+        background: #ddd;
+    }
+
+    .nav > li > a {
+        position: relative;
+        display: block;
+        /*padding: 10px 15px;*/
+    }
+
+    .contact-custom-nav-item > a {
+        /* background: #3c4e5e; */
+        background: #3c4e5e;
+        background: -moz-linear-gradient(top, #3c4e5e 1%, #5a646c 100%);
+        background: -webkit-linear-gradient(top, #3c4e5e 1%,#5a646c 100%);
+        background: linear-gradient(to bottom, #3c4e5e 1%,#5a646c 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3c4e5e', endColorstr='#5a646c',GradientType=0 );
+        color: #fff;
+        border-color: #7AC29A;
+        border-radius: 5px;
+        padding:8px;
+    }
+
+    .contact-custom-tabs > li > a:hover, .contact-custom-tabs > li > a:focus {
+        background: #000;
+    }
+
+    /*.nav > li > a:hover, .nav > li > a:focus {
+        background-color: transparent;
+    }*/
+
+    .nav-tabs > li > a:hover {
+        border-color: #eee #eee #ddd;
+    }
+
+    .nav > li > a:hover, .nav > li > a:focus {
+        text-decoration: none;
+        /*background-color: #eee;*/
+    }
+
+    .patient-detail-tabs .nav-tabs > li.active > a, .patient-detail-tabs .nav-tabs > li.active > a:hover, .patient-detail-tabs .nav-tabs > li.active > a:focus {
+        /* background: #034b22; */
+        background: #034b22;
+        background: -moz-linear-gradient(top, #034b22 1%, #1e894c 100%);
+        background: -webkit-linear-gradient(top, #034b22 1%,#1e894c 100%);
+        background: linear-gradient(to bottom, #034b22 1%,#1e894c 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#034b22', endColorstr='#1e894c',GradientType=0 );
+        color: #fff;
+    }
+
+    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+        cursor: default;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-bottom-color: transparent;
+    }
+
+        .contact-custom-tabs > li.active > a, .contact-custom-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+            /* background: #034b22; */
+            background: #034b22;
+            background: -moz-linear-gradient(top, #034b22 1%, #1e894c 100%);
+            background: -webkit-linear-gradient(top, #034b22 1%,#1e894c 100%);
+            background: linear-gradient(to bottom, #034b22 1%,#1e894c 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#034b22', endColorstr='#1e894c',GradientType=0 );
+            color: #fff;
+            border-color: #7AC29A;
+        }
+</style>
+<div >
+    <!-- Parent main content section starts below-->
+    <div class="tab-content" style="width:100%;">
+
+        <div id="contact-pref">
+
+            <div class="tabs-list">
+                <ul class="nav nav-tabs contact-custom-tabs">
+                    <li class="hvr-float-shadow nav-item contact-custom-nav-item active">
+                        <a class="nav-link" data-toggle="tab" href="#basic-info">Basic Information Profile</a>
+                    </li>
+                    <li class="hvr-float-shadow nav-item contact-custom-nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#contact-info">Contact Information</a>
+                    </li>
+                    <li class="hvr-float-shadow nav-item contact-custom-nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#address">Address</a>
+                    </li>
+                    <li class="hvr-float-shadow nav-item contact-custom-nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#medical-urg">Medical Urgency Contacts</a>
+                    </li>
+
+                    <li class="hvr-float-shadow nav-item contact-custom-nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#insurance">Insurance</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-content">
+                <div id="basic-info" class="container-fluid custom-tab-pane tab-pane fade active in">
+
+                    <div class="custom-title">
+                        <h4> BASIC INFORMATION PROFILE </h4>
+                    </div>
+
+                    <!-- expand wraper -->
+
+
+
+                </div>
+                <div id="contact-info" class="container-fluid custom-tab-pane tab-pane fade">
+                    <br>
+                    <div class="custom-title">
+                        <h4>  CONTACT INFORMATION</h4>
+                    </div>
+
+
+                    <div class="inner-content-wraper">
+                        <!-- <h3 class="pageTitle text-info">CONTACT INFORMATION</h3> -->
+
+
+                    </div>
+                </div>
+                <!-- Contact Information -->
+                <div id="address" class="container-fluid custom-tab-pane tab-pane fade">
+                    <br>
+
+                    <div class="address">
+                        <div class="custom-title">
+                            <h4> Address</h4>
+                        </div>
+
+
+
+                        <div class="inner-content-wraper">
+
+                        </div>
+
+
+                    </div>
+                    <!-- address section -->
+
+                </div>
+                <!-- address tab -->
+                <div id="medical-urg" class="container-fluid custom-tab-pane tab-pane fade">
+                    <br>
+                    <div class="custom-title">
+                        <h4> MEDICAL URGENCY CONTACTS</h4>
+                    </div>
+
+
+
+                </div>
+
+
+                <div id="insurance" class="container-fluid custom-tab-pane tab-pane fade">
+                    <br>
+
+                    <div class="custom-title">
+                        <h4> Insurance</h4>
+                    </div>
+                    <div class="col-md-12">
+                        <h5 class="inner-heading">DRUG COVERAGE INSURANCE</h5>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+            <!-- medical urgency -->
+
+            <!-- insurance -->
+
+        </div>
+        <!-- tab contents -->
+    </div>
+    <!-- contact pref tab-->
+</div>

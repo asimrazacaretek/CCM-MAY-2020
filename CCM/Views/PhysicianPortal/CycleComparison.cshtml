@@ -1,0 +1,462 @@
+﻿@model IEnumerable<CCM.Models.FinalCarePlanNotes>
+
+
+
+@functions {
+    private static string TrimTimeSpan(TimeSpan reviewTime)
+    {
+        return reviewTime > TimeSpan.Zero ? reviewTime.ToString().Substring(0, reviewTime.ToString().IndexOf('.')) : reviewTime.ToString();
+    }
+}
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" type="text/css" />
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<style>
+    #CompareCycleModal .close{
+        margin-top:-36px;
+    }
+    .cycle-wrapper {
+        display: block;
+        table-layout: fixed;
+        width: 100%;
+        height: 90%;
+        border-collapse: separate;
+        border-spacing: 15px;
+        overflow:auto;
+    }
+    .cycle-wrapper-div {
+        display: table-cell;
+        box-shadow: 0px 0 8px 2px #ccc !important;
+        padding: 5px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        max-height:100%;
+        overflow:auto;
+    }
+    .modal-dialog{
+        width:100%;
+    }
+    .form-horizontal .form-group:before, .form-horizontal .form-group:after{
+display:none;
+    }
+</style>
+
+
+
+
+<div class="cycle-wrapper">
+
+
+    @foreach (var rtcItem in Model)
+    {
+       
+
+        
+    <div class="cycle-wrapper-div">
+        <h3 style="text-align:center">Cycle: @rtcItem.Cycle</h3>
+        <div class="form-horizontal col-md-12 no-padding">
+
+            <h3>Final Care Plan</h3>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Patient Summary</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.PatientSummary, new { @class = "form-control border-input", rows = "5" })
+                          
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Medical History</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.HealthConcerns, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Drug Utilization Review</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.DrugUtillizationReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+
+
+                        <label class="col-md-12">Hospitalization in Last 30 Days</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => rtcItem.HospitalizationLast30Days, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+
+
+                        <br>
+                        <label class="col-md-12">Current Blood Pressure and Glucose Reading</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => rtcItem.BloodPressureGlucoseReading, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+
+                        <br>
+                        <label class="col-md-12">Diabetic screening: Retinal Eye Exam, Podiatry Exam and last A1C result </label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => rtcItem.DiabeticScreening, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Critical Medical Complaints:</label>
+                        <div class="col-md-12">
+
+                            &nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => rtcItem.CriticalChestPain, true) @Html.LabelFor(model => rtcItem.CriticalChestPain, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => rtcItem.CriticalBreathShortness, true) @Html.LabelFor(model => rtcItem.CriticalBreathShortness, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => rtcItem.CriticalSeverePain, true) @Html.LabelFor(model => rtcItem.CriticalSeverePain, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => rtcItem.CriticalMoodChange, true) @Html.LabelFor(model => rtcItem.CriticalMoodChange, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => rtcItem.CriticalSpeechChange, true) @Html.LabelFor(model => rtcItem.CriticalSpeechChange, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => rtcItem.CriticalHeadache, true) @Html.LabelFor(model => rtcItem.CriticalHeadache, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => rtcItem.CriticalBloodSugar, true) @Html.LabelFor(model => rtcItem.CriticalBloodSugar, new { @style = "font-weight: normal" })
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;@Html.CheckBoxFor(model => rtcItem.CriticalBloodPressure, true) @Html.LabelFor(model => rtcItem.CriticalBloodPressure, new { @style = "font-weight: normal" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Ability to perform IADL and ADL</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => rtcItem.AbilityPerformIADL, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Sensory assessment on vision, hearing and speech</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => rtcItem.AssessmentVisionHearingSpeech, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Fall and Ambulation Assessment</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => rtcItem.FallAmbulationAssessment, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12"><br>How Would You Describe Your Health?</label>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                            item => rtcItem.HealthRating,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "1", Text = "1 - Worst"},
+                                    new {Value = "2", Text = "2"},
+                                    new {Value = "3", Text = "3"},
+                                    new {Value = "4", Text = "4"},
+                                    new {Value = "5", Text = "5"},
+                                    new {Value = "6", Text = "6"},
+                                    new {Value = "7", Text = "7"},
+                                    new {Value = "8", Text = "8"},
+                                    new {Value = "9", Text = "9"},
+                                    new {Value = "10", Text = "10 - Best"}
+                                }, "Value", "Text", Model),
+                            "Quality of Life at the Moment", new { @class = "form-control border-input" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Able to Accomplish Your Daily Chores, Tasks and Responsibilities?</label>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                            item => rtcItem.PerformTasksRating,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "1", Text = "1 - Worst"},
+                                    new {Value = "2", Text = "2"},
+                                    new {Value = "3", Text = "3"},
+                                    new {Value = "4", Text = "4"},
+                                    new {Value = "5", Text = "5"},
+                                    new {Value = "6", Text = "6"},
+                                    new {Value = "7", Text = "7"},
+                                    new {Value = "8", Text = "8"},
+                                    new {Value = "9", Text = "9"},
+                                    new {Value = "10", Text = "10 - Best"}
+                                }, "Value", "Text", Model),
+                            "Quality of Life at the Moment", new { @class = "form-control border-input" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12"><br>Hospitalization in Last 30 Days</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => rtcItem.HospitalizationLast30Days, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Colon Cancer Screen: Date</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => rtcItem.ColonCancerScreenDate, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Mammogram Screen: Date</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => rtcItem.MammogramScreenDate, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Urinary Incontinence</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => rtcItem.UrinaryIncontinence, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Immunization</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.Immunization, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Tobacco and Alcohol Screening</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.TobaccoAlcoholScreening, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Allergies/Side Effects To Medication</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.Allergies, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Medication Management Intervention</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.ManagingMedicationInterventions, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Managing Medication Monitoring</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.ManagingMedicationReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Medication Management Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.ManagingMedicationGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Mental Resilience Interventions</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.MentalResilienceInterventions, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Mental Resilience Monitoring</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.MentalResilienceReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Mental Resilience Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.MentalResilienceGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Nutrition Interventions</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.NutritionInterventions, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Nutrition Monitoring</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.NutritionReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Nutrition Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.NutritionGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+
+                        <label class="col-md-12">Physical Activity Interventions</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.PhysicalActivityInterventions, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Physical Activity Monitoring</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.PhysicalActivityReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+
+                        <label class="col-md-12">Physical Activity Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.PhysicalActivityGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Sleep Interventions</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.SleepInterventions, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Sleep Monitoring</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.SleepReview, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Sleep Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.SleepGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div >
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Patient Compliance Management</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.PatientComplianceManagement, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="col-md-12">Pharmacy Treatment Goals</label>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => rtcItem.PharmacyTreatmentGoals, new { @class = "form-control border-input", rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+
+
+            
+        </div>
+
+    </div>
+    }
+</div>
+
+
+
+
+

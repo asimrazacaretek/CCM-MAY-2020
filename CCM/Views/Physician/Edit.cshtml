@@ -1,0 +1,304 @@
+﻿@model CCM.Models.Physician
+<link href='https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/15.1.1/autocomplete-lhc_jQueryUI.min.css' rel="stylesheet">
+<div class="container">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "editphyscian",enctype = "multipart/form-data",role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        if (!User.IsInRole("Admin"))
+        {
+            @Html.HiddenFor(model => model.isActive)
+        }
+    <div class="form-horizontal col-md-6">
+        <h3>Edit Physician</h3>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @if (Model.Photo != null)
+        {
+            <div class="form-group">
+                <img class="avatar border-white" src="@Url.Action("UserPhotos", "Physician", new { userId = Model.Id })" alt="" width="200" />
+            </div>
+        }
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Photo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                <input type="file" name="Photo" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4">
+                Search
+            </label>
+
+
+            <div class="col-md-8">
+                <input type="text" id="searchnpi" class="form-control border-input" placeholder="Search by NPI,Name or Number" />
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.NPI, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.NPI, new { htmlAttributes = new { @class = "form-control border-input npisearch" } })
+                @Html.ValidationMessageFor(model => model.NPI, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control border-input npisearch" } })
+                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control border-input npisearch" } })
+                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Specialty, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Specialty, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "Required" } })
+                @Html.ValidationMessageFor(model => model.Specialty, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address1, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Address1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.Address1, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address2, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Address2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.Address2, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.State, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.State, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Zipcode, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Zipcode, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.Zipcode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MainPhoneNumber, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.MainPhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.MainPhoneNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MobilePhoneNumber, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.MobilePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.MobilePhoneNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="form-group">
+
+                <div class="col-md-12">
+                    @if (Model.isActive == true)
+                    {
+                        @Html.CheckBoxFor(m => m.isActive, new { @checked = "checked", @class = "control-label " });
+                    }
+                    else
+                    {
+                        @Html.CheckBoxFor(m => m.isActive, new { @class = "control-label" });
+                    }
+                    @Html.LabelFor(model => model.isActive, new { @class = "control-label col-md-4" })
+                </div>
+            </div>
+        }
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Update" class="btn btn-warning" />
+                @Html.ActionLink("Back to List", "Index", null, null, new { @class = "btn btn-success" })
+            </div>
+        </div>
+    </div>
+    @*<div class="form-horizontal col-md-6">
+        <h3>Billing Rates</h3>
+        <hr />
+        <div class="form-group">
+            @Html.Label("CCM 20 Minutes - CPT 99490 *", htmlAttributes: new { @class = "control-label col-md-8" })
+            <div class="col-md-3">
+                <input type="text" name="CPT99490Billing" value="@ViewBag.CPT99490Billing" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Simple CCM 30 Minutes - CPT 99491 *", htmlAttributes: new { @class = "control-label col-md-8" })
+            <div class="col-md-3">
+                <input type="text" name="CPT99491Billing" value="@ViewBag.CPT99491Billing" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Complex CCM 60 Minutes - CPT 99487 *", htmlAttributes: new { @class = "control-label col-md-8" })
+            <div class="col-md-3">
+                <input type="text" name="CPT99487Billing" value="@ViewBag.CPT99487Billing" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Complex CCM 30 Minutes - CPT 99489 + 99487 *", htmlAttributes: new { @class = "control-label col-md-8" })
+            <div class="col-md-3">
+                <input type="text" name="CPT99489Billing" value="@ViewBag.CPT99489Billing" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+            </div>
+        </div>
+        <h3>Invoice Rate</h3>
+        <hr />
+        <div class="form-group">
+            @Html.Label("CCM 20 Minutes - CPT 99490 *", htmlAttributes: new { @class = "control-label col-md-8 " })
+            <div class="col-md-3">
+                <input type="text" name="CPT99490Invoice" value="@ViewBag.CPT99490Invoice" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Simple CCM 30 Minutes - CPT 99491 *", htmlAttributes: new { @class = "control-label col-md-8 " })
+            <div class="col-md-3">
+                <input type="text" name="CPT99491Invoice" value="@ViewBag.CPT99491Invoice" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Complex CCM 60 Minutes - CPT 99487 *", htmlAttributes: new { @class = "control-label col-md-8" })
+            <div class="col-md-3">
+                <input type="text" name="CPT99487Invoice" value="@ViewBag.CPT99487Invoice" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Complex CCM 30 Minutes - CPT 99489 + 99487 *", htmlAttributes: new { @class = "control-label col-md-8" })
+            <div class="col-md-3">
+                <input type="text" name="CPT99489Invoice" value="@ViewBag.CPT99489Invoice" class="form-control border-input numbers-only" required placeholder="required" />
+
+
+            </div>
+        </div>
+    </div>*@
+    }
+</div>
+<script src='https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/15.1.1/autocomplete-lhc_jQuery.min.js'></script>
+<script>
+    new Def.Autocompleter.Search('searchnpi', 'https://clinicaltables.nlm.nih.gov/api/npi_idv/v3/search?df=NPI,name.full,addr_practice.full,addr_mailing.full,addr_practice.phone,addr_mailing.phone,provider_type'
+        /*{ tableFormat: true, valueCols: [0], colHeaders: ['NPI', 'Name', 'Gender', 'Type', 'Practice Address', 'Mailing Address', 'Phone1', 'Phone2'] }*/);
+    Def.Autocompleter.Event.observeListSelections('searchnpi', function () {
+        if ($("#searchnpi").val() != "") {
+            var drugField = $('#searchnpi')[0];
+            var drugFieldVal = drugField.value;
+            var searchvalues = drugFieldVal.split(' - ');
+            var autocomp = drugField.autocomp;
+            $("#NPI").val(searchvalues[0]);
+            var fullname = searchvalues[1].split(',');
+            $("#FirstName").val(fullname[1]);
+            $("#LastName").val(fullname[0]);
+            $("#Address1").val(searchvalues[2]);
+            $("#Address2").val(searchvalues[3]);
+
+            var MainPhoneNumber = searchvalues[4];
+            var MobilePhoneNumber = searchvalues[5];
+            $("#MainPhoneNumber").val(MainPhoneNumber.replace(/[- )(]/g, ''));
+            $("#MobilePhoneNumber").val(MobilePhoneNumber.replace(/[- )(]/g, ''));
+
+            //$("#MainPhoneNumber").val(searchvalues[4]);
+            //$("#MobilePhoneNumber").val(searchvalues[5]);
+            $("#Specialty").val(searchvalues[6]);
+            $("#searchnpi").val('');
+
+        }
+
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var text = $("#MainPhoneNumber").val();
+        $("#MainPhoneNumber").val(text.replace(/[- )(]/g, ''));
+
+        var text1 = $("#MobilePhoneNumber").val();
+        $("#MobilePhoneNumber").val(text1.replace(/[- )(]/g, ''));
+
+
+        $(".numbers-only").keypress(function (e) {
+            if (e.which == 46) {
+                if ($(this).val().indexOf('.') != -1) {
+                    return false;
+                }
+            }
+
+            if (e.which != 8 && e.which != 0 && e.which != 46 && (e.which < 48 || e.which > 57)) {
+                return false;
+            }
+        });
+        $("#MainPhoneNumber").focusout(function () {
+            var text = $("#MainPhoneNumber").val();
+            $("#MainPhoneNumber").val(text.replace(/[- )(]/g, ''));
+        });
+        $("#MobilePhoneNumber").focusout(function () {
+            var text = $("#MobilePhoneNumber").val();
+            $("#MobilePhoneNumber").val(text.replace(/[- )(]/g, ''));
+        })
+   
+        $('#editphyscian').submit(function (event) {
+            var isvalidform = true;
+            $(".numbers-only").each(function () {
+                if ($(this).val() == "") {
+                    isvalidform = false;
+                }
+            });
+            if (isvalidform == false) {
+                event.preventDefault();
+            }
+        });
+    });
+    
+   
+</script>

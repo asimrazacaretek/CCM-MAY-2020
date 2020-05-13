@@ -1,0 +1,1757 @@
+﻿@using Microsoft.AspNet.Identity
+@model CCM.Models.Patient
+@using CCM.Helpers;
+
+@{
+    var controllerName = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString().ToLower();
+    var actionName = HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString().ToLower();
+
+    var patientDetails = controllerName == "patient" && actionName == "details" ? "currentPage" : "";
+    var doctorVisit = controllerName == "doctorvisit" ? "currentPage" : "";
+    var medicareeligibilty = controllerName == "patientmeidcaremedicaideligibilities" ? "currentPage" : "";
+    var secondaryDoctor = controllerName == "secondarydoctor" ? "currentPage" : "";
+    var carePlan = controllerName == "careplan" ? "currentPage" : "";
+    var finalCarePlanNotes = controllerName == "finalcareplannotes" ? "currentPage" : "";
+    var profile = controllerName == "patientprofile" || controllerName == "patientcontact" ||
+                             controllerName == "patientaddress" || controllerName == "patienturgencycontact" ||
+                             controllerName == "patientinsurance" ? "currentPage" : "";
+    var medicalHistory = controllerName == "patientmedicalstatus" || controllerName == "patientmedicalhistory_medicalcondition" ||
+                             controllerName == "patientfamilyhistory" || controllerName == "patientallergy" ||
+                             controllerName == "currentmedication" ? "currentPage" : "";
+    var lifestyle = controllerName == "patientworkandrelationship" || controllerName == "patientlifestyle_dietandhabit" ||
+                             controllerName == "patientlifestyle_lifestress" || controllerName == "PatientLifestyle_NutritionalSupplement" ? "currentPage" : "";
+    var reviewTime = actionName == "reviewtimev1" ? "currentPage" : "";
+    var icd10 = controllerName == "icd" ? "currentPage" : "";
+}
+
+<link href='https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/15.1.1/autocomplete-lhc_jQueryUI.min.css' rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.14/jquery.datetimepicker.min.css">
+<style>
+    .card {
+        padding: 3px 15px
+    }
+
+    .padding-wraper {
+        padding: 0px 15px;
+    }
+
+    .main-tabs-sticky {
+        position: sticky;
+        top: 75px;
+        z-index: 8;
+        background: #f3f3f3;
+    }
+
+    .swal-overlay {
+        z-index: 101700000000000000000 !important;
+    }
+    /*.linkButtons {
+        margin-top: 5px;
+        width: 12%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 5px 5px;
+        font-weight: normal;
+        font-size:11px;
+    }*/
+
+    #profile {
+        border: 1px solid lightgray;
+        padding: 5px;
+        margin-bottom: 8px;
+    }
+
+        #profile img {
+            border: 1px solid;
+        }
+
+    .bodycontent {
+        /*margin-top: 148px;*/
+    }
+
+    .linkButtonsa {
+        color: white;
+    }
+
+        .linkButtonsa:hover {
+        }
+
+    .caret1 {
+        border-top-color: white !important;
+    }
+
+        .caret1:hover {
+            border-top-color: #7AC29A !important;
+        }
+
+    #BADialog #bamodaldialog {
+        width: auto !important;
+        height: 99%;
+        overflow: auto;
+    }
+
+        #BADialog #bamodaldialog .modal-content {
+            height: 100%;
+            height: 99%;
+            overflow: auto;
+        }
+
+    .btn:hover, .btn:focus, .btn:active, .btn.active {
+        background: #0364bd;
+        color: #fff;
+        border-color: #0364bd;
+    }
+
+    .linkButtons {
+        margin-top: 5px;
+    }
+
+    .full-width {
+        width: 100%;
+    }
+
+
+
+    .custom-tabs > li, .custom-tabs > li > a:hover, .custom-tabs > li > a:focus {
+        /* background: #7AC29A; */
+    }
+
+    .nav-tabs > li {
+        float: left;
+        margin-bottom: -1px;
+    }
+
+    .nav > li {
+        position: relative;
+        display: block;
+    }
+
+    .patient-detail-tabs .nav-tabs > li.active > a, .patient-detail-tabs .nav-tabs > li.active > a:hover, .patient-detail-tabs .nav-tabs > li.active > a:focus {
+        background: #034b22;
+        background: #034b22;
+        background: -moz-linear-gradient(top, #034b22 1%, #1e894c 100%);
+        background: -webkit-linear-gradient(top, #034b22 1%,#1e894c 100%);
+        background: linear-gradient(to bottom, #034b22 1%,#1e894c 100%) !important;
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#034b22', endColorstr='#1e894c',GradientType=0 );
+        color: #fff;
+    }
+
+    .custom-tabs .open > a, .custom-tabs .open > a:hover, .custom-tabs .open > a:focus {
+        background: #034b22;
+        background: #034b22;
+        background: -moz-linear-gradient(top, #034b22 1%, #1e894c 100%);
+        background: -webkit-linear-gradient(top, #034b22 1%,#1e894c 100%);
+        background: linear-gradient(to bottom, #034b22 1%,#1e894c 100%) !important;
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#034b22', endColorstr='#1e894c',GradientType=0 );
+        color: #fff;
+    }
+
+    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+        cursor: pointer;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-bottom-color: transparent;
+    }
+
+    .hvr-float-shadow {
+        display: inline-block;
+        vertical-align: middle;
+        -webkit-transform: perspective(1px) translateZ(0);
+        transform: perspective(1px) translateZ(0);
+        box-shadow: 0 0 1px rgba(0,0,0,0);
+        position: relative;
+        -webkit-transition-duration: .3s;
+        transition-duration: .3s;
+        -webkit-transition-property: transform;
+        transition-property: transform;
+    }
+
+        .hvr-float-shadow:active, .hvr-float-shadow:focus, .hvr-float-shadow:hover {
+            -webkit-transform: translateY(-5px);
+            transform: translateY(-5px);
+        }
+
+    .custom-tabs > li > a:hover, .custom-tabs > li > a:focus {
+        background: #7AC29A;
+        color: #fff;
+    }
+
+    .custom-tabs > li > a:hover {
+        background: #7AC29A;
+        color: #fff;
+    }
+
+    .custom-tabs > li, .custom-tabs > li > a:hover, .custom-tabs > li > a:focus {
+        /* background: #7AC29A; */
+    }
+
+    .nav > li > a:hover, .nav > li > a:focus {
+        background-color: transparent;
+    }
+
+    .nav-tabs > li > a:hover {
+        border-color: #eee #eee #ddd;
+    }
+
+    .nav > li > a:hover, .nav > li > a:focus {
+        text-decoration: none;
+        /*background-color: #eee;*/
+    }
+
+    .custom-tabs {
+        position: relative;
+        z-index: 4444;
+        border-bottom: none;
+    }
+
+        .custom-tabs > li a {
+            background: #0364bd;
+            background: -moz-linear-gradient(top, #0364bd 1%, #34638f 100%);
+            background: -webkit-linear-gradient(top, #0364bd 1%,#34638f 100%);
+            background: linear-gradient(to bottom, #0364bd 1%,#34638f 100%) !important;
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0364bd', endColorstr='#34638f',GradientType=0 );
+            margin-bottom: 5px;
+            padding: 10px;
+            text-align: center;
+            margin-right: 3.6px;
+        }
+
+
+        .custom-tabs > li, .custom-tabs > li > a:hover, .custom-tabs > li > a:focus {
+            /* background: #7AC29A; */
+        }
+
+    .nav-tabs > li > a {
+        margin-right: 3.6px;
+        line-height: 1.428571429;
+        border: 1px solid transparent;
+        border-radius: 0;
+    }
+
+    .nav > li > a {
+        position: relative;
+        display: block;
+        /*padding: 10px 15px;*/
+    }
+
+    .nav-tabs > li > a:hover {
+        border-color: #eee #eee #ddd;
+    }
+
+    hvr-float-shadow:active:before, .hvr-float-shadow:focus:before, .hvr-float-shadow:hover:before {
+        opacity: 1;
+        -webkit-transform: translateY(5px);
+        transform: translateY(5px);
+    }
+
+    .hvr-float-shadow:before {
+        pointer-events: none;
+        position: absolute;
+        z-index: -1;
+        content: '';
+        top: 100%;
+        left: 5%;
+        height: 10px;
+        width: 90%;
+        opacity: 0;
+        background: -webkit-radial-gradient(center,ellipse,rgba(0,0,0,.35) 0,rgba(0,0,0,0) 80%);
+        background: radial-gradient(ellipse at center,rgba(0,0,0,.35) 0,rgba(0,0,0,0) 80%);
+        -webkit-transition-duration: .3s;
+        transition-duration: .3s;
+        -webkit-transition-property: transform,opacity;
+        transition-property: transform,opacity;
+    }
+
+    a:hover, a:focus {
+        color: #3091B2;
+        text-decoration: none;
+    }
+
+    a:focus {
+        outline: thin dotted #333 !important;
+        outline: 5px auto -webkit-focus-ring-color !important;
+        outline-offset: -2px !important;
+    }
+
+
+    a:active, a:hover {
+        outline: 0;
+    }
+
+    a:focus {
+        outline: thin dotted;
+    }
+
+    .nav-link {
+        color: #fff;
+    }
+
+    a {
+        color: #2c3e50;
+        text-decoration: none;
+    }
+
+    a {
+        color: #0364bd;
+    }
+
+    h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6, p, .navbar, .brand, a, .td-name, td {
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-family: 'Muli', "Helvetica", Arial, sans-serif;
+    }
+
+    a {
+        color: #428bca;
+        text-decoration: none;
+    }
+
+    .custom-tabs > li > a:hover, .custom-tabs > li > a:focus {
+        background: #7AC29A;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .custom-tabs > li > a:hover {
+        background: #7AC29A !important;
+        color: #fff !important;
+    }
+
+    ul, li {
+        list-style: none;
+        list-style-type: none;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .nested-tab-list li a {
+        display: block;
+        padding: 5px 10px;
+        color: #fff;
+        margin: 0px;
+        width: 100%;
+        border-radius: 0px;
+    }
+
+        .nested-tab-list li a:hover {
+            background: #7AC29A !important;
+            cursor: pointer;
+        }
+
+    .custom-tabs .open > a, .custom-tabs .open > a:hover, .custom-tabs .open > a:focus {
+        /* background: #034b22; */
+        background: #034b22;
+        background: -moz-linear-gradient(top, #034b22 1%, #1e894c 100%);
+        background: -webkit-linear-gradient(top, #034b22 1%,#1e894c 100%);
+        background: linear-gradient(to bottom, #034b22 1%,#1e894c 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#034b22', endColorstr='#1e894c',GradientType=0 );
+        color: #fff;
+        border-color: #7AC29A;
+    }
+
+    .nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
+        background-color: #eee;
+        border-color: #428bca;
+    }
+
+    .leftmenu > li:hover {
+        background-color: #133658;
+    }
+
+    .leftmenu > li {
+        border-bottom: 1px solid #ccc;
+    }
+
+    .importnotesarea {
+        float: left;
+        border: 1px solid #828282;
+        margin: 5px 0;
+        padding: 0px;
+        box-shadow: 0 0 3px #828282;
+    }
+
+    .custom-title {
+        background: #0364bd;
+        margin-bottom: 15px;
+        padding: 5px 10px;
+    }
+
+        .custom-title h4, .custom-title h3 {
+            color: #fff;
+            font-weight: 400;
+            padding: 0px !important;
+            text-transform: uppercase;
+            margin: 0px;
+            font-size: 16px;
+        }
+
+    .pageTitle {
+        display: inline;
+    }
+
+    .custom-title .fa-caret-down:hover {
+        cursor: pointer;
+    }
+
+    #importantnotesid {
+        padding: 0px 10px 11px;
+    }
+
+
+    .full-width {
+        width: 100%;
+    }
+
+    .half-width {
+        width: 45%;
+        float: left;
+    }
+
+    .contact-custom-nav-item > a {
+        padding: 8px !important
+    }
+
+    .care-plan-section .close-btn {
+        color: #3c4e5e;
+        font-size: 20px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .care-plan-section {
+        display: none;
+        width: 54%;
+        box-shadow: 0px 0px 5px #393939;
+        background: #ddd;
+        position: relative;
+        /* border: 1px solid red; */
+    }
+
+    #hide-carePlan:hover {
+        cursor: pointer;
+        color: #7AC29A;
+    }
+    #hide-OtherCategoies:hover {
+        cursor: pointer;
+    }
+    .uperareafix {
+        float: left;
+        background-color: white;
+        position: fixed;
+        top: 75px;
+        z-index: 2;
+        width: 100%;
+        box-shadow: 0 2px 2px rgb(140, 140, 140);
+        padding: 6px;
+        border: 1px solid rgb(216, 216, 216);
+        margin-bottom: 9px;
+       
+    }
+    .uperareafixstick {
+       
+        
+    }
+    #MultiLinksPartialViews {
+        margin-top: 190px
+    }
+    #patientDetails {
+        margin-top: 190px
+    }
+    @@keyframes smoothScroll {
+        0% {
+		transform: translateY(-40px);
+	}
+	100% {
+		transform: translateY(0px);
+	}
+}
+    #LoadFinalCarePlan {
+        margin-top: 35px;
+    }
+</style>
+
+
+
+
+<!-- Content Tab -->
+<!--START patient-detail-wraper-->
+<!--END patient-detail-wraper-->
+<div class="modal fade" id="BADialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" id="bamodaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div id="BADetails">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Close" class="btn btn-success" data-dismiss="modal" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        getimportantnotes();
+        LoadNarrative();
+        $("#importantnotes").hide();
+        $('.nav li a').click(function (e) {
+            $('.nav li.active').removeClass('active');
+            var $parent = $(this).parent();
+            $parent.addClass('active');
+            //e.preventDefault();
+
+        });
+        //$('.datepicker').datepicker({
+        //    dateFormat: "mm/dd/yy",
+        //    changeMonth: true,
+        //    changeYear: true,
+        //    yearRange: "-10:+0"
+        //});
+        $("#Patient").click(function () {
+            if ($(this).is(":checked")) {
+
+                $("#patient-detail").hide();
+                $("#Patient-detail").hide();
+            } else {
+
+                $("#patient-detail").show();
+                $("#Patient-detail").show();
+            }
+        });
+        $("#chkbookappoinment").click(function () {
+            if ($(this).is(":checked")) {
+                $("#bookAppointment").hide();
+            } else {
+
+                $("#bookAppointment").show();
+            }
+        });
+        $("#patientConsent-v").click(function () {
+            if ($(this).is(":checked")) {
+                $("#patientConsent").hide();
+            } else {
+                $("#patientConsent").show();
+            }
+        });
+        $("#doctor-v").click(function () {
+            if ($(this).is(":checked")) {
+
+                $("#doctorVisit").hide();
+            } else {
+
+                $("#doctorVisit").show();
+            }
+        });
+        $("#chkDiagnosis").click(function () {
+             if ($(this).is(":checked")) {
+                $("#diagnosis").hide();
+            } else {
+                $("#diagnosis").show();
+            }
+        });
+        $("#eligBox").click(function () {
+            if ($(this).is(":checked")) {
+                $("#elig").hide();
+            } else {
+
+                $("#elig").show();
+            }
+        });
+
+        $("#addp").click(function () {
+            if ($(this).is(":checked")) {
+
+                $("#additionalP").hide();
+            } else {
+
+                $("#additionalP").show();
+            }
+        });
+        $("#review").click(function () {
+            if ($(this).is(":checked")) {
+
+                $("#reviewT").hide();
+            } else {
+
+                $("#reviewT").show();
+            }
+        });
+        $("#icdC").click(function () {
+            if ($(this).is(":checked")) {
+
+                $("#icd").hide();
+            } else {
+
+                $("#icd").show();
+            }
+        });
+
+        $("#con").click(function () {
+            if ($(this).is(":checked")) {
+
+                $("#conP").hide();
+            } else {
+
+                $("#conP").show();
+            }
+        });
+        $("#med").click(function () {
+            if ($(this).is(":checked")) {
+
+                $("#medical").hide();
+            } else {
+
+                $("#medical").show();
+            }
+        });
+        $("#life").click(function () {
+            if ($(this).is(":checked")) {
+
+                $("#lifeS").hide();
+            } else {
+
+                $("#lifeS").show();
+            }
+        });
+        $("#careplan").click(function () {
+            $("#care_plan").show();
+
+            $("#patient-detail-wraper").addClass("half-width");
+            $("#patient-detail-wraper").removeClass("full-width full-width");
+            $("#patientDetails").css("overflow","auto");
+            //$("#patientDetails").css("height", "360px");
+            $("#patientDetails").css("height", "550px");
+            $("#care_plan").css("overflow", "auto");
+            //$("#care_plan").css("height","360px");
+            $("#care_plan").css("height","550px");
+ 
+            if ($("#callingprogress").css("display") == "none") {
+
+
+            $("#sidebar").css("display", "none");
+                $("html, body").css("margin-left", "0");
+            }
+            changeupperareafix();
+        });
+        $(".OtherBillingCategoryTab").click(function () {
+            $("#OtherBillingCategoryDiv").show();
+
+            $("#patient-detail-wraper").addClass("half-width");
+            $("#patient-detail-wraper").removeClass("full-width full-width");
+            $("#OtherBillingCategoryDiv").addClass("half-width");
+            $("#care_plan").hide();
+
+       
+            changeupperareafix();
+
+
+
+
+            $("#patientDetails").css("overflow", "auto");
+            //$("#patientDetails").css("height", "360px");
+            $("#patientDetails").css("height", "550px");
+            $("#OtherBillingCategoryDiv").css("overflow", "auto");
+            //$("#OtherBillingCategoryDiv").css("height", "360px");
+            $("#OtherBillingCategoryDiv").css("height", "550px");
+            $("#OtherBillingCategoryDiv").css("float", "none");
+            $("#OtherBillingCategoryDiv").css("width", "55%");
+            
+            if ($("#callingprogress").css("display") == "none") {
+
+                $("#careplan").attr("disabled", true);
+
+            $("#sidebar").css("display", "none");
+                $("html, body").css("margin-left", "0");
+            }
+            changeupperareafix();
+        });
+        $("#hide-carePlan").click(function () {
+            $("#care_plan").hide();
+            $("#patient-detail-wraper").addClass("full-width");
+            $("#patient-detail-wraper").removeClass("half-width");
+            $(".OtherBillingCategoryTab").attr("disabled", false);
+            $("#patientDetails").css("overflow", "unset");
+            $("#patientDetails").css("height", "100%");
+            $("#care_plan").css("overflow", "unset");
+            $("#care_plan").css("height", "100%");
+            if ($("#HideDataforCallRecive").val() == "No") {
+                $("#sidebar").css("display", "block");
+                $("html, body").css("margin-left", "110px");
+
+            }
+            changeupperareafix();
+        });
+
+        $("#hide-OtherCategoies").click(function () {
+          var isRpmOpen = $('Rpmtimer').html();
+            var isG0506Open = $('#OtherBillingCategoryDiv').html() == null ? false : true;
+            if (isRpmOpen != null) {
+                $("#ControlTimerHidden").val('@BillingCodeHelper.RPM');
+                $("#ControlTimerHidden").data("value",'@BillingCodeHelper.RPMBillingCatagoryid');
+                $("#SelectedCategory").val('@BillingCodeHelper.RPM');
+                $("#SelectedCategory").data("value",'@BillingCodeHelper.RPM');
+                $("#SelectedCategory").data("id",'@BillingCodeHelper.RPMBillingCatagoryid');
+            }
+            else {
+                $("#ControlTimerHidden").val('@BillingCodeHelper.ccm');
+                $("#ControlTimerHidden").data("value", '');
+            }
+
+            
+            
+            $("#OtherBillingCategoryDiv").hide();
+
+            $("#patientDetails").css("overflow", "unset");
+            $("#patientDetails").css("height", "100%");
+            $("#OtherBillingCategoryDiv").css("overflow", "unset");
+            $("#OtherBillingCategoryDiv").css("height", "100%");
+
+            $("#patient-detail-wraper").addClass("full-width");
+            $("#patient-detail-wraper").removeClass("half-width");
+            if ($("#HideDataforCallRecive").val() == "No") {
+                $("#sidebar").css("display", "block");
+                $("html, body").css("margin-left", "110px");
+
+            }
+            $("#careplan").attr("disabled", false);
+            changeupperareafix();
+        });
+        $("#refresh-carePlan").click(function () {
+
+            var patientid = $("#patientidh").val();
+            RefreshFinalcareplandiv('FinalCarePlanNotes', '_Index', patientid, 'finalcare');
+        });
+
+    });
+    function showhidenotes() {
+        $("#importantnotes").toggle();
+        importanttable.columns.adjust().draw();
+    }
+    function showhidenarratives() {
+        $("#NarrativeSurvey").toggle();
+        topFunction();
+        surveytable.columns.adjust().draw();
+        changeupperareafix();
+    }
+    function LoadNarrative() {
+        $.ajax({
+            type: "POST",
+
+            url: "/Survey/_SurveyStart",
+            data: {'Id': @Model.Id },
+            success: function (result) {
+                $(".NarrativeSurvey").html(result).promise().done(function () {
+                    $("#NarrativeSurvey").hide();
+                    var showNarrativeAuto = $("#ViewNarrative").val();
+                    if (showNarrativeAuto) {
+                        $("#NarrativeSurvey").show();
+                        changeupperareafix();
+                    }
+
+                });
+
+            }, error: function (result) {
+
+            }
+        });
+    }
+    var importanttable;
+    var surveytable;
+    $(window).resize(function () {
+
+
+        //importanttable.columns.adjust().draw();
+        //surveytable.columns.adjust().draw();
+    });
+    function getimportantnotes() {
+            $.ajax({
+                type: "POST",
+
+                url: "/Patient/GetImportantNotes",
+                data: {
+                    'PatientID': @Model.Id
+                },
+                success: function (result) {
+                    $(".importantnotes").html(result).promise().done(function () {
+
+
+                    });
+                }, error: function (result) {
+
+                }
+            });
+    }
+    function RefreshFinalcareplandiv(controler, action, id) {
+        $(".loader").show();
+        var URL = "/" + controler + "/" + action;
+        var parameter = id;
+        $.ajax({
+            url: URL,
+            type: "GET",
+            data: { patientId: parameter },
+            success: function (partialViewResult) {
+                $(".loader").hide();
+                $("#LoadFinalCarePlan").html(partialViewResult).promise().done(function () { recordactivity(); });
+                $("#CreatCarePlan").show();
+            },
+            error: function () {
+                $(".loader").hide();
+            }
+        });
+    }
+    /****** Generice Click *******/
+    function AjaxRefresh(controler, action, id,currentTab) {
+        debugger;
+         /******Get Current Tab *******/
+        //var currentTabId = "";
+        //try {
+        //    if (currentTab.hasAttribute("id"))
+        //        currentTabId = currentTab.parentNode.id;
+        //}
+        //catch(err){
+        //    currentTabId = currentTab;
+        //}
+        $("#currentcontroller").val(currentTab);
+        /******Get Current Tab *******/
+
+        $(".loader").show();
+        var parameter = id;
+        var URL = "/" + controler + "/" + action;
+        $.ajax({
+            url: URL,
+            type: "GET",
+            data: { patientId: parameter },
+            success: function (partialViewResult) {
+
+               getimportantnotes();
+                debugger;
+                if (controler == "PatientProfile" && action == "_ContactPreferences") {
+                    $("#patientDetails").hide();
+                    $("#MultiLinksPartialViews").show();
+                    $("#MultiLinksPartialViews").html(partialViewResult).promise().done(function () { recordactivity(); });
+                    ContactPrefrence();
+                    $(".loader").hide();
+                    topFunction();
+                }
+                else if (controler == "PatientLifestyle_DietAndHabit" && action == "_LifeStyleAndHabits") {
+                    $("#patientDetails").hide();
+                    $("#MultiLinksPartialViews").show();
+                    $("#MultiLinksPartialViews").html(partialViewResult).promise().done(function () { recordactivity(); });
+                    LifeStyleAndHabit();
+                    $(".loader").hide();
+                    topFunction();
+                }
+                else if (controler == "PatientMedicalStatus" && action == "_MedicalHistory")
+                {
+                    $("#patientDetails").hide();
+                    $("#MultiLinksPartialViews").show();
+                    $("#MultiLinksPartialViews").html(partialViewResult).promise().done(function () { recordactivity(); });
+                    MedicalHistory();
+                    $(".loader").hide();
+                    topFunction();
+                }
+                    //////For FinalCare LoadFinalCarePlan
+                else if (controler == "FinalCarePlanNotes" && action == "_Index") {
+                    
+                    if ($("#LoadFinalCarePlan").html() == "") {
+                        $("#LoadFinalCarePlan").html(partialViewResult).promise().done(function () { recordactivity(); });
+                        $("#CreatCarePlan").show();
+
+                    }
+                    changeupperareafix();
+                    $(".loader").hide();
+                    topFunction();
+                }
+                else if (controler == "G0506" && action == "Index") {
+
+                    //if ($("#LoadOtherBillingCategoryDiv").html() == "") {
+                        $("#LoadOtherBillingCategoryDiv").html(partialViewResult).promise().done(function () { recordactivity(); });
+                        $("#OtherBillingCategoryDiv").show();
+
+                    //}
+                    changeupperareafix();
+                    $(".loader").hide();
+                    topFunction();
+                }
+                else if (controler == "FinalCarePlanNotes" && action == "_Create") {
+                    if (partialViewResult == "Cannot generate final care plan until patient is enrolled.") {
+                        swal("Not Allowed!", partialViewResult,"error");
+                    }
+                    else {
+                        $("#CreatCarePlan").hide();
+                        $("#LoadFinalCarePlan").html(partialViewResult).promise().done(function () { recordactivity(); });
+                    }
+                    $(".loader").hide();
+                    topFunction();
+                    //LoadFinalCarePlanCreate();
+                }
+                else if ((controler == "DoctorVisit" && action == "_Create") || (controler == "DoctorVisit" && action == "_ListDoctorVisits"))
+                {
+                    $("#DoctorVisitsID").html(partialViewResult).promise().done(function () {
+                        recordactivity();
+                        var date = new Date();
+                        var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+                        $('#NextAppointment').datepicker({
+                            minDate: today
+                        });
+                    });
+                    $(".loader").hide();
+                    topFunction();
+                }
+                else if ((controler == "SecondaryDoctor" && action == "_Create"))
+                {
+                    $("#AdditionalProvidersID").html(partialViewResult).promise().done(function () {
+                        recordactivity();
+
+                    });
+                    $(".loader").hide();
+                    $("html, body").animate({ scrollTop: 500 }, "slow");
+                    
+                }
+                else if ( (controler == "SecondaryDoctor" && action == "_Index")) {
+                    $("#AdditionalProvidersID").html(partialViewResult).promise().done(function () {
+                        recordactivity();
+
+                    });
+                    $(".loader").hide();
+                    topFunction();
+                }
+                else {
+                    $("#MultiLinksPartialViews").hide();
+                    $("#patientDetails").show();
+                    $("#partialviewsdata").html(partialViewResult).promise().done(function () {
+                        if (currentTab == "Remote Patient") {
+                            calculateBMI();
+                        }
+                        recordactivity();
+                    });
+                    $(".loader").hide();
+                    topFunction();
+                   
+                }
+
+                if (controler == "CcmStatus" && action == "_ReviewTimeV1") {
+                    LoadJqueryForReviewTime();
+                    $(".loader").hide();
+                    topFunction();
+                }
+                else if (controler == "PatientMeidcareMedicaidEligibilities" && action == "_Create") {
+                    LoadJqueryForEligiblity();
+                    $(".loader").hide();
+                    topFunction();
+                }
+                else if (controler == "DoctorVisit" && action == "_Create") {
+                    loadDatetimePicker();
+                    $(".loader").hide();
+                    topFunction();
+                }
+                else if (controler == "Icd" && action == "_Create") {
+                    loadDiagnosis();
+                    $(".loader").hide();
+                    topFunction();
+                }
+             
+
+            }, error: function () {
+                $(".loader").hide();
+            }
+        });
+       
+    }
+
+    function LoadShareCarePlanviewAllCyclesHistory(controler, action, ID) {
+
+        $("#currentcontroller").val('Share Care Plan');
+        $(".loader").show();
+        var URL = "";
+
+        URL = "/" + controler + "/" + action + "?id=" + ID;
+        $.ajax({
+            url: URL,
+            type: "GET",
+
+            success: function (partialViewResult) {
+                $(".loader").hide();
+                $("#MultiLinksPartialViews").hide();
+                $("#patientDetails").show();
+                $("#partialviewsdata").html(partialViewResult).promise().done(function () { recordactivity(); });
+                debugger;
+                $(".custom-nav-item").removeClass("active");
+                $("#Sharecareplanli").addClass("active");
+                topFunction();
+
+            },
+            error: function () {
+                $(".loader").hide();
+            }
+        });
+    }
+    function LoadShareCarePlanview(controler, action, ID, Cycle) {
+        $("#sharecareplancycle").val(Cycle);
+        $("#currentcontroller").val('Share Care Plan');
+        $(".loader").show();
+        var URL = "";
+
+        URL = "/" + controler + "/" + action + "?id=" + ID + "&cycle=" + $("#sharecareplancycle").val();
+        $.ajax({
+            url: URL,
+            type: "GET",
+
+            success: function (partialViewResult) {
+                $(".loader").hide();
+                $("#MultiLinksPartialViews").hide();
+                $("#patientDetails").show();
+                $("#partialviewsdata").html(partialViewResult).promise().done(function () { recordactivity(); });
+                debugger;
+                $(".custom-nav-item").removeClass("active");
+                $("#Sharecareplanli").addClass("active");
+                topFunction();
+                topFunction();
+            },
+            error: function () {
+                $(".loader").hide();
+            }
+        });
+    }
+    /****** **** *******/
+    function AjaxRefreshReview(controler, action, ID, Cycle,BillingCategoryId) {
+        debugger;
+        $("#currentcontroller").val('Review Encounter');
+        $(".loader").show();
+        var URL = "";
+        if (Cycle == "") {
+            URL = "/" + controler + "/" + action + "?patientId=" + ID;
+        }
+        else {
+            URL = "/" + controler + "/" + action + "?patientId=" + ID + "&cycle=" + Cycle + "&BillingCategoryId=" + BillingCategoryId;
+        }
+
+        $.ajax({
+            url: URL,
+            type: "GET",
+
+            success: function (partialViewResult) {
+                $(".loader").hide();
+                $("#MultiLinksPartialViews").hide();
+                $("#patientDetails").show();
+                $("#partialviewsdata").html(partialViewResult).promise().done(function () { recordactivity(); });
+                debugger;
+                if (controler == "Patient" && action == "_Details") {
+                  //  LoadCallMessageEmailHistory();
+                }
+                topFunction();
+            },
+            error: function () {
+                $(".loader").hide();
+            }
+        });
+
+      
+    }
+
+
+
+    /****** Generice Click for multiParameters*******/
+    function AjaxRefresh1(controler, action, ID, Status) {
+        debugger;
+     $("#currentcontroller").val('Patient Details');
+        $(".loader").show();
+        var URL = "";
+        if (Status == "") {
+           URL  = "/" + controler + "/" + action +"?id="+ID;
+        }
+        else {
+            URL = "/" + controler + "/" + action + "?id=" + ID+"&status="+Status;
+        }
+        if (action =="_ShareCarePlanView") {
+            $("#currentcontroller").val('Share CarePlan');
+            URL = '/Patient/_ShareCarePlanView?id=' + ID + '&cycle='+ $("#sharecareplancycle").val();
+            $.ajax({
+                url: URL,
+                type: "GET",
+
+                success: function (partialViewResult) {
+                    debugger;
+                    $(".loader").hide();
+                    $("#MultiLinksPartialViews").hide();
+                    $("#patientDetails").show();
+                    $("#partialviewsdata").html(partialViewResult).promise().done(function () { recordactivity(); });
+                    $(".custom-nav-item").removeClass("active");
+                    $("#Sharecareplanli").addClass("active");
+
+                },
+                error: function () {
+                    $(".loader").hide();
+                }
+            });
+        }
+        else {
+            $.ajax({
+                url: URL,
+                type: "GET",
+
+                success: function (partialViewResult) {
+                    debugger;
+                    $(".loader").hide();
+                    $("#MultiLinksPartialViews").hide();
+                    $("#patientDetails").show();
+                    $("#partialviewsdata").html(partialViewResult).promise().done(function () { recordactivity(); });
+                    debugger;
+                    if (controler == "Patient" && action == "_Details") {
+                        //  LoadCallMessageEmailHistory();
+                    }
+                    topFunction();
+                },
+                error: function () {
+                    $(".loader").hide();
+                }
+            });
+        }
+
+
+    }
+     /****** **** *******/
+
+    function AjaxRefreshMulti(controler, action, ID, PatientId) {
+        debugger;
+        
+        $(".loader").show();
+        var URL = "";
+        if (PatientId == "") {
+            URL = "/" + controler + "/" + action + "?id=" + ID;
+        }
+        else {
+            URL = "/" + controler + "/" + action + "?id=" + ID + "&patientId=" + PatientId;
+        }
+
+        $.ajax({
+            url: URL,
+            type: "GET",
+            success: function (partialViewResult) {
+                debugger;
+                if (controler == "PatientUrgencyContact" && action == "_Edit") {
+                    $("#medical-urg").html(partialViewResult).promise().done(function () { recordactivity(); });
+                }
+                else {
+                    $("#MultiLinksPartialViews").hide();
+                    $("#patientDetails").show();
+                    $("#partialviewsdata").html(partialViewResult).promise().done(function () { recordactivity(); });
+                }
+                $(".loader").hide();
+                topFunction();
+            }, error: function () {
+                $(".loader").hide();
+            }
+        });
+    }
+
+    function AjaxActionReturns(controler, action, id){
+        /*data deleted Successfully*/
+        swal({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve) {
+                    /* Ajax code will be here*/
+                    $(".loader").show();
+                    var parameter = id;
+                    var URL = "/" + controler + "/" + action;
+                    $.ajax({
+                        url: URL,
+                        type: "GET",
+                        data: { id: parameter },
+                        success: function (result) {
+                            if (result == "True") {
+                                $(".loader").hide();
+                                if (controler == "PatientUrgencyContact" && action == "_Delete") {
+                                    GetAjaxView('/PatientUrgencyContact/_Index', '@Model.Id', 'medical-urg')
+                                    $("#MultiLinksPartialViews").show();
+                                    $("#patientDetails").hide();
+                                }
+                                else {
+                                    $("#MultiLinksPartialViews").hide();
+                                    $("#patientDetails").show();
+                                }
+
+                                if ((controler == "DoctorVisit" && action == "_Delete") || (controler == "SecondaryDoctor" && action == "_Delete")) {
+                                    $("#doctorVisit a").trigger("click");
+                                }
+                                else if (controler =="PatientProfile" && action == "_DeleteLabRes")
+                                {
+                                    if ($("#currentcontroller").val() == "Patient Details")
+                                        $("#patient-detail a").trigger("click");
+                                    else
+                                        $("#Laboratory a").trigger("click");
+                                }
+                                //else if (controler == "SecondaryDoctor" && action == "_Delete") {
+                                //    $("#additionalP a").trigger("click");
+                                //}
+                                else if (controler == "Icd" && action == "_Delete") {
+                                    $("#diagnosis a").trigger("click");
+                                }
+                                else if (controler == "CurrentMedication" && action == "_DeleteRx") {
+                                    $("#MultiLinksPartialViews").show();
+                                    $("#patientDetails").hide();
+                                    GetAjaxView("/CurrentMedication/_MedicationsListPartial", $("#patientidh").val(), "divMedicationsList");
+                                }
+                                if (controler == "PatientProfile" && action == "_DeleteHospitalDetails") {
+                                    GetAjaxView('/PatientProfile/_PatientProfile_HospitalVisit', $("#patientidh").val(), 'divhospitalvisitdetails');
+                                }
+
+                                swal(
+                                    "Deleted",
+                                    "Deleted Successfully...!",
+                                    "success"
+                                );
+                            }
+                            else {
+                                swal("Error!", "Error Accured :" + result, "error");
+                                $(".loader").hide();
+                            }
+                        }, error: function () {
+                            $(".loader").hide();
+                            swal("Error", "Request Cannot Processed!");
+                        }
+                    });
+                });
+
+            },
+            //allowOutsideClick: false,
+            //showLoaderOnConfirm: false
+        }).catch(swal.noop);
+    }
+
+    function EditAjaxAction(controler, action, id) {
+        $(".loader").show();
+        var URL = "/" + controler + "/" + action + "?hospitalId=" + id;
+        $.ajax({
+            url: URL,
+            type: "GET",
+            success: function (partialViewResult) {
+                $(".loader").hide();
+                $("#divAddHospital").html(partialViewResult).promise().done(function () {
+                    debugger;
+                    recordactivity();
+                    $("#divAddHospital").css("display", "block");
+                    $("#btnAddHospital").css("display", "None");
+                    totalamount();
+                    topFunction();
+                });
+            }
+        });
+    }
+
+    function EditAjaxActionReturns(controler, action, id)
+    {
+            $(".loader").show();
+            var parameter = id;
+            var URL = "/" + controler + "/" + action + "?medicationId=" + id;
+            $.ajax({
+                url: URL,
+                type: "GET",
+                data: { id: parameter },
+                success: function (partialViewResult) {
+                    $(".loader").hide();
+                    $("#divAddMedication").html(partialViewResult).promise().done(function () { recordactivity(); });
+                }
+            });
+    }
+
+    /****** Generice For Form Submition *******/
+    function SubmitForm(Form, AddUpdate) {
+        
+         //$('.imageuploadify-container').each(function () {
+   
+         //                               var src = $(this).find('img').attr("src");
+         //                               if ($("#uploadFiles").val() == "")
+         //                                   $("#uploadFiles").val(src);
+         //                               else {
+         //                                   var oldstr = $("#uploadFiles").val();
+         //                                   src = oldstr + "|" + src;
+         //                                   $("#uploadFiles").val(src);
+         //                               }
+         //                           });
+        debugger;
+        var form = $("#" + Form);
+        var formdata = false;
+        if (window.FormData) {
+            formdata = new FormData(form[0]);
+        }
+        if (form.valid() == false) {
+            //alert("1 am here");
+            console.log('FORM INVALID');
+
+            var validator = form.validate();
+
+            $.each(validator.errorMap, function (index, value) {
+
+                console.log('Id: ' + index + ' Message: ' + value);
+
+            });
+            return false;
+        }
+        var urltosend = form.attr('action');
+        //var datatosend = $("#createform").serialize();
+        var datatosend = formdata ? formdata : form.serialize();
+        $(".loader").show();
+        $.ajax({
+            type: 'POST',
+            url: urltosend,
+            data: datatosend,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (json) {
+                debugger;
+                $(".loader").hide();
+                if (json == "True") {
+                    var msg = "Saved Successfully";
+                    var titl = "Saved!";
+                    if (AddUpdate == "Update") {
+                        titl = "Updated!";
+                        msg = "Updated Successfully!";
+                    }
+                    else
+                        clear();
+
+                    swal({
+                        title: titl,
+                        text: msg,
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+
+                    var patientid = $("#patientidh").val();
+                    if (form.selector == "#form_AddMedication" || form.selector == "#form_EditMedication") {
+                        $("#divAddMedication").css("display", "none");
+                        $("#btnAddMedication").show();
+                        GetAjaxView("/CurrentMedication/_MedicationsListPartial", patientid, "divMedicationsList");
+                    }
+                    if (form.selector == "#frmId")
+                        AjaxRefresh('DoctorVisit', '_ListDoctorVisits', patientid);
+                    if (form.selector == "#frmAddition")
+                        AjaxRefresh('SecondaryDoctor', '_Index',patientid);
+                    if (form.selector == "#frmDiagnosis" || form.selector == "#frmDiagnosisUpdate")
+                        AjaxRefresh('Icd', '_Index', patientid, ' Diagnosis');
+                    if (form.selector == "#frmCreatePatientUrgencyContact" || form.selector == "#frmUpdatePatientUrgencyContact")
+                        GetAjaxView('/PatientUrgencyContact/_Index', patientid, 'medical-urg');
+                    if (form.selector == "#form_AddHospital" || form.selector =="#form_updateHospital") {
+                        GetAjaxView('/PatientProfile/_PatientProfile_HospitalVisit', patientid, 'divhospitalvisitdetails');
+                        clear();
+                    }
+                    if (form.selector == "#patientupdate")
+                    {
+                        var EnrollSubstatus = $("#EnrollmentSubStatushiden").val();
+                        var OldEnrollSubstatus = $("#patientEnrollmentOldsubstatus").val();
+                        if (OldEnrollSubstatus != EnrollSubstatus) {
+                            if ($("#callingprogress").css("display") == "block") {
+                                $("#patient-detail a").trigger("click");
+                            } else {
+                                window.location.reload(true);
+
+                            }
+
+                        }else
+                            $("#patient-detail a").trigger("click");
+                            //AjaxRefresh1('Patient', '_Details',patientid, '');
+                    }
+
+                    if (form.selector == "#frmpatientLaboratory") {
+                        AjaxRefresh('PatientProfile', 'LaboratoryResult', patientid, 'Laboratory Results')
+                    }
+                    if (form.selector == "#frmPatientProfileConsent") {
+                        $.ajax({
+                            type: 'Post',
+                            data: { patientId: patientid },
+                            url: '/PatientProfile/_PatientProfileConsentPatrial',
+                            success: function (data) {
+                                $("#PatientConsentHistoryPartialDiv").html(data);
+                                var data1 = 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+                                $('#txtSignatureID').val(data1);
+                                $("#sign").find('img').attr("src", 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
+                                $("#saveButton").attr("disabled", true);
+                                $("#Concent").val('');
+                                $("#notes").val('');
+                                //$("#notes").text("");
+                                //$("#notediv").find('textarea').val('');    
+                                $("#example").DataTable({
+        "order": [[6 , "Dsec" ]]
+    });
+                            },
+                            error: function () {
+
+                            }
+                        })
+
+                    }
+                    
+                }
+                else {
+                    swal("Error!", "Error Accured :" + json, "error");
+                }
+            },
+            error: function (xhr, status, error) {
+                $(".loader").hide();
+                var err = eval("(" + xhr.responseText + ")");
+                //;
+                swal("Error!", "Error Accured :" + err.Message, "error");
+            }
+        });
+
+        return false;
+    }
+    /************End Generice************/
+
+    /****** Generic Clear *******/
+    function clear() {
+        if ($("#care_plan").css("display") == "none") {
+            $("input[type=text], textarea").val("");
+        }
+        if ($("#divAddHospital").css("display") == "block")
+        {
+            $("#divAddHospital").find("input[type=text]").val("");
+            $("#divAddHospital").find("textarea").val("");
+            $("#divAddHospital").css("display", "None");
+            $("#btnAddHospital").css("display", "block");
+        }
+    }
+     /****** **** *******/
+    //*****Strt For Remote Patient Monitoring
+    function calculateBMI() {
+        debugger;
+        var height = $('#bmiHeight').val();
+        height = height * 12;
+        var weight = $('#bmiWeight').val();
+        var _bmi = 0;
+        //For dropdownval
+        //if ($('#bmiFormula').val() == 'kgm') {
+        //    _bmi = weight / (height * height);
+        //}
+        //else if ($('#bmiFormula').val() == 'lbin') {
+        //    _bmi = (703 * weight) / (height * height);
+        //}
+        //else { _bmi = 0;}
+
+        _bmi = (703 * weight) / (height * height);
+        _bmi = parseFloat(_bmi).toFixed(2);
+
+        if (_bmi != "Infinity" && _bmi !="NaN")
+            $('#spnbmi').text(_bmi);
+        else
+            $('#spnbmi').text("___");
+
+        //for passing to Model value
+        $("#BMI").val(_bmi);
+
+        var state = "";
+        _bmi = parseFloat(_bmi).toFixed(1);
+
+        if (_bmi < 18.5)
+            state = "Underweight";
+        else if (_bmi >= 18.5 && _bmi <= 24.9)
+            state = "Normal weight";
+        else if (_bmi >= 25 && _bmi <= 29.9)
+            state = "Overweight";
+        else if (_bmi >= 30 && _bmi <= 34.9)
+            state = "class I obese";
+        else if (_bmi >= 35 && _bmi <= 39.9)
+            state = "class II obese";
+        else if (_bmi >= 40)
+            state = "Obesity"
+        else
+            state = "___";
+
+        $('#spnstate').text(state);
+    }
+    //*****END For Remote Patient Monitoring
+
+    function loadDiagnosis() {
+        $(".datepicker").datepicker('setDate', '0');
+        $("input[type=datetime]").datepicker({
+            dateFormat: "mm/dd/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "-0:+2"
+        });
+    }
+    function loadDatetimePicker() {
+        //$(".datepicker").datepicker('setDate', '0');
+        $('.datepicker').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "-10:+0"
+        });
+        $(".datepicker").datepicker('setDate', '0');
+    }
+    function LoadJqueryForEligiblity() {
+        $("#EnrollmentSubStatus").children('option').hide();
+
+        $("#EnrollmentStatus option").filter(function () {
+            return $(this).text() == $("#EnrollmentStatushiden").val();
+        }).prop("selected", true);
+        debugger;
+        $("#EnrollmentSubStatus").children("option[value='" + $('#EnrollmentStatus').get(0).value + "']").show();
+        $("#EnrollmentSubStatus option").filter(function () {
+            return $(this).text() == $("#EnrollmentSubStatushiden").val();
+        }).prop("selected", true);
+
+        $("#EnrollemntStatusReson option:contains(" + $("#EnrollmentSubStatusReasonhiden").val() + ")").attr('selected', 'selected');
+        $("#EnrollemntStatusResondiv").hide();
+        if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+            $("#EnrollemntStatusResondiv").show();
+        }
+    }
+    function ContactPrefrence()
+    {
+        $("#basic-info").load('@Url.Action("_Create", "PatientProfile", new {patientId = Model.Id})', function () {
+            $("#contact-info").load('@Url.Action("_Create", "PatientContact", new {patientId = Model.Id })', function () {
+                $("#address").load('@Url.Action("_Create", "PatientAddress", new {patientId = Model.Id })', function () {
+                    $("#medical-urg").load('@Url.Action("_Index", "PatientUrgencyContact", new {patientId = Model.Id })', function () {
+                        $("#insurance").load('@Url.Action("_Create", "PatientInsurance", new {patientId = Model.Id })', function () { recordactivity(); });
+                    });
+                });
+
+            });
+        });
+
+
+
+        //$("#medical-urg").load('@Url.Action("_Create", "PatientUrgencyContact", new {patientId = Model.Id })', function () { recordactivity();});
+
+    }
+    function LifeStyleAndHabit() {
+        $("#work-status").load('@Url.Action("_Create", "PatientWorkAndRelationship", new {patientId = Model.Id})', function () {
+            $("#diet-habbit").load('@Url.Action("_Create", "PatientLifestyle_DietAndHabit", new {patientId = Model.Id })', function () {
+                $("#life-stress").load('@Url.Action("_Create", "PatientLifestyle_LifeStress", new {patientId = Model.Id })', function () {
+                    $("#nutritional").load('@Url.Action("_Create", "PatientLifestyle_NutritionalSupplement", new {patientId = Model.Id })', function () { recordactivity(); });
+                });
+            });
+
+        });
+    }
+    function MedicalHistory() {
+        debugger;
+        $("#general-medical").load('@Url.Action("_Create", "PatientMedicalStatus", new {patientId = Model.Id})', function () {
+            $("#medical-condition").load('@Url.Action("_Create", "PatientMedicalHistory_MedicalCondition", new {patientId = Model.Id })', function () {
+                $("#family-history").load('@Url.Action("_Create", "PatientFamilyHistory", new {patientId = Model.Id })', function () {
+                    $("#food-drug").load('@Url.Action("_Create", "PatientAllergy", new {patientId = Model.Id })', function () {
+                        $("#current-medication").load('@Url.Action("_Patient", "CurrentMedication", new {patientId = Model.Id })', function () {
+
+                            $("#divAddMedication").load('@Url.Action("_AddMedicationPartial", "CurrentMedication", new {patientId = Model.Id })', function () {
+                                recordactivity();
+                                var patientid = $("#patientidh").val();
+                                GetAjaxView("/CurrentMedication/_MedicationsListPartial", patientid, "divMedicationsList");
+                                //$("#divGeneralConditions").load('/CurrentMedication/_GeneralConditionsPartial', { patientId: patientid });
+                            });
+
+                        });
+                    });
+                });
+            });
+        });
+    }
+    function LoadFinalCarePlanCreate()
+    {
+        var patientid = $("#patientidh").val();
+        var error = '@ViewBag.Errors';
+        if (error != "") {
+            swal(error);
+        }
+
+        GetAjaxView("/CurrentMedication/MedicationListPartialNew", patientid, "divMedicationsList"); $('#medicationsTable').DataTable({
+            responsive: true,
+            pageLength: 100
+        });
+    }
+    function GetAjaxView(URL, PatientID, ViewID) {
+        $(".loader").show();
+        $.ajax({
+            url: URL + '?patientId=' + PatientID,
+            type: "GET",
+
+            success: function (partialViewResult) {
+                debugger;
+                $(".loader").hide();
+
+                $("#" + ViewID).html(partialViewResult);
+
+
+            },
+            error: function () {
+                $(".loader").hide();
+            }
+        });
+    }
+    function calculatetotalminutesforselected() {
+        GetTotalTimeofSelectedReview();
+        var totalminutes = 0;
+        //$(".checkboxforsubmitreviews").each(function () {
+        //    if ($(this).prop('checked') == true) {
+
+        //        totalminutes += toSeconds($(this).attr("data-time"));
+        //    }
+        //});
+        //var result =
+        //    fill(Math.floor(totalminutes / 3600), 2) + ':' +
+        //    fill(Math.floor(totalminutes / 60) % 60, 2) + ':' +
+        //    fill(totalminutes % 60, 2);
+        //$("#totselectedtime").text(result);
+    }
+    function GetTotalTimeofSelectedReview() {
+        var RecordingTimes = [];
+
+        $(".checkboxforsubmitreviews").each(function () {
+            if ($(this).prop('checked') == true) {
+                RecordingTimes.push($(this).val());
+
+            }
+        });
+        debugger;
+        $.ajax({
+            type: "POST",
+
+            url: "/CcmStatus/GetTotalTimeforSelectedReviews",
+            data: {
+                'timeSpans': RecordingTimes
+            },
+            success: function (result) {
+                $("#totselectedtime").html(result);
+
+            }, error: function (result) {
+
+            }
+        });
+    }
+    function LoadJqueryForReviewTime()
+    {
+        debugger;
+        $('#table').DataTable({
+            pageLength: 100,
+            scrollY: "50vh",
+            "dom": "Blfrtip",
+            'columnDefs': [{
+                'targets': 0,
+                'searchable': false,
+                'orderable': false
+
+            }],
+            buttons: [{
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: ["thead th:not(.noExport)", ':visible']
+                }
+            },
+                , {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                exportOptions: {
+                    columns: ["thead th:not(.noExport)", ':visible']
+                }
+            }],
+
+        });
+        $('#table1').DataTable({
+            pageLength: 25,
+            scrollY: "50vh",
+            "order": []
+
+        });
+        $("#callHistoryPartialView").load('@Url.Action("_CallHistoryPartial", "ContactPatient", new {patientId = Model.Id})');
+        $("#textHistoryPartialView").load('@Url.Action("_TextHistoryPartial", "ContactPatient", new {patientId = Model.Id })');
+        $("#emailHistoryPartialView").load('@Url.Action("_EmailHistoryPartial", "ContactPatient", new {patientId = Model.Id })');
+        calculatetotalminutesforselected();
+    }
+
+
+
+    function LoadCallMessageEmailHistory() {
+        var error = '@ViewBag.Msg';
+        if (error != "") {
+            swal(error);
+        }
+            @* Load Partial Views *@
+        $("#callHistoryPartialView").load('@Url.Action("_CallHistoryPartial", "ContactPatient", new {patientId = Model.Id})');
+        $("#textHistoryPartialView").load('@Url.Action("_TextHistoryPartial", "ContactPatient", new {patientId = Model.Id})');
+        $("#emailHistoryPartialView").load('@Url.Action("_EmailHistoryPartial", "ContactPatient", new {patientId = Model.Id})');
+        $("#patientinsuranceinfo").load('@Url.Action("PatientInsuranceInfo", "Patient", new {patientId = Model.Id})');
+
+
+        $("#EnrollmentSubStatus").children('option').hide();
+        $("#EnrollmentSubStatus").val('0')
+
+        $("#EnrollmentStatus option").filter(function () {
+            return $(this).text() == $("#EnrollmentStatushiden").val();
+        }).prop("selected", true);
+
+        $("#EnrollmentSubStatus").children("option[value='" + $('#EnrollmentStatus').get(0).value + "']").show();
+        $("#EnrollmentSubStatus option").filter(function () {
+            return $(this).text() == $("#EnrollmentSubStatushiden").val();
+        }).prop("selected", true);
+
+        $("#EnrollemntStatusReson option:contains(" + $("#EnrollmentSubStatusReasonhiden").val() + ")").attr('selected', 'selected');
+        $("#EnrollemntStatusResondiv").hide();
+        if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+            $("#EnrollemntStatusResondiv").show();
+        }
+    }
+
+
+   
+    function showappointmentpopup(id)
+    {
+        //initalizecalender();
+      //  $("#BADialog").modal("show");
+
+        $(".loader").show();
+        ////$.post('/Appointment/_BookAppointment', { PatientID: id }, function (response) {
+        ////    $('#BADetails').html(response)
+        ////});
+        $.ajax({
+            url: "/Appointment/_BookAppointment?PatientID="+id,
+                    type: "POST",
+                    async: true,
+            success: function (response) {
+                $(".loader").hide();
+                $('#BADetails').html(response);
+                setTimeout(function () {
+                    $("#BADialog").modal("show");
+                    
+
+                }, 0);
+            },
+            complete: function () {
+                $(".loader").hide();
+            },
+            error: function (error) {
+                $(".loader").hide();
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+    }
+</script>
+
+<script src='https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/15.1.1/autocomplete-lhc_jQuery.min.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.14/jquery.datetimepicker.full.min.js"></script>
+
+
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>*@

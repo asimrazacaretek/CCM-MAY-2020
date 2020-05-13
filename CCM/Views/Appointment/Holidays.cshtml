@@ -1,0 +1,36 @@
+﻿@model IEnumerable<CCM.Models.PhysicianHolidays>
+
+
+<table class="table">
+    <thead>
+        <tr>
+          
+            <th>
+               Date
+            </th>
+           <th>
+               Remarks
+           </th>
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.HDate)
+            </td>
+           <td>
+               @Html.DisplayFor(modelitem=>item.Remarks)
+           </td>
+            <td>
+
+                <a> <i class="fa fa-trash text-warning" onclick="deleteorderH('@item.ID')"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

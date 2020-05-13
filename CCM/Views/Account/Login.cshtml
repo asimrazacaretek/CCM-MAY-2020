@@ -1,0 +1,51 @@
+﻿@model CCM.Models.LoginViewModel
+@{ Layout = null; }
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CCM Health - Chronic Care Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/Content/stylelogin0302.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div class="main-agileits">
+       
+
+        <div class="mainw3-agileinfo">
+        
+            <div class="login-form">
+                <center><img id="logo" src="~/images/CCM Logo Final.png" height="65" width="250" alt="" /></center>
+                <h3 align="center" id="authorizedPersonal"> Warning: Authorized Personal Only</h3>
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <p>@Html.ValidationSummary(true, "", new { @class = "error" })</p>
+                    <p>Username</p>
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "error" })
+                    @Html.TextBoxFor(m => m.Email)
+
+                    <p>Password</p>
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "error" })
+                    @Html.PasswordFor(m => m.Password)
+
+                    <br />
+                    <label class="anim">
+                        @Html.CheckBoxFor(m => m.RememberMe, new { @class = "checkbox" })
+                        <span> Remember me ?</span>
+                    </label>
+                    <input type="submit" value="Login" />
+                    
+                }
+            </div>
+       
+        </div>
+    </div>
+
+</body>
+
+</html>

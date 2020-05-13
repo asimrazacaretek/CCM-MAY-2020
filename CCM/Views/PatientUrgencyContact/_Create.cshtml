@@ -1,0 +1,525 @@
+﻿@model CCM.Models.PatientProfile_UrgencyContact
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })*@
+<style>
+    .panel-body {
+        width: 100%;
+        overflow-x: scroll;
+    }
+</style>
+<div>
+    <div class="custom-title">
+        <h3>Create MEDICAL URGENCY CONTACTS</h3>
+    </div>
+    @using (Html.BeginForm("_Create", "PatientUrgencyContact", FormMethod.Post,
+ new { id = "frmCreatePatientUrgencyContact", @class = "frmStyle" }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-horizontal">
+            @*<p style="font-size: 1.35em; font-weight: bold; padding: 10px 0; color: #74B34A">Primary Urgency Contact</p>*@
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryProfesionalCareProvider, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(item => item.PrimaryProfesionalCareProvider,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "Profesional Care",  Text = "Profesional Care"},
+                                        new {Value = "Family Member", Text = "Family Member"}
+                                    },
+                                    "Value", "Text", Model), new { @class = "form-control border-input", id = "PrimaryProfesionalCareProvider" })
+                            @Html.ValidationMessageFor(model => model.PrimaryProfesionalCareProvider, "", new { @class = "text-danger" })
+
+
+                            @*@Html.DropDownListFor(model => model.PrimaryProfesionalCareProvider, new SelectList(ViewBag.ProfesionalCareProvider, "Value", "Text", Model), "Select Profesional Care Provider", new { @class = "form-control border-input" })
+                                @Html.ValidationMessageFor(model => model.PrimaryProfesionalCareProvider, "", new { @class = "text-danger" })*@
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryRelationship, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            <select class="form-control border-input validaterefillinfo" id="PrimaryRelationship">
+                                <option value="N/A" selected="selected">N/A</option>
+                                <option value="Father">Father</option>
+                                <option value="Mother">Mother</option>
+                                <option value="Brother">Brother</option>
+                                <option value="Sister">Sister</option>
+                                <option value="Son">Son</option>
+                                <option value="Daughter">Daughter</option>
+                                <option value="Friend">Friend</option>
+                            </select>
+                            @Html.ValidationMessageFor(model => model.PrimaryRelationship, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryName, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            <input type="text" id="TxtName" class="form-control border-input validaterefillinfo" />
+                            @*@Html.EditorFor(model => model.PrimaryName, new { htmlAttributes = new { @class = "form-control border-input validaterefillinfo" } })*@
+                            @Html.ValidationMessageFor(model => model.PrimaryName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryMobilePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryMobilePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input validaterefillinfo" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryMobilePhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryMobilePhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryMobilePhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryMobilePhoneNumber1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryHomePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryHomePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryHomePhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryHomePhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryHomePhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryHomePhoneNumber1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryExpertise, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryExpertise, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryExpertise, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryHealthProxyAndCarplane, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(item => item.PrimaryHealthProxyAndCarplane,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "true",  Text = "Yes"},
+                                        new {Value = "false", Text = "No"}
+                                    },
+                                    "Value", "Text", Model), new { @class = "form-control border-input", id = "PrimaryHealthProxyAndCarplane" })
+                            @Html.ValidationMessageFor(model => model.PrimaryHealthProxyAndCarplane, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryEmail, htmlAttributes: new { @class = "col-md-2" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryEmail, new { htmlAttributes = new { @class = "form-control border-input", type = "email" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryEmail, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryIsShareCarePlan, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(item => item.PrimaryIsShareCarePlan,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "true",  Text = "Yes"},
+                                        new {Value = "false", Text = "No"}
+                                    },
+                                    "Value", "Text", Model), new { @class = "form-control border-input", id = "PrimaryIsShareCarePlan" })
+                            @Html.ValidationMessageFor(model => model.PrimaryIsShareCarePlan, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="col-md-12">Urgency Contact Type</label>
+
+                        <div class="col-md-12">
+                            <select class="form-control border-input" id="UrgencyType">
+                                <option value="Primary">Primary</option>
+                                <option value="Secondary">Secondary</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+                @*<div class="col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PrimaryDieseaseState, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                <select class="form-control border-input" id="PrimaryDieseaseState">
+                                    <option value="High Blood Presure">High Blood Presure</option>
+                                    <option value="Sugar">Sugar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+            <div class="row">
+
+
+                <div class="col-md-3">
+                    <br />
+                    <div class="col-md-12">
+                        <button class="btn btn-success " type="button" onclick="addtoUrgencydata()">
+                            Add to List
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover display nowrap" id="tblUrgencydata" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Relationship</th>
+                            <th>Cell Phone Number 1</th>
+                            <th>Cell Phone Number 2</th>
+                            @*<th>Cell Phone Number 3</th>*@
+                            <th>Home Phone Number </th>
+                            <th>Work Phone Number </th>
+                            @*<th>Home Phone Number 3</th>*@
+                            <th>Profesional Care Provider/Family Member</th>
+                            <th>Expertise / Skillset</th>
+                            <th>Health Proxy and Carplane</th>
+                            @*<th>Diesease State</th>*@
+                            <th>Email</th>
+                            <th>Share Care Plan</th>
+                            <th>Urgency Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+
+            <!--------Start Secondary Urgency Contact------>
+            <div id="secondaryUrgency" style="display:none">
+                <p style="font-size: 1.35em; font-weight: bold; padding: 25px 0 10px 0; color: #74B34A">Secondary Urgency Contact</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryName, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.SecondaryName, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                @Html.ValidationMessageFor(model => model.SecondaryName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryRelationship, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.SecondaryRelationship, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                @Html.ValidationMessageFor(model => model.SecondaryRelationship, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryMobilePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.SecondaryMobilePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                @Html.ValidationMessageFor(model => model.SecondaryMobilePhoneNumber, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryMobilePhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.SecondaryMobilePhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                @Html.ValidationMessageFor(model => model.SecondaryMobilePhoneNumber1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryMobilePhoneNumber2, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.SecondaryMobilePhoneNumber2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                @Html.ValidationMessageFor(model => model.SecondaryMobilePhoneNumber2, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryHomePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.SecondaryHomePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                @Html.ValidationMessageFor(model => model.SecondaryHomePhoneNumber, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryHomePhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.SecondaryHomePhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                @Html.ValidationMessageFor(model => model.SecondaryHomePhoneNumber1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryHomePhoneNumber2, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.SecondaryHomePhoneNumber2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                @Html.ValidationMessageFor(model => model.SecondaryHomePhoneNumber2, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryProfesionalCareProvider, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(model => model.SecondaryProfesionalCareProvider, new SelectList(ViewBag.ProfesionalCareProvider, "Value", "Text", Model), "Select Profesional Care Provider", new { @class = "form-control border-input" })
+                                @Html.ValidationMessageFor(model => model.SecondaryProfesionalCareProvider, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryExpertise, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.SecondaryExpertise, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                @Html.ValidationMessageFor(model => model.SecondaryExpertise, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryHealthProxyAndCarplane, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(item => item.SecondaryHealthProxyAndCarplane,
+                                    new SelectList(
+                                        new[]
+                                        {
+                                            new {Value = "true",  Text = "Yes"},
+                                            new {Value = "false", Text = "No"}
+                                        },
+                                        "Value", "Text", Model),
+                                    "Select One", new { @class = "form-control border-input", id = "issues" })
+                                @Html.ValidationMessageFor(model => model.SecondaryHealthProxyAndCarplane, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryDieseaseState, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(model => model.SecondaryDieseaseState, new SelectList(ViewBag.DieseaseState, "Value", "Text", Model), "Select Diesease State", new { @class = "form-control border-input" })
+                                @Html.ValidationMessageFor(model => model.SecondaryDieseaseState, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryEmail, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.SecondaryEmail, new { htmlAttributes = new { @class = "form-control border-input", type = "email" } })
+                                @Html.ValidationMessageFor(model => model.SecondaryEmail, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SecondaryIsShareCarePlan, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(item => item.SecondaryIsShareCarePlan,
+                                    new SelectList(
+                                        new[]
+                                        {
+                                            new {Value = "true",  Text = "Yes"},
+                                            new {Value = "false", Text = "No"}
+                                        },
+                                        "Value", "Text", Model),
+                                    "Select One", new { @class = "form-control border-input", id = "issues" })
+                                @Html.ValidationMessageFor(model => model.SecondaryIsShareCarePlan, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--------End Secondary Urgency Contact------>
+
+            <br />
+            <div class="row">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="button" value="Create" class="btn btn-default logdetails" onclick="SubmitForm('frmCreatePatientUrgencyContact','Save')" />
+                    <a class="btn btn-success logdetails" onclick="GetAjaxView('/PatientUrgencyContact/_Index', '@Model.PatientId','medical-urg')"> Back to List</a>
+
+                    @*<input type="button" value="Update" class="btn btn-success logdetails" onclick="SubmitForm('frmCreatePatientUrgencyContact','Update')" />*@
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    function addtoUrgencydata() {
+        if (1 == 1) {
+            var isvalidated = true; debugger;
+            $(".validaterefillinfo").each(function () {
+                if (isvalidated == false) {
+                    return false;
+                }
+
+                if ($(this).val().length == 0) {
+                    swal("Enter all the fields");
+                    isvalidated = false;
+                    return false;
+                }
+            });
+            if (isvalidated == false) {
+                return false;
+            }
+            $("#tblUrgencydata tbody tr .icd10code").each(function () {
+                if ($(this).text() == $("#icd10").val()) {
+                    $("#icd10").val('');
+                    $("#icd9dx").val('');
+
+                    swal("ICD10 Code already exists.");
+                    isvalidated = false;
+                    return false;
+                }
+            });
+            if (isvalidated == false) {
+                return false;
+            }
+            // $("#tblRefills tbody tr").remove();
+            var a = $("#TxtName").val();
+            var rowcount = ($("#tblUrgencydata tbody tr").length) + 1;
+            
+            $("#tblUrgencydata").find('tbody').append($('<tr id="PrimaryName' + rowcount + '">')
+                .append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryNameH" value="' + $("#TxtName").val() + '"><label>' + $("#TxtName").val() + '</label>')
+                    )
+                )
+                .append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryRelationshipH" value="' + $("#PrimaryRelationship").val() + '"><label>' + $("#PrimaryRelationship").val() + '</label>')
+                    )
+                )
+                .append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryMobilePhoneNumberH" value="' + $("#PrimaryMobilePhoneNumber").val() + '"><label>' + $("#PrimaryMobilePhoneNumber").val() + '</label>')
+                    )
+                ).append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryMobilePhoneNumberH1" value="' + $("#PrimaryMobilePhoneNumber1").val() + '"><label>' + $("#PrimaryMobilePhoneNumber1").val() + '</label>')
+                    )
+                )//.append($('<td>')
+                //    .append($('<input type="hidden" name="PrimaryMobilePhoneNumberH2" value="' + $("#PrimaryMobilePhoneNumber2").val() + '"><label>' + $("#PrimaryMobilePhoneNumber2").val() + '</label>')
+                //    )
+                //)
+                .append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryHomePhoneNumberH" value="' + $("#PrimaryHomePhoneNumber").val() + '"><label>' + $("#PrimaryHomePhoneNumber").val() + '</label>')
+                    ))
+                .append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryHomePhoneNumberH1" value="' + $("#PrimaryHomePhoneNumber1").val() + '"><label>' + $("#PrimaryHomePhoneNumber1").val() + '</label>')
+                    ))
+                //.append($('<td>')
+                    //.append($('<input type="hidden" name="PrimaryHomePhoneNumberH2" value="' + $("#PrimaryHomePhoneNumber2").val() + '"><label>' + $("#PrimaryHomePhoneNumber2").val() + '</label>')
+                    //))
+                .append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryProfesionalCareProviderH" value="' + $("#PrimaryProfesionalCareProvider").find(":selected").val() + '"><label>' + $("#PrimaryProfesionalCareProvider").find(":selected").val() + '</label>')
+                    ))
+                .append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryExpertiseH" value="' + $("#PrimaryExpertise").val() + '"><label>' + $("#PrimaryExpertise").val() + '</label>')
+                    ))
+                .append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryHealthProxyAndCarplaneH" value="' + $("#PrimaryHealthProxyAndCarplane").find(":selected").val() + '"><label>' + $("#PrimaryHealthProxyAndCarplane").find(":selected").val() + '</label>')
+                    ))
+                //.append($('<td>')
+                //    .append($('<input type="hidden" name="PrimaryDieseaseStateH" value="' + $("#PrimaryDieseaseState").find(":selected").val() + '"><label>' + $("#PrimaryDieseaseState").find(":selected").val() + '</label>')
+                //    ))
+                .append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryEmailH" value="' + $("#PrimaryEmail").val() + '"><label>' + $("#PrimaryEmail").val() + '</label>')
+                    ))
+                .append($('<td>')
+                    .append($('<input type="hidden" name="PrimaryIsShareCarePlanH" value="' + $("#PrimaryIsShareCarePlan").find(":selected").val() + '"><label>' + $("#PrimaryIsShareCarePlan").find(":selected").val() + '</label>')
+                    ))
+                .append($('<td>')
+                    .append($('<input type="hidden" name="UrgencyTypeH" value="' + $("#UrgencyType").find(":selected").val() + '"><label>' + $("#UrgencyType").find(":selected").val() + '</label>')
+                    ))
+                .append($('<td>')
+                    .append($('<i class="fa fa-trash text-warning" onclick="deleteUrgencyrow(' + rowcount + ')">')
+                    ))
+            );
+        }
+    }
+    function deleteUrgencyrow(id) {
+        $("#PrimaryName" + id).remove();
+    }
+</script>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+
+
+        function reviewTimePost() {
+            $.ajax({
+                url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                type: "POST",
+                async: true,
+                success: function () {
+                },
+                error: function (error) {
+                    Showerrormsg1(error.statusText);
+                }
+            });
+        }
+        </SCRIPT>
+    }
+}

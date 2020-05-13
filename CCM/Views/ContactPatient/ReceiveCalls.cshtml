@@ -1,0 +1,290 @@
+﻿
+@{
+    ViewBag.Title = "ReceiveCalls";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .navbar-fixed-top {
+        display: none;
+    }
+
+    html, body {
+        margin-left: 0;
+        background-color: #e2e2e2;
+    }
+
+    .copyright {
+        display: none;
+    }
+
+    .body-content {
+        margin-top: 0 !important;
+    }
+
+    h2 {
+        margin: 10px;
+    }
+    .callernum {
+        text-align: center;
+        width: 100%;
+        font-size: 20px;
+        border-bottom: 1px solid;
+        margin-bottom: 10px;
+    }
+    .acceptcall {
+        margin-left:15px;
+        background-image: url('../../images/acceptcall1.gif');
+        background-size: 266px;
+        box-sizing: border-box;
+        background-color: transparent;
+        height: 228px;
+        width: 210px;
+        padding:7px 18px;
+        color: #66615B;
+        -webkit-transition: all 150ms linear;
+        -moz-transition: all 150ms linear;
+        -o-transition: all 150ms linear;
+        -ms-transition: all 150ms linear;
+        transition: all 150ms linear;
+        border: 0px;
+    }
+    .rejectcall {
+        background-image: url('../../images/rejectcall1.gif');
+        background-size: 200px;
+        background-repeat: no-repeat;
+        box-sizing: border-box;
+        background-color: transparent;
+        padding: 7px 18px;
+        
+        color: #66615B;
+        -webkit-transition: all 150ms linear;
+        -moz-transition: all 150ms linear;
+        -o-transition: all 150ms linear;
+        -ms-transition: all 150ms linear;
+        transition: all 150ms linear;
+        height: 181px;
+        width: 210px;
+        border: 0px;
+    }
+    .timerdiv{
+        float:left;
+        width:100%;
+        text-align:center;
+    }
+    .maincontentdiv{
+        width:100%;
+        text-align:center;
+    }
+    .modal-footer{
+        border-top:0px solid white;
+    }
+</style>
+<h2>Receive Calls</h2>
+
+<div class="modal fade" id="TwilioCallModalR" tabindex="-1" role="dialog" aria-labelledby="TwilioCallModalR" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+
+
+
+            <div class="modal-body">
+                <div id="twilliomodalbodyR">
+                    <div class="col-md-12 pull-left maincontentdiv" style="width:100%;">
+                        <label class="msg" style="display:none">Please wait for page refresh after the call or clicking on hangup.</label>
+                        <label class="callernum"></label><br />
+                                                         <div class="timerdiv">
+                                                             <h3 id="time1" class="time">00:00:00</h3>
+                                                         </div>
+                       
+                        <input type="button" class="acceptcall" value="" style="display:none" />
+                        <input type="button" class="hangupincomming btn btn-danger" value="Hangup Call" style="display:none" />
+                        <input type="button" class="rejectcall" value="" style="display:none" />
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                @*<input type="button" value="Close" class="btn btn-danger btnclosetwilio" onclick="closecalldialogandreload()" data-dismiss="modal" />*@
+
+            </div>
+
+        </div>
+    </div>
+   
+</div>
+
+<script type="text/javascript">
+    var h1 = $("#time1").html(),
+        seconds = 0, minutes = 0, hours = 0, t;
+
+    function add() {
+
+        seconds++;
+        if (seconds >= 60) {
+            seconds = 0;
+            minutes++;
+            if (minutes >= 60) {
+                minutes = 0;
+                hours++;
+            }
+        }
+
+        $("#time1").html( (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" +
+            (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" +
+            (seconds > 9 ? seconds : "0" + seconds));
+        timer();
+
+
+    }
+  
+    function timer() {
+        t = setTimeout(add, 1000);
+    }
+    var ideltimeoutforreceivecall = 0;
+    var receiveinterval;
+    function checktime() {
+        ideltimeoutforreceivecall += 1;
+        if (ideltimeoutforreceivecall >= 35) {
+           
+            ideltimeoutforreceivecall = 0;
+            clearInterval(receiveinterval);
+            $(".callernum").text("You missed a call from " + callername);
+            $(".acceptcall").hide();
+            $(".rejectcall").hide();
+            //Twilio.Device.disconnectAll();
+            setTimeout(function () {
+
+                location.reload(true);
+            }, 2000);
+
+        }
+    }
+    function closecalldialogandreload() {
+        $("#TwilioCallModal").modal("hide");
+        Twilio.Device.disconnectAll();
+        location.reload();
+    }
+
+     $(function () {
+        //$("#TwilioCallModal").modal("show");
+        // $(".acceptcall").show();
+        // $(".rejectcall").show();
+                $.getJSON('/token/Tokenforincomming?CallerName=empty' )
+                    .done(function (data) {
+                      
+                       
+                        console.log('Token: ' + data.token);
+                        //document.getElementById('call-controls').style.display = 'block';
+                        // Setup Twilio.Device
+                        Twilio.Device.setup(data.token, { closeProtection: true, allowIncomingWhileBusy:false });
+
+                        Twilio.Device.ready(function (device) {
+                            
+                        });
+
+                        Twilio.Device.error(function (error) {
+                            
+                        });
+
+                        Twilio.Device.connect(function (conn) {
+                          
+                            
+
+                            
+                        });
+
+                        Twilio.Device.disconnect(function (conn) {
+                           
+                            $(".loader").show();
+                           
+                            setTimeout(function () {
+                               
+                                location.reload(true);
+                            }, 3000);
+
+
+
+
+                        });
+                        Twilio.Device.incoming(function (conn) {
+                            receiveinterval = setInterval(checktime, 1000);
+                            //incommingSid = conn.parameters.callSid;
+                            //log("Incoming call from " + conn.parameters.From);
+                            getnamefromnumber(conn.parameters.From);
+                            $("#TwilioCallModalR").modal("show");
+                            // Set a callback to be executed when the connection is accepted
+                            conn.accept(function () {
+                               // log("In call with customer");
+                            });
+
+                            // Set a callback on the answer button and enable it
+                            $(".acceptcall").click(function () {
+                                clearInterval(receiveinterval);
+                                conn.accept();
+                                timer();
+                                $(".acceptcall").hide();
+                                $(".rejectcall").hide();
+                                $(".hangupincomming").show();
+                            });
+                            $(".rejectcall").click(function () {
+                                clearInterval(receiveinterval);
+                                //log("Call rejected");
+                                conn.reject();
+                                $("#TwilioCallModalR").modal("hide");
+                                $(".acceptcall").hide();
+                                $(".rejectcall").hide();
+                                Twilio.Device.disconnectAll();
+                            });
+                            $(".acceptcall").show();
+                            $(".rejectcall").show();
+                            console.log('Incoming connection from ' + conn.parameters.From);
+                            // accept the incoming connection and start two-way audio
+                            // conn.accept();
+                        });
+                    })
+
+                    .fail(function () {
+                       // log('Could not get a token from server!');
+                    });
+               
+                
+                $(".hangupincomming").click(function () {
+                   // log('Hanging up...');
+                    $(".acceptcall").hide();
+                    $(".rejectcall").hide();
+                    $(".hangupincomming").hide();
+                    Twilio.Device.disconnectAll();
+
+                })
+               
+                
+
+                
+
+               
+                
+
+    });
+    var callername = "";
+    function getnamefromnumber(callsid) {
+        $.ajax({
+            url: "/ContactPatient/GetNamefromNumber",
+            type: "POST",
+            data: { 'CallSid': callsid },
+            success: function (result) {
+                callername = result;
+                $(".callernum").text("Incoming call from " + result);
+  },
+            error: function (result) {
+
+            }
+        });
+    }
+</script>

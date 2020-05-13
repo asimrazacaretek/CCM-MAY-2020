@@ -1,0 +1,516 @@
+﻿
+    
+
+
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet" />
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+
+
+<style>
+    td.highlight {
+        font-weight: bold;
+        color: blue;
+    }
+</style>
+
+
+<br />
+<br />
+<br />
+<br />
+<div id="profile" class="row card">
+
+
+    <div class="col-sm-6 col-md-8 text-center" id="linkButtons">
+        @Html.ActionLink("Approved", "ApprovedList", "DrugRep", null, new { @class = "btn btn-warning" })
+        @Html.ActionLink("In Progress", "InProgressList", "DrugRep", null, new { @class = "btn btn-warning" })
+        @if (User.IsInRole("DrugRep"))
+        {
+            @Html.ActionLink("My Physicians", "DrugRepDoctorList", "DrugRep", null, new { @class = "btn btn-success" })
+
+        }
+
+    </div>
+</div>
+
+
+<br />
+<br />
+
+<table cellpadding="3" cellspacing="0" border="0" style="width: 30%; margin: 0 auto 2em auto;">
+    <thead>
+    <tr>
+        <th>Target</th>
+        <th>Search text</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr id="filter_global">
+    <td>Global search</td>
+    <td><input type="text" class="global_filter" id="global_filter"></td>
+
+
+    <tr id="filter_col4" data-column="3">
+        <td>Column - Bin</td>
+        <td>
+
+            <input type="text" class="column_filter" id="col3_filter">
+        </td>
+    </tr>
+    <tr id="filter_col5" data-column="4">
+        <td>Column - GroupNo</td>
+        <td><input type="text" class="column_filter" id="col4_filter"></td>
+    </tr>
+    <tr id="filter_col6" data-column="5">
+        <td>Column - Insurance</td>
+        <td><input type="text" class="column_filter" id="col5_filter"></td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p>Total in Queue: <strong style ="color:Red">@ViewBag.Total</strong></p><br/>
+<p>Total Validated: <strong style="color: green">
+    <a href="@Url.Action("ValidatedRx","DrugRep")">@ViewBag.Totalvalidated</a>
+</strong></p>
+
+
+
+<body>
+
+@*<div class="container">*@
+<br />
+<table id="example" class="table">
+    <thead>
+    <tr>
+        <th>Rx#</th>
+        <th>Patient</th>
+        <th>Doctor</th>
+        <th>Drug</th>
+        <th>DateFilled</th>
+        <th>Quantity</th>
+        <th>BodyParts Affected</th>
+        <th>Approved</th>
+        <th>In Progress</th>
+        <th>Deactivate</th>
+        <th>Validate</th>
+        <th>Validate On</th>
+         
+
+
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th>Rx#</th>
+        <th>Patient</th>
+        <th>Doctor</th>
+        <th>Drug</th>
+        <th>DateFilled</th>
+        <th>Quantity</th>
+        <th>BodyParts Affected</th>
+        <th>Approved</th>
+        <th>In Progress</th>
+        <th>Deactivate</th>
+        <th>Validate</th>
+        <th>Validate On</th>
+
+    </tr>
+    </tfoot>
+
+</table>
+
+<!-- In Progress Modal -->
+<div class="modal fade" id="InProgressModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">In Progress Reason Selection</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                  
+                    
+            @using (Ajax.BeginForm("InProgressReason", "DrugRep", new {}, new AjaxOptions
+            {
+                HttpMethod = "Post",
+                OnSuccess = "Result"
+            }))
+            {
+                <div class="modal-body">
+
+
+
+                    <ul class="nav nav-tabs">
+                        <li class="dropdown">
+                            @Html.DropDownList("inProgressReason",
+                                new SelectList(ViewBag.InProgressReason, "Value", "Text", Model),
+                                "In Progress Reason", new {@class = "form-control border-input", id = "d1"})
+                        </li>
+                    </ul>
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <input type="submit" value="Save" class="btn btn-warning"/>
+                    <input type="button" value="Close" class="btn btn-success" data-dismiss="modal"/>
+                            
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Deactivate Modal -->
+<div class="modal fade" id="DeactivateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Deactivate Reason Selection</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                  
+                    
+            @using (Ajax.BeginForm("DeactivateReason", "DrugRep", new {}, new AjaxOptions
+            {
+                HttpMethod = "Post",
+                OnSuccess = "InProgressResult"
+            }))
+            {
+                <div class="modal-body">
+
+
+
+                    <ul class="nav nav-tabs">
+                        <li class="dropdown">
+                            @Html.DropDownList("deactivateReason",
+                                new SelectList(ViewBag.Reasons, "Value", "Text", Model),
+                                "Deactivate Reason", new {@class = "form-control border-input", id = "d1"})
+                        </li>
+                    </ul>
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <input type="submit" id="now" value="Save" class="btn btn-warning"/>
+                    <input type="submit" value="Close" class="btn btn-success" data-dismiss="modal"/>
+                            
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+</body>
+
+
+
+<script>
+    function filterGlobal() {
+        $('#example').DataTable().search(
+            $('#global_filter').val(),
+            $('#global_regex').prop('checked'),
+            $('#global_smart').prop('checked')
+        ).draw();
+    }
+
+    function filterColumn(i) {
+        $('#example').DataTable().column(i).search(
+            $('#col' + i + '_filter').val(),
+            $('#col' + i + '_regex').prop('checked'),
+            $('#col' + i + '_smart').prop('checked')
+        ).draw();
+    }
+    $(document).ready(function () {
+        //function filterGlobal() {
+        //    $('#example').DataTable().search(
+        //        $('#global_filter').val(),
+        //        $('#global_regex').prop('checked'),
+        //        $('#global_smart').prop('checked')
+        //    ).draw();
+        //}
+
+
+
+
+        $("#example").DataTable({
+
+       
+
+
+
+            "processing": true, // for show progress bar
+                 "language": {
+            processing: '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="256px" height="32px" viewBox="0 0 128 16" xml:space="preserve"><path fill="#96a6d8" fill-opacity="0.42" d="M6.4,4.8A3.2,3.2,0,1,1,3.2,8,3.2,3.2,0,0,1,6.4,4.8Zm12.8,0A3.2,3.2,0,1,1,16,8,3.2,3.2,0,0,1,19.2,4.8ZM32,4.8A3.2,3.2,0,1,1,28.8,8,3.2,3.2,0,0,1,32,4.8Zm12.8,0A3.2,3.2,0,1,1,41.6,8,3.2,3.2,0,0,1,44.8,4.8Zm12.8,0A3.2,3.2,0,1,1,54.4,8,3.2,3.2,0,0,1,57.6,4.8Zm12.8,0A3.2,3.2,0,1,1,67.2,8,3.2,3.2,0,0,1,70.4,4.8Zm12.8,0A3.2,3.2,0,1,1,80,8,3.2,3.2,0,0,1,83.2,4.8ZM96,4.8A3.2,3.2,0,1,1,92.8,8,3.2,3.2,0,0,1,96,4.8Zm12.8,0A3.2,3.2,0,1,1,105.6,8,3.2,3.2,0,0,1,108.8,4.8Zm12.8,0A3.2,3.2,0,1,1,118.4,8,3.2,3.2,0,0,1,121.6,4.8Z"/><g transform="translate(36 0)"><path fill="#052aa3" fill-opacity="1" d="M-42.7,3.84A4.16,4.16,0,0,1-38.54,8a4.16,4.16,0,0,1-4.16,4.16A4.16,4.16,0,0,1-46.86,8,4.16,4.16,0,0,1-42.7,3.84Zm12.8-.64A4.8,4.8,0,0,1-25.1,8a4.8,4.8,0,0,1-4.8,4.8A4.8,4.8,0,0,1-34.7,8,4.8,4.8,0,0,1-29.9,3.2Zm12.8-.64A5.44,5.44,0,0,1-11.66,8a5.44,5.44,0,0,1-5.44,5.44A5.44,5.44,0,0,1-22.54,8,5.44,5.44,0,0,1-17.1,2.56Z"/><animateTransform attributeName="transform" type="translate" values="23 0;36 0;49 0;62 0;74.5 0;87.5 0;100 0;113 0;125.5 0;138.5 0;151.5 0;164.5 0;178 0" calcMode="discrete" dur="1560ms" repeatCount="indefinite"/></g></svg> '},
+ 
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "stateSave": true,
+            "pageLength": 50,
+
+            //"deferRender": true,
+            //"stateSave": true,
+
+
+
+            "ajax": {
+                "url": "/DrugRep/LoadDrugData",
+                "type": "POST",
+                "datatype": "json"
+            },
+
+            //"columnDefs":
+            //[
+            //    //{
+            //    //    targets: [3],
+            //    //    render: $.fn.dataTable.render.moment('Do MMM YYYYY')
+            //    //},
+            //{
+            //    "targets": [0],
+            //    "visible": false,
+            //    "searchable": true
+            //},
+
+
+            //{
+            //    "targets": [1],
+            //    "searchable": true,
+            //    "orderable": false
+            //},
+            //{
+            //    "targets": [2],
+            //    "searchable": true,
+            //    "orderable": false
+            //    }
+            ////},
+            ////{
+            ////    "targets": [9],
+            ////    "searchable": false,
+            ////    "orderable": false
+            ////}
+            //],
+
+            "columns": [
+                {"data": "RxNo", "name": "RxNo", "autoWidth": true},
+                {
+                    "data": "FirstName", "name": "FirstName", "autoWidth": true,
+                    "render": function (data, type, full, meta) {
+                        return full.FirstName + " " + full.LastName;
+                    }
+                },
+                { "data": "Doctor", "name": "Doctor", "autoWidth": true },
+                { "data": "DrugName", "name": "DrugName", "autoWidth": true },
+                {"data": "DateFilled", "name": "DateFilled", "autoWidth": true,
+                    "render": function (data) {
+                        if (data === null) return "";
+
+                        var pattern = /Date\(([^)]+)\)/;
+                        var results = pattern.exec(data);
+                        var dt = new Date(parseFloat(results[1]));
+
+                        return (dt.getMonth() + 1) + "/" + dt.getDate() + "/" + dt.getFullYear();
+                    }
+
+                },
+
+                { "data": "Quantity", "name": "Quantity", "autoWidth": true },
+                { "data": "BodyPartsAffected", "name": "BodyPartsAffected", "autoWidth": true },
+                //{
+                //    "data": null, render: function (data, type, full, meta) {
+                //        if (full.BodyPartsAffected != null){
+                //        return "<p style='color:red'>" + full.BodyPartsAffected + "</p>";
+                //        }
+                //        return "";
+
+                //    }
+                //},
+                {  data: null, render: function (data, type, full, meta) {
+                        return "<a href='#' class='btn btn-info btn-sm' onclick=Approved('" + full.RxNo + "'); >Approved</a>";
+                    }
+                },
+                {
+                    data: null, render: function (data, type, full, meta) {
+
+                        return "<a href='#' class='btn btn-primary btn-sm'  data-toggle='modal' data-target='#InProgressModal'onclick=InProgress('" + full.RxNo + "'); >In Progress</a>";
+
+
+                    }
+                },
+                {
+                    data: null, render: function (data, type, full, meta) {
+
+                        //return "<a href='#' class='btn btn-success btn-sm' data-toggle='modal' data-target='#exampleModal'>Deactivate</a>";
+                        return "<button class='btn btn-success btn-sm' data-toggle='modal' data-target='#DeactivateModal' onclick=Deactivate('" + full.RxNo + "');>Deactivate</button>";
+
+
+                    }
+                },
+               
+                //{
+                //    "render":
+                //        function(data, type, row)
+                //        {
+                //            return '<div class="input-group date">' +
+                //                '<input type="text" class="form-control"  data-field="bestEstimate">' +
+                //                + '<input type="submit" value="Submit" class="btn btn-warning/>"'+'</div>';
+                //        }
+
+                //},
+
+                {
+                    data: null, render: function (data, type, full, meta) {
+                        if (full.Validated != null) {
+                            return "<p>Validated</p>";
+                        }
+                        return "<a href='#' class='btn btn-warning btn-sm' onclick=Validate('" + full.RxNo + "'); >Validate</a>";
+
+
+                    }
+                },
+                {
+                    "data": "ValidationDate", "name": "ValidationDate", "autoWidth": true,
+                    "render": function (data) {
+                        if (data === null) return "";
+
+                        var pattern = /Date\(([^)]+)\)/;
+                        var results = pattern.exec(data);
+                        var dt = new Date(parseFloat(results[1]));
+
+                        return (dt.getMonth() + 1) + "/" + dt.getDate() + "/" + dt.getFullYear();
+                    }
+
+                }
+
+           
+            ]
+
+        });
+
+       
+
+
+        $('input.global_filter').on('keyup click', function () {
+            filterGlobal();
+        });
+
+        $('input.column_filter').on('keyup click', function () {
+            filterColumn($(this).parents('tr').attr('data-column'));
+        });
+
+
+       
+
+    });
+
+
+</script>
+<script>
+    function Validate(RxNo) {
+        var url = '@Url.Content("~/")' + "DrugRep/ValidateRx";
+
+        $.post(url, { RxNo: RxNo }, function (result) {
+            if (result.Action === "Updated") {
+                window.swal({
+                        title: "Thank You!",
+                        text: "Record Sucessfully Updated",
+                        type: "success"
+
+                    },
+                    function () {
+                        location.reload(true);
+                        tr.hide();
+                    });
+
+            }
+            if (result.Action === "error") {
+                window.swal({
+                        title: "Rx not Validated",
+                        text: "Record Sucessfully Updated",
+                        type: "error"
+
+                    }
+                );
+
+            }
+        });
+    }
+</script>
+
+<script>
+    function Approved(RxNo) {
+        var url = '@Url.Content("~/")' + "DrugRep/Approved";
+
+        $.post(url, { RxNo: RxNo }, function (result) {
+            if (result.Action === "Updated") {
+                window.swal({
+                        title: "Thank You!",
+                        text: "Record Sucessfully Updated",
+                        type: "success"
+                       
+                    },
+                    function () {
+                        location.reload(true);
+                        tr.hide();
+                    });
+
+            }
+            else {
+                window.swal("Something Went Wrong!");
+            }
+        });
+    }
+</script>
+
+<script>
+    function Deactivate(RxNo) {
+        var url = '@Url.Content("~/")' + "DrugRep/RxNoDeactivate";
+
+        $.post(url, { RxNo: RxNo }, function (result) {
+        });
+    }
+
+</script>
+
+
+
+<script>
+    function InProgress(RxNo) {
+        var url = '@Url.Content("~/")' + "DrugRep/RxNoInProgress";
+
+        $.post(url, { RxNo: RxNo }, function (result) {
+        });
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+<script>
+    var Result= function(data) {
+        window.swal(data.result);
+    }
+    var InProgressResult = function(data) {
+        window.swal(data.result);
+    }
+</script>
+
+
+

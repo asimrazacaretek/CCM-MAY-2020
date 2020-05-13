@@ -1,0 +1,534 @@
+﻿@model IEnumerable<CCM.Models.Patient>
+
+@*<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet" />*@
+<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.5/css/fixedHeader.dataTables.min.css">
+@*<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>*@
+
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet" />*@
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+
+
+<style>
+    td.highlight {
+        font-weight: bold;
+        color: blue;
+    }
+
+    table.fixedHeader-floating {
+        top: 75px !important;
+    }
+
+    .dataTables_wrapper .dataTables_processing {
+        top: 0 !important;
+    }
+
+    #example td {
+        white-space: pre;
+    }
+</style>
+
+
+<body>
+   
+    <div class="col-md-12 no-padding searchbox">
+
+        <div class="col-md-2">
+            <label>From</label>
+            <input type="date" id="DateFrom" class="form-control border-input datefield" />
+        </div>
+        <div class="col-md-2">
+            <label>To</label>
+            <input type="date" id="DateTo" class="form-control border-input datefield" />
+        </div>
+
+
+        <div class="col-md-2">
+            <label>Filter Date Column</label>
+            <ul class="nav nav-tabs">
+                <li class="dropdown">
+                    @Html.DropDownList(
+    "datefiltercolumn",
+    new SelectList(
+        new[]
+        {
+            new {Value = "Enrolled On",  Text = "Enrolled On"},
+            new {Value = "Assigned on",  Text = "Assigned on"},
+            new {Value = "Appointment",  Text = "Appointment"},
+            new {Value = "Date of Birth",  Text = "Date of Birth"},
+              new {Value = "Capitated",  Text = "Capitated"}
+
+        },
+        "Value", "Text"),
+    "Select Date Filtered Column", new { @class = "form-control border-input", id = "datefiltercolumn" })
+                </li>
+            </ul>
+        </div>
+
+        @if (1 == 1)
+        {
+            if (User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup") || User.IsInRole("LiaisonGroup") || User.IsInRole("Liaison"))
+            {
+                <div class="col-md-2">
+                    <label>
+                        Liaisons
+                    </label>
+
+                    @Html.DropDownList("Liaisons",
+                                  ViewBag.Liaisons as SelectList,
+                                    "Liaisons", new { @class = "form-control border-input select2", id = "ddlLiaisons1" })
+
+
+                </div>
+                if (User.IsInRole("Admin"))
+                {
+                    <div class="col-md-2">
+                        <label>
+                            Physician Groups
+                        </label>
+
+                        @Html.DropDownList("physiciansGroup",
+                                               new SelectList(ViewBag.physiciansGroups, "Value", "Text", Model),
+                                               "Physicians Groups", new { @class = "form-control border-input select2", id = "ddlPhysiciansGroups1" })
+
+
+                    </div>
+                }
+
+            }
+
+            <div class="col-md-2">
+                <label>
+                    Physicians
+                </label>
+
+
+                @Html.DropDownList("physician",
+                          new SelectList(ViewBag.Physicians, "Value", "Text", Model),
+                          "Physicians", new { @class = "form-control border-input select2", id = "ddlPhysicians1" })
+
+            </div>
+
+        }
+
+        <div class="right col-md-12">
+            <div class="col-md-2  pull-right">
+                <input type="button" value="Clear Filters" class="btn btn-success pull-right" style="margin-top:10px;" id="btnclear" onclick="clearfilters()" />
+            </div>
+
+        </div>
+
+    </div>
+    <br />
+   
+   
+    <br />
+
+    <div class="tablefixwidth1">
+        <table id="example" class="table table-striped nowrap" style="width:100%">
+            <thead>
+                <tr>
+
+                    <th class="noExport">Details</th>
+                    <th class="noExport">Survey</th>
+                    <th>ID</th>
+                    <th>Patient Name</th>
+                    @*<th>LastName</th>*@
+                    <th>Gender</th>
+                    <th>Date of Birth</th>
+                    <th>
+                        Counselor Name
+                    </th>
+                    <th>
+                        Physician
+                    </th>
+                    <th>Preferrred Language</th>
+
+                    <th>Enrollment Status</th>
+                    <th>Enrollment SubStatus</th>
+                </tr>
+            </thead>
+
+
+        </table>
+    </div>
+   
+
+
+</body>
+
+
+<script>
+    function clearfilters() {
+        $("#ddlLiaisons1").val("");
+        $("#ddlPhysicians1").val("");
+        $("#ddlPhysiciansGroups1").val("");
+        $("#DateFrom").val("");
+        $("#DateTo").val("");
+        $("#datefiltercolumn").val("");
+        //$("#ddlLiaisons1").select2("destroy");
+        //$("#ddlLiaisons1").select2();
+        //$("#ddlPhysicians1").select2("destroy");
+        //$("#ddlPhysicians1").select2();
+        //$("#ddlPhysiciansGroups1").select2("destroy");
+        //$("#ddlPhysiciansGroups1").select2();
+
+      //  $(".select2").select2("val", "");
+        //$("#ddlLiaisons1").selectpicker('refresh');
+        //$("#ddlPhysicians1").selectpicker('refresh');
+        //$("#ddlPhysiciansGroups1").selectpicker('refresh');
+        table.ajax.reload();
+    }
+    function filterGlobal() {
+        $('#example').DataTable().search(
+            $('#global_filter').val(),
+            $('#global_regex').prop('checked'),
+            $('#global_smart').prop('checked')
+        ).draw();
+    }
+
+    function filterColumn(i) {
+        $('#example').DataTable().column(i).search(
+            $('#col' + i + '_filter').val(),
+            $('#col' + i + '_regex').prop('checked'),
+            $('#col' + i + '_smart').prop('checked')
+        ).draw();
+    }
+   
+   
+    var table;
+
+    //$("#ddlLiaisons1").select2();
+
+    //$("#ddlPhysicians1").select2();
+
+    //$("#ddlPhysiciansGroups1").select2();
+
+    $(document).ready(function () {
+
+        $(".datefield,#datefiltercolumn").change(function () {
+            table.ajax.reload();
+        });
+        $("#ddlLiaisons1").change(function () {
+
+
+
+            table.ajax.reload();
+        });
+        $("#ddlPhysicians1").change(function () {
+
+            table.ajax.reload();
+        });
+        $("#ddlPhysiciansGroups1").change(function () {
+
+            table.ajax.reload();
+        });
+        //function filterGlobal() {
+        //    $('#example').DataTable().search(
+        //        $('#global_filter').val(),
+        //        $('#global_regex').prop('checked'),
+        //        $('#global_smart').prop('checked')
+        //    ).draw();
+        //}
+
+        var UserRolestr = '@ViewBag.Owner';
+    var status ="@ViewBag.StatusStr";
+            var User ="@ViewBag.UserId";
+            var UserRolestr = "@ViewBag.UserRole";
+            var DateStr = "@ViewBag.DateStr";
+        var statusstr = "@ViewBag.SubStatus";
+        if (UserRolestr == "Liaison") {
+            $("#ddlLiaisons1").val('@ViewBag.CCMID');
+        }
+        else {
+            if (UserRolestr == "PhysiciansGroup") {
+                $("#ddlPhysiciansGroups1").val('@ViewBag.CCMID');
+            }
+            else {
+                if (UserRolestr == "Physician") {
+                    $("#ddlPhysicians1").val('@ViewBag.CCMID');
+                }
+
+            }
+        }
+     
+        $.fn.dataTable.ext.errMode = 'throw';
+         table = $("#example").on('page.dt', function () {
+            $('#example-select-all').prop("checked", false);
+
+
+        }).DataTable({
+            fixedHeader: {
+                header: true,
+                footer: false
+            },
+
+            "processing": true, // for show progress bar
+                 "language": {
+            processing: '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="256px" height="32px" viewBox="0 0 128 16" xml:space="preserve"><path fill="#96a6d8" fill-opacity="0.42" d="M6.4,4.8A3.2,3.2,0,1,1,3.2,8,3.2,3.2,0,0,1,6.4,4.8Zm12.8,0A3.2,3.2,0,1,1,16,8,3.2,3.2,0,0,1,19.2,4.8ZM32,4.8A3.2,3.2,0,1,1,28.8,8,3.2,3.2,0,0,1,32,4.8Zm12.8,0A3.2,3.2,0,1,1,41.6,8,3.2,3.2,0,0,1,44.8,4.8Zm12.8,0A3.2,3.2,0,1,1,54.4,8,3.2,3.2,0,0,1,57.6,4.8Zm12.8,0A3.2,3.2,0,1,1,67.2,8,3.2,3.2,0,0,1,70.4,4.8Zm12.8,0A3.2,3.2,0,1,1,80,8,3.2,3.2,0,0,1,83.2,4.8ZM96,4.8A3.2,3.2,0,1,1,92.8,8,3.2,3.2,0,0,1,96,4.8Zm12.8,0A3.2,3.2,0,1,1,105.6,8,3.2,3.2,0,0,1,108.8,4.8Zm12.8,0A3.2,3.2,0,1,1,118.4,8,3.2,3.2,0,0,1,121.6,4.8Z"/><g transform="translate(36 0)"><path fill="#052aa3" fill-opacity="1" d="M-42.7,3.84A4.16,4.16,0,0,1-38.54,8a4.16,4.16,0,0,1-4.16,4.16A4.16,4.16,0,0,1-46.86,8,4.16,4.16,0,0,1-42.7,3.84Zm12.8-.64A4.8,4.8,0,0,1-25.1,8a4.8,4.8,0,0,1-4.8,4.8A4.8,4.8,0,0,1-34.7,8,4.8,4.8,0,0,1-29.9,3.2Zm12.8-.64A5.44,5.44,0,0,1-11.66,8a5.44,5.44,0,0,1-5.44,5.44A5.44,5.44,0,0,1-22.54,8,5.44,5.44,0,0,1-17.1,2.56Z"/><animateTransform attributeName="transform" type="translate" values="23 0;36 0;49 0;62 0;74.5 0;87.5 0;100 0;113 0;125.5 0;138.5 0;151.5 0;164.5 0;178 0" calcMode="discrete" dur="1560ms" repeatCount="indefinite"/></g></svg> '},
+ 
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "stateSave": false,
+            "pageLength": 10,
+
+            bDeferRender: true,
+            colReorder: true,
+            "ajax": {
+                "url": "/Patient/LoadPatientDataSurvey",
+                "type": "POST",
+                "datatype": "json",
+                "data": function (d) {
+                    d.substatus = statusstr,
+                    d.date1 = DateStr,
+                    d.status = status,
+                        d.userId = User,
+                        d.LiaisonId = $("#ddlLiaisons1").val(),
+                        d.PhysicianID = $("#ddlPhysicians1").val(),
+
+                        d.PhysicianGroupID = $("#ddlPhysiciansGroups1").val(),
+                        d.DateFrom = $("#DateFrom").val(),
+                        d.DateTo = $("#DateTo").val(),
+                        d.SearchCol = $("#datefiltercolumn").val()
+                },
+            },
+          
+            'order': [1, 'desc'],
+            //"dom": 'Blfrtip',
+            "dom": '<"top"i>rt<"bottom"Blfrtip><"clear">',
+            lengthMenu: [
+                [10, 25, 50, -1],
+                ['10 rows', '25 rows', '50 rows', 'Show all']
+            ],
+            buttons:
+                [{
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: ["thead th:not(.noExport)", ':visible']
+                }
+            },
+                , {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                exportOptions: {
+                    columns: ["thead th:not(.noExport)", ':visible']
+                    }
+                }, 'colvis'],
+            "columns": [
+
+              
+                {
+                    "render": function (data, type, full, meta) {
+                        return '<a class="btn btn-success btn-sm" href="/Survey/PatientSurveys?Id=' + full.Id+'">Details</a>';
+                    }
+
+                },
+            {
+                    "render": function (data, type, full, meta) {
+                        return '<a class="btn btn-success btn-sm" href=@Url.Action("SurveyStart", "Survey")/' + full.Id + '>Start Survey</a>';
+                    }
+
+                },
+                { "data": "Id", "name": "Id", "autoWidth": true },
+                { "data": "FirstName", "name": "FirstName", "autoWidth": true },
+                //{ "data": "LastName", "name": "LastName", "autoWidth": true },
+                { "data": "Gender", "name": "Gender", "autoWidth": true },
+                { "data": "BirthDate", "name": "BirthDate", "autoWidth": true },
+                {
+                    "data": "liaisonFirstName", "name": "liaisonFirstName", "autoWidth": true,
+                    "render": function (data, type, full, meta) {
+                        return full.liaisonFirstName + " " + full.liaisonLastName;
+                    }
+                },
+                { "data": "DocFirstName", "name": "DocFirstName", "autoWidth": true },
+               
+                { "data": "PreferredLanguage", "name": "PreferredLanguage", "autoWidth": true },
+                { "data": "EnrollmentStatus", "name": "EnrollmentStatus", "autoWidth": true },
+                { "data": "enrollmentsubstatus", "name": "enrollmentsubstatus", "autoWidth": true },
+                
+               
+               
+
+
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+               
+
+
+
+            ]
+
+        });
+
+
+
+
+        $('input.global_filter').on('keyup click', function () {
+            filterGlobal();
+        });
+
+        $('input.column_filter').on('keyup click', function () {
+            filterColumn($(this).parents('tr').attr('data-column'));
+        });
+        // Handle click on "Select all" control
+        $('#example-select-all').on('click', function () {
+            // Check/uncheck all checkboxes in the table
+            var rows = table.rows({ 'search': 'applied' }).nodes();
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        });
+
+        // Handle click on checkbox to set state of "Select all" control
+        $('#example tbody').on('change', 'input[type="checkbox"]', function () {
+            // If checkbox is not checked
+            if (!this.checked) {
+                var el = $('#example-select-all').get(0);
+                // If "Select all" control is checked and has 'indeterminate' property
+                if (el && el.checked && ('indeterminate' in el)) {
+                    // Set visual state of "Select all" control
+                    // as 'indeterminate'
+                    el.indeterminate = true;
+                }
+            }
+        });
+        if (UserRolestr != "Admin") {
+            table.columns(9).visible(false);
+        }
+        else {
+            table.columns(9).visible(true);
+        }
+
+    //Statuses
+        //if (UserRolestr == "Admin") {
+        //    $("#EnrollmentSubStatus").children('option').hide();
+
+        //    $("#EnrollmentStatus option").filter(function () {
+        //        return $(this).text() == $("#EnrollmentStatushiden").val();
+        //    }).prop("selected", true);
+
+        //    $("#EnrollmentSubStatus").children("option[value='" + $('#EnrollmentStatus').get(0).value + "']").show();
+        //    $("#EnrollmentSubStatus option").filter(function () {
+        //        return $(this).text() == $("#EnrollmentSubStatushiden").val();
+        //    }).prop("selected", true);
+
+        //    $("#EnrollemntStatusReson option:contains(" + $("#EnrollmentSubStatusReasonhiden").val() + ")").attr('selected', 'selected');
+        //    $("#EnrollemntStatusResondiv").hide();
+        //    if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+        //        $("#EnrollemntStatusResondiv").show();
+        //    }
+        //    $("#EnrollmentStatushiden").val($("#EnrollmentStatus option:selected").text());
+        //    $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+        //    $("#EnrollmentSubStatusReasonhiden").val($("#EnrollemntStatusReson option:selected").text());
+        //    $(document).on('change', '#EnrollmentStatus', function () {
+
+        //        $("#EnrollmentSubStatus").children('option').hide();
+        //        $("#EnrollmentSubStatus").children("option[value='" + $(this).val() + "']").show();
+        //        $("#EnrollmentSubStatus").val($("#EnrollmentStatus").val());
+
+        //        $("#EnrollmentStatushiden").val($("#EnrollmentStatus option:selected").text());
+        //        $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+        //        $("#EnrollemntStatusResondiv").hide();
+        //    });
+        //    $(document).on('change', '#EnrollmentSubStatus', function () {
+
+        //        $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+
+        //        if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+
+        //            $("#EnrollemntStatusResondiv").show();
+        //        }
+        //        else {
+        //            $("#EnrollemntStatusResondiv").hide();
+        //        }
+        //    });
+        //    $(document).on('change', '#EnrollemntStatusReson', function () {
+        //        $("#EnrollmentSubStatusReasonhiden").val($("#EnrollemntStatusReson option:selected").text());
+        //    });
+        //}
+
+    });
+
+
+</script>
+<script>
+    function Details(Id) {
+        var url = '@Url.Content("~/")' + "Patient/Details";
+
+        $.post(url, { Id: Id }, function (result) {
+        });
+    }
+</script>
+@*<script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js" type="text/javascript"></script>*@
+@*<script src="https://code.jquery.com/jquery-3.3.1.js" type="text/javascript"></script>*@
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.colVis.min.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/colreorder/1.5.1/js/dataTables.colReorder.min.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+
+
+
+
+
+<script>
+    function InProgress(PatientId) {
+        var url = '@Url.Content("~/")' + "EnrollmentStatus/PatientNo";
+
+        $.post(url, { patientId: PatientId }, function (result) {
+        });
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+<script>
+    var Result = function (data) {
+        window.swal(data.result);
+    }
+
+</script>
+
+
+
+
+
+

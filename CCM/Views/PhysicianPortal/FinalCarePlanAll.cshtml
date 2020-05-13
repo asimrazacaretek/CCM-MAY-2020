@@ -1,0 +1,138 @@
+﻿@using System.Collections.Generic;
+@model IEnumerable<CCM.Models.FinalCarePlanNotes>
+@if (Model.Count() > 0)
+{
+
+
+    <input type="hidden" id="nameofpatient" value="@ViewBag.Patient" />
+    var careplanshared = ViewBag.CarePlanShared as List<CCM.Models.CarePlanSharedHistory>;
+
+
+<input type="button" value="Compare" class="btn btn-success" style="margin-bottom:5px;" onclick="comparaecycleforreview()" />
+<br />
+<table class="table">
+    <tr>
+        <th><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
+        <th>
+            Cycle
+        </th>
+        <th>
+            Link
+        </th>
+       
+      
+
+    </tr>
+    <input type="hidden" id="patientid" value="@Model.FirstOrDefault().PatientId" />
+    
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>  <input type="checkbox" id="chkcycle@(item.Cycle)" value="@item.Cycle" class="chkforcomapre" /></td>
+            <td>
+                @{ var cycletoshow = "Cycle " + item.Cycle.ToString() + " (" + item.CarePlanCreatedOn.Value.Date.ToString("MMM") + "-" + item.CarePlanCreatedOn.Value.Date.ToString("yy") + ") ";}
+                @cycletoshow
+            </td>
+            <td>
+                @Html.ActionLink("Generate Plan PDF",
+                                           "GenerateFinalCarePdfForVersion", "FinalCarePlan",
+                                           new { patientId = item.PatientId, version = item.Version },
+                                           new { @class = "btn btn-success logdetails", target = "_blank" })
+            </td>
+           
+           
+        </tr>
+    }
+
+</table>
+                    }
+                    else
+                    {
+                        <h3>There is no care plan against this patient.</h3>
+                    }
+<div class="modal fade" id="CompareCycleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalLabel">Patient Cycle Comparison for: @ViewBag.Patient</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+
+            <div class="modal-body">
+                <div id="comparecyclesdiv">
+
+                </div>
+
+
+
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <input type="button" value="Close" class="btn btn-success" data-dismiss="modal" />
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="">
+    function comparaecycleforreview() {
+
+        var CycleIDs = [];
+
+        $(".chkforcomapre").each(function () {
+            if ($(this).prop('checked') == true) {
+                CycleIDs.push($(this).val());
+
+            }
+        });
+        if (CycleIDs.length >= 2) {
+            $(".loader").show();
+            $.ajax({
+                type: "POST",
+
+                url: "/PhysicianPortal/FinalCarePlanComparison",
+                data: {
+                    'patientId': $("#patientid").val(), 'cyclesforreivew': CycleIDs, 'cycle': 0
+                },
+                success: function (result) {
+                    $("#comparecyclesdiv").html(result);
+                    $("#CompareCycleModal").modal('show');
+                    $(".loader").hide();
+
+                }, error: function (result) {
+                    $(".loader").hide();
+                }
+            });
+        }
+        else {
+            swal("Please select atleast two cycles.");
+        }
+    }
+    $('#example-select-all').on('click', function () {
+        // Check/uncheck all checkboxes in the table
+
+        $('.chkforcomapre').prop('checked', this.checked);
+    });
+
+    // Handle click on checkbox to set state of "Select all" control
+    $('.chkforcomapre').on('change', 'input[type="checkbox"]', function () {
+        // If checkbox is not checked
+        if (!this.checked) {
+            var el = $('#example-select-all').get(0);
+            // If "Select all" control is checked and has 'indeterminate' property
+            if (el && el.checked && ('indeterminate' in el)) {
+                // Set visual state of "Select all" control
+                // as 'indeterminate'
+                el.indeterminate = true;
+            }
+        }
+    });
+</script>

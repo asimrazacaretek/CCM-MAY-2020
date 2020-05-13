@@ -1,0 +1,155 @@
+﻿@using Microsoft.AspNet.Identity
+@using CCM.Models.ENUMS_
+@using CCM.Models
+@model List<ListViewTicket>
+    <style>
+        .patientname{
+             color: #1a8cf7 !important;
+        }
+    </style>
+@if (Model.Any())
+{
+    <table id="ListViewTicket" class="mt-4">
+        <thead>
+            <tr>
+                <td class="hide"></td>
+                <th>Ticket Id</th>
+                <th>
+                    Subject Name
+                </th>
+                <th>
+                    Prority
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Patient ID
+                </th>
+                <th>
+                    Patient Name
+                </th>
+                <th>
+                    Patient Status
+                </th>
+                <th>
+                    Patient Sub Status
+                </th>
+                <th>
+                    CreatedBy
+                </th>
+                <th>
+                    Created Date
+                </th>
+                <th>
+                    Ticket Resolution
+                </th>
+                <th>
+                    Hours
+                </th>
+
+                <th>
+                    Status
+                </th>
+                <th>
+                    Action
+                </th>
+
+            </tr>
+        </thead>    
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+            <tr @if (item.statusName=="Open") { <text>style=" background: #b4dbff"</text>}>
+                <td class="hide">@Html.HiddenFor(modelitem => item.UserTicketId)</td>
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">@item.UserTicketId</td>
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">@Html.DisplayFor(modelitem => item.subjectName)</td>
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">@Html.DisplayFor(modelitem => item.Priority.priorityLevel) - @Html.DisplayFor(modelitem => item.Priority.priorityMinute)</td>
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">@Html.DisplayFor(modelitem => item.TypeName)</td>
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">@Html.DisplayFor(modelitem => item.PatientId)</td>
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">
+                    @if (item.PatientId != 0)
+                    {
+
+                        <b > @Html.ActionLink(item.PatientName, "Details", "Patient", new { id = item.PatientId },htmlAttributes: new { @style="color:#1a8cf7"})</b>}
+
+                    else
+                    { <p>
+                            @item.PatientName
+                        </p>
+                    }
+                    </td>
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">@Html.DisplayFor(modelitem => item.Pstatus)</td>
+                   <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">@Html.DisplayFor(modelitem => item.Psubstatus)</td>
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">@Html.DisplayFor(modelitem => item.createdBy)</td>
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">@Html.DisplayFor(modelitem => item.createdDate)</td>
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">
+                    @item.TicketResolution
+                </td>
+
+                @*<td class="sorting_1">
+            <span style="display:none">@item.timestamp.Value</span>
+        </td>*@
+
+                @*<td>@Html.DisplayFor(modelitem => item.createdDate)</td>*@
+                <td style="@if (item.statusName=="Open") { <text>font-weight: bold</text>}">@Html.Action("TotalHours", "Chats", new { @createdDate = item.createdDate })</td>
+
+                <td><strong style="text-transform: uppercase">@Html.DisplayFor(modelitem => item.statusName)</strong> </td>
+
+                <td><button onclick="openAssigneeTicketing('@item.UserTicketId','@item.statusName')" data-value="@item.notify"  data-id="@item.UserTicketId" id="ViewTicketbtn" style="@if (item.notify==false) { <text>color: black</text>}" class="btn btn-info ViewTicketbtn">View Ticket</button></td>
+            </tr>
+
+            }
+
+        </tbody>
+    </table>
+}
+else
+{
+    <h5 class="jumbotron">No Created Tickets Available</h5>
+}
+
+
+<script>
+    $(".ViewTicketbtn").click(function () {
+        //$(this).parent().parent().css("background", "white");
+       // alert("color changed");
+       // alert($(this).data('value'));
+        if ($(this).data('value') == "False") {
+            $.ajax({
+                url: "/Chats/clearTicketNotification?TicktId=" + $(this).data('id')+"&Type=single",
+                type: "get"
+            }).done(function (res) {
+                if (res == "True") {
+                     $.ajax({
+                url: "/Chats/_SingleChat",
+                type: 'GET',
+                success: function (result) {
+                    $('#SingnalR').html();
+                    $('#SingnalR').html(result);
+                }
+            });
+                $.ajax({
+                url: "/Chats/getTicketNotification",
+                type: "Get"
+                }).done(function (res) {
+           
+
+                    if (res.length > 0) {
+                        var HtmltoAppend = "";
+                    var userid='@User.Identity.GetUserId()';
+                        $(".ticketnotifycount." + id).text(res);
+                        $("#ticketNotificationCount").show();
+                        $("#viewAllNotifications").show();
+                    } else {
+                        $("#ticketNotificationCount").hide();
+                    }
+                    });
+                }
+
+            });
+        }
+
+    })
+</script>

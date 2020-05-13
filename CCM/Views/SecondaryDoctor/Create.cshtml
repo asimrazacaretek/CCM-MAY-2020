@@ -1,0 +1,108 @@
+﻿@model CCM.Models.SecondaryDoctor
+
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })
+
+
+<div class="container">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.PatientId)
+
+    <div class="form-horizontal">
+        <h3 class="pageTitle text-info">ADD NEW ADDITIONAL PROVIDER</h3>
+        <br /><br /><br />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FullName, "Doctor's Full Name", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "Required*" } })
+                @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Speciality, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.Speciality, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.Speciality, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Doctor Type</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(
+           model => model.DoctorType,
+           new SelectList(
+               new[]
+               {
+                   new {Value = "PCP",  Text = "PCP"},
+                   new {Value = "Specialist",  Text = "Specialist"},
+                   new {Value = "Other",  Text = "Other"},
+
+               },
+               "Value", "Text", Model.DoctorType), new { @class = "form-control border-input", id = "doctortype" })
+            </div>
+
+        </div>
+        <div class="form-group" style="display:none">
+            @Html.LabelFor(x => x.isCCMProvider, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.CheckBoxFor(x => x.isCCMProvider)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.LastVisit, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.LastVisit, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.LastVisit, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NextAppointment, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.NextAppointment, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.NextAppointment, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.MobilePhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.MobilePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                @Html.ValidationMessageFor(model => model.MobilePhoneNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-success logdetails" />
+                @Html.ActionLink("Back To List", "Index", "SecondaryDoctor", new { patientId = Model.PatientId }, new { @class = "btn btn-success logdetails" })
+            </div>
+        </div>
+    </div>
+    }
+</div>
+
+
+@Scripts.Render("~/bundles/jqueryval")
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+            
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+    </SCRIPT>
+}

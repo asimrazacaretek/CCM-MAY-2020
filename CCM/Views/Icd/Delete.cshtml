@@ -1,0 +1,79 @@
+﻿@model CCM.Models.Icd10Codes
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Icd10Codes</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Code10)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Code10)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Code9)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Code9)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PatientId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PatientId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateCreated)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default logdetails" /> |
+            @Html.ActionLink("Back to List", "Index", new { patientId = Model.PatientId }, new { @class = "logdetails" })
+        </div>
+    }
+</div>
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+    </SCRIPT>
+}

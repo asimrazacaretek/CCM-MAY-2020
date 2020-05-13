@@ -1,0 +1,104 @@
+﻿@model List<CCM.Models.PatientMedicalHistory_MedicationRxViewModel>
+
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+
+<div id="divDrugInteraction" style="max-height: 650px; overflow-y: auto"></div>
+<a class="btn btn-success pull-left linkButtons collapsed" style="margin-right:10px;display:none" data-toggle="collapse" href="#tablefixwidth" role="button" aria-expanded="false" aria-controls="tablefixwidth" title="Show/Hide Table"><i class="fa fa-toggle-on" aria-hidden="true"></i></a>
+<div class="tablefixwidth" id="tablefixwidth">
+
+    <table class="display" id="medicationsTable">
+        <thead>
+            <tr>
+                <th align="left">Medication</th>
+                <th align="left">Strength</th>
+                <th align="left">RxCUIS</th>
+                <th align="left">Route</th>
+                <th align="left">Direction</th>
+                <th align="left">Purpose of Use</th>
+                <th align="left">Date Started</th>
+
+                <th align="left">Dose Repetition Time</th>
+                <th align="left">Issues Identified</th>
+                <th align="left">Prescribe by</th>
+                <th align="left">Additional Comments</th>
+                <th align="left">For How Long</th>
+                <th align="left">Are you taking medicine properly?</th>
+                <th align="left">How many time medicine used?</th>
+                <th align="left">Is Permanent Medicine</th>
+                <th align="left">Is Medicine Discontinued</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DrugName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DailyDose)
+                    </td>
+                    <td class="rxcuis" id="@item.RxCuis">
+                        @Html.DisplayFor(modelItem => item.RxCuis)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Route)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RateQuantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UseReason)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DoseRepetitionTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IssuesIdentified)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrescribeBy)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comments)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ForHowLong)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsTakenMedicineProperly)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TakenMedicineProperly)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsPermanentMedicine)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsMedicineDiscontinued)
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        //Combine RxCUIs into one string
+        var rxcuis = '';
+
+
+        // Close Drug Interaction
+
+
+        // Get Drug Interaction
+
+    });
+</script>

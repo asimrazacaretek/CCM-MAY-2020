@@ -1,0 +1,104 @@
+﻿@model CCM.Models.PatientLifestyle_LifeStress
+
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })
+
+<div class="container">
+    <h3 class="pageTitle text-info">LIFE STRESS</h3>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+
+        <br /><br />
+        <div class="form-horizontal">
+            <div class="form-group">
+                @Html.LabelFor(model => model.LifeStressId, htmlAttributes: new { @class = "col-md-3" })
+                <div class="col-md-8 addressRadio">
+                    @Html.RadioButtonFor(model => model.LifeStressId, 1)
+                    @Html.Label("High", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.LifeStressId, 2)
+                    @Html.Label("Moderate", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.LifeStressId, 3)
+                    @Html.Label("None", new { @class = "lighterLabel" })
+                </div>
+                @Html.ValidationMessageFor(model => model.LifeStressId, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.workStressId, htmlAttributes: new { @class = "col-md-3" })
+                <div class="col-md-8 addressRadio">
+                    @Html.RadioButtonFor(model => model.workStressId, 1)
+                    @Html.Label("High", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.workStressId, 2)
+                    @Html.Label("Moderate", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.workStressId, 3)
+                    @Html.Label("None", new { @class = "lighterLabel" })
+                </div>
+                @Html.ValidationMessageFor(model => model.workStressId, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Coping_StressId, htmlAttributes: new { @class = "col-md-3" })
+                <div class="col-md-8 addressRadio">
+                    @Html.RadioButtonFor(model => model.Coping_StressId, 1)
+                    @Html.Label("I Can't", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.Coping_StressId, 2)
+                    @Html.Label("I Manage", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.Coping_StressId, 3)
+                    @Html.Label("It's Not A Problem", new { @class = "lighterLabel" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Coping_StressId, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.StressCauses, htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-8">
+                    @Html.EditorFor(model => model.StressCauses, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.StressCauses, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <br />
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Update" class="btn btn-success logdetails" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+      
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+        </SCRIPT>
+    }
+}

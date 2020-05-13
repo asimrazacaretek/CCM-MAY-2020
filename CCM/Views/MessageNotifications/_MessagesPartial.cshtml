@@ -1,0 +1,60 @@
+﻿@model IEnumerable<CCM.Models.MessageNotification>
+
+
+<style>
+    .blog-comment ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .blog-comment .post-comments {
+        border: 1px solid lightgray;
+        margin-bottom: 25px;
+        margin-right: 0;
+        padding: 10px 20px;
+        position: relative;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -o-border-radius: 4px;
+        border-radius: 4px;
+        color: #6b6e80;
+        position: relative;
+    }
+
+    .blog-comment .meta {
+        font-size: 13px;
+        color: #aaaaaa;
+        padding-bottom: 8px;
+        margin-bottom: 10px !important;
+        border-bottom: 1px solid lightgray;
+    }
+
+    #message {
+        margin-left: 25px;
+        margin-top: 15px;
+    }
+</style>
+
+
+
+<div class="blog-comment">
+    <ul>
+        @{
+            var messages = Model.ToList();
+
+            for (var i = messages.Count - 1; i >= 0; i--)
+            {
+                <li>
+                    <div class="post-comments">
+                        <p class="meta">
+                            @*String Interpolation for Nuallable DateTime*@
+                            On @($"{messages[i].SendDateTime:ddddd, MMM dd yyyy @ hh:mm tt}")
+                        <p>
+                            <b id="message" class="fa fa-quote-left" aria-hidden="true"></b> @Html.DisplayFor(modelItem => messages[i].MessageBody)
+                        </p>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+</div>

@@ -1,0 +1,185 @@
+﻿@model IEnumerable<CCM.Models.DataModels.Devices.DeviceMappingHistory>
+@using CCM.Helpers;
+@using CCM.Models.DataModels.Devices;
+@using CCM.Models.DataModels;
+@using CCM.Models;
+@{
+    Layout = null;
+    var patient = ViewBag.Patient as Patient;
+    var Service = ViewBag.Service as Patients_Services;
+    var attachments = ViewBag.Attachments as List<Rpm_DeviceMappingAttachments>;
+
+}
+<link href="~/Content/Plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" />
+<link href="~/Content/Plugins/magiczoomplus/magiczoomplus.module.css" rel="stylesheet" />
+@functions {
+    string GetTime(DateTime? Date)
+    {
+        var date = Convert.ToDateTime(Date);
+        var day = date.Day;
+        var month = date.Month;
+        var year = date.Year;
+        string datestr = date.ToString("mm/dd/yyyy");
+        if (datestr == "00/01/0001")
+        {
+            return "";
+        }
+        datestr = month + "/" + day + "/" + year;
+        return datestr;
+    }
+}
+<style>
+    .p-l-r-0 {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .model-font {
+        font-size: 14px;
+    }
+
+    .model-title-w {
+        font-weight: 600;
+    }
+
+    .service-div {
+        /*border: 1px solid #bebebe;
+
+        border-radius: 5px;*/
+    }
+
+        .service-div .row {
+            padding-top: 3px;
+            padding-bottom: 3px;
+        }
+    .mz-expand .mz-expand-stage {
+        background: #00000099!important;
+    }
+    .imagecollaspe{
+        display:none;
+    }
+</style>
+
+<div class="col-md-6 p-l-r-0  service-div" style="padding-left:15px">
+    <div class="row">
+        <div class="col-md-4 model-title-w model-font p-l-r-0">
+            Patient Id:
+        </div>
+        <div class="col-md-8 model-font p-l-r-0">
+            @patient.Id
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 model-title-w model-font p-l-r-0">
+            Patient Name:
+        </div>
+        <div class="col-md-8 model-font p-l-r-0">
+            @patient.FirstName @patient.LastName
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 model-title-w model-font p-l-r-0">
+            Rpm Enrolled on:
+        </div>
+        <div class="col-md-8  model-font p-l-r-0">
+            @GetTime(patient.Patients_Services.FirstOrDefault().CreatedOn)
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6 service-div ">
+
+    <div class="row p-l-r-0">
+        <div class="col-md-4 model-title-w model-font p-l-r-0">
+            Service Name:
+        </div>
+        <div class="col-md-8 model-font p-l-r-0">
+            @Service.RPMService.ServiceName
+        </div>
+
+    </div>
+    <div class="row p-l-r-0">
+        <div class="col-md-4 model-title-w model-font p-l-r-0">
+            Device:
+        </div>
+        <div class="col-md-8 model-font p-l-r-0">
+            @(Service.IsAssigned == (int)IsActiveStatus.Active ? Service.Device.Devices_Brand.Name + " " + Service.Device.Device_BrandModel.Name : "Needs to Map the Device")
+        </div>
+
+    </div>
+    <div class="row p-l-r-0">
+        <div class="col-md-4 model-title-w model-font p-l-r-0">
+            Device Status:
+        </div>
+        <div class="col-md-8 model-font p-l-r-0">
+            @{
+                var statusId = Service.Device != null ? Service.Device.DeviceStatusId : 0;
+            }
+            @Enum.GetValues(typeof(DeviceStatus)).GetValue(statusId)
+        </div>
+
+    </div>
+
+</div>
+
+<div class="container-fluid" style="margin-top:13%">
+    <div>
+        <table id="DeviceMappingHistorytable" class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Message</th>
+                    <th>Device</th>
+                    <th>Device Id</th>
+                    <th>Comments</th>
+                    <th>Performed On</th>
+                    <th style="width: 103px;">Attachments</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var currentHisatoryAttacgments = attachments.Where(x => x.DeviceMappingHistoryId == item.Id).ToList();
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@HelperExtensions.GetUserNamebyID(item.CreatedBy) @item.Type the Device</td>
+                        <td>@item.Device.Devices_Brand.Name @item.Device.Device_BrandModel.Name</td>
+                        <td>@item.DevicetId</td>
+                        <td>@item.Message</td>
+                        <td>@item.DatePerformed</td>
+                        <td>
+                            @{
+                                var imgCount = 0;
+                            }
+                            @foreach (var img in currentHisatoryAttacgments)
+                            {
+                                imgCount++;
+                         
+                                <span class="@(imgCount>=3?"imagecollaspe pickimagecollaspe":"")">
+                                    <a style="width: 55px; border: 1px solid gray; padding: 3px; margin-bottom: 3px; margin-right: 3px;" class="MagicZoom" data-options="zoomMode: off;zoomCaption:off;hint:off" href="@img.Image"><img style="width: 55px; border: 1px solid gray; padding: 3px; margin-bottom: 3px; margin-right: 3px;" src="@img.Image"></a>
+
+                                </span>
+                        
+
+                                @*<img src="@img.Image" style="width: 55px; border: 1px solid gray; padding: 3px; margin-bottom: 3px; margin-right: 3px;" />*@
+                            }
+                            @if(imgCount > 2)
+                            {
+                            <div class="row"><span class="imagecollaspebtn" style="float: right;cursor:pointer"><a>See More..</a></span></div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="~/Content/Plugins/magiczoomplus/magiczoomplus.js"></script>
+<script type="text/javascript">
+    $("#DeviceMappingHistorytable").DataTable({
+        pageLength: 6,
+        "order": [[5, "desc"]]
+    });
+
+
+</script>

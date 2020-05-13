@@ -1,0 +1,56 @@
+﻿<div>
+    <div class="custom-title">
+        <h3>Doctor Visits / Additional Providers</h3>
+    </div>
+    <div style="margin:0 3px;padding-right:0px;width:99%;float:left;">
+        <div class="card" style="padding:0px;z-index:0;">
+            <div class="custom-title">
+                <h4 class="pageTitle" data-toggle="collapse" href="#collapseExample1" role="button" aria-expanded="true" aria-controls="collapseExample1">
+                    Doctor Visits
+                    <i class="fa fa-caret-down pull-right"></i>
+                </h4>
+            </div>
+            <div class="expand-section in" id="collapseExample1">
+                <div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="DoctorVisitsID"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin:0 3px;padding-right:0px;width:99%;float:left;">
+        <div class="card" style="padding:0px;z-index:0;">
+            <div class="custom-title">
+                <h4 class="pageTitle" data-toggle="collapse" href="#collapseExample2" role="button" aria-expanded="true" aria-controls="collapseExample2">
+                    Additional Providers
+                    <i class="fa fa-caret-down pull-right"></i>
+                </h4>
+            </div>
+            <div class="expand-section in" id="collapseExample2">
+                <div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="AdditionalProvidersID"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var patientid = $("#patientidh").val();
+        debugger;
+        GetAjaxView("/DoctorVisit/_ListDoctorVisits", patientid, "DoctorVisitsID");
+        GetAjaxView("/SecondaryDoctor/_Index", patientid, "AdditionalProvidersID");
+    })
+</script>

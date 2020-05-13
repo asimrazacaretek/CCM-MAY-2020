@@ -1,0 +1,906 @@
+﻿@model IEnumerable<CCM.Models.GroupchatViewModel>
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<input id="selectedgroupid" type="hidden" value="" />
+
+<script src="~/Scripts/inputEmoji.js"></script>
+<link href="~/Content/multiselect/bootstrap-multiselect.css" rel="stylesheet" />
+<style>
+    .radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {
+        margin-left: 5px !important
+    }
+
+    .checkbox:hover, .radio {
+    }
+
+    .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+        background-color: #ccc !important;
+        opacity: 1;
+        text-decoration: none;
+    }
+
+    .dropdown label {
+        display: block;
+    }
+
+    h4 {
+        /*white-space: pre;*/
+    }
+
+    .groupchatwrapper {
+        float: left;
+        width: 100%;
+    }
+
+    .groupleft {
+        float: left;
+        width: 25%;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        height: 83vh;
+        overflow: auto;
+        border-radius: 15px !important;
+        background-color: rgba(0,0,0,0.4) !important;
+    }
+    .groupright {
+        float: left;
+        width: 23%;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        height: 83vh;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4) !important;
+        border: 1px solid #ccc;
+        border-radius: 15px !important;
+    }
+
+    .searchboxchatandaddnew {
+        float: left;
+        width: 100%;
+        padding: 15px 0px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .searchboxchat {
+        float: left;
+        width: 89%;
+    }
+
+    .addnewchat {
+        float: left;
+        width: 9%;
+        margin-left: 5px;
+    }
+
+    .grupchatnames {
+        float: left;
+        width: 100%;
+    }
+
+    .groupchatmaindiv {
+        /*border-bottom: 1px solid #ccc;*/
+        padding: 10px 6px;
+        float: left;
+    }
+
+    .groupchatname {
+        font-size: 1.6em;
+        margin-bottom: 0px;
+        font-weight: normal;
+    }
+
+    .statusandadmin {
+        color: #a99393;
+    }
+
+    .groupchaatadmin {
+        font-weight: normal;
+    }
+
+    .groupchatstatus {
+        font-weight: normal;
+        display:none;
+    }
+
+    .groupdetails {
+        float: left;
+        width: 50%;
+        height: 83vh;
+        border-radius: 15px !important;
+        background-color: rgba(0,0,0,0.4) !important;
+        /*background-image: url('/images/2-28303_chat-background-wallpaper-wallpaper.jpg');
+        background-size: cover;
+        border-left: 1px solid #ccc;*/
+        position: relative;
+        margin-left: 1%;
+        margin-right: 1%;
+    }
+
+    .chatinfo {
+        float: left;
+        width: 100%;
+        background: white;
+        /* border-bottom: 1px solid #ccc; */
+        padding: 10px;
+        padding: .75rem 1.25rem;
+        margin-bottom: 0;
+        background-color: rgba(0,0,0,.03);
+    }
+    .chatnamedetail {
+        float: left;
+        width: 91%;
+        margin-left: 9px;
+    }
+
+    #chatnamedetails {
+        margin-bottom: 0px !important;
+        font-size: 1.6em;
+        font-weight: normal;
+    }
+
+    #chatparticipents {
+        font-weight: normal;
+        color: #a99393;
+    }
+
+    .chatdetails {
+    }
+
+    .sendmessage {
+        border-top: 1px solid;
+        float: left;
+        width: 100%;
+        padding: 10px;
+        position: absolute;
+        bottom: 0px;
+        /* background-color: #cecece; */
+        border-radius: 0 0 15px 15px !important;
+        border-top: 0 !important;
+        padding: .75rem 1.25rem;
+        background-color: rgba(0,0,0,.03);
+        border-top: 1px solid rgba(0,0,0,.125);
+    }
+
+    .txtmessage {
+        float: left;
+        width: 86%;
+        margin-right: 10px;
+    }
+
+    .btnmsgsend {
+        float: left;
+        width: 10%;
+    }
+    .input-group-text {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        padding: .375rem .75rem;
+        margin-bottom: 0;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        text-align: center;
+        white-space: nowrap;
+        background-color: #e9ecef;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+    }
+    .input-group-append {
+        /*padding-top: 20px;*/
+        /* margin-left: -13px; */
+        /* overflow: hidden; */
+        position: absolute;
+        right: 15px;
+        top: 17px;
+    }
+
+    .send_btn {
+        /* border-radius: 0 15px 15px 0 !important; */
+        background-color: transparent;
+        border: 0 !important;
+        color: white !important;
+        cursor: pointer;
+        padding: 15px;
+        font-size: 20px;
+    }
+    html {
+        background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    }
+    .modal-content {
+        background: rgba(0,0,0,0.4) !important;
+        color: white;
+        border-radius: 5% 5%;
+        border: 1px solid;
+    }
+    .modal-header {
+        background-color: #366795;
+        color: white;
+        border-radius: 18px 18px 0 0;
+    }
+    .body-content {
+        background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+        margin: 0px !important;
+        margin-top: 72.5px !important;
+    }
+    .rounded-circle {
+        border-radius: 50% !important;
+        border: 1px solid #fff;
+    }
+    .input-group-append {
+        margin-left: -1px;
+    }
+
+    .input-group-append, .input-group-prepend {
+        display: -ms-flexbox;
+        display: flex;
+    }
+    .searchboxchattxt {
+        border: 0px solid;
+        border-radius: 15px !important;
+        background-color: rgba(0,0,0,0.3) !important;
+        border: 0 !important;
+        color: white !important;
+        margin-left: 15px;
+        padding: 12px;
+        width: 95%;
+    }
+
+    .chatimgdiv {
+        float: left;
+        width: 14%;
+        margin-left: 6px;
+    }
+
+    .chatimg {
+        width: 100%;
+        height:50px;
+    }
+
+    .chatnameandstatus {
+        float: left;
+        width: 78%;
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-left: 15px;
+    }
+    .chatnameandstatus label {
+        font-size: 14px;
+        color: white;
+    }
+    .statusandadmin {
+        font-size: 10px;
+        color: rgba(255,255,255,0.6);
+    }
+    .chatimgdivdetail {
+        float: left;
+        width: 7%;
+    }
+    .fa-location-arrow:before {
+        content: "\f124";
+    }
+
+    #txtmessage {
+        border-radius: 10px;
+        padding: 12px 11px 11px 45px;
+        background-color: rgba(0,0,0,0.3) !important;
+        border: 0 !important;
+        color: white !important;
+        height: 60px !important;
+        overflow-y: auto;
+        width: 100%;
+        position: relative;
+    }
+
+    ::-webkit-input-placeholder { /* Edge */
+        color: red;
+    }
+
+    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+        color: red;
+    }
+
+    ::placeholder {
+        color: red;
+    }
+
+    #btnemoji {
+        position: absolute;
+        left: 20px;
+        top: 26px;
+        cursor: pointer !important;
+        font-size: 20px !important;
+        z-index: 5 !important;
+    }
+        .groupchatnewmessageicon {
+        display: none;
+        background-color: red;
+        color: white;
+        padding: 2px 5px;
+        border-radius: 24px;
+        min-width: 25px;
+        text-align: center;
+        margin-top: -13px;
+        float: right;
+    }
+
+    .multiselect-container {
+        max-height: 300px;
+        overflow: auto;
+    }
+    .multiselect {
+        border: 1px solid;
+    }
+    .modal-dialog{
+        width:440px !important;
+    }
+    .modal-footer{
+        margin-top:0px !important;
+    }
+    .modal-header .close {
+        margin-top: -17px;
+    }
+    .editchatdiv {
+        display: none;
+    }
+    .blink_me1 {
+        color: red;
+        width: 100%;
+        text-align: center;
+        animation: blinker1 1s linear infinite;
+    }
+    .defaultgroups {
+        border-bottom: 1px solid #fff;
+        color:white;
+        padding:20px;
+    }
+
+    @@keyframes blinker1 {
+        50% {
+    opacity: 0;
+  }
+}
+</style>
+
+<div id="lastsavedhtml" style="display:none"></div>
+<div id="newsavedhtml" style="display:none"></div> 
+<div class="groupchatwrapper">
+    <div class="groupleft">
+        <input type="hidden" id="lastsaveddiv" value="" />
+
+        <div class="searchboxchatandaddnew">
+            <div class="searchboxchat">
+                <input type="text" placeholder="Search here" class="col-md-12 form-control searchboxchattxt" />
+            </div>
+            <div class="addnewchat">
+                <span><i class="fa fa-plus fa-2x" style="color:white;cursor:pointer;margin-top:8px;" onclick="showaddchatdialog()"></i></span>
+
+            </div>
+            <div class="refrshpage" style="display:none;width:100%">
+                @*<label class="blink_me1">
+                    You were added in new group press refresh icon or reload page to see the messages (if any)
+                    <span style="float:right"><i class="fa fa-refresh fa-2x" style="color:green;cursor:pointer;margin:5px 5px 0;font-size:1.2em;" onclick="window.location.reload()"></i></span>
+                </label>*@
+            </div>
+        </div>
+
+        <div class="grupchatnames">
+            @foreach (var groupchat in Model)
+            {
+                <div class="groupchatmaindiv" id="groupchat@(groupchat.GroupChat.Id)" onclick="setselectedchatandgetdetails(@groupchat.GroupChat.Id)" data-chatname="@groupchat.GroupChat.ChatName" data-users="@string.Join(",",groupchat.usersViewModels.Select(x=>x.Name).ToList())" data-isTicket="@groupchat.GroupChat.isTicket" data-TicketNum="@groupchat.GroupChat.TicketNum" data-TicketTitle="@groupchat.GroupChat.TicketTitle" data-Department="@groupchat.GroupChat.Department" data-CreatedBy="@groupchat.GroupChat.CreatedBy" data-Userid="@User.Identity.GetUserId()">
+                    <input type="hidden" id="groupchatdetailscount@(groupchat.GroupChat.Id)" value="@groupchat.TotalCount" />
+                    <div class="chatimgdiv">
+                        @*<img src="~/images/male-icon-19.png" class="chatimg rounded-circle" />*@
+                        <img src="~/images/group-img.png" class="chatimg rounded-circle" />
+                    </div>
+                    <div class="chatnameandstatus">
+                        <label class="groupchatname" id="groupchatlabel@(groupchat.GroupChat.Id)">@groupchat.GroupChat.ChatName </label>
+                        @if (groupchat.GroupChat.isTicket == true)
+                        {
+                            <label class="groupchatTicket col-md-12" id="groupchatlabelTicket@(groupchat.GroupChat.Id)"><strong>Ticket #:</strong> @groupchat.GroupChat.TicketNum </label>
+                            <label class="groupchatTicketTitle col-md-12" id="groupchatlabelTicketTitle@(groupchat.GroupChat.Id)"><strong>Title:</strong> @groupchat.GroupChat.TicketTitle </label>
+                            <label class="groupchatTicketDepartment col-md-12" id="groupchatlabelTicketDepartment@(groupchat.GroupChat.Id)"><strong>Department:</strong> @groupchat.GroupChat.Department </label>
+                        }
+                        <div class="statusandadmin">
+                            <label class="groupchaatadmin"><b>Created By: </b>@HelperExtensions.GetUserNamebyID(groupchat.GroupChat.CreatedBy)</label>
+                            <label class="groupchatstatus" id="groupchatstatus@(groupchat.GroupChat.Id)" data-status="@groupchat.GroupChat.ChatStatus"><b>Status: </b>@groupchat.GroupChat.ChatStatus</label>
+                            <label class="groupchatnewmessageicon" id="groupchatcounticon@(groupchat.GroupChat.Id)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="groupdetails">
+        <div class="chatinfo">
+            <div class="chatimgdivdetail">
+                <img src="~/images/group-img.jpg" class="chatimg rounded-circle" />
+
+            </div>
+            <div class="chatnamedetail">
+                <label id="chatnamedetails"></label><br />
+                <label id="chatparticipents"></label>
+            </div>
+            <div class="editchatdiv" onclick="editchatdialog()">
+                <i class="fa fa-edit"></i>
+            </div>
+        </div>
+        <div id="chatdetails"></div>
+        <div class="sendmessage">
+            <input type="text" id="txtmessage" class="txtmessage form-control border-input" placeholder="Type Message Here" />
+            <div class="input-group-append"  onclick="sendmessage()">
+                <span class="input-group-text send_btn send_btn"><i class="fas fa-location-arrow"></i></span>
+            </div>        
+    
+    @*<input type="button" id="btnsendmessage" class="btnmsgsend btn btn-success" value="Send" onclick="sendmessage()" />*@
+        </div>
+    </div>
+
+    <div class="groupright">
+        <div class="defaultgroups"><label>Default Groups</label></div>
+
+        <div class="groupchatmaindiv" id="groupchat">
+            <input type="hidden" id="groupchatdetailscount" />
+            <div class="chatimgdiv">
+                @*<img src="~/images/male-icon-19.png" class="chatimg rounded-circle" />*@
+                <img src="~/images/group-img.png" class="chatimg rounded-circle" />
+            </div>
+            <div class="chatnameandstatus">
+                <label class="groupchatname" id="groupchatlabel">Enroller Group</label>
+                <div class="statusandadmin">
+                    <label class="groupchaatadmin"><b>Created By: </b>Admin</label>
+                    <label class="groupchatstatus" id="groupchatstatus" data-status="open"><b>Status: </b></label>
+                    <label class="groupchatnewmessageicon" id="groupchatcounticon"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="groupchatmaindiv" id="groupchat">
+            <input type="hidden" id="groupchatdetailscount" />
+            <div class="chatimgdiv">
+                @*<img src="~/images/male-icon-19.png" class="chatimg rounded-circle" />*@
+                <img src="~/images/group-img.png" class="chatimg rounded-circle" />
+            </div>
+            <div class="chatnameandstatus">
+                <label class="groupchatname" id="groupchatlabel">Liasions Group</label>
+                <div class="statusandadmin">
+                    <label class="groupchaatadmin"><b>Created By: </b>Admin</label>
+                    <label class="groupchatstatus" id="groupchatstatus" data-status="open"><b>Status: </b></label>
+                    <label class="groupchatnewmessageicon" id="groupchatcounticon"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="groupchatmaindiv" id="groupchat">
+            <input type="hidden" id="groupchatdetailscount" />
+            <div class="chatimgdiv">
+                @*<img src="~/images/male-icon-19.png" class="chatimg rounded-circle" />*@
+                <img src="~/images/group-img.png" class="chatimg rounded-circle" />
+            </div>
+            <div class="chatnameandstatus">
+                <label class="groupchatname" id="groupchatlabel">Translators Group</label>
+                <div class="statusandadmin">
+                    <label class="groupchaatadmin"><b>Created By: </b>Admin</label>
+                    <label class="groupchatstatus" id="groupchatstatus" data-status="open"><b>Status: </b></label>
+                    <label class="groupchatnewmessageicon" id="groupchatcounticon"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="groupchatmaindiv" id="groupchat">
+            <input type="hidden" id="groupchatdetailscount" />
+            <div class="chatimgdiv">
+                @*<img src="~/images/male-icon-19.png" class="chatimg rounded-circle" />*@
+                <img src="~/images/group-img.png" class="chatimg rounded-circle" />
+            </div>
+            <div class="chatnameandstatus">
+                <label class="groupchatname" id="groupchatlabel">Physcians Group</label>
+                <div class="statusandadmin">
+                    <label class="groupchaatadmin"><b>Created By: </b>Admin</label>
+                    <label class="groupchatstatus" id="groupchatstatus" data-status="open"><b>Status: </b></label>
+                    <label class="groupchatnewmessageicon" id="groupchatcounticon"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AddGroupChat" tabindex="-1" role="dialog" aria-labelledby="AddGroupChat" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add/Update group Chat</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-12">ChatName</label>
+                        <div class="col-md-12">
+                            <input type="text" class="form-control" id="txtchatname" maxlength="25" />
+                        </div>
+                    </div>
+                </div>
+
+
+                <ul class="nav nav-tabs">
+                    <li class="dropdown">
+                        <label>Users</label>
+                        @Html.DropDownList("Users",
+                            new SelectList(ViewBag.Users, "Id", "Name", Model),
+                           new { @class = "form-control border-input" ,id= "ddlUsers",multiple="multiple" })
+                    </li>
+                </ul>
+                <div class="form-horizontal" style="display:none">
+                    <div class="form-group">
+                        <label class="col-md-2">is Ticket</label>
+                        <div class="col-md-10">
+                            <input type="checkbox" class="form-control" id="isTicket" onchange="showticketdata()" />
+                        </div>
+                    </div>
+                </div>
+                <div class="ticketdata" style="display:none">
+
+                    <div class="form-horizontal" id="tickettitlediv">
+                        <div class="form-group">
+                            <label class="col-md-12">Ticket Title</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="txtTicketTitle" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chatdepartments">
+                        <label>Departments</label>
+                        @Html.DropDownList(
+                               "ddlchatdepartments",
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new { Value = "Technical",  Text = "Technical" },
+                                        new { Value = "Sales",   Text = "Sales" },
+                                          new { Value = "Support",   Text = "Support" },
+                                          new { Value = "Administration",   Text = "Administration" }
+
+
+
+                                    },
+                                    "Value", "Text", Model),
+                               null,new { @class = "form-control border-input", id = "ddlchatdepartments" })
+                    </div>
+                </div>
+
+                <div class="chatstatus" style="display:none">
+                    <label>Status</label>
+                    @Html.DropDownList(
+                           "ddlStatus",
+                            new SelectList(
+                                new[]
+                                {
+                                    new { Value = "Open",  Text = "Open" },
+                                    new { Value = "Closed",   Text = "Closed" }
+
+
+                                },
+                                "Value", "Text", Model),
+                           null,new { @class = "form-control border-input", id = "ddlStatus" })
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+                <input type="button" value="Add/Update Chat" class="btn btn-warning" onclick="addgroupchat()" />
+                <input type="button" value="Close" class="btn btn-success" data-dismiss="modal" />
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    var isedit = false;
+    function showticketdata() {
+        $(".ticketdata").toggle();
+    }
+    $(document).ready(function () {
+        $('#ddlUsers').multiselect({
+            includeSelectAllOption: true,
+            buttonWidth: 379,
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
+        });
+        getdetailsininterval();
+        gettotalcount();
+        gettotalcountgroups();
+    });
+    function showaddchatdialog() {
+        $("#isTicket").prop("checked", false);
+        isedit = false;
+        $('#AddGroupChat').modal({
+            backdrop: 'static'
+        });
+        //$("#AddGroupChat").modal("show");
+    }
+    function editchatdialog() {
+        $(".loader").show();
+        isedit = true;
+        $.ajax({
+            type: "POST",
+            url: "/GroupChats/GetChatParticipent",
+            data: {
+                'id': $("#selectedgroupid").val()
+            },
+            success: function (result) {
+                debugger;
+                if (result != "false") {
+                    $('#ddlUsers').val(result);
+                    $('#ddlUsers').multiselect('refresh');
+
+                    $("#txtchatname").val($("#groupchatlabel" + $("#selectedgroupid").val()).text());
+                    var chatid = $("#selectedgroupid").val();
+                    var isticket = $("#groupchat" + chatid).attr("data-isTicket");
+                    var TicketNum = $("#groupchat" + chatid).attr("data-TicketNum");
+                    var TicketTitle = $("#groupchat" + chatid).attr("data-TicketTitle");
+                    var Department = $("#groupchat" + chatid).attr("data-Department");
+
+                    $("#isTicket").prop("checked", isticket);
+                    $("#txtTicketTitle").val(TicketTitle);
+                    $("#ddlchatdepartments").val(Department);
+                    if (isticket == "True") {
+                        $("#isTicket").prop("checked", true);
+                        $(".ticketdata").show();
+                        $("#isTicket").prop("disabled", "disabled");
+                        $("#txtTicketTitle").prop("disabled", "disabled");
+                    }
+                    else {
+                        $("#isTicket").prop("checked", false);
+                        $(".ticketdata").hide();
+                        $("#isTicket").prop("disabled", false);
+                        $("#txtTicketTitle").prop("disabled", false);
+                    }
+                    var status = $("#groupchatstatus" + $("#selectedgroupid").val()).attr("data-status");
+                    $("#ddlStatus").val(status);
+
+                    $(".chatstatus").show();
+                    $("#AddGroupChat").modal("show");
+                }
+                else {
+
+                }
+                $(".loader").hide();
+
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+    function addgroupchat() {
+
+        $(".loader").show();
+        if ($("#txtchatname").val() == "") {
+            return false;
+        }
+        var chatid = 0;
+        var status = "";
+        if (isedit == true) {
+            chatid = $("#selectedgroupid").val();
+            status = $("#ddlStatus").val();
+        }
+        $.ajax({
+            type: "POST",
+            url: "/GroupChats/AddnewChat",
+            data: {
+                'ChatName': $("#txtchatname").val(), 'Participents': $("#ddlUsers").val(), 'chatId': chatid, 'status': status, 'isTicket': $("#isTicket").prop("checked"), 'TicketTitle': $("#txtTicketTitle").val(), 'Department': $("#ddlchatdepartments").val()
+            },
+            success: function (result) {
+                location.reload(true);
+                $(".loader").hide();
+
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+    $("#txtmessage").keypress(function (event) {
+
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode == '13') {
+            if ($("#txtmessage").val() != "")
+                sendmessage();
+        }
+    });
+    $("#txtmessage").emoji({ place: 'before' });
+    function sendmessage() {
+        if ($("#txtmessage").val().trim() != "") {
+            var gid = 0;
+
+            $.ajax({
+                type: "POST",
+                url: "/GroupChats/AddnewChatmessage",
+                data: {
+                    'Message': $("#txtmessage").val(), 'GID': $("#selectedgroupid").val()
+                },
+                success: function (result) {
+                    $("#txtmessage").val("");
+
+
+                }, error: function (result) {
+                    $(".loader").hide();
+                }
+            });
+        }
+        else
+            $("#txtmessage").focus();
+    }
+    function setselectedchatandgetdetails(id) {
+        var status = $("#groupchatstatus" + id).attr("data-status");
+        if (status == "Closed") {
+            $(".sendmessage").find('*').prop("disabled", "disabled");
+            //$("#btnemoji").attr("disabled","disabled")
+            //$("#txtmessage").attr("disabled", "disabled");
+            //$("#btnsendmessage").attr("disabled", "disabled");
+        }
+        else {
+            $(".sendmessage").find('*').prop("disabled", false);
+        }
+        var createdby = $("#groupchat" + id).attr("data-CreatedBy");
+        var userid = $("#groupchat" + id).attr("data-Userid");
+        if (createdby == userid) {
+            $(".editchatdiv").show();
+        }
+        else {
+            $(".editchatdiv").hide();
+        }
+       
+        $("#groupchatcounticon" + id).hide();
+        $("#selectedgroupid").val(id);
+        $(".groupdetails").show();
+
+        $(".groupchatmaindiv").css("background-color", "transparent");
+        $("#groupchat" + id).css("background-color", "rgba(0,0,0,0.3)");
+
+        $("#chatnamedetails").text($("#groupchat" + id).attr("data-chatname") + " (" + status + ")");
+        $("#chatparticipents").text($("#groupchat" + id).attr("data-users"));
+
+    }
+    function gettotalcountgroups() {
+        try {
+            $.ajax({
+                type: "GET",
+                url: "/GroupChats/GetTotalGroups",
+                success: function (result) {
+                    debugger;
+                    var totalgroupsexits = $(".groupchatmaindiv").length;
+                    var newgroups = parseInt(result);
+                    if (totalgroupsexits != newgroups && result>0) {
+
+                        $(".refrshpage").show();
+
+
+                    }
+                    else {
+                        $(".refrshpage").hide();
+                    }
+                    
+                    setTimeout(function () {
+                        gettotalcountgroups();
+                    }, 1000);
+
+
+                }, error: function (result) {
+                    setTimeout(function () {
+                        gettotalcountgroups();
+                    }, 1000);
+                }
+            });
+        } catch (e) {
+            setTimeout(function () {
+                gettotalcountgroups();
+            }, 1000);
+        }
+    }
+    function gettotalcount() {
+        try {
+            $.ajax({
+                type: "GET",
+                url: "/GroupChats/GetGroupChatCountsAll",
+                success: function (result) {
+                    
+                    
+                    $.each(result, function (k, v) {
+                        
+                        if ($("#selectedgroupid").val() != v.GroupChatId) {
+                            var oldvalue = parseInt($("#groupchatdetailscount" + v.GroupChatId).val());
+                            if (v.TotalCount > 0) {
+                                $("#groupchatcounticon" + v.GroupChatId).text(v.TotalCount);
+                                $("#groupchatcounticon" + v.GroupChatId).show();
+                                $("#groupchatdetailscount" + v.GroupChatId).val(v.TotalCount);
+                                var tests = $('.groupchatmaindiv');
+                                $("#groupchat" + v.GroupChatId).insertBefore(tests.first());
+                            }
+
+                        }
+                        else {
+                            $("#groupchatdetailscount" + v.GroupChatId).val(0);
+                        }
+
+                    });
+                    setTimeout(function () {
+                        gettotalcount();
+                    }, 1000);
+
+
+                }, error: function (result) {
+                    setTimeout(function () {
+                        gettotalcount();
+                    }, 1000);
+                }
+            });
+        } catch (e) {
+            setTimeout(function () {
+                gettotalcount();
+            }, 1000);
+        }
+
+    }
+    function getdetailsininterval() {
+
+        if ($("#selectedgroupid").val() == "") {
+            setTimeout(function () {
+                getdetailsininterval();
+            }, 200);
+        }
+        else {
+            var lastid = 0;
+            if ($("#lastid").val() != undefined) {
+                lastid = $("#lastid").val();
+            }
+            $.ajax({
+                type: "POST",
+                url: "/GroupChats/Details",
+                data: {
+                    'id': $("#selectedgroupid").val()
+                },
+                success: function (result) {
+
+                    $(".loader").hide();
+                    $("#newsavedhtml").html(result).promise().done(function () {
+                        if ($("#lastsavedhtml").html() != $("#newsavedhtml").html()) {
+                            $("#lastsavedhtml").html(result);
+                            $("#chatdetails").html(result).promise().done(function () {
+                                $('.chatdetailswrapper').scrollTop(1E10);
+                                setTimeout(function () {
+                                    getdetailsininterval();
+                                }, 200);
+                            });
+                        }
+                        else {
+                            setTimeout(function () {
+                                getdetailsininterval();
+                            }, 200);
+                        }
+                    });
+
+                }, error: function (result) {
+                    $(".loader").hide();
+                    setTimeout(function () {
+                        getdetailsininterval();
+                    }, 200);
+                }
+            });
+        }
+
+    }
+</script>

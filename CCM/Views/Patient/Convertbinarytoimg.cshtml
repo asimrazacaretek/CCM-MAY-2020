@@ -1,0 +1,93 @@
+﻿<div class="custom-title">
+    <h4 data-toggle="collapse" href="#collapseExample2" role="button" aria-expanded="true" aria-controls="collapseExample2" class="collapsed">
+        EMR RECORDS
+        <i class="fa fa-caret-down pull-right"></i>
+    </h4>
+</div>
+
+@*<div class="tabel" data-table="Patients">
+        <input type="checkbox" class="checkbox" id="Photo" />
+        <label for="Photo">Photo</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords" />
+        <label for="PhotoEmrRecords">PhotoEmrRecords</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords2" />
+        <label for="PhotoEmrRecords2">PhotoEmrRecords2</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords3" />
+        <label for="PhotoEmrRecords3">PhotoEmrRecords3</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords4" />
+        <label for="PhotoEmrRecords4">PhotoEmrRecords4</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords5" />
+        <label for="PhotoEmrRecords5">PhotoEmrRecords5</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords6" />
+        <label for="PhotoEmrRecords6">PhotoEmrRecords6</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords7" />
+        <label for="PhotoEmrRecords7">PhotoEmrRecords7</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords8" />
+        <label for="PhotoEmrRecords8">PhotoEmrRecords8</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords9" />
+        <label for="PhotoEmrRecords9">PhotoEmrRecords9</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords10" />
+        <label for="PhotoEmrRecords10">PhotoEmrRecords10</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords11" />
+        <label for="PhotoEmrRecords11">PhotoEmrRecords11</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords12" />
+        <label for="PhotoEmrRecords12">PhotoEmrRecords12</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords13" />
+        <label for="PhotoEmrRecords13">PhotoEmrRecords13</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords14" />
+        <label for="PhotoEmrRecords14">PhotoEmrRecords14</label>
+        <input type="checkbox" class="checkbox" id="PhotoEmrRecords15" />
+        <label for="PhotoEmrRecords15">PhotoEmrRecords15</label>
+    </div>
+    <input type="hidden" id="SelectedColumn" />*@
+<button id="btnLoadTables">Click To Convert and Save Images</button>
+<div id="LoadTables">
+    <img src="~/images/Wedges-3s-200px.gif" id="loaderimg" height="300" width="300"/>
+</div>
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $("#loaderimg").hide();
+    });
+    $("#btnLoadTables").click(function () {
+        //chkcolumns = [];
+        //$('.checkbox').each(function () {
+        //    debugger;
+        //    if ($(this).is(":checked")) {
+        //        var chk = $(this).attr("id");
+        //        if ($("#SelectedColumn").val() == "")
+        //            $("#SelectedColumn").val(chk);
+        //        else {
+        //            var oldstr = $("#SelectedColumn").val();
+        //            chk = oldstr + "|" + chk;
+        //            $("#SelectedColumn").val(chk);
+        //        }
+        //    }
+        //});
+
+        $("#btnLoadTables").attr("disabled", "disabled");
+        $("#loaderimg").show();
+        $.ajax({
+            type: "POST",
+            url: "/Patient/Load",
+            success: function (response) {
+                if (response == "True") {
+                    $("#LoadTables").append("<H1>Created Folder and Save images into Folder and In Database!</H1>");
+                }
+                else {
+                    $("#LoadTables").append("<H1>Error in Creating Directory</H1>");
+                }
+                $("#loaderimg").hide();
+                //$("#btnLoadTables").removeAttr("disabled");
+                //$("#LoadTables").html(response).promise().done(function () { });
+            }, failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>

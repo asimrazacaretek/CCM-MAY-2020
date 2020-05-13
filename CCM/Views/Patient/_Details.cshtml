@@ -1,0 +1,1735 @@
+﻿@model CCM.Models.Patient
+@using CCM.Models.CCMBILLINGS;
+@using CCM.Helpers;
+@using CCM.Models;
+@*//////////////////////////////////////////////////revert to chnegeset 513*@
+@{
+    List<int> EnrolledIdList = new List<int>();
+    List<int> BillingCategoryIdList = new List<int>();
+    ApplicationdbContect _db = new ApplicationdbContect();
+    List<Tuple<string, string>> liaisonsexist = new List<Tuple<string, string>>();
+    List<Tuple<string, string>> translatorexist = new List<Tuple<string, string>>();
+    int? PreliaisonId = 0;
+    int? PreTranslaterId = 0;
+    try
+    {
+        if (Model.Patients_PreLiaisons != null)
+        {
+            if (Model.Patients_PreLiaisons.LiaisonId != null)
+            {
+                PreliaisonId = Model.Patients_PreLiaisons.LiaisonId;
+            }
+        }
+
+    }
+    catch { }
+    try
+    {
+        if (Model.Patients_PreLiaisons != null)
+        {
+            if (Model.Patients_PreLiaisons.TranslatorId != null)
+            {
+                PreTranslaterId = Model.Patients_PreLiaisons.TranslatorId;
+            }
+        }
+
+    }
+    catch { }
+    List<EnrollmentSubstatusReason> enrollmentSubstatusReasons = new List<EnrollmentSubstatusReason>();
+    List<EnrollmentSubstatusReason> enrollmentSubstatusReasons2 = ViewBag.EnrollmentReasons;
+}
+<style>
+    #FilesImages img {
+        width: 100%;
+        padding: 10px 5px;
+    }
+
+    .imagandlabeldetails {
+        float: left;
+        width: 100%;
+        border-radius: 2px;
+        border: 1px solid;
+        margin: 6px 0px;
+        box-shadow: 0 2px 2px rgba(21, 27, 45, 0.85);
+        /*max-height: 116px;*/
+        overflow: hidden;
+    }
+
+        .imagandlabeldetails label {
+            float: left;
+            width: 100%;
+            color: white;
+            background-color: #0364bd;
+            padding: 5px;
+            margin-bottom: 0px;
+        }
+
+    #RpmServices {
+        padding-left: 30px;
+        display: none
+    }
+
+    .select2-choices {
+        border: 0px !important;
+    }
+
+    #RpmServices > label {
+        font-size: 14px;
+        font-weight: 700;
+    }
+</style>
+<script>
+
+
+</script>
+
+@*<div class="tab-content" style="position: relative; z-index: 0;margin:4px 4px 20px 2px;width:100%;" id="patientDetails">*@
+@using (Html.BeginForm("_Details", "Patient", FormMethod.Post, new { @class = "form-horizontal", id = "patientupdate", role = "form", enctype = "multipart/form-data" }))
+{
+    @*<input type="hidden" id="ImageUploadHidden" name="ImageUploadHidden" />*@
+
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+    <div class="row">
+
+        <!--------Patient Detials History-------->
+        <div style="margin:0 0px;padding-right:0px;width:100%;float:left;">
+            <div class="card" style="padding:0px;z-index:0;">
+                <div class="custom-title">
+                    <h4 class="pageTitle" data-toggle="collapse" href="#collapseExample1" role="button" aria-expanded="true" aria-controls="collapseExample1">
+                        Patient Details
+                        <i class="fa fa-caret-down pull-right"></i>
+                    </h4>
+                </div>
+                <div class="expand-section in" id="collapseExample1" style="height: auto;">
+                    <div class="wrapper" style="height:auto;">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Primary Care Physician</label>
+                                @Html.DropDownListFor(item => item.PhysicianId,
+                                    new SelectList(ViewBag.Physicians, "Value", "Text", Model),
+                                    "Select Patient's Physician", new { @class = "form-control border-input" })
+                                @Html.ValidationMessageFor(model => model.PhysicianId, "", new { @class = "text-danger" })
+                            </div>
+                            @*////////////////////////////////Start Liasion\Translator//////////////////////*@
+                            <div class="col-md-2">
+                                <label>Chronic Condition 1</label>
+                                @Html.DropDownListFor(item => item.PatientChronicCondition1Id,
+                                    new SelectList(ViewBag.PatientChronicCondition1, "Value", "Text", Model),
+                                    "Select Chronic Condition 1", new { @class = "form-control border-input" })
+                            </div>
+                            <div class="col-md-2">
+                                <label>Chronic Condition 2</label>
+                                @Html.DropDownListFor(item => item.PatientChronicCondition2Id,
+                                    new SelectList(ViewBag.PatientChronicCondition2, "Value", "Text", Model),
+                                    "Select Chronic Condition 2", new { @class = "form-control border-input" })
+                            </div>
+                            @if (User.IsInRole("Sales") || User.IsInRole("Admin"))
+                            {
+                                if (Model.Patients_PreLiaisons != null)
+                                {
+
+                                }
+                                @*Translator*@
+                                <div id="PreLiasionTranslaterDIv">
+                                    @*Lison / Counsler*@
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            @Html.Label("Pre-Counselor", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12">
+                                                @Html.DropDownList("Prelaison",
+                                                  new SelectList(ViewBag.Liason, "Value", "Text", PreliaisonId),
+                                                  "Select Counselor", new { @class = "form-control border-input" })
+                                                @*@Html.ValidationMessageFor(model => model.LiaisonId, "", new { @class = "text-danger", @id = "PreLiaison" })*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            @Html.Label("Pre-Translater", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12">
+                                                @Html.DropDownList("Pretranslator",
+                                                   new SelectList(ViewBag.Translator, "Value", "Text" ,PreTranslaterId),
+                                                   "Select Translator", new { @class = "form-control border-input"})
+                                                @*@Html.ValidationMessageFor(model => model.TranslatorId, "", new { @class = "text-danger", @id="PreTranslater"})*@
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            }
+                            else
+                            {
+                                @*Translator*@
+                                <div id="PreLiasionTranslaterDIv">
+                                    @*Lison / Counsler*@
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.LiaisonId, "Pre-Counselor", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12">
+                                                @Html.DropDownList("Prelaison",
+                                                new SelectList(ViewBag.Liason, "Value", "Text", PreliaisonId),
+                                                "Select Counselor", new { @class = "form-control border-input"/*, @readonly = "readonly"*/ })
+                                                @*@Html.ValidationMessageFor(model => model.LiaisonId, "", new { @class = "text-danger" })*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.TranslatorId, "Pre-Translator", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12">
+                                                @Html.DropDownList("Pretranslator",
+                                                   new SelectList(ViewBag.Translator, "Value", "Text",PreTranslaterId),
+                                                   "Select Translator", new { @class = "form-control border-input"/*, @readonly = "readonly" */})
+                                                @*@Html.ValidationMessageFor(model => model.TranslatorId, "", new { @class = "text-danger" })*@
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            }
+                            @*///////////////////////////////END Liasion\Translator//////////////////////*@
+
+
+                            @*///////////////////////////////old Start Liasion\Translator//////////////////////*@
+                            @*@if (User.IsInRole("Sales") || User.IsInRole("Admin"))
+                                {
+                                    <div class="col-md-2">
+                                        <label>Chronic Condition 1</label>
+                                        @Html.DropDownListFor(item => item.PatientChronicCondition1Id,
+                                            new SelectList(ViewBag.PatientChronicCondition1, "Value", "Text", Model),
+                                            "Select Chronic Condition 1", new { @class = "form-control border-input" })
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Chronic Condition 2</label>
+                                        @Html.DropDownListFor(item => item.PatientChronicCondition2Id,
+                                            new SelectList(ViewBag.PatientChronicCondition2, "Value", "Text", Model),
+                                            "Select Chronic Condition 2", new { @class = "form-control border-input" })
+                                    </div>
+                                    @*Translator
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.TranslatorId, htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12">
+                                                @Html.DropDownListFor(item => item.TranslatorId,
+                                                   new SelectList(ViewBag.Translator, "Value", "Text", Model),
+                                                   "Select Translator", new { @class = "form-control border-input" })
+                                                @Html.ValidationMessageFor(model => model.TranslatorId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*Lison / Counsler
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.LiaisonId, htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12">
+                                                @Html.DropDownListFor(item => item.LiaisonId,
+                                                  new SelectList(ViewBag.Liason, "Value", "Text", Model),
+                                                  "Select Liaison", new { @class = "form-control border-input" })
+                                                @Html.ValidationMessageFor(model => model.PhysicianId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-4">
+                                        <label>Chronic Condition 1</label>
+                                        @Html.DropDownListFor(item => item.PatientChronicCondition1Id,
+                                            new SelectList(ViewBag.PatientChronicCondition1, "Value", "Text", Model),
+                                            "Select Chronic Condition 1", new { @class = "form-control border-input" })
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Chronic Condition 2</label>
+                                        @Html.DropDownListFor(item => item.PatientChronicCondition2Id,
+                                            new SelectList(ViewBag.PatientChronicCondition2, "Value", "Text", Model),
+                                            "Select Chronic Condition 2", new { @class = "form-control border-input" })
+                                    </div>
+                                }*@
+                            @*///////////////////////////////old END Liasion\Translator//////////////////////*@
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label>Address 1</label>
+                                @Html.EditorFor(model => model.Address1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Floor/Apt/Suite</label>
+                                @Html.EditorFor(model => model.Address2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>City</label>
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            </div>
+                            <div class="col-md-4">
+                                <label>State</label>
+                                @Html.EditorFor(model => model.State, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Postal Code</label>
+                                @Html.EditorFor(model => model.Zipcode, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Preferred Language</label>
+                                @Html.DropDownListFor(
+                                model => model.PreferredLanguage,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "English",  Text = "English"},
+                                        new {Value = "Spanish",  Text = "Spanish"},
+                                        new {Value = "Russian",  Text = "Russian"},
+                                        new {Value = "French",   Text = "French"},
+                                        new {Value = "Japanese", Text = "Japanese"},
+                                        new {Value = "Korean",   Text = "Korean"},
+                                        new {Value = "Mandarin", Text = "Mandarin"},
+                                        new {Value = "Hindi",    Text = "Hindi"},
+                                        new {Value = "Other",    Text = "Other"}
+                                    },
+                                    "Value", "Text", Model.PreferredLanguage),
+                                "Select Preferred Language", new { @class = "form-control border-input", id = "preferredLanguage" })
+                            </div>
+                            <div class="col-md-4">
+                                <label><span class="text-info">CCM Cycle</span></label>
+                                @Html.EditorFor(model => model.Cycle, new { htmlAttributes = new { @class = "form-control border-input", disabled = "disabled" } })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Picasso Checked</label>
+                                @Html.DropDownListFor(
+                                model => model.PicassoChecked,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "Yes",  Text = "Yes"},
+                                        new {Value = "No",  Text = "No"},
+
+                                    },
+                                    "Value", "Text", Model.PicassoChecked), "Select Picasso Checked",
+                                 new { @class = "form-control border-input", id = "picassochecked" })
+                            </div>
+
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Picasso Checked Date</label>
+                                @{
+                                    var picassocheckon = Model.PicassoCheckedOn == null ? "" : Model.PicassoCheckedOn.Value.ToString("yyyy-MM-dd"); }
+                                <input class="form-control border-input text-box single-line" data-val="true" data-val-date="The field Picasso Checked Date must be a date." id="PicassoCheckedOn" name="PicassoCheckedOn" type="date" value="@picassocheckon">
+
+
+                            </div>
+                            <div class="col-md-4">
+                                <label>EMR #</label>
+                                @Html.EditorFor(model => model.EMRNumber, new { htmlAttributes = new { @class = "form-control border-input", required = "required" } })
+
+                            </div>
+                            <div class="col-md-4">
+                                <label>EMR Type</label>
+                                @Html.DropDownListFor(
+                                model => model.EMRType,
+                                new SelectList(
+                                    new[]
+                                    {
+                                       new {Value = "E-clinical",  Text = "E-clinical"},
+                                    new {Value = "Picasso",  Text = "Picasso"},
+
+                                    },
+                                    "Value", "Text", Model.EMRType),
+                                new { @class = "form-control border-input", id = "emrtype" })
+                            </div>
+
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Capitated</label>
+                                @Html.DropDownListFor(
+                                model => model.CapitatedPatient,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "Yes",  Text = "Yes"},
+                                        new {Value = "No",  Text = "No"},
+
+                                    },
+                                    "Value", "Text", Model.CapitatedPatient), "Select Capitated Checked",
+                                 new { @class = "form-control border-input", id = "CapitatedPatient" })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Capitated From</label>
+                                @{
+                                    var capitedfrom = Model.CapitatedFrom == null ? "" : Model.CapitatedFrom.Value.ToString("yyyy-MM-dd"); }
+                                <input class="form-control border-input text-box single-line" data-val="true" data-val-date="The field Capitated From must be a date." id="CapitatedFrom" name="CapitatedFrom" type="date" value="@capitedfrom">
+
+
+                            </div>
+                            <div class="col-md-4">
+                                <label>Capitated To</label>
+                                @{
+                                    var capitedto = Model.CapitatedTo == null ? "" : Model.CapitatedTo.Value.ToString("yyyy-MM-dd"); }
+                                <input class="form-control border-input text-box single-line" data-val="true" data-val-date="The field Capitated To must be a date." id="CapitatedTo" name="CapitatedTo" type="date" value="@capitedto">
+
+
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+
+                            <div class="enrollmentStatus">
+                                @*@if (User.IsInRole("Admin") || User.IsInRole("LiaisonGroup"))*@
+                                @if (User.IsInRole("Admin") || User.IsInRole("Sales") || User.IsInRole("LiaisonGroup"))
+                                {
+                                    <div class="col-md-4">
+                                        <label>Enrollment Status</label>
+                                        @Html.DropDownList("EnrollmentStatus", (IEnumerable<SelectListItem>)ViewBag.EnrollmentStatus, null, new { @class = "form-control border-input" })
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>SubStatus</label>
+                                        @Html.DropDownList("EnrollmentSubStatus", (IEnumerable<SelectListItem>)ViewBag.EnrollmentSubStatus, null, new { @class = "form-control border-input" })
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div id="EnrollemntStatusResondiv">
+                                            <label>Reason  <span style="color:red">*</span></label>
+                                            @{
+
+                                                enrollmentSubstatusReasons = enrollmentSubstatusReasons2.Where(p => p.BillingCategoryId == null).ToList();
+                                            }
+                                            @Html.DropDownList("EnrollemntStatusReson", new SelectList(enrollmentSubstatusReasons, "Name", "Name"), null, new { @class = "form-control border-input" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12" id="EnrollBillingCategory" style="display: grid;">
+                                            <label style="width:100%;margin-top:18px">Enrolled In</label>
+                                            <div style="display:contents">
+                                                @{
+                                                    string str = "checked";
+                                                    string dataId = " data-id=";
+
+                                                }
+                                                @foreach (var item in ViewBag.BillingCategories as List<BillingCategory>)
+                                                {
+                                                    BillingCategoryIdList.Add(item.BillingCategoryId);
+                                                    <label class="d-block" style="margin-right: 12px;cursor:default; font-size: 13px;width:fit-content;">
+                                                        <input type="checkbox" id="@("billingCategoryCheckBox"+item.BillingCategoryId)" value="@item.BillingCategoryId" data-identifier="@item.Name" name="billingCategory" @if (item.BillingCategoryId == (Model.Patients_BillingCategories.Where(p => p.BillingCategoryId == item.BillingCategoryId && p.Status == true).Select(p => p.BillingCategoryId).FirstOrDefault())) { @str  @dataId  @item.BillingCategoryId EnrolledIdList.Add(item.BillingCategoryId); } onclick="ShowHideDeEnrollmentDiv(@item.BillingCategoryId)" /> @item.Name
+                                                    </label>
+                                                    <div class="col-md-4 DeEnrollmentStatusDiv" id="@("DeEnrollmentStatusDiv"+item.BillingCategoryId)" data-identifierreason="@item.Name" style="margin-bottom: 15px;">
+                                                        <div>
+                                                            <label>@item.Name De-Enrollemnt Reason <span style="color:red">*</span></label>
+
+                                                            @{
+
+                                                                enrollmentSubstatusReasons = enrollmentSubstatusReasons2.Where(p => p.BillingCategoryId == item.BillingCategoryId).ToList();
+                                                            }
+                                                            @Html.DropDownList("EnrollemntStatusReson", new SelectList(enrollmentSubstatusReasons, "Name", "Name"), "Select De-Enrollment Reason", new { @class = "form-control border-input DeEnrollemntReson", @id = "DeEnrollemntReson" + item.BillingCategoryId, @data_id = item.Name })
+                                                        </div>
+                                                    </div>
+
+
+
+
+
+
+
+
+                                                    {
+                                                        liaisonsexist.Clear();
+                                                        translatorexist.Clear();
+                                                        try
+                                                        {
+                                                            List<Liaison> liaisons = new List<Liaison>();
+                                                            liaisons = ViewBag.Laisons;
+
+                                                            foreach (var liaison in liaisons)
+                                                            {
+                                                                //liaison.Liaisons_BillingCategories = new List<Liaisons_BillingCategories>();
+
+                                                                var exist = liaison.Liaisons_BillingCategories.Where(p => p.BillingCategoryId == item.BillingCategoryId && p.Status == true).Select(p => new
+                                                                {
+                                                                    Id = p.Liaison.Id.ToString(),
+                                                                    Name = p.Liaison.FirstName + p.Liaison.LastName,
+
+                                                                }).FirstOrDefault();
+                                                                // var exist=  liaison.
+                                                                if (exist != null)
+                                                                {
+
+                                                                    liaisonsexist.Add(new Tuple<string, string>(exist.Id, exist.Name));
+                                                                }
+
+                                                                //var liaisoncategory = liaisons.Select(p => p.Liaisons_BillingCategories.FirstOrDefault(x => x.BillingCategoryId == item.BillingCategoryId).Liaison).ToList();
+
+                                                            }
+                                                            List<Liaison> translators = new List<Liaison>();
+                                                            translators = ViewBag.Translators;
+                                                            foreach (var translator in translators)
+                                                            {
+
+
+                                                                var exist = translator.Liaisons_BillingCategories.Where(p => p.BillingCategoryId == item.BillingCategoryId && p.Status == true).Select(p => new
+                                                                {
+                                                                    Id = p.Liaison.Id.ToString(),
+                                                                    Name = p.Liaison.FirstName + p.Liaison.LastName,
+
+                                                                }).FirstOrDefault();
+                                                                // var exist=  liaison.
+                                                                if (exist != null)
+                                                                {
+
+                                                                    translatorexist.Add(new Tuple<string, string>(exist.Id, exist.Name));
+                                                                }
+
+                                                                //var liaisoncategory = liaisons.Select(p => p.Liaisons_BillingCategories.FirstOrDefault(x => x.BillingCategoryId == item.BillingCategoryId).Liaison).ToList();
+
+                                                            }
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+
+                                                        }
+                                                    }
+                                                    <div class="col-md-4 LiasonTranslatorDiv" id="@("LiasonTranslatorDiv"+item.BillingCategoryId)" data-identifierId="@item.Name" style="margin-bottom: 15px;">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                @Html.Label("Post-Counselor", htmlAttributes: new { @class = "col-md-12", @style = "padding-left: 0px" })
+                                                                <div class="col-md-12" style="padding-left: 0px;">
+                                                                    @Html.DropDownList("Liaison",
+                                                                      new SelectList(liaisonsexist, "Item1", "Item2", Model),
+                                                                      "Select Counselor", new { @class = "form-control PatientLiaison border-input"/*, required = "required"*/, @id = "Liaison" + item.BillingCategoryId, @data_id = item.Name })
+                                                                    @Html.ValidationMessageFor(model => model.LiaisonId, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6" style="">
+                                                            <div class="form-group">
+                                                                @Html.Label("Post-Translator", htmlAttributes: new { @class = "col-md-12", @style = "padding-left: 0px" })
+                                                                <div class="col-md-12" style="padding-left: 0px;">
+                                                                    @Html.DropDownList("Translator",
+                                                                       new SelectList(translatorexist, "Item1", "Item2", Model),
+                                                                       "Select Translator", new { @class = "form-control PatientTranslator border-input", @id = "Translator" + item.BillingCategoryId, @data_id = item.Name })
+                                                                    @Html.ValidationMessageFor(model => model.TranslatorId, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+
+
+
+
+
+
+
+
+                                                    @*<div class="col-md-4 LiasonTranslatorDiv" id="@("LiasonTranslatorDiv"+item.BillingCategoryId)" style="margin-bottom: 15px;">
+                                                            <div>
+                                                                <label>@item.Name De-Enrollemnt Reason <span style="color:red">*</span></label>
+
+                                                                @Html.DropDownList("EnrollemntStatusReson", (IEnumerable<SelectListItem>)ViewBag.EnrollemntStatusReson, "Select De-Enrollment Reason", new { @class = "form-control border-input DeEnrollemntReson", @id = "DeEnrollemntReson" + item.BillingCategoryId, @data_id = item.Name })
+                                                            </div>
+                                                        </div>*@
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="container-fluid">
+
+                                        <div class="row" id="RpmServices">
+                                            <label>RPM Services</label>
+                                            <div class="row" style="    display: -webkit-box;">
+                                                @Html.DropDownList("RpmServices",
+                                           new SelectList(ViewBag.RpmServices, "Value", "Text", Model),
+                                           new { @class = "form-control  border-input",@id= "RpmServicesdd",@multiple="multiple",@name= "RpmServices" })
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    <div class="col-md-4">
+                                        <label>Enrollment Status</label>
+                                        @Html.DropDownList("EnrollmentStatus", (IEnumerable<SelectListItem>)ViewBag.EnrollmentStatus, null, new { @class = "form-control border-input", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>SubStatus</label>
+                                        @Html.DropDownList("EnrollmentSubStatus", (IEnumerable<SelectListItem>)ViewBag.EnrollmentSubStatus, null, new { @class = "form-control border-input", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div id="EnrollemntStatusResondiv">
+
+
+                                            <label>Reason <span style="color:red">*</span></label>
+                                            @Html.DropDownList("EnrollemntStatusReson", (IEnumerable<SelectListItem>)ViewBag.EnrollemntStatusReson, null, new { @class = "form-control border-input", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12" id="EnrollBillingCategory" style="display: grid;">
+                                            <label style="width:100%;margin-top:18px">Enrolled In</label>
+                                            <div style="display:contents">
+                                                @{
+                                                    string str = "checked";
+                                                    string dataId = " data-id=";
+
+                                                }
+                                                @foreach (var item in ViewBag.BillingCategories as List<BillingCategory>)
+                                                {
+                                                    BillingCategoryIdList.Add(item.BillingCategoryId);
+                                                    <label class="d-block" style="margin-right: 12px;cursor:default; font-size: 13px;width:fit-content;">
+                                                        <input type="checkbox" id="@("billingCategoryCheckBox"+item.BillingCategoryId)" value="@item.BillingCategoryId" data-identifier="@item.Name" disabled="disabled" name="billingCategory" @if (item.BillingCategoryId == Model.Patients_BillingCategories.Where(p => p.BillingCategoryId == item.BillingCategoryId && p.Status == true).Select(p => p.BillingCategoryId).FirstOrDefault()) { @str  @dataId  @item.BillingCategoryId EnrolledIdList.Add(item.BillingCategoryId); } onclick="ShowHideDeEnrollmentDiv(@item.BillingCategoryId)" /> @item.Name
+                                                    </label>
+                                                    <div class="col-md-4 DeEnrollmentStatusDiv" id="@("DeEnrollmentStatusDiv"+item.BillingCategoryId)" data-identifierreason="@item.Name" style="margin-bottom: 15px;">
+                                                        <div>
+                                                            <label>@item.Name De-Enrollemnt Reason <span style="color:red">*</span></label>
+
+                                                            @Html.DropDownList("EnrollemntStatusReson", (IEnumerable<SelectListItem>)ViewBag.EnrollemntStatusReson, "Select De-Enrollment Reason", new { @class = "form-control border-input DeEnrollemntReson", @id = "DeEnrollemntReson" + item.BillingCategoryId, @data_id = item.Name, @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+
+
+
+
+
+
+
+
+                                                    {
+                                                        liaisonsexist.Clear();
+                                                        translatorexist.Clear();
+                                                        try
+                                                        {
+                                                            List<Liaison> liaisons = new List<Liaison>();
+                                                            liaisons = ViewBag.Laisons;
+
+                                                            foreach (var liaison in liaisons)
+                                                            {
+                                                                //liaison.Liaisons_BillingCategories = new List<Liaisons_BillingCategories>();
+
+                                                                var exist = liaison.Liaisons_BillingCategories.Where(p => p.BillingCategoryId == item.BillingCategoryId && p.Status == true).Select(p => new
+                                                                {
+                                                                    Id = p.Liaison.Id.ToString(),
+                                                                    Name = p.Liaison.FirstName + p.Liaison.LastName,
+
+                                                                }).FirstOrDefault();
+                                                                // var exist=  liaison.
+                                                                if (exist != null)
+                                                                {
+
+                                                                    liaisonsexist.Add(new Tuple<string, string>(exist.Id, exist.Name));
+                                                                }
+
+                                                                //var liaisoncategory = liaisons.Select(p => p.Liaisons_BillingCategories.FirstOrDefault(x => x.BillingCategoryId == item.BillingCategoryId).Liaison).ToList();
+
+                                                            }
+                                                            List<Liaison> translators = new List<Liaison>();
+                                                            translators = ViewBag.Translators;
+                                                            foreach (var translator in translators)
+                                                            {
+
+
+                                                                var exist = translator.Liaisons_BillingCategories.Where(p => p.BillingCategoryId == item.BillingCategoryId && p.Status == true).Select(p => new
+                                                                {
+                                                                    Id = p.Liaison.Id.ToString(),
+                                                                    Name = p.Liaison.FirstName + p.Liaison.LastName,
+
+                                                                }).FirstOrDefault();
+                                                                // var exist=  liaison.
+                                                                if (exist != null)
+                                                                {
+
+                                                                    translatorexist.Add(new Tuple<string, string>(exist.Id, exist.Name));
+                                                                }
+
+                                                                //var liaisoncategory = liaisons.Select(p => p.Liaisons_BillingCategories.FirstOrDefault(x => x.BillingCategoryId == item.BillingCategoryId).Liaison).ToList();
+
+                                                            }
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+
+                                                        }
+                                                    }
+                                                    <div class="col-md-4 LiasonTranslatorDiv" id="@("LiasonTranslatorDiv"+item.BillingCategoryId)" data-identifierId="@item.Name" style="margin-bottom: 15px;">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                @Html.Label("Post-Counselor", htmlAttributes: new { @class = "col-md-12", @style = "padding-left: 0px" })
+                                                                <div class="col-md-12" style="padding-left: 0px;">
+                                                                    @Html.DropDownListFor(items => items.LiaisonId,
+                                                                      new SelectList(liaisonsexist, "Item1", "Item2", Model),
+                                                                      "Select Counselor", new { @class = "form-control PatientLiaison border-input"/*, required = "required"*/, @id = "Liaison" + item.BillingCategoryId, @data_id = item.Name, @disabled = "disabled" })
+                                                                    @Html.ValidationMessageFor(model => model.LiaisonId, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6" style="">
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(model => model.TranslatorId, "Post-Translator", htmlAttributes: new { @class = "col-md-12", @style = "padding-left: 0px" })
+                                                                <div class="col-md-12" style="padding-left: 0px;">
+                                                                    @Html.DropDownListFor(items => items.TranslatorId,
+                                                                       new SelectList(translatorexist, "Item1", "Item2", Model),
+                                                                       "Select Translator", new { @class = "form-control PatientTranslator border-input", @id = "Translator" + item.BillingCategoryId, @data_id = item.Name, @disabled = "disabled" })
+                                                                    @Html.ValidationMessageFor(model => model.TranslatorId, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+
+
+
+
+
+
+
+
+                                                    @*<div class="col-md-4 LiasonTranslatorDiv" id="@("LiasonTranslatorDiv"+item.BillingCategoryId)" style="margin-bottom: 15px;">
+                                                            <div>
+                                                                <label>@item.Name De-Enrollemnt Reason <span style="color:red">*</span></label>
+
+                                                                @Html.DropDownList("EnrollemntStatusReson", (IEnumerable<SelectListItem>)ViewBag.EnrollemntStatusReson, "Select De-Enrollment Reason", new { @class = "form-control border-input DeEnrollemntReson", @id = "DeEnrollemntReson" + item.BillingCategoryId, @data_id = item.Name })
+                                                            </div>
+                                                        </div>*@
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="container-fluid">
+
+                                        <div class="row" id="RpmServices">
+                                            <label>RPM Services</label>
+                                            <div class="row" style="    display: -webkit-box;">
+                                                @Html.DropDownList("RpmServices",
+                                           new SelectList(ViewBag.RpmServices, "Value", "Text", Model),
+                                           new { @class = "form-control  border-input",@id= "RpmServicesdd",@multiple="multiple",@name= "RpmServices",@style= "pointer-events: none" })
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+                        <br />
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <label>Enrollment Status Notes</label>
+                                @Html.TextAreaFor(model => model.EnrollmentStatusNotes, new { @class = "form-control border-input", rows = "5" })
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Calling Status</label>
+                                @Html.DropDownListFor(
+                                model => model.CallingStatus,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "Left Voice Message 1",  Text = "Left Voice Message 1"},
+                                        new {Value = "Left Voice Message 2",  Text = "Left Voice Message 2"},
+                                        new {Value = "Left Voice Message 3",  Text = "Left Voice Message 3"},
+
+                                    },
+                                    "Value", "Text", Model.CallingStatus),
+                                "Select Voice Message", new { @class = "form-control border-input", id = "callingstatus" })
+                                <div class="col-md-12">
+                                    <br />
+                                    <button type="button" id="Save" class="btn btn-success logdetails">Update / Save</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label>Calling Notes</label>
+                                @Html.TextAreaFor(model => model.CallingNote, new { @class = "form-control border-input", rows = "5" })
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Appointment Date</label>
+                                @Html.EditorFor(model => model.AppointmentDate, new { htmlAttributes = new { @class = "form-control border-input", id = "datepicker", disabled = "disabled" } })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Temporary Password</label>
+                                @{
+                                    var password = Model.LastName.ToLower() + "#PA1013"; // + Model.Id;
+                                }
+                                <input type="text" class="form-control border-input" placeholder="Username" value="@password" readonly="readonly">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Email Address</label>
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <br />
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Enrollment Notes</label>
+                                @Html.TextAreaFor(model => model.EnrollmentNotes, new { @class = "form-control border-input", rows = "5" })
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Notes</label>
+                                @Html.TextAreaFor(model => model.Notes, new { @class = "form-control border-input", rows = "5" })
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--------Call History-------->
+        <div style="margin:0 0px;padding:0px;width:100%;float:right;">
+            <div class="card" style="padding:0px;">
+                <div class="custom-title">
+                    <h4 data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="true" aria-controls="collapseExample">
+                        Call History
+                        <i class="fa fa-caret-down pull-right"></i>
+                    </h4>
+                </div>
+                <div class="collapse expand-section in" id="collapseExample" style="height: auto;">
+                    <div class="padding-wraper">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a data-toggle="tab" href="#call" onclick="callHistory('call')">CALL History</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" href="#text" onclick="callHistory('text')">TEXT History</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" href="#email" onclick="callHistory('email')">EMAIL History</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            @* Call Tab *@
+                            <div id="call" class="tab-pane fade in active">
+                                <br />
+                                <div id="callHistoryPartialView">
+                                    Call History Loading . . .
+                                </div>
+                            </div>
+
+                            @* Text Tab *@
+                            <div id="text" class="tab-pane fade">
+                                <br />
+                                <div id="textHistoryPartialView">
+                                    Text History Loading . . .
+                                </div>
+                            </div>
+
+                            @* Email Tab *@
+                            <div id="email" class="tab-pane fade">
+                                <br />
+                                <div id="emailHistoryPartialView">
+                                    Email History Loading . . .
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <button id="Narrrative" class="btn btn-success" onclick="return NarrativeClick()">Narrative</button>
+                    </div>
+                    <br />
+                    <div class="custom-title">
+                        <h3>Medicare Info (Read only)</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+
+                            <label class="col-md-12">Medicare#</label>
+                            <label class="form-control border-input">@Model.MedicareIdNumber</label>
+
+                        </div>
+                        <div class="col-md-4">
+
+                            <label class="col-md-12">Medicaid#</label>
+                            <label class="form-control border-input">@Model.MedicaidIdNumber</label>
+
+                        </div>
+                        <div class="col-md-4">
+
+                            <label class="col-md-12">Other Insurance #</label>
+                            <label class="form-control border-input">@Model.OtherInsuranceIdNumber</label>
+
+                        </div>
+                    </div>
+                    <div id="patientinsuranceinfo"></div>
+
+                </div>
+            </div>
+        </div>
+        <!--------Call History-->
+
+    </div>
+    <div class="clearfix"></div>
+    <!--------ERM Records -------->
+    <div class="row card" style="padding:0;">
+        <div class="custom-title">
+            <h4 data-toggle="collapse" href="#collapseExample2" role="button" aria-expanded="true" aria-controls="collapseExample2" class="collapsed">
+                EMR RECORDS ADD/UPDATE
+                <i class="fa fa-caret-down pull-right"></i>
+            </h4>
+        </div>
+        <div class="expand-section collapse" id="collapseExample2" style="height: 276px;">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>EMR Records</label>
+                    <input type="file" name="PhotoEmrRecords" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>EMR Records 2</label>
+                    <input type="file" name="PhotoEmrRecords2" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>EMR Records 3</label>
+                    <input type="file" name="PhotoEmrRecords3" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>EMR Records 4</label>
+                    <input type="file" name="PhotoEmrRecords4" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+
+                <div class="col-md-3">
+                    <label>EMR Records 5</label>
+                    <input type="file" name="PhotoEmrRecords5" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+
+                <div class="col-md-3">
+                    <label>EMR Records 7</label>
+                    <input type="file" name="PhotoEmrRecords7" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>EMR Records 8</label>
+                    <input type="file" name="PhotoEmrRecords8" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>EMR Records 9</label>
+                    <input type="file" name="PhotoEmrRecords9" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label>EMR Records 10</label>
+                    <input type="file" name="PhotoEmrRecords10" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>EMR Records 11</label>
+                    <input type="file" name="PhotoEmrRecords11" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>EMR Records 12</label>
+                    <input type="file" name="PhotoEmrRecords12" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>EMR Records 13</label>
+                    <input type="file" name="PhotoEmrRecords13" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label>EMR Records 14</label>
+                    <input type="file" name="PhotoEmrRecords14" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>EMR Records 15</label>
+                    <input type="file" name="PhotoEmrRecords15" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+                <div class="col-md-3">
+                    <label>EMR Records 6 (PDF Only)</label>
+                    <input type="file" name="PhotoEmrRecords6" id="fileUpload" class="form-control border-input" accept=".pdf" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Upload Photo</label>
+                    <input type="file" name="Photo" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        <br />
+        <button type="button" id="_Save" class="btn btn-success logdetails">Update / Save</button>
+    </div>
+    <!--------ERM Records-------->
+
+    @Html.HiddenFor(patient => patient.Id)
+    @Html.HiddenFor(patient => patient.CreatedOn)
+    @Html.HiddenFor(patient => patient.CreatedBy)
+
+    @Html.HiddenFor(patient => patient.Prefix)
+    @Html.HiddenFor(patient => patient.FirstName)
+    @Html.HiddenFor(patient => patient.MiddleName)
+    @Html.HiddenFor(patient => patient.LastName)
+    @Html.HiddenFor(patient => patient.Suffix)
+    @Html.HiddenFor(patient => patient.BirthDate)
+    @Html.HiddenFor(patient => patient.Gender)
+
+    @Html.HiddenFor(patient => patient.MobilePhoneNumber)
+    @Html.HiddenFor(patient => patient.HomePhoneNumber)
+    @Html.HiddenFor(patient => patient.HomePhoneNumber)
+    @Html.HiddenFor(patient => patient.WorkPhoneNumber)
+    @Html.HiddenFor(patient => patient.EmergencyNumber)
+    @Html.HiddenFor(patient => patient.BestContactTime)
+    @Html.HiddenFor(patient => patient.AllowText)
+    @Html.HiddenFor(patient => patient.AllowEmail)
+    @Html.HiddenFor(patient => patient.BuildingType)
+    @Html.HiddenFor(patient => patient.DeliveryPermisison)
+    @Html.HiddenFor(patient => patient.DeliveryInstruction)
+
+    @Html.HiddenFor(patient => patient.LiaisonId)
+    @Html.HiddenFor(patient => patient.MedicaidIdNumber)
+    @Html.HiddenFor(patient => patient.MedicareIdNumber)
+    @Html.HiddenFor(patient => patient.OtherInsuranceIdNumber)
+    <input type="hidden" id="EnrollmentStatushiden" name="EnrollmentStatushiden" value="@Model.EnrollmentStatus" />
+    <input type="hidden" id="EnrollmentSubStatushiden" name="EnrollmentSubStatushiden" value="@Model.EnrollmentSubStatus" />
+    <input type="hidden" id="EnrollmentSubStatusReasonhiden" name="EnrollmentSubStatusReasonhiden" value="@Model.EnrollmentSubStatusReason" />
+    <input type="hidden" id="patientEnrollmentOldsubstatus" name="EnrollmentSubStatusReasonhiden" value="@ViewBag.patientOldSubStatus" />
+    int? check = 0;
+
+    foreach (var item in Model.Patients_BillingCategories)
+    {
+        var LiaisonOrTranslater = _db.Liaisons.Where(x => x.Id == item.LiaisonId).FirstOrDefault();
+        if (LiaisonOrTranslater != null)
+        {
+            if (item.Status == true)
+            {
+                <input type="hidden" value="@item.LiaisonId" id="@("LiasionHidden"+item.BillingCategoryId)" />
+                <input type="hidden" value="@item.TranslatorId" id="@("TranslaterHidden"+item.BillingCategoryId)" />
+
+            }
+            @*if (LiaisonOrTranslater.IsTranslator == true && item.Status == true)
+                {
+                    <input type="hidden" value="@item.TranslatorId" id="@("TranslaterHidden"+item.BillingCategoryId)" />
+                }
+                else if (LiaisonOrTranslater.IsTranslator == false && item.Status == true)
+                {
+                    <input type="hidden" value="@item.LiaisonId" id="@("LiasionHidden"+item.BillingCategoryId)" />
+
+                }*@
+
+
+        }
+        if (check != item.BillingCategoryId)
+        {
+            if (Model.Patients_BillingCategories.Where(x => x.BillingCategoryId == item.BillingCategoryId && x.Status == true).LastOrDefault() == null)
+            {
+                var ss = Model.Patients_BillingCategories.Where(x => x.BillingCategoryId == item.BillingCategoryId && x.Status == false && x.DeEnrollmentReason != null).LastOrDefault();
+                if (ss != null)
+                {
+                    check = item.BillingCategoryId;
+                    <input type="hidden" value="@ss.DeEnrollmentReason" id="@("DeEnrollmentReasonHidden" + item.BillingCategoryId)" />
+                }
+            }
+        }
+
+
+    }
+    @Html.HiddenFor(patient => patient.CcmStatus)
+    @Html.HiddenFor(patient => patient.CCMEnrolledBy)
+    @Html.HiddenFor(patient => patient.CCMEnrolledOn)
+    @Html.HiddenFor(patient => patient.CcmClinicalSignOffDate)
+    @Html.HiddenFor(patient => patient.CcmClaimSubmissionDate)
+    @Html.HiddenFor(patient => patient.CcmReconciliationDate)
+    @Html.HiddenFor(patient => patient.CcmBillingCode)
+    @Html.HiddenFor(patient => patient.CcmBillingCode2)
+    @Html.HiddenFor(patient => patient.Cycle)
+    @Html.HiddenFor(patient => patient.FinalCarePlanPdf)
+
+    @Html.HiddenFor(patient => patient.CaretakerFirstName)
+    @Html.HiddenFor(patient => patient.CaretakerLastName)
+    @Html.HiddenFor(patient => patient.CaretakerPhoneNumber)
+    @Html.HiddenFor(patient => patient.CaretakerRelationship)
+
+    // Profile
+    @Html.HiddenFor(patient => patient.ProfileId)
+    @Html.HiddenFor(patient => patient.ContactId)
+    @Html.HiddenFor(patient => patient.AddressId)
+    @Html.HiddenFor(patient => patient.UrgencyContactId)
+    @Html.HiddenFor(patient => patient.InsuranceId)
+
+    // Medical History
+    @Html.HiddenFor(patient => patient.MedicalStatusId)
+    @Html.HiddenFor(patient => patient.MedicalConditionId)
+    @Html.HiddenFor(patient => patient.FamilyHistoryId)
+    @Html.HiddenFor(patient => patient.AllergyId)
+    @Html.HiddenFor(patient => patient.MedicationOtcId)
+
+    // Lifestyle
+    @Html.HiddenFor(patient => patient.WorkAndRelationshipId)
+    @Html.HiddenFor(patient => patient.DietAndHabitId)
+    @Html.HiddenFor(patient => patient.LifeStressId)
+    @Html.HiddenFor(patient => patient.NutritionalSupplementId)
+    @Html.HiddenFor(patient => patient.LiasionAssignedBy)
+    @Html.HiddenFor(patient => patient.LiasionAssignedOn)
+    @Html.HiddenFor(patient => patient.TranslatorId)
+    @Html.HiddenFor(patient => patient.TranslatorAssignedOn)
+    @Html.HiddenFor(patient => patient.TranslatorAssignedBy)
+    <input type="hidden" value="" id="PatientBillingCategories" class="PatientBillingCategories" name="PatientBillingCategories" />
+
+}
+
+<br />
+<div class="row" style="margin-top: 50px;">
+    <div id="FilesImages">
+        @if (Model.PhotoEmrRecords != null)
+        {
+            <div class="imagandlabeldetails">
+                <label>EMR Records 1</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record1" })" alt="" />
+            </div>
+
+        }
+
+        @if (Model.PhotoEmrRecords2 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 2</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record2" })" alt="" />
+            </div>
+        }
+
+        @if (Model.PhotoEmrRecords3 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 3</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record3" })" alt="" />
+            </div>
+        }
+        @if (Model.PhotoEmrRecords4 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 4</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record4" })" alt="" />
+            </div>
+        }
+
+        @if (Model.PhotoEmrRecords5 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 5</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record5" })" alt="" />
+            </div>
+
+        }
+        @if (Model.PhotoEmrRecords6 != null)
+        {
+            <br />
+            <br />
+            <div style="margin: 0 auto; width : 1000px; height: 735px;">
+                <label>EMR Records 6</label>
+                <object data="@Url.Action("PhotoEmrRecords6", "Patient", new { patientId = Model.Id })" type="application/pdf" height="100%" width="100%"></object>
+                <br />
+            </div>
+
+        }
+        @if (Model.PhotoEmrRecords7 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 7</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record7" })" alt="" />
+            </div>
+
+        }
+        @if (Model.PhotoEmrRecords8 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 8</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record8" })" alt="" />
+            </div>
+        }
+
+
+        @if (Model.PhotoEmrRecords9 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 9</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record9" })" alt="" />
+            </div>
+        }
+
+        @if (Model.PhotoEmrRecords10 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 10</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record10" })" alt="" />
+            </div>
+        }
+
+        @if (Model.PhotoEmrRecords11 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 11</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record11" })" alt="" />
+            </div>
+        }
+        @if (Model.PhotoEmrRecords12 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 12</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record12" })" alt="" />
+            </div>
+        }
+
+        @if (Model.PhotoEmrRecords13 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 13</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record13" })" alt="" />
+            </div>
+        }
+
+        @if (Model.PhotoEmrRecords14 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 14</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record14" })" alt="" />
+            </div>
+        }
+
+        @if (Model.PhotoEmrRecords15 != null)
+        {
+            <br />
+            <br />
+            <div class="imagandlabeldetails">
+                <label>EMR Records 15</label>
+                <img src="@Url.Action("DisplayImage", "Patient", new { patientId = Model.Id, imageName = "record15" })" alt="" />
+            </div>
+        }
+
+    </div>
+</div>
+@*<input type="hidden" id="SaveImageDataForUplaodHidden" value="" />
+    <input type="hidden" id="SaveImageVariableForUplaodHidden" value="" />*@
+<script>
+    $("#Save, #_Save").click(function () {
+        debugger;
+        if ($("#EMRNumber").val() == "") {
+            swal("Please enter EMR number");
+            $("#EMRNumber").focus();
+            return false;
+        }
+
+
+        if ($("#CapitatedPatient").val() == "Yes") {
+            debugger;
+            if ($("#CapitatedFrom").val() == "" && $("#CapitatedTo").val() == "") {
+                swal("Please select Capitated dates.");
+                return false;
+            }
+            swal({
+                title: "Capitated",
+                text: "Do you want to move patient to Capitated as it will move to (Not Qualifified under Capitated) ?",
+                icon: "warning",
+                buttons: true,
+                showCancelButton: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $(".loader").show();
+
+                        $("#EnrollmentStatushiden").val("Not Qualified");
+                        $("#EnrollmentSubStatushiden").val("NQ - Capitated");
+
+
+
+
+
+                        debugger;
+                        SubmitForm("patientupdate", "Update");
+                        //$('#patientupdate').submit(function () {
+                        //        $.ajax({
+                        //            url: $('#patientupdate').attr('action'),
+                        //            type: 'POST',
+                        //            data: $('#patientupdate').serialize(),
+                        //            success: function (response) {
+                        //                Swal('Good job!', "The server says: " + response,                   'success')
+                        //            }
+                        //        });
+                        //        return false;
+                        //    });
+
+                        //var a = $("#patientupdate").submit();
+
+                    } else {
+                        return false;
+                    }
+                });
+        }
+        else {
+            //$("#patientupdate").submit();
+            //alert($(".DeEnrollemntReson").val());
+              var checkForFirstTime = "true";
+            var checkForReasonEmptyAndUnchecked = "true";
+              var EnrollmentList = [];
+            var data =@Html.Raw(Json.Encode(EnrolledIdList));
+             var DataList =@Html.Raw(Json.Encode(BillingCategoryIdList));
+            if (data == "") {
+                if ((($("#EnrollmentStatus option:selected").text() == "Enrolled" && $("#EnrollmentSubStatus option:selected").text() == "Active Enrolled" && $('input[name ="billingCategory"]:checked').val() == null))) {
+                    swal("Warning", "If SubStatus is Active Enrolled, You Must have to select atleast one Category", "warning");
+                    checkForFirstTime = "false";
+                    return false;
+                }
+
+                 DataList.forEach(item => {
+                        if (($("#billingCategoryCheckBox" + item).data('id')) != null) {
+                            if ($("#billingCategoryCheckBox" + item).prop("checked") != true) {
+
+                                var obj = {
+                                    BillingcategoryId: item,
+                                    DeEnrollmentReason: $("#DeEnrollemntReson" + item).val(),
+                                    LiaisonId: "",
+                                    TranslatorId: ""
+                                }
+                                EnrollmentList.push(obj);
+                            } else {
+                                             if (($("#Liaison" + item).val() != '')) {
+                                    var obj = {
+                                        BillingcategoryId: item,
+                                        DeEnrollmentReason: "",
+                                        LiaisonId: $("#Liaison" + item).val(),
+                                        TranslatorId: $("#Translator" + item).val(),
+                                    }
+                                    EnrollmentList.push(obj);
+                                } else {
+
+                                                 swal("Warning", "Please Select Counselor For " + ($("#Liaison" + item).data('id')), "warning");
+                                  check = "false";
+                                }
+                            }
+
+                        } else {
+                            if ($("#billingCategoryCheckBox" + item).prop("checked") == true) {
+                                if (($("#Liaison" + item).val() != '')) {
+                                    var obj = {
+                                        BillingcategoryId: item,
+                                        DeEnrollmentReason: "",
+                                        LiaisonId: $("#Liaison" + item).val(),
+                                        TranslatorId: $("#Translator" + item).val(),
+                                    }
+                                    EnrollmentList.push(obj);
+                                } else {
+
+                                  swal("Warning", "Please Select Counselor For " + ($("#Liaison" + item).data('id')), "warning");
+                                  check = "false";
+                                }
+                            }
+                     }
+
+
+                })
+                if (check == "false") {
+                    return false;
+                }
+
+                if (($("#EnrollmentSubStatus option:selected").text() != "Active Enrolled") && ($("#Prelaison").val() == "")) {
+                    swal("Warning", "Please Select Pre-Counselor!", "warning");
+                    return false;
+                }
+            }
+            else {
+            if (($("#EnrollmentStatus option:selected").text() != "Enrolled" || ($("#EnrollmentSubStatus option:selected").text() != "Active Enrolled" && $('input[name ="billingCategory"]:checked').val() != null))) {
+                             swal("Warning","Please De-Enroll from all Biling Categories if you want to change Status and SubStatus","warning");
+                        return false;
+            }
+
+                if ($("#RpmServices").css("display") == "block") {
+
+
+                    if ($('#RpmServicesdd :selected').val() == null) {
+                        swal("Warning", "Please select atleast one RPM Service", "warning");
+                        return false;
+                    }
+                }
+            var DeEnrolledWithNoReason = "";
+
+             //alert(data);
+                DataList.forEach(item => {
+                    if (($("#billingCategoryCheckBox" + item).data('id')) != null) {
+                        if ($("#billingCategoryCheckBox" + item).prop("checked") != true && $("#DeEnrollemntReson" + item).val() == '') {
+                            DeEnrolledWithNoReason += $("#DeEnrollemntReson" + item).data('id') + ", ";
+                        }
+                    }
+            })
+
+                var check="true";
+                if (DeEnrolledWithNoReason != "") {
+                    swal("Warning", "Please Select De-Enrollment Reason for " + DeEnrolledWithNoReason + "if you want to De-Enroll", "warning");
+                    return false;
+                }
+                else {
+
+                    DataList.forEach(item => {
+                        if (($("#billingCategoryCheckBox" + item).data('id')) != null) {
+                            if ($("#billingCategoryCheckBox" + item).prop("checked") != true) {
+
+                                var obj = {
+                                    BillingcategoryId: item,
+                                    DeEnrollmentReason: $("#DeEnrollemntReson" + item).val(),
+                                    LiaisonId: "",
+                                    TranslatorId: ""
+                                }
+                                EnrollmentList.push(obj);
+                            } else {
+                                             if (($("#Liaison" + item).val() != '')) {
+                                    var obj = {
+                                        BillingcategoryId: item,
+                                        DeEnrollmentReason: "",
+                                        LiaisonId: $("#Liaison" + item).val(),
+                                        TranslatorId: $("#Translator" + item).val(),
+                                    }
+                                    EnrollmentList.push(obj);
+                                } else {
+
+                                  swal("Warning", "Please Select Counselor For " + ($("#Liaison" + item).data('id')), "warning");
+                                  check = "false";
+                                }
+                            }
+                            if (check == "false") {
+                                return false;
+                            }
+                        } else {
+                            if ($("#billingCategoryCheckBox" + item).prop("checked") == true) {
+                                if (($("#Liaison" + item).val() != '')) {
+                                    var obj = {
+                                        BillingcategoryId: item,
+                                        DeEnrollmentReason: "",
+                                        LiaisonId: $("#Liaison" + item).val(),
+                                        TranslatorId: $("#Translator" + item).val(),
+                                    }
+                                    EnrollmentList.push(obj);
+                                } else {
+
+                                    swal("Warning", "Please Select Counselor For " + ($("#Liaison" + item).data('id')), "warning");
+                                  check = "false";
+                                }
+                            }
+                        }
+                    })
+                          if (check == "false") {
+            return false;
+        }
+                    //console.log(EnrollmentList);
+                }
+                if (($("#EnrollmentSubStatus option:selected").text() != "Active Enrolled") && ($("#Prelaison").val() == "")) {
+                    swal("Warning", "Please Select Pre-Counselor!", "warning");
+                    return false;
+                }
+                  }
+            //if(1==1)
+            //return false;
+            console.log(EnrollmentList);
+            var stringifyData = JSON.stringify(EnrollmentList);
+            $("#PatientBillingCategories").val(stringifyData);
+            //alert($("#PatientBillingCategories").val());
+
+
+            //var Imagedata = $("#SaveImageDataForUplaodHidden").val();
+            //alert(Imagedata);
+            //$("#ImageUploadHidden").val(Imagedata);
+            //alert($("#ImageUploadHidden").val());
+            //console.log(JSON.parse($("#ImageUploadHidden").val()));
+            SubmitForm("patientupdate", "Update");
+        }
+    });
+    function NarrativeClick() {
+        debugger;
+        swal.setDefaults({
+            input: 'text',
+            confirmButtonText: 'Next &rarr;',
+            showCancelButton: true,
+            animation: false,
+            progressSteps: ['1', '2', '3', '4']
+        });
+
+        var steps =
+            [
+            {
+                title: 'Intro',
+                text:
+                    "[Good Morning], [Good Afternoon], [Good evening]  this is @User.Identity.GetFirstName() @User.Identity.GetLastName(),  I am part of the clinical Team in\n Dr. @ViewBag.PhysicianName's office\n May I please speak with @Model.FirstName @Model.LastName ?"
+
+            },
+            {
+                title: 'Intro Disposition',
+                text:
+                    "If patient was not available, did the caller attempt to obtain an alternative number?" +
+                    "If the Patient is incapable of speaking, did I attempt to get consent to speak to their caretaker ?" +
+                    "If there was a language Barrier, did caller attempt to locate a translator?"
+
+            },
+            {
+                title: 'Reason for Call',
+                text:
+                    "Dr. @ViewBag.PhysicianName has started a new Clinical program in which he monitors well being and clinical outcomes of his Patients. " +
+                    "He would like to assign a healthcare coordinate to you, who will be speaking to you on a monthly basis to review your health records, set up a treatment plan, and assitant you in the healthcare needs."
+            },
+            {
+                title: 'Program Overview ',
+                text:
+                    'Throughtout the program we are going to build a more comprehensive biography of your medical history  and make suggestions on your medication and lifestyle. Our main goals are to be sure that your needs are meet by the clinican staff, so we can drive better health outcomes. We would like to work with our patients to see where you are and make sure you are informed and understand your treatment plan.'
+            },
+            {
+                title: 'Sign-up',
+                text:
+                    'This means that for the next 12 months we will be your guide in this program and we will call you once a month to review your medical needs. With your permission I would like to set up your profile and our first session.'
+            }
+        ];
+
+        swal.queue(steps).then(function (result) {
+            swal.resetDefaults();
+        },
+            function () {
+                swal.resetDefaults();
+            });
+        return false;
+    }
+        //$("#Narrrative").click(function() {
+
+        //});
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+             var RpmEnrolledServices =@Html.Raw(Json.Encode(Model.Patients_Services.Where(y=>y.IsActive==(int)IsActiveStatus.Active).Select(x=>x.RPMServiceId)));
+        $('#RpmServicesdd').val(RpmEnrolledServices);
+        $(".DeEnrollmentStatusDiv").hide()
+             $(".PatientLiaison").val("");
+        $(".PatientTranslator").val("");
+        $('#RpmServicesdd').select2({
+            theme: "classic",
+            width: "390px"
+        });
+
+
+        //$("#RpmServicesdd").val();
+
+        @*$("#PreTranslater").val(@PreTranslaterId);
+
+        $("#PreTranslater option").filter(function () {
+            return $(this).val() == '@PreTranslaterId';
+        }).prop("selected", true);
+
+        $("#PreLiaison option").filter(function () {
+            return $(this).val() == '@PreliaisonId';
+        }).prop("selected", true);*@
+            var patientid=@Model.Id;
+            var error = '@ViewBag.Msg';
+        var data =@Html.Raw(Json.Encode(BillingCategoryIdList));
+
+        data.forEach(item => {
+            if (($("#billingCategoryCheckBox" + item).data('id')) == null) {
+
+
+                $("#LiasonTranslatorDiv" + item).hide();
+            }
+
+                $("#Liaison"+item+" option").filter(function () {
+                    return $(this).val() == $("#LiasionHidden" + item).val();
+            }).prop("selected", true);
+
+                     $("#Translator"+item+" option").filter(function () {
+                    return $(this).val() == $("#TranslaterHidden" + item).val();
+                     }).prop("selected", true);
+
+            if ($("#DeEnrollmentReasonHidden" + item).val() != null) {
+                $("#DeEnrollmentStatusDiv" + item).show();
+                 $("#DeEnrollemntReson"+item+" option").filter(function () {
+                    return $(this).val() == $("#DeEnrollmentReasonHidden" + item).val();
+                     }).prop("selected", true);
+            }
+
+            //Check for rpm
+            var id = $("#billingCategoryCheckBox" + item).data('id');
+            if (id) {
+                if ($("#billingCategoryCheckBox" + id).data('identifier') == "RPM") {
+                    $("#RpmServices").show();
+                }
+            }
+
+            })
+          var isLiaison = '@User.IsInRole("Liaison")';
+        if (isLiaison == true || isLiaison == "True") {
+            if ($("#EnrollmentSubStatushiden").val() == "Active Enrolled") {
+
+            } else {
+                $("#EnrollmentStatus").attr("disabled", false);
+                $("#EnrollmentSubStatus").attr("disabled", false);
+                $(".PatientLiaison ").attr("disabled", false);
+                $(".PatientTranslator  ").attr("disabled", false);
+                $('input[name ="billingCategory"]').attr("disabled", false);
+            }
+            $("#Pretranslator option").hide();
+            $("#Prelaison option").hide();
+
+            $("#Pretranslator").attr("readonly", true);
+            $("#Prelaison").attr("readonly", true);
+        }
+
+
+            @* Load Partial Views *@
+            $("#callHistoryPartialView").load('@Url.Action("_CallHistoryPartial", "ContactPatient", new {patientId = Model.Id})');
+            $("#textHistoryPartialView").load('@Url.Action("_TextHistoryPartial", "ContactPatient", new {patientId = Model.Id})');
+            $("#emailHistoryPartialView").load('@Url.Action("_EmailHistoryPartial", "ContactPatient", new {patientId = Model.Id})');
+            $("#patientinsuranceinfo").load('@Url.Action("PatientInsuranceInfo", "Patient", new {patientId = Model.Id})');
+
+
+            $("#EnrollmentSubStatus").children('option').hide();
+            $("#EnrollmentSubStatus").val('0')
+            debugger;
+            $("#EnrollmentStatus option").filter(function () {
+                return $(this).text() == $("#EnrollmentStatushiden").val();
+            }).prop("selected", true);
+        //alert($("#EnrollmentSubStatushiden").val());
+        //alert($("#EnrollmentSubStatushiden").val());
+            $("#EnrollmentSubStatus").children("option[value='" + $('#EnrollmentStatus').get(0).value + "']").show();
+            $("#EnrollmentSubStatus option").filter(function () {
+                return $(this).text() == $("#EnrollmentSubStatushiden").val();
+            }).prop("selected", true);
+
+            $("#EnrollemntStatusReson option:contains(" + $("#EnrollmentSubStatusReasonhiden").val() + ")").attr('selected', 'selected');
+        $("#EnrollemntStatusResondiv").hide();
+
+            if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled"){
+                $("#EnrollemntStatusResondiv").show();
+            }
+
+
+            $(document).on('change', '#EnrollmentStatus', function () {
+
+                $("#EnrollmentSubStatus").children('option').hide();
+                $("#EnrollmentSubStatus").children("option[value='" + $(this).val() + "']").show();
+                $("#EnrollmentSubStatus").val($("#EnrollmentStatus").val());
+
+                $("#EnrollmentStatushiden").val($("#EnrollmentStatus option:selected").text());
+                $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+                $("#EnrollemntStatusResondiv").hide();
+
+
+            });
+            $(document).on('change', '#EnrollmentSubStatus', function () {
+
+                $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+
+                if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+
+                    $("#EnrollemntStatusResondiv").show();
+                }
+                else {
+                    $("#EnrollemntStatusResondiv").hide();
+
+                }
+            });
+            $(document).on('change', '#EnrollemntStatusReson', function () {
+                $("#EnrollmentSubStatusReasonhiden").val($("#EnrollemntStatusReson option:selected").text());
+            });
+         $("#datepicker").datetimepicker({
+                //format: "mm/dd/yy",
+                //changeMonth: true,
+                //changeYear: true,
+                //yearRange: "-0:+2"
+         });
+
+                    $("#EnrollmentStatus").change(function(){
+
+                if ($("#EnrollmentStatus option:selected").text() == "Enrolled") {
+                    $("#EnrollBillingCategory").show();
+                    $("#PreLiasionTranslaterDIv").hide();
+
+
+                } else {
+                    $("#EnrollBillingCategory").hide();
+                    $("#PreLiasionTranslaterDIv").show();
+
+
+                }
+            })
+                       $("#EnrollmentSubStatus").change(function(){
+
+                if ($("#EnrollmentSubStatus option:selected").text() == "Active Enrolled") {
+                    $("#EnrollBillingCategory").show();
+                    $("#PreLiasionTranslaterDIv").hide();
+
+
+                } else {
+                    $("#EnrollBillingCategory").hide();
+                    $("#PreLiasionTranslaterDIv").show();
+
+
+                }
+                       })
+        if ($("#EnrollmentSubStatus option:selected").text() == "Active Enrolled") {
+            $("#EnrollBillingCategory").show();
+            $("#PreLiasionTranslaterDIv").hide();
+
+                } else {
+            $("#EnrollBillingCategory").hide();
+            $("#PreLiasionTranslaterDIv").show();
+
+                }
+
+        });
+
+
+</script>

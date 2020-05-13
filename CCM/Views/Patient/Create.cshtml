@@ -1,0 +1,1804 @@
+﻿@model CCM.Models.Patient
+@using CCM.Models.CCMBILLINGS;
+@using CCM.Models;
+@*//////////////////////////////////////////////////revert to chnegeset 513*@
+@{
+    List<int> BillingCategoryIdList = new List<int>();
+    ApplicationdbContect _db = new ApplicationdbContect();
+    List<Tuple<string, string>> liaisonsexist = new List<Tuple<string, string>>();
+    List<Tuple<string, string>> translatorexist = new List<Tuple<string, string>>();
+
+
+}
+<style>
+    #RpmServices {
+        display: none
+    }
+
+    .select2-choices {
+        border: 0px !important;
+    }
+
+    #RpmServices > label {
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    textarea {
+        width: 100%;
+        height: 100px;
+    }
+
+    .hLine {
+        margin-top: 5px;
+    }
+
+    .imageuploadify {
+        border: 2px dashed #d2d2d2;
+        position: relative;
+        min-height: 152px;
+        min-width: 250px;
+        max-width: 100% !important;
+        margin: auto;
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        text-align: center;
+        background-color: transparent;
+        color: #3AA0FF
+    }
+
+    .imageuploadify-overlay {
+        z-index: 10;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        flex-direction: column;
+        top: 0;
+        left: 0;
+        display: none;
+        font-size: 7em;
+        background-color: rgba(242,242,242,.7);
+        text-align: center;
+        pointer-events: none
+    }
+
+        .imageuploadify-overlay i {
+            z-index: 10;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            pointer-events: none
+        }
+
+    .imageuploadify-images-list {
+        display: inline-block
+    }
+
+        .imageuploadify-images-list i {
+            display: block;
+            font-size: 3em;
+            text-align: center;
+            margin: 0px auto;
+            margin-left: 47%;
+            /* margin-bottom: 7px; */
+            padding: 4px;
+        }
+
+    span.imageuploadify-message {
+        font-size: 18px;
+        border-top: 1px solid #3AA0FF;
+        border-bottom: 1px solid #3AA0FF;
+        padding: 5px;
+        display: inline-block;
+    }
+
+    .imageuploadify-images-list button.btn-default {
+        display: block;
+        color: #3AA0FF;
+        border-color: #3AA0FF;
+        border-radius: 1em;
+        margin: 10px auto;
+        width: 38%;
+        max-width: 500px;
+        cursor: pointer;
+    }
+
+    .imageuploadify-container {
+        width: 70px;
+        height: 70px;
+        position: relative;
+        overflow: hidden;
+        float: left;
+        margin: 0 0 1em 1em !important;
+        border-radius: 12px;
+        box-shadow: 0 0 4px 0 #888;
+    }
+
+        .imageuploadify-container button.btn-danger {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 16px;
+            height: 17px;
+            border-radius: 15px;
+            font-size: 9px;
+            /* line-height: 1.42; */
+            padding: 1px;
+            text-align: center;
+            z-index: 3;
+        }
+
+        .imageuploadify-container img {
+            height: 60px;
+            left: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            width: auto
+        }
+
+        .imageuploadify-container .imageuploadify-details {
+            position: absolute;
+            top: 0;
+            padding-top: 20px;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            background: rgba(255,255,255,.5);
+            z-index: 2;
+            opacity: 0
+        }
+
+            .imageuploadify-container .imageuploadify-details span {
+                display: block
+            }
+</style>
+<script>
+    const ShowHideLiasonBillingCategoryDiv = id => {
+        debugger;
+        if ($("#BillingCategoryCheckBox" + id).prop("checked") == true) {
+            $("#LiaisonBillingCategoryDiv" + id).show();
+
+
+
+            if ($("#BillingCategoryCheckBox" + id).data('identifier') == "CCM") {
+                $('[data-identifier="G0506 INITIAL VISIT"]').prop("checked", true);
+                $("[data-identifierId='G0506 INITIAL VISIT']").show();
+
+            }
+            if ($("#BillingCategoryCheckBox" + id).data('identifier') == "G0506 INITIAL VISIT") {
+                $('[data-identifier="CCM"]').prop("checked", true);
+                $("[data-identifierId='CCM']").show();
+            }
+            if ($("#BillingCategoryCheckBox" + id).data('identifier') == "RPM") {
+                $("#RpmServices").show();
+            }
+
+        } else {
+            $("#LiaisonBillingCategoryDiv" + id).hide();
+            if ($("#BillingCategoryCheckBox" + id).data('identifier') == "CCM") {
+                $('[data-identifier="G0506 INITIAL VISIT"]').prop("checked", false);
+                $("[data-identifierId='G0506 INITIAL VISIT']").hide();
+
+            }
+            if ($("#BillingCategoryCheckBox" + id).data('identifier') == "G0506 INITIAL VISIT") {
+                $('[data-identifier="CCM"]').prop("checked", false);
+                $("[data-identifierId='CCM']").hide();
+            }
+            if ($("#BillingCategoryCheckBox" + id).data('identifier') == "RPM") {
+                $("#RpmServices").hide();
+            }
+        }
+    }
+
+</script>
+
+<h2 class="pageTitle">Add New Patient</h2>
+<hr class="hLine" />
+
+@using (Html.BeginForm("Create", "Patient", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data", id = "addnewpatientform" }))
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <input type="hidden" id="EnrollmentStatushiden" name="EnrollmentStatushiden" value="Eligibility" />
+    <input type="hidden" id="EnrollmentSubStatushiden" name="EnrollmentSubStatushiden" value="Pending eligibility" />
+    <input type="hidden" id="EnrollmentSubStatusReasonhiden" name="EnrollmentSubStatusReasonhiden" value="" />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "col-md-12", @for = "firstName" })
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control border-input txtOnly", placeholder = "First Name", id = "firstName", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            @*<div class="form-group">
+                    @Html.LabelFor(model => model.MiddleName, htmlAttributes: new { @class = "col-md-12", @for = "MiddleName" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control border-input txtOnly", placeholder = "Last Name", id = "lastName" } })
+                        @Html.ValidationMessageFor(model => model.MiddleName, "", new { @class = "text-danger" })
+                    </div>
+                </div>*@
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "col-md-12", @for = "lastName" })
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control border-input txtOnly", placeholder = "Last Name", id = "lastName", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.BirthDate, new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.BirthDate, new { htmlAttributes = new { @class = "form-control border-input", min = "1899-01-01", max = "2000-01-31", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.BirthDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12">EMR #</label>
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.EMRNumber, new { htmlAttributes = new { @class = "form-control border-input", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.EMRNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12">EMR Type</label>
+                <div class="col-md-12">
+                    @Html.DropDownListFor(
+                model => model.EMRType,
+                new SelectList(
+                    new[]
+                    {
+                        new {Value = "E-clinical",  Text = "E-clinical"},
+                        new {Value = "Picasso",  Text = "Picasso"},
+
+
+                    },
+                    "Value", "Text", Model),
+                 new { @class = "form-control border-input", id = "emrtype" })
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Gender, "Gender", htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.DropDownListFor(
+                        item => item.Gender,
+                        new SelectList(
+                            new[]
+                            {
+                                new {Value = "Male",   Text = "Male"},
+                                new {Value = "Female", Text = "Female"},
+                            },
+                            "Value", "Text", Model),
+                        "Select Gender", new { @class = "form-control border-input" })
+                    @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Search Address", htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    <div id="locationField">
+                        <input id="autocomplete" placeholder="Enter Address" class="form-control border-input" onFocus="geolocate()" type="text" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.MobilePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.MobilePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input only-numeric", maxlength = "10", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.MobilePhoneNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div id="address">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            @Html.Label("House Number", htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.Address1, new { htmlAttributes = new { @class = "form-control border-input", id = "street_number" } })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            @Html.Label("Street Name", htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                <input type="text" class="form-control border-input" name="street" id="route" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            @Html.Label("Floor/Apt/Suite", htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.Address2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control border-input", id = "sublocality_level_1" } })
+                                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.State, htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.State, new { htmlAttributes = new { @class = "form-control border-input", id = "administrative_area_level_1" } })
+                                @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            @Html.Label("Zip Code", htmlAttributes: new { @class = "col-md-12" })
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.Zipcode, new { htmlAttributes = new { @class = "form-control border-input only-numeric", id = "postal_code", maxlength = "5" } })
+                                @Html.ValidationMessageFor(model => model.Zipcode, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (!User.IsInRole("Sales"))
+        {
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PreferredLanguage, "Preferred Language", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(
+                        item => item.PreferredLanguage,
+                        new SelectList(
+                            new[]
+                            {
+                                new { Value = "English",  Text = "English" },
+                                new { Value = "Spanish",  Text = "Spanish" },
+                                new { Value = "Russian",  Text = "Russian" },
+                                new { Value = "French",   Text = "French" },
+                                new { Value = "Japanese", Text = "Japanese" },
+                                new { Value = "Korean",   Text = "Korean" },
+                                new { Value = "Mandarin", Text = "Mandarin" },
+                                new { Value = "Hindi",    Text = "Hindi" },
+                                new { Value = "Other",    Text = "Other" }
+                            },
+                            "Value", "Text", Model),
+                        "Select Preferred Language", new { @class = "form-control border-input", id = "preferredLanguage" })
+                        @Html.ValidationMessageFor(model => model.PreferredLanguage, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                @*<div class="form-group">
+                        @Html.LabelFor(model => model.MobilePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.MobilePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.MobilePhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.WorkPhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.WorkPhoneNumber, new { htmlAttributes = new { @class = "form-control border-input only-numeric", maxlength = "10" } })
+                        @Html.ValidationMessageFor(model => model.WorkPhoneNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.HomePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.HomePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input only-numeric", maxlength = "10" } })
+                        @Html.ValidationMessageFor(model => model.HomePhoneNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Email, "Email Address", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Photo, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        <input type="file" name="Photo" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                        @Html.ValidationMessageFor(model => model.Photo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PhotoEmrRecords6, "EMR Record (PDF Only)", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        <input type="file" name="PhotoEmrRecords6" class="form-control border-input" accept=".pdf" />
+                        @Html.ValidationMessageFor(model => model.PhotoEmrRecords6, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                @*<div class="form-group">
+                        <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PhotoEmrRecords, htmlAttributes: new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="PhotoEmrRecords" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                        @Html.ValidationMessageFor(model => model.PhotoEmrRecords, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PhotoEmrRecords2, htmlAttributes: new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="PhotoEmrRecords2" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                        @Html.ValidationMessageFor(model => model.PhotoEmrRecords2, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+
+                    @*<div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PhotoEmrRecords3, htmlAttributes: new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="PhotoEmrRecords3" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                        @Html.ValidationMessageFor(model => model.PhotoEmrRecords3, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PhotoEmrRecords4, htmlAttributes: new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="PhotoEmrRecords4" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                        @Html.ValidationMessageFor(model => model.PhotoEmrRecords4, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PhotoEmrRecords8, htmlAttributes: new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="PhotoEmrRecords8" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                        @Html.ValidationMessageFor(model => model.PhotoEmrRecords8, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PhotoEmrRecords9, htmlAttributes: new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="PhotoEmrRecords9" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                        @Html.ValidationMessageFor(model => model.PhotoEmrRecords9, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PhotoEmrRecords12, htmlAttributes: new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="PhotoEmrRecords12" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                        @Html.ValidationMessageFor(model => model.PhotoEmrRecords12, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PhotoEmrRecords13, htmlAttributes: new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="PhotoEmrRecords13" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                        @Html.ValidationMessageFor(model => model.PhotoEmrRecords13, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PhotoEmrRecords6, "EMR Record 6 (PDF Only)", htmlAttributes: new { @class = "col-md-12" })
+                                    <div class="col-md-12">
+                                        <input type="file" name="PhotoEmrRecords6" id="fileUpload" class="form-control border-input" accept=".pdf" />
+                                        @Html.ValidationMessageFor(model => model.PhotoEmrRecords6, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>*@
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MedicaidIdNumber, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.MedicaidIdNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.MedicaidIdNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MedicareIdNumber, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.MedicareIdNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.MedicareIdNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OtherInsuranceIdNumber, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.OtherInsuranceIdNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.OtherInsuranceIdNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CaretakerFirstName, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.CaretakerFirstName, new { htmlAttributes = new { @class = "form-control border-input txtOnly" } })
+                        @Html.ValidationMessageFor(model => model.CaretakerFirstName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CaretakerLastName, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.CaretakerLastName, new { htmlAttributes = new { @class = "form-control border-input txtOnly" } })
+                        @Html.ValidationMessageFor(model => model.CaretakerLastName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-6" style="padding:0px !important;">
+                        @Html.LabelFor(model => model.CaretakerRelationship, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                                item => item.CaretakerRelationship,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "Spouse", Text = "Spouse"},
+                                        new {Value = "Child", Text = "Child"},
+                                        new {Value = "Parent", Text = "Parent"},
+                                        new {Value = "Home Aide", Text = "Home Aide"},
+                                        new {Value = "Friend", Text = "Friend"},
+                                        new {Value = "Relative", Text = "Relative"},
+                                        new {Value = "Other", Text = "Other"}
+                                    },
+                                    "Value", "Text", Model),
+                                "Select One", new { @class = "form-control border-input" })
+                            @Html.ValidationMessageFor(model => model.CaretakerRelationship, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="padding:0px !important;">
+                        @Html.LabelFor(model => model.CaretakerPhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.CaretakerPhoneNumber, new { htmlAttributes = new { @class = "form-control border-input only-numeric" }, maxlength = "10" })
+                            @Html.ValidationMessageFor(model => model.CaretakerPhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                @*<div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PhotoEmrRecords5, htmlAttributes: new { @class = "col-md-12" })
+                                <div class="col-md-12">
+                                    <input type="file" name="PhotoEmrRecords5" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                    @Html.ValidationMessageFor(model => model.PhotoEmrRecords5, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PhotoEmrRecords7, htmlAttributes: new { @class = "col-md-12" })
+                                <div class="col-md-12">
+                                    <input type="file" name="PhotoEmrRecords7" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                    @Html.ValidationMessageFor(model => model.PhotoEmrRecords7, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PhotoEmrRecords10, htmlAttributes: new { @class = "col-md-12" })
+                                <div class="col-md-12">
+                                    <input type="file" name="PhotoEmrRecords10" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                    @Html.ValidationMessageFor(model => model.PhotoEmrRecords10, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PhotoEmrRecords11, htmlAttributes: new { @class = "col-md-12" })
+                                <div class="col-md-12">
+                                    <input type="file" name="PhotoEmrRecords11" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                    @Html.ValidationMessageFor(model => model.PhotoEmrRecords11, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PhotoEmrRecords14, htmlAttributes: new { @class = "col-md-12" })
+                                <div class="col-md-12">
+                                    <input type="file" name="PhotoEmrRecords14" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                    @Html.ValidationMessageFor(model => model.PhotoEmrRecords14, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PhotoEmrRecords15, htmlAttributes: new { @class = "col-md-12" })
+                                <div class="col-md-12">
+                                    <input type="file" name="PhotoEmrRecords15" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif,.pdf" />
+                                    @Html.ValidationMessageFor(model => model.PhotoEmrRecords15, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+        }
+        <div class="col-md-8">
+            <div class="col-sm-12" style="padding:0;">
+                <label class="col-md-12" style="padding:0;">Multi EMR Images</label>
+                <input type="file" name="upload" id="multiupload" accept="image/*" multiple>
+                <input type="hidden" name="uploadFiles" id="uploadFiles" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.TextAreaFor(model => model.Notes, htmlAttributes: new { @class = "form-control border-input", @rows = "15", @placeholder = "Notes", @style = "height:150px !important;" })
+                    @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        @if (User.IsInRole("Sales"))
+        {
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="col-md-12" for="Signature">Click to Signature</label>
+                    <div class="col-md-12">
+                        @*<input type="text" id="txtSignature" style="border-radius: 5px;">*@
+                        @Html.TextBoxFor(model => model.Signature, new { @id = "txtSignature", @style = "border-radius: 5px;" })
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="enrollmentStatus">
+            <div class="col-md-4">
+                <label>Enrollment Status</label>
+                @Html.DropDownList("EnrollmentStatus", (IEnumerable<SelectListItem>)ViewBag.EnrollmentStatus, null, new { @class = "form-control border-input" })
+            </div>
+            <div class="col-md-4">
+                <label>SubStatus</label>
+                @Html.DropDownList("EnrollmentSubStatus", (IEnumerable<SelectListItem>)ViewBag.EnrollmentSubStatus, null, new { @class = "form-control border-input" })
+            </div>
+
+
+
+            <div class="col-md-4">
+                <div id="EnrollemntStatusResondiv">
+                    <label>Reason <span style="color:red">*</span></label>
+                    @Html.DropDownList("EnrollemntStatusReson", (IEnumerable<SelectListItem>)ViewBag.EnrollemntStatusReson, null, new { @class = "form-control border-input" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" id="EnrollBillingCategory" style="display: grid;">
+                    <label style="width:100%;margin-top:10px">Enrolled In</label>
+                    <div style="display:contents">
+                        @foreach (var item in ViewBag.BillingCategories as List<BillingCategory>)
+                        {
+                            <label class="d-block" style="margin-right: 12px;font-weight:100; font-size: 13px;width:fit-content"><input type="checkbox" id="@("BillingCategoryCheckBox"+item.BillingCategoryId)" class="BillingCategoryCheckBox" value="@item.BillingCategoryId" onclick="ShowHideLiasonBillingCategoryDiv(@item.BillingCategoryId)" name="billingCategory" data-identifier="@item.Name" /> @item.Name  </label>
+                            BillingCategoryIdList.Add(item.BillingCategoryId);
+                            <div class="col-md-4 ignoreValidation LiaisonBillingCategoryDiv" id="@("LiaisonBillingCategoryDiv"+item.BillingCategoryId)" data-identifierId="@item.Name" style="padding-left: 0px; padding-right: 0px;margin-bottom: 5px;">
+                                <div class="row">
+                                    <span style="font-size: 12px; font-weight: 600;">Select for @item.Name</span>
+                                </div>
+                                @{ liaisonsexist.Clear();
+                                    translatorexist.Clear();
+                                    try
+                                    {
+                                        List<Liaison> liaisons = new List<Liaison>();
+                                        liaisons = ViewBag.Laisons;
+
+                                        foreach (var liaison in liaisons)
+                                        {
+                                            //liaison.Liaisons_BillingCategories = new List<Liaisons_BillingCategories>();
+
+                                            var exist = liaison.Liaisons_BillingCategories.Where(p => p.BillingCategoryId == item.BillingCategoryId && p.Status == true).Select(p => new
+                                            {
+                                                Id = p.Liaison.Id.ToString(),
+                                                Name = p.Liaison.FirstName + p.Liaison.LastName,
+
+                                            }).FirstOrDefault();
+                                            // var exist=  liaison.
+                                            if (exist != null)
+                                            {
+
+                                                liaisonsexist.Add(new Tuple<string, string>(exist.Id, exist.Name));
+                                            }
+
+                                            //var liaisoncategory = liaisons.Select(p => p.Liaisons_BillingCategories.FirstOrDefault(x => x.BillingCategoryId == item.BillingCategoryId).Liaison).ToList();
+
+                                        }
+                                        List<Liaison> translators = new List<Liaison>();
+                                        translators = ViewBag.Translators;
+                                        foreach (var translator in translators)
+                                        {
+
+
+                                            var exist = translator.Liaisons_BillingCategories.Where(p => p.BillingCategoryId == item.BillingCategoryId && p.Status == true).Select(p => new
+                                            {
+                                                Id = p.Liaison.Id.ToString(),
+                                                Name = p.Liaison.FirstName + p.Liaison.LastName,
+
+                                            }).FirstOrDefault();
+                                            // var exist=  liaison.
+                                            if (exist != null)
+                                            {
+
+                                                translatorexist.Add(new Tuple<string, string>(exist.Id, exist.Name));
+                                            }
+
+                                            //var liaisoncategory = liaisons.Select(p => p.Liaisons_BillingCategories.FirstOrDefault(x => x.BillingCategoryId == item.BillingCategoryId).Liaison).ToList();
+
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+
+                                    }
+                                }
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.Label("Post-Counselor", htmlAttributes: new { @class = "col-md-12", @style = "padding-left: 0px" })
+                                        <div class="col-md-12" style="padding-left: 0px;">
+                                            @Html.DropDownList("Liaison",
+                                              new SelectList(liaisonsexist,"Item1","Item2", Model),
+                                              "Select Counselor                 ", new { @class = "form-control PatientLiaison border-input"/*, required = "required"*/, @id = "Liaison" + item.BillingCategoryId, @data_id = item.Name, @Name = "" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6" style="">
+                                    <div class="form-group">
+                                        @Html.Label("Post-Translator", htmlAttributes: new { @class = "col-md-12", @style = "padding-left: 0px" })
+                                        <div class="col-md-12" style="padding-left: 0px;">
+                                            @Html.DropDownList("Translator",
+                                               new SelectList(translatorexist, "Item1", "Item2", Model),
+                                               "Select Translator", new { @class = "form-control PatientTranslator border-input", @id = "Translator" + item.BillingCategoryId, @data_id = item.Name ,@Name=""})
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                    </div>
+                    <div class="container-fluid">
+
+                        <div class="row" id="RpmServices">
+                            <label>RPM Services</label>
+                            <div class="row" style="    display: -webkit-box;">
+                                @Html.DropDownList("RpmServices",
+                           new SelectList(ViewBag.RpmServices, "Value", "Text", Model),
+                           new { @class = "form-control  border-input",@id= "RpmServicesdd",@multiple="multiple",@name= "RpmServices" })
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="row">
+                    <div class="col-md-12">
+                        @foreach (var item in ViewBag.BillingCategories as List<BillingCategory>)
+                        {
+                        }
+                    </div>
+                </div>*@
+        </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PhysicianId, htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.DropDownListFor(item => item.PhysicianId,
+                        new SelectList(ViewBag.Physicians, "Value", "Text", Model),
+                        "Select Patient's Physician", new { @class = "form-control border-input" })
+                    @Html.ValidationMessageFor(model => model.PhysicianId, "", new { @class = "text-danger", required = "required" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2" id="preliaison">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TranslatorId, "Pre-Translator", htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.DropDownListFor(item => item.TranslatorId,
+                       new SelectList(ViewBag.Translator, "Value", "Text", Model),
+                       "Select Translator", new { @class = "form-control border-input" })
+                    @Html.ValidationMessageFor(model => model.TranslatorId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2" id="pretranslator">
+            <div class="form-group">
+                @Html.LabelFor(model => model.LiaisonId, "Pre-Counselor", htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.DropDownListFor(item => item.LiaisonId,
+                      new SelectList(ViewBag.Liason, "Value", "Text", Model),
+                      "Select Counselor", new { @class = "form-control border-input"})
+                    @Html.ValidationMessageFor(model => model.LiaisonId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PatientChronicCondition1Id, "Chronic Condition 1", htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.DropDownList("PatientChronicCondition1Id", null, "Select Chronic Condition 1", htmlAttributes: new { @class = "form-control border-input" })
+                    @Html.ValidationMessageFor(model => model.PatientChronicCondition1Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PatientChronicCondition2Id, "Chronic Condition 2", htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.DropDownList("PatientChronicCondition2Id", null, "Select Chronic Condition 2", htmlAttributes: new { @class = "form-control border-input" })
+                    @Html.ValidationMessageFor(model => model.PatientChronicCondition2Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        @*Translator*@
+
+    </div>
+    <input type="hidden" name="ReviewID" value="@ViewBag.ReviewId" id="ReviewID" />
+    <br />
+    <br />
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-md-12">
+            <input type="button" value="Create New Patient" class="btn btn-success logdetails" onclick="return chkimages()" />
+            @*<span class="text-danger">Reminder: <b class="text-warning">Don't forget to add a Phone Number.</b></span>*@
+        </div>
+    </div>
+</div>
+
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="imgbox" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" style="width:85%;height:90%;margin:0 auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img src="#" id="imgLargeBox" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script src="~/Scripts/imageuploadify.min.js" type="text/javascript"></script>
+
+<script>
+    $('#multiupload').imageuploadify();
+</script>
+<script>
+
+    $("#EnrollmentStatus").change(function () {
+        if ($("#EnrollmentStatus option:selected").text() != "Enrolled") {
+            $("#preliaison").show();
+            $("#pretranslator").show();
+        }
+        if ($("#EnrollmentStatus option:selected").text() == "Enrolled") {
+            $("#preliaison").hide();
+            $("#pretranslator").hide();
+        }
+    });
+
+
+    function openLargeImage(imgpath) {
+        var name = imgpath.attributes[2].value;
+        var src = imgpath.src;
+
+        $("#imgLargeBox").attr("src", src);
+        $("#exampleModalLongTitle").text(name)
+        $('#imgbox').modal('show');
+    }
+    function chkimages() {
+        $('.imageuploadify-container').each(function () {
+            var src = $(this).find('img').attr("src");
+            if ($("#uploadFiles").val() == "")
+                $("#uploadFiles").val(src);
+            else {
+                var oldstr = $("#uploadFiles").val();
+                src = oldstr + "|" + src;
+                $("#uploadFiles").val(src);
+            }
+        });
+        var form = $("#addnewpatientform");
+        var formdata = false;
+        if (window.FormData) {
+            formdata = new FormData(form[0]);
+        }
+
+        form.validate({
+            ignore: "#EnrollBillingCategory :select",
+        })
+
+        if (form.valid() == false) {
+
+            console.log('FORM INVALID');
+
+            var validator = form.validate();
+
+            $.each(validator.errorMap, function (index, value) {
+
+                console.log('Id: ' + index + ' Message: ' + value);
+
+            });
+            return false;
+        }
+           if (($("#EnrollmentStatus option:selected").text() == "Enrolled" &&($("#EnrollmentSubStatus option:selected").text() == "Active Enrolled" && $('input[name ="billingCategory"]:checked').val() == null))) {
+             swal("Warning","If SubStatus is Active Enrolled, You Must have to select atleast one Category","warning");
+                        return false;
+                    } else {
+
+        }
+        var isEnroller  = '@User.IsInRole("Sales")';
+        var isAdmin = '@User.IsInRole("Admin")';
+        var isManager = '@User.IsInRole("LiaisonGroup")';
+
+        if ((isEnroller == "True") || (isManager == "True") || (isAdmin == "True")) {
+
+        } else {
+            if (($("#EnrollmentSubStatus option:selected").text() != "Active Enrolled") && ($("#LiaisonId").val() == "")) {
+                swal("Warning", "Please Select Pre-Counselor!", "warning");
+                return false;
+            }
+        }
+
+
+        var urltosend = form.attr('action');
+        //var datatosend = $("#createform").serialize();
+        var check="true";
+        var EnrollmentList = [];
+        debugger;
+          var data =@Html.Raw(Json.Encode(BillingCategoryIdList));
+        data.forEach((item) => {
+            if ($("#BillingCategoryCheckBox" + item).prop("checked") == true) {
+
+                if (($("#Liaison" + item).val() != '')) {
+                    var obj = {
+                        BillingcategoryId: item,
+
+                        LiaisonId: $("#Liaison" + item).val(),
+                        TranslatorId:$("#Translator" + item).val()
+                    }
+                    EnrollmentList.push(obj);
+                } else {
+                    if (($("#Liaison" + item).val() == ''))
+                        swal("Warning", "Please Select Counselor For " + ($("#Liaison" + item).data('id')), "warning");
+                    check = "false";
+
+                }
+
+            }
+        })
+        if (check == "false") {
+            return false;
+        }
+        if ($("#RpmServices").css("display") == "block") {
+
+
+            if ($('#RpmServicesdd :selected').val() == null) {
+                swal("Warning", "Please select atleast one RPM Service", "warning");
+                return false;
+            }
+        }
+        //console.log(EnrollmentList);
+                EnrollmentList = JSON.stringify(EnrollmentList);
+
+
+        var datatosend = formdata ? formdata : form.serialize();
+         datatosend.append("EnrollmentList", EnrollmentList);
+
+        $(".loader").show();
+        $.ajax({
+            type: 'POST',
+            url: urltosend,
+            data: datatosend,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (json) {
+                $(".loader").hide();
+                //window.location.href = "~/Index";
+                window.location.href = '@Url.Action("Index", "Patient")';
+            },error: function (xhr, status, error) {
+                debugger;
+                $(".loader").hide();
+                var err = eval("(" + xhr.responseText + ")");
+                //;
+                swal("Error!", "Error Accured :" + err.Message, "error");
+            }
+        });
+
+    }
+</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        // This example displays an address form, using the autocomplete feature
+        // of the Google Places API to help users fill in the information.
+
+        // This example requires the Places library. Include the libraries=places
+        // parameter when you first load the API. For example:
+        //<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAX_t0xQX0HCtxeerdB9y2tctGE-wwsdyU&libraries=places" >
+
+        var placeSearch, autocomplete;
+        var componentForm = {
+            street_number: 'short_name',
+            route: 'long_name',
+            sublocality_level_1: 'long_name',
+            administrative_area_level_1: 'short_name',
+            postal_code: 'short_name'
+        };
+
+        function initAutocomplete() {
+            // Create the autocomplete object, restricting the search to geographical
+            // location types.
+            autocomplete = new google.maps.places.Autocomplete(
+                /** type {!HTMLInputElement} */
+                (document.getElementById('autocomplete')),
+                { types: ['geocode'] });
+
+            // When the user selects an address from the dropdown, populate the address
+            // fields in the form.
+            autocomplete.addListener('place_changed', fillInAddress);
+        }
+
+        function fillInAddress() {
+            // Get the place details from the autocomplete object.
+            var place = autocomplete.getPlace();
+
+            for (var component in componentForm) {
+                document.getElementById(component).value = '';
+                document.getElementById(component).readOnly = false;
+            }
+
+            // Get each component of the address from the place details
+            // and fill the corresponding field on the form.
+            for (var i = 0; i < place.address_components.length; i++) {
+                var addressType = place.address_components[i].types[0];
+                if (componentForm[addressType]) {
+                    var val = place.address_components[i][componentForm[addressType]];
+                    document.getElementById(addressType).value = val;
+                }
+            }
+        }
+
+        // Bias the autocomplete object to the user's geographical location,
+        // as supplied by the browser's 'navigator.geolocation' object.
+        function geolocate() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var geolocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    var circle = new google.maps.Circle({
+                        center: geolocation,
+                        radius: position.coords.accuracy
+                    });
+                    autocomplete.setBounds(circle.getBounds());
+                });
+            }
+        }
+        function checkform() {
+            if ($("#BirthDate").val() == "") {
+                swal("Please select date of birth for this patient");
+                $("#BirthDate").focus();
+                $(".loader").hide();
+                return false;
+            }
+            if ($("#LiaisonId").val() == "") {
+                swal("Please select counsler for this patient");
+                $("#LiaisonId").focus();
+                $(".loader").hide();
+                return false;
+            }
+            if ($("#PhysicianId").val() == "") {
+                swal("Please select physician for this patient");
+                $("#PhysicianId").focus();
+                $(".loader").hide();
+                return false;
+            }
+            if ($("#MobilePhoneNumber").val() == "") {
+                swal("Please add mobile number for this patient");
+                $("#MobilePhoneNumber").focus();
+                $(".loader").hide();
+                return false;
+            }
+            else {
+                if ($("#addnewpatientform").validate()) {
+
+                    $("#addnewpatientform").submit();
+                }
+                else {
+                    $(".loader").hide();
+                }
+            }
+        }
+        $(document).ready(function () {
+
+
+            $("#SelectedCategory").val('CCM');
+            $("#PreviousCategory").val('CCM');
+
+            $('#SelectedCategory').data('id', 0);
+            $('#SelectedCategory').data('value', 0);
+            $('#PreviousCategory').data('id', 0);
+            $('#PreviousCategory').data('value', 0);
+            $('#RpmServicesdd').select2({
+                theme: "classic",
+                width: "390px"
+            });
+
+
+            recordactivity();
+            $("#EnrollmentSubStatus").children('option').hide();
+            $("#EnrollmentSubStatus").val('0')
+            debugger;
+            $("#EnrollmentStatus option").filter(function () {
+                return $(this).text() == $("#EnrollmentStatushiden").val();
+            }).prop("selected", true);
+
+            $("#EnrollmentSubStatus").children("option[value='" + $('#EnrollmentStatus').get(0).value + "']").show();
+            $("#EnrollmentSubStatus option").filter(function () {
+                return $(this).text() == $("#EnrollmentSubStatushiden").val();
+            }).prop("selected", true);
+
+            $("#EnrollemntStatusReson option:contains(" + $("#EnrollmentSubStatusReasonhiden").val() + ")").attr('selected', 'selected');
+            $("#EnrollemntStatusResondiv").hide();
+            if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+                $("#EnrollemntStatusResondiv").show();
+            }
+
+            $(document).on('change', '#EnrollmentStatus', function () {
+
+                $("#EnrollmentSubStatus").children('option').hide();
+                $("#EnrollmentSubStatus").children("option[value='" + $(this).val() + "']").show();
+                $("#EnrollmentSubStatus").val($("#EnrollmentStatus").val());
+
+                $("#EnrollmentStatushiden").val($("#EnrollmentStatus option:selected").text());
+                $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+                $("#EnrollemntStatusResondiv").hide();
+            });
+            $(document).on('change', '#EnrollmentSubStatus', function () {
+
+                $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+
+                if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+
+                    $("#EnrollemntStatusResondiv").show();
+
+
+                }
+                else {
+                    $("#EnrollemntStatusResondiv").hide();
+
+
+                }
+
+                if ($("#EnrollmentSubStatus option:selected").text() == "Active Enrolled") {
+                    $("#preliaison").hide();
+                    $("#pretranslator").hide();
+                } else {
+                    $("#preliaison").show();
+                    $("#pretranslator").show();
+                }
+
+            });
+            $(document).on('change', '#EnrollemntStatusReson', function () {
+                $("#EnrollmentSubStatusReasonhiden").val($("#EnrollemntStatusReson option:selected").text());
+            });
+
+            $("#EnrollBillingCategory").hide();
+            $("#EnrollmentStatus").change(function () {
+
+                if ($("#EnrollmentStatus option:selected").text() == "Enrolled") {
+                    $("#EnrollBillingCategory").show();
+
+                } else {
+                    $("#EnrollBillingCategory").hide();
+                    $(".BillingCategoryCheckBox").attr("checked", false);
+                    $(".LiaisonBillingCategoryDiv").hide();
+
+                }
+            })
+            $("#EnrollmentSubStatus").change(function () {
+
+                if ($("#EnrollmentSubStatus option:selected").text() == "Active Enrolled") {
+                    $("#EnrollBillingCategory").show();
+                    $("#preliaison").hide();
+                    $("#pretranslator").hide();
+                } else {
+                    $("#EnrollBillingCategory").hide();
+                    $(".BillingCategoryCheckBox").attr("checked", false);
+                    $(".LiaisonBillingCategoryDiv").hide();
+                    $("#preliaison").show();
+                    $("#pretranslator").show();
+                }
+            })
+
+            $(".LiaisonBillingCategoryDiv").hide();
+
+            $("#EnrollmentSubStatus").change(function () {
+
+                if ($("#EnrollmentSubStatus option:selected").text() != "Active Enrolled") {
+                    $("#preliaison").show();
+                    $("#pretranslator").show();
+                }
+            })
+
+        });
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9cDx5auSyYdXnFpjEiMLnT3u3SlFWClg&libraries=places&callback=initAutocomplete" async defer></script>
+}
+<script>
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var yyyy = today.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd
+    }
+    if (mm < 10) {
+        mm = '0' + mm
+    }
+
+    today = yyyy + '-' + mm + '-' + dd;
+    document.getElementById("BirthDate").setAttribute("max", today);
+
+
+    $(document).ready(function () {
+        $(".only-numeric").bind("keypress", function (e) {
+            var keyCode = e.which ? e.which : e.keyCode
+
+            if (!(keyCode >= 48 && keyCode <= 57)) {
+                return false;
+            } else {
+                //$(".error").css("display", "none");
+            }
+        });
+        $(".txtOnly").keypress(function (e) {
+            debugger;
+            var key = e.keyCode;
+            if (key >= 48 && key <= 57) {
+                e.preventDefault();
+            }
+            //if (key == 32) {
+            //    e.preventDefault();
+            //}
+        });
+
+    });
+</script>
+
+
+<!--Signature Pad Scripts Start-->
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>*@
+<script>
+    $(document).ready(function () {
+        var sign = $('#txtSignature').SignaturePad({
+            allowToSign: true,
+            img64: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+            border: '3px dashed #c7c8c9',
+            width: '300px',
+            height: '150px',
+            callback: function (data, action) {
+                data = data.replace('data:image/png;base64,', '');
+                $('#txtSignature').val(data);
+                //console.log(data);
+            }
+        });
+
+
+    })
+</script>
+<script>
+
+    (function () {
+        var __slice = [].slice;
+
+        (function ($) {
+            var Sketch;
+            $.fn.sketch = function () {
+                var args, key, sketch;
+                key = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+                if (this.length > 1) {
+                    $.error('Sketch.js can only be called on one element at a time.');
+                }
+                sketch = this.data('sketch');
+                if (typeof key === 'string' && sketch) {
+                    if (sketch[key]) {
+                        if (typeof sketch[key] === 'function') {
+                            return sketch[key].apply(sketch, args);
+                        } else if (args.length === 0) {
+                            return sketch[key];
+                        } else if (args.length === 1) {
+                            return sketch[key] = args[0];
+                        }
+                    } else {
+                        return $.error('Sketch.js did not recognize the given command.');
+                    }
+                } else if (sketch) {
+                    return sketch;
+                } else {
+                    this.data('sketch', new Sketch(this.get(0), key));
+                    return this;
+                }
+            };
+            Sketch = (function () {
+
+                function Sketch(el, opts) {
+                    this.el = el;
+                    this.canvas = $(el);
+                    this.context = el.getContext('2d');
+                    this.options = $.extend({
+                        toolLinks: true,
+                        defaultTool: 'marker',
+                        defaultColor: '#000000',
+                        defaultSize: 2
+                    }, opts);
+                    this.painting = false;
+                    this.color = this.options.defaultColor;
+                    this.size = this.options.defaultSize;
+                    this.tool = this.options.defaultTool;
+                    this.actions = [];
+                    this.action = [];
+                    this.canvas.bind('click mousedown mouseup mousemove mouseleave mouseout touchstart touchmove touchend touchcancel', this.onEvent);
+                    if (this.options.toolLinks) {
+                        $('body').delegate("a[href=\"#" + (this.canvas.attr('id')) + "\"]", 'click', function (e) {
+                            var $canvas, $this, key, sketch, _i, _len, _ref;
+                            $this = $(this);
+                            $canvas = $($this.attr('href'));
+                            sketch = $canvas.data('sketch');
+                            _ref = ['color', 'size', 'tool'];
+                            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                                key = _ref[_i];
+                                if ($this.attr("data-" + key)) {
+                                    sketch.set(key, $(this).attr("data-" + key));
+                                }
+                            }
+                            if ($(this).attr('data-download')) {
+                                sketch.download($(this).attr('data-download'));
+                            }
+                            return false;
+                        });
+                    }
+                }
+
+                Sketch.prototype.download = function (format) {
+                    var mime;
+                    format || (format = "png");
+                    if (format === "jpg") {
+                        format = "jpeg";
+                    }
+                    mime = "image/" + format;
+                    return window.open(this.el.toDataURL(mime));
+                };
+
+                Sketch.prototype.set = function (key, value) {
+                    this[key] = value;
+                    return this.canvas.trigger("sketch.change" + key, value);
+                };
+
+                Sketch.prototype.startPainting = function () {
+                    this.painting = true;
+                    return this.action = {
+                        tool: this.tool,
+                        color: this.color,
+                        size: parseFloat(this.size),
+                        events: []
+                    };
+                };
+
+
+                Sketch.prototype.stopPainting = function () {
+                    if (this.action) {
+                        this.actions.push(this.action);
+                    }
+                    this.painting = false;
+                    this.action = null;
+                    return this.redraw();
+                };
+
+                Sketch.prototype.onEvent = function (e) {
+                    if (e.originalEvent && e.originalEvent.targetTouches) {
+                        e.pageX = e.originalEvent.targetTouches[0].pageX;
+                        e.pageY = e.originalEvent.targetTouches[0].pageY;
+                    }
+                    $.sketch.tools[$(this).data('sketch').tool].onEvent.call($(this).data('sketch'), e);
+                    e.preventDefault();
+                    return false;
+                };
+
+                Sketch.prototype.redraw = function () {
+                    var sketch;
+                    //this.el.width = this.canvas.width();
+                    this.context = this.el.getContext('2d');
+                    sketch = this;
+                    $.each(this.actions, function () {
+                        if (this.tool) {
+                            return $.sketch.tools[this.tool].draw.call(sketch, this);
+                        }
+                    });
+                    if (this.painting && this.action) {
+                        return $.sketch.tools[this.action.tool].draw.call(sketch, this.action);
+                    }
+                };
+
+                return Sketch;
+
+            })();
+            $.sketch = {
+                tools: {}
+            };
+            $.sketch.tools.marker = {
+                onEvent: function (e) {
+                    switch (e.type) {
+                        case 'mousedown':
+                        case 'touchstart':
+                            if (this.painting) {
+                                this.stopPainting();
+                            }
+                            this.startPainting();
+                            break;
+                        case 'mouseup':
+                        //return this.context.globalCompositeOperation = oldcomposite;
+                        case 'mouseout':
+                        case 'mouseleave':
+                        case 'touchend':
+                        //this.stopPainting();
+                        case 'touchcancel':
+                            this.stopPainting();
+                    }
+                    if (this.painting) {
+                        this.action.events.push({
+                            x: e.pageX - this.canvas.offset().left,
+                            y: e.pageY - this.canvas.offset().top,
+                            event: e.type
+                        });
+                        return this.redraw();
+                    }
+                },
+                draw: function (action) {
+                    var event, previous, _i, _len, _ref;
+                    this.context.lineJoin = "round";
+                    this.context.lineCap = "round";
+                    this.context.beginPath();
+                    this.context.moveTo(action.events[0].x, action.events[0].y);
+                    _ref = action.events;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        event = _ref[_i];
+                        this.context.lineTo(event.x, event.y);
+                        previous = event;
+                    }
+                    this.context.strokeStyle = action.color;
+                    this.context.lineWidth = action.size;
+                    return this.context.stroke();
+                }
+            };
+            return $.sketch.tools.eraser = {
+                onEvent: function (e) {
+                    return $.sketch.tools.marker.onEvent.call(this, e);
+                },
+                draw: function (action) {
+                    var oldcomposite;
+                    oldcomposite = this.context.globalCompositeOperation;
+                    this.context.globalCompositeOperation = "destination-out";
+                    action.color = "rgba(0,0,0,1)";
+                    $.sketch.tools.marker.draw.call(this, action);
+                    return this.context.globalCompositeOperation = oldcomposite;
+                }
+            };
+        })(jQuery);
+
+    }).call(this);
+
+
+(function ($) {
+    $.fn.SignaturePad = function (options) {
+
+        //update the settings
+        var settings = $.extend({
+            allowToSign: true,
+            img64: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+            border: '1px solid #c7c8c9',
+            width: '300px',
+            height: '150px',
+            callback: function () {
+                return true;
+            }
+        }, options);
+
+        //control should be a textbox
+        //loop all the controls
+        var id = 0;
+
+        //add a very big pad
+        var big_pad = $('#signPadBig');
+        var back_drop = $('#signPadBigBackDrop');
+        var canvas = undefined;
+        if (big_pad.length == 0) {
+
+            back_drop = $('<div>')
+            back_drop.css('position', 'fixed');
+            back_drop.css('top', '0');
+            back_drop.css('right', '0');
+            back_drop.css('bottom', '0');
+            back_drop.css('left', '0');
+            back_drop.css('z-index', '1040 !important');
+            back_drop.css('background-color', '#000');
+            back_drop.css('display', 'none');
+            back_drop.css('filter', 'alpha(opacity=50)');
+            back_drop.css('opacity', '0.5');
+            $('body').append(back_drop);
+
+            big_pad = $('<div>');
+            big_pad.css('display', 'none');
+            big_pad.css('position', 'fixed');
+            big_pad.css('margin', '0 auto');
+            big_pad.css('top', '0');
+            big_pad.css('bottom', '0');
+            big_pad.css('right', '0');
+            big_pad.css('left', '0');
+            big_pad.css('z-index', '1000002 !important');
+            big_pad.css('overflow', 'hidden');
+            big_pad.css('outline', '0');
+            big_pad.css('-webkit-overflow-scrolling', 'touch');
+
+            big_pad.css('right', '0');
+            big_pad.css('border', '1px solid #c8c8c8');
+            big_pad.css('padding', '15px');
+            big_pad.css('background-color', 'white');
+            big_pad.css('margin-top', '75px');
+            big_pad.css('z-index', '9');
+            big_pad.css('width', '95%');
+            big_pad.css('height', '90%');
+            big_pad.css('border-radius', '10px');
+            big_pad.attr('id', 'signPadBig');
+            $('body').append(big_pad);
+
+            var update_canvas_size = function () {
+                var w = big_pad.width() //* 0.95;
+                var h = big_pad.height() - 55;
+
+                canvas.attr('width', w);
+                canvas.attr('height', h);
+            }
+
+
+            canvas = $('<canvas>');
+            canvas.css('display', 'block');
+            canvas.css('margin', '0 auto');
+            canvas.css('border', '1px solid #c8c8c8');
+            canvas.css('border-radius', '10px');
+            //canvas.css('width', '90%');
+            //canvas.css('height', '80%');
+            big_pad.append(canvas);
+
+            update_canvas_size();
+            $(window).on('resize', function () {
+                update_canvas_size();
+            });
+
+            var clearCanvas = function () {
+                canvas.sketch().action = null;
+                canvas.sketch().actions = [];       // this line empties the actions.
+                var ctx = canvas[0].getContext("2d");
+                ctx.clearRect(0, 0, canvas[0].width, canvas[0].height);
+                return true
+            }
+
+            var _get_base64_value = function () {
+                var text_control = $.data(big_pad[0], 'control');  //settings.control; // $('#' + big_pad.attr('id'));
+                return $(text_control).val();
+            }
+
+            var copyCanvas = function () {
+                //get data from bigger pad
+                var sigData = canvas[0].toDataURL("image/png");
+
+                var _img = new Image;
+                _img.onload = resizeImage;
+                _img.src = sigData;
+
+                var targetWidth = canvas.width();
+                var targetHeight = canvas.height();
+
+                function resizeImage() {
+                    var imageToDataUri = function (img, width, height) {
+
+                        // create an off-screen canvas
+                        var canvas = document.createElement('canvas'),
+                            ctx = canvas.getContext('2d');
+
+                        // set its dimension to target size
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        // draw source image into the off-screen canvas:
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // encode image to data-uri with base64 version of compressed image
+                        return canvas.toDataURL();
+                    }
+
+                    var newDataUri = imageToDataUri(this, targetWidth, targetHeight);
+                    var control_img = $.data(big_pad[0], 'img');
+                    if (control_img)
+                        $(control_img).attr("src", newDataUri);
+
+                    var text_control = $.data(big_pad[0], 'control');  //settings.control; // $('#' + big_pad.attr('id'));
+                    if (text_control)
+                        $(text_control).val(newDataUri);
+                }
+            }
+
+            var buttons = [
+                {
+                    title: 'Close',
+                    callback: function () {
+                        clearCanvas();
+                        big_pad.slideToggle(function () {
+                            back_drop.hide('fade');
+                        });
+
+                    }
+                },
+                {
+                    title: 'Clear',
+                    callback: function () {
+                        clearCanvas();
+                        if (settings.callback)
+                            settings.callback(_get_base64_value(), 'clear');
+                    }
+                },
+                {
+                    title: 'Accept',
+                    callback: function () {
+                        copyCanvas();
+                        clearCanvas();
+                        big_pad.slideToggle(function () {
+                            back_drop.hide('fade', function () {
+                                if (settings.callback)
+                                    settings.callback(_get_base64_value(), 'accept');
+                            });
+                        });
+                    }
+                }].forEach(function (e) {
+                    var btn = $('<button>');
+                    btn.attr('type', 'button');
+                    btn.css('border', '1px solid #c8c8c8');
+                    btn.css('background-color', 'white');
+                    btn.css('padding', '10px');
+                    btn.css('display', 'block');
+                    btn.css('margin-top', '15px');
+                    btn.css('margin-right', '5px');
+                    btn.css('cursor', 'pointer');
+                    btn.css('border-radius', '5px');
+                    btn.css('float', 'right');
+                    btn.css('height', '40px');
+                    btn.text(e.title);
+                    btn.on('click', function () {
+                        e.callback(e.title);
+                    })
+                    big_pad.append(btn);
+
+                });
+
+        }
+        else {
+            canvas = big_pad.find('canvas')[0];
+        }
+
+        //init the signpad
+        if (canvas) {
+            var sign1big = $(canvas).sketch({ defaultColor: "#000", defaultSize: 5 });
+        }
+
+        //for each control
+        return this.each(function () {
+
+            var control = $(this);
+            control.hide();
+
+            //get the control parent
+            var wrapper = control.parent();
+            var img = $('<img>');
+
+            //style it
+            img.css("cursor", "pointer");
+            img.css("border", settings.border);
+            img.css("height", settings.height);
+            img.css("width", settings.width);
+            img.css('border-radius', '5px')
+            img.attr("src", settings.img64);
+
+            if (typeof (wrapper) == 'object') {
+                wrapper.append(img);
+            }
+
+
+
+
+            //init the big sign pad
+            if (settings.allowToSign == true) {
+                //click to the pad bigger
+                img.on('click', function () {
+                    //show the pad
+                    back_drop.show();
+                    big_pad.slideToggle();
+
+                    //save control to use later
+                    $.data(big_pad[0], 'img', img);
+                    $.data(big_pad[0], 'control', control);
+
+                    //settings.control = control;
+                    //settings.img = img;
+                });
+            }
+        });
+    };
+
+
+})(jQuery);
+
+
+
+         var ReviewIdForRecordActivity = "@ViewBag.ReviewId";
+</script>
+<!--Signature Pad Scripts End-->
+
+
+<script src="~/Scripts/RecordActivity.js"></script>

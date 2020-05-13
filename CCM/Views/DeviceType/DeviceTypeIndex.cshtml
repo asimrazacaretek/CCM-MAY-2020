@@ -1,0 +1,255 @@
+﻿@model CCM.Models.DataModels.RPMService
+@using CCM.Models.DataModels;
+
+@{
+    ViewBag.Title = "DeviceType";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    #BillingCategoryModal {
+        overflow: auto;
+    }
+
+    .mt-4 {
+        margin-top: 15px;
+    }
+
+    .savebtnsforBillingCategory {
+        float: right;
+        margin-right: 60px;
+        margin-top: 10px;
+    }
+
+    .field-validation-error {
+        margin-left: -229px;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" data-toggle="modal" data-target="#BillingCategoryModal" id="ButonOpen" class="createAdminResolutin btn btn-success"><span class="fas fa-fw fa-floppy-o"></span> Create New Device Types</button>
+    </div>
+</div>
+<div class="mt-4" id="BillingCategoryPage">
+    <table class="table" style=" width: 700px; margin-left: 15px;">
+        <thead>
+            <tr>
+                <th scope="col">Device Name</th>
+                <th scope="col">Is Active</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        @{ try
+            {
+                <tbody>
+                    @foreach (var item in ViewBag.devicetypes as List<RPMService>)
+                    {
+                        <tr>
+                            <td>@item.ServiceName</td>
+
+                            <td>
+                                @if (@item.IsActive == 1)
+                                {
+                                    @Html.Raw("Active")
+                                }
+                                else
+                                {
+                                    @Html.Raw(" Deactive Active")
+                                }
+                            </td>
+                            <td data-id="@item.Id">
+                                <span style="font-size: 16px;cursor:pointer" value="@item.ServiceName" onclick="EditCategory('@item.ServiceName','@item.Id','@item.ReasonForDeactivate')" id="EditResolution" class=" fa fa-edit text-primary"></span> @*|*@
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+            }
+            catch (Exception ex) { }
+        }
+
+
+    </table>
+</div>
+<div id="modal-container">
+    <div class="modal-background">
+        <div class="modal fade" id="BillingCategoryModal" role="dialog" data-backdrop="static" data-keyboard="false" style="position:absolute">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Device Type Form</h4>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form id="DiviceTypeForm">
+                                @Html.HiddenFor(x => x.Id, new { @id = "HiddenId" })
+                                <div class="form-group">
+                                    @Html.Label("Device Type Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(x => x.ServiceName, new { htmlAttributes = new { @id = "DeviceTypeName", @required = "required", @placeholder = "Device Type Name", @class = "form-control" } })
+                                        @Html.ValidationMessageFor(x => x.ServiceName, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    @Html.Label("Is Active", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @{
+                                            List<SelectListItem> listItems = new List<SelectListItem>();
+                                            listItems.Add(new SelectListItem
+                                            {
+                                                Text = "--Select Status--",
+                                                Value = "-1"
+                                            });
+                                            listItems.Add(new SelectListItem
+                                            {
+                                                Text = "Active",
+                                                Value = "1",
+                                                Selected = true
+                                            });
+                                            listItems.Add(new SelectListItem
+                                            {
+                                                Text = "De-Activate",
+                                                Value = "0"
+                                            });
+                                        }
+
+                                        @Html.DropDownListFor(x => x.IsActive, listItems, new { @class = "IsActive form-control", @id = "IsActive" })
+
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    @Html.Label("Reason For Deactivate", htmlAttributes: new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(x => x.ReasonForDeactivate, new { htmlAttributes = new { @id = "ReasonForDeactivate", @placeholder = "Reason For Deactivate", @class = "form-control" } })
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="form-group">
+                                <div class="savebtnsforBillingCategory">
+                                    <button style="margin-left: 5px;" id="DiviceTypeButton" type="button" class="btn">Save</button>
+                                    <button type="button" class=" btn btn-default close-custom-button" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="check" value="0" />
+<script>
+
+    $(document).ready(function () {
+
+        $(window).keydown(function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+
+        });
+        $("#DeviceTypeName").keyup(function () {
+
+            if ($("#DeviceTypeName").val().trim() != '') {
+
+                $("#DiviceTypeButton").attr("disabled", false);
+            } else {
+                $("#DiviceTypeButton").attr("disabled", true);
+
+            }
+        })
+
+
+    });
+    $('#ButonOpen').click(function () {
+        $('#modal-container').removeAttr('class').addClass("ButonOpen");
+        $('body').addClass('modal-active');
+        $("#HiddenId").val('0');
+        $("#DeviceTypeName").val('');
+        $("#ReasonForDeactivate").val('');
+        $("#check").val("0");
+        $("#DiviceTypeButton").attr("disabled", true);
+    });
+    $('.close-custom-button').click(function () {
+
+        $('#modal-container').addClass('out');
+        $('body').removeClass('modal-active');
+    });
+    function EditCategory(value, id, ReasonForDeactivate) {
+        $(".createAdminResolutin").click();
+        $("#DeviceTypeName").val(value);
+        $("#HiddenId").val(id);
+        $("#ReasonForDeactivate").val(ReasonForDeactivate);
+      //  $("#DeviceTypeName").attr("disabled", true)
+        $("#DiviceTypeButton").attr("disabled", false);
+        $("#check").val("edit");
+
+    }
+    function AddOrEdit(valdata) {
+        $.ajax({
+            type: "POST",
+            data: valdata,
+            url: "/DeviceType/DeviceTypeCreate",
+            success: function (result) {
+                if (result == "added") {
+                    $("#DeviceTypeName").val('');
+                    $("#ReasonForDeactivate").val("");
+                    swal({
+                        title: "Saved",
+                        text: "Saved Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+                }
+                else if (result == "updated") {
+                    $("#DeviceTypeName").val('');
+                    $("#ReasonForDeactivate").val("");
+                    swal({
+                        title: "Update",
+                        text: "Updated Successfully",
+                        icon: "success",
+                        button: "Ok",
+                        confirmButtonColor: "#1ab394",
+                    });
+                    $('.close-custom-button').click();
+                    $("#BillingCategoryPage").load(window.location + " #BillingCategoryPage");
+                }
+                else if (result == "exists") {
+                    var s = $("#DeviceTypeName").val();
+                    swal("Warning!", s + " Already exists as a Billing Category", "warning");
+                }
+                else {
+                    $('.close-custom-button').click();
+                    swal("Error!", "Error Accured", "error");
+
+                }
+            }
+        });
+    }
+    $("#DiviceTypeButton").on("click", function () {
+        if ($("#DeviceTypeName").val().trim() != "") {
+            var valdata = $("#DiviceTypeForm").serialize();
+            AddOrEdit(valdata);
+        }
+
+    });
+
+</script>
+

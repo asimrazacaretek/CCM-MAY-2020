@@ -1,0 +1,806 @@
+﻿@model CCM.Models.DataModels.Device
+@using CCM.Models.DataModels.Devices;
+@using CCM.Helpers;
+
+<link href="~/Content/Plugins/Tags/src/bootstrap-tagsinput.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css" />
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+
+@{
+    ViewBag.Title = "Index";
+    var DevicesList = ViewBag.Devices as List<CCM.Models.DataModels.Device>;
+}
+
+
+<style>
+
+    .bootstrap-tagsinput .tag {
+        margin-right: 2px;
+        color: #f7f7f7;
+        font-size: 13px;
+        background: #8c8c8c;
+        border-radius: 6px;
+        padding: 2px 10px 3px;
+        font-weight: 100;
+    }
+
+        .bootstrap-tagsinput .tag [data-role="remove"]:after {
+            content: "✖";
+            padding: 3px 3px 1px 3px;
+            font-size: 8px;
+            border-radius: 17px;
+            margin-right: -11px;
+            vertical-align: super;
+            background: red;
+            color: white;
+            font-weight: bold;
+            border: 0px;
+            box-shadow: 2px 2px 6px #676767;
+        }
+
+    .bootstrap-tagsinput {
+        width: 100%;
+        border: 1px solid black;
+        border-radius: 0px;
+        text-align: left;
+    }
+
+    #BillingCategoryModal {
+        overflow: auto;
+    }
+
+    .mt-4 {
+        margin-top: 15px;
+    }
+
+    .savebtnsforBillingCategory {
+        float: right;
+        margin-right: 60px;
+        margin-top: 10px;
+    }
+
+    .field-validation-error {
+        margin-left: -229px;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+<style>
+    .patientname {
+        color: #1a8cf7 !important;
+    }
+
+    .background-forDashboard {
+        background: white;
+        background-size: cover;
+        height: 100%;
+        box-shadow: black -2px -3px 24px 3px;
+        margin: 15px;
+    }
+
+    #donutchart {
+        height: 100%;
+        width: 100%;
+    }
+
+    #LineChatGenrated {
+        border-radius: 10px;
+    }
+
+    .mt-3 {
+        margin-top: 1.5rem;
+    }
+
+    .custom-card {
+        background-color: white;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        border-radius: 4px;
+        overflow-y: auto;
+    }
+
+        .custom-card .heading {
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bolder;
+            border-bottom: 1px solid darkgrey;
+            border-bottom-style: dotted;
+            background: #0364bd;
+            color: white;
+        }
+
+        .custom-card .data-list {
+            padding: 10px 10px;
+            border-bottom: 1px solid darkgray;
+            border-bottom-style: dotted;
+        }
+
+            .custom-card .data-list .dummy-image {
+                font-size: 17px;
+                padding: 8px;
+                background-color: lightgray;
+                border-radius: 50%;
+            }
+
+            .custom-card .data-list .person-name ul {
+                font-size: 13px;
+                padding: 0;
+                list-style: none;
+                position: absolute;
+                left: 20%;
+                margin-top: -27px;
+                margin-left: 3px
+            }
+
+            .custom-card .data-list .count ul {
+                list-style: none;
+            }
+
+            .custom-card .data-list .person-name small, .custom-card .data-list .count small {
+                color: gray !important;
+            }
+
+    .canvasjs-chart-canvas {
+        position: relative !important;
+        border-radius: 4px;
+    }
+
+    .canvasjs-chart-container {
+        border-radius: 4px;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    .box-shadow {
+        box-shadow: grey -2px 4px 12px;
+    }
+
+    .TicketGeneral {
+        font-size: 17px;
+        padding: 15px;
+        border-radius: 4px;
+    }
+
+    .color-white {
+        color: white;
+    }
+
+    .filter-icons {
+        position: absolute;
+        top: 20px;
+        background: #909090;
+        color: white;
+        padding: 6px;
+        font-size: 8px;
+    }
+
+    .filter-label, .filter-input {
+        margin-left: 40px;
+    }
+
+    .filter-label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .filter-input input {
+        width: 100%;
+        height: 33px;
+        border: 1px solid #000000;
+        border-radius: 1px;
+    }
+
+    @@media (min-width: 992px) {
+        .col-md-2 {
+            width: 19.666667%;
+        }
+    }
+
+    #TicketCreationListView .modal-body label {
+        text-align: left;
+        font-weight: 500;
+        padding-left: 95px;
+        margin-top: 4px;
+    }
+
+    .filters-row-custom {
+        padding: 18px;
+        border-radius: 4px;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .Chartslinks {
+        padding: 20px;
+        font-size: 15px;
+        text-decoration: underline;
+        cursor: pointer;
+        color: blue;
+    }
+
+    .select2-choice {
+        height: 34px !important;
+        border-radius: 0px;
+        border-color: black;
+        border: 3px solid thick;
+        padding: 4px 0px 4px 4px;
+    }
+
+    .select2-container {
+        width: 100%;
+    }
+
+        .select2-container .select2-choice > .select2-chosen {
+            padding-top: 4px;
+            min-width: 100%;
+            max-width: 100%;
+        }
+
+    .TicketAssigneeClass .select2-container {
+        width: 155px !important;
+    }
+
+    .TickettypeClass .select2-container {
+        width: 153px !important;
+    }
+
+    .ticketSubjectDashboardClass .select2-container {
+        width: 136px !important;
+    }
+
+    .borderlesscoloumn {
+        border: none !important;
+    }
+
+    .ticketsStatus .select2-container {
+        width: 136px !important;
+    }
+
+    #ticketrows {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    #ticketuser {
+        padding-left: 38px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+        margin-left: -14px;
+    }
+</style>
+<style>
+    .imageuploadify-overlay {
+        display: none;
+    }
+
+    .imageuploadify-images-list i {
+        color: #3AA0FF;
+        display: block;
+        font-size: 5em;
+        text-align: center;
+        margin: .5em auto;
+        margin-bottom: 7px;
+        /* padding-bottom: 12px; */
+    }
+
+    span.imageuploadify-message {
+        font-size: 24px;
+        border-top: 1px solid #3AA0FF;
+        border-bottom: 1px solid #3AA0FF;
+        padding: 10px;
+        display: inline-block;
+        color: #3AA0FF;
+    }
+
+    .imageuploadify-images-list button.btn-default {
+        display: block;
+        color: #3AA0FF;
+        border-color: #3AA0FF;
+        border-radius: 1em;
+        margin: 25px auto;
+        width: 100%;
+        max-width: 500px;
+        cursor: pointer;
+    }
+
+    .imageuploadify {
+        border: 2px dashed #d2d2d2;
+        position: relative;
+        min-height: 250px;
+        min-width: 250px;
+        max-width: 100% !important;
+        margin: auto;
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        text-align: center;
+        background-color: #fff;
+        color: #3AA0FF;
+        top: 10px;
+    }
+
+    .imageuploadify-container img {
+        max-width: 100px;
+        max-height: 100px;
+        text-align: left;
+    }
+
+    .error {
+        color: red
+    }
+
+    #TicketCreationListView .modal-dialog {
+        width: 900px;
+    }
+
+    .select2-drop-active, .select2-drop-mask {
+        position: absolute !important;
+        z-index: 1000000000000000000000000000000 !important;
+    }
+
+    .CommentPartialView thead tr th {
+        text-align: center !important;
+    }
+
+    .CommentPartialView {
+        overflow-y: auto !important;
+    }
+    .multiselect.dropdown-toggle.btn.btn-default {
+        width: 89% !important
+    }
+    .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+        background-color: #efefef !important;
+    }
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+
+
+@Html.Action("Filters")
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" data-toggle="modal" data-target="#BillingCategoryModal" id="ButonOpen" class="ModelOpenBtn btn btn-success"><span class="fas fa-fw fa-floppy-o"></span> Add New Device</button>
+    </div>
+</div>
+<div class="mt-4" id="CurrentPageParial">
+    <table class="DevicesTable" id="DevicesTable">
+        <thead>
+            <tr>
+                <th scope="col"hidden></th>
+                <th scope="col">Brand Name</th>
+                <th scope="col">Device Type</th>
+                <th scope="col">Current Status</th>
+                <th scope="col">Model Number/ <br>Serial Number</th>
+                <th scope="col">Vendor/ <br />Date Purchase</th>
+                <th scope="col">IsActive</th>
+                <th scope="col">Created By/ <br /> Date</th>
+                <th scope="col">Modified By/ <br /> Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="LoadDevicesDiv">
+            @Html.Action("LoadDevices", new { obj = "" })
+        </tbody>
+
+
+    </table>
+</div>
+
+
+
+
+
+
+
+<div id="modal-container">
+    <div class="modal-background">
+        <div class="modal fade" id="BillingCategoryModal" role="dialog" data-backdrop="static" data-keyboard="false" style="position:absolute">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Device Form</h4>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form id="AddBrandForm">
+                                @Html.HiddenFor(model => model.Id, new { @id = "HiddenId" })
+                                <div class="form-group">
+                                    <div class="row">
+                                        @Html.Label("Brand Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.DropDownListFor(model => model.Devices_BrandId, new SelectList(ViewBag.Device_brands, "Value", "Text"), "--Select--", new { @id = "BrandName", @required = "required", @placeholder = "Device Name", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        @Html.Label("Device Type", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.DropDownListFor(model => model.RPMServiceId, CCM.Helpers.CommonFunctions.GetActiveDevicesTypes(),
+                                                                        "Select Device Type", new { @required = "required", @class = "DeviceTypeId form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        @Html.Label("Model Number", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+
+                                            <select id="ModelNumber" name="Device_BrandModelId" class="form-control">
+                                                <option value="">--Select--</option>
+                                                @foreach (var item in ViewBag.ModelNumber)
+                                                {
+                                                    <option value="@item.Id" data-devicetypeid="@item.RPMServiceId" data-BrandId="@item.Devices_BrandId">@item.Name</option>
+                                                }
+                                            </select>
+
+                                            @Html.ValidationMessageFor(model => model.Device_BrandModelId, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        @Html.Label("Serial Number", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.EditorFor(model => model.SerialNumber, new { htmlAttributes = new { @id = "SerialNumber", @placeholder = "Serial Number", @class = "form-control", @data_role = "tagsinput" } })
+
+
+                                            @Html.ValidationMessageFor(model => model.SerialNumber, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        @Html.Label("Vendor Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.DropDownListFor(model => model.VendorId, new SelectList(ViewBag.Vendors, "Value", "Text"), "--Select--", new { @id = "VendorName", @placeholder = "Vendor Name", @class = "form-control" })
+
+                                            @Html.ValidationMessageFor(model => model.VendorId, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        @Html.Label("Purchase date", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.TextBoxFor(model => model.DatePurchase, new { @type = "date", @class = "pickerdate form-control" })
+                                            @Html.ValidationMessageFor(model => model.DatePurchase, "", new { @class = "text-danger", @id = "subjectvalidation" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        @Html.Label("Device Current Status", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.DropDownListFor(model => model.DeviceStatusId, new SelectList(ViewBag.DeviceStatus, "Value", "Text"), "--Select--", new { @class = "DeviceStatusId form-control", @id = "DeviceStatusId" })
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row">
+                                        @Html.Label("Is Active", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.DropDownListFor(model => model.IsActive, new SelectList(ViewBag.IsAvtiveStatus, "Value", "Text"), "--Select--", new { @class = "IsActive form-control", @id = "IsActive" })
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row" id="DeactivateReasonDiv">
+                                        @Html.Label("Reason For Deactivate", htmlAttributes: new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.EditorFor(model => model.ReasonForDeactivate, new { htmlAttributes = new { @id = "ReasonForDeactivate", @placeholder = "Reason For Deactivate", @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="form-group">
+                                <div class="savebtnsforBillingCategory">
+                                    <button style="margin-left: 5px;" id="SaveBrandForm" type="button" class="btn">Save</button>
+                                    <button type="button" class=" btn btn-default close-custom-button" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="check" value="0" />
+
+@section Scripts {
+    <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="~/Content/Plugins/Tags/src/bootstrap-tagsinput.js"></script>
+    <script src = "~/Content/multiselect/bootstrap-multiselect.js" ></script>
+    <script>
+        var table;
+        $(document).ready(function () {
+            table = $("#DevicesTable").dataTable({
+            "order": [[0, "desc"]],
+                pageLength: 10
+            
+            });
+            $(".FilterElement").hide();
+            $('.FilterElement').multiselect({
+                includeSelectAllOption: false,
+                buttonWidth: 200,
+                enableCaseInsensitiveFiltering: true,
+                enableFiltering: true
+            });
+       
+
+            $("#ModelNumber option").hide();
+
+            $("#BrandName").change(function () {
+                var val = $("#BrandName :selected").val();
+                $("#ModelNumber").val('');
+                $("#ModelNumber option").filter(function () {
+                    return $(this).data('brandid') == val;
+                }).show()
+                $("#ModelNumber option").filter(function () {
+                    return $(this).data('brandid') != val;
+                }).hide()
+            })
+
+            $("#RPMServiceId").change(function () {
+                var val = $("#RPMServiceId :selected").val();
+                $("#ModelNumber").val('');
+                $("#ModelNumber option").filter(function () {
+                    return $(this).data('devicetypeid') == val && $(this).data('brandid') == val;
+                }).show()
+                $("#ModelNumber option").filter(function () {
+                    return $(this).data('devicetypeid') != val || $(this).data('brandid') != val;
+                }).hide()
+            })
+
+            //$("#BrandName").keyup(function () {
+            //    if ($("#BrandName").val().trim() != '' && $("#IsActive :selected").val() != '') {
+
+            //        $("#SaveBrandForm").attr("disabled", false);
+            //    } else {
+            //        $("#SaveBrandForm").attr("disabled", true);
+            //    }
+
+            //})
+
+
+
+
+            $("#IsActive").change(function () {
+                var value = $("#IsActive :selected").val();
+                if (value =='0') {
+                    $("#DeactivateReasonDiv").show();
+                } else {
+                    $("#DeactivateReasonDiv").hide();                }
+
+
+            })
+
+
+        });
+        $('#ButonOpen').click(function () {
+            $('#modal-container').removeAttr('class').addClass("ButonOpen");
+            $('body').addClass('modal-active');
+            $("#HiddenId").val('0');
+
+
+            $("#BrandName").val('');
+            $("#RPMServiceId").val('');
+            $("#ModelNumber").val('');
+            $('#SerialNumber').tagsinput('removeAll');
+            $("#VendorName").val('');
+            $("#DatePurchase").val('');
+            $("#IsActive").val('');
+            $("#DeviceStatusId").val('');
+            $("#ReasonForDeactivate").val('');
+            //  $("#BrandName").attr("disabled", true)
+            $("#DeactivateReasonDiv").hide();
+
+
+
+
+
+
+            $("#check").val("0");
+            //$("#SaveBrandForm").attr("disabled", true);
+        });
+        $('.close-custom-button').click(function () {
+
+            $('#modal-container').addClass('out');
+            $('body').removeClass('modal-active');
+        });
+        function EditCategory(Devices_BrandId, Id, RPMServiceId, DeviceStatusId, Device_BrandModelId, SerialNumber, VendorId, DatePurchase, IsActive, ReasonForDeactivate) {
+          
+            var date = new Date(DatePurchase);
+            var DatePurchasestr = date.getFullYear() + '-' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '-' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate()));
+
+            $(".ModelOpenBtn").click();
+            $("#BrandName").val(Devices_BrandId);
+            $("#HiddenId").val(Id);
+            $("#RPMServiceId").val(RPMServiceId);
+            $("#ModelNumber").val(Device_BrandModelId);
+            $('#SerialNumber').tagsinput('add', SerialNumber);
+            //$("#SerialNumber").text(SerialNumber);
+            $("#VendorName").val(VendorId);
+            $("#DatePurchase").val(DatePurchasestr);
+            $("#IsActive").val(IsActive);
+            $("#DeviceStatusId").val(DeviceStatusId);
+            $("#ReasonForDeactivate").val(ReasonForDeactivate);
+            //  $("#BrandName").attr("disabled", true)
+            $("#SaveBrandForm").attr("disabled", false);
+            $("#check").val("edit");
+
+        }
+        function AddOrEdit(valdata) {
+            $.ajax({
+                type: "POST",
+                data: valdata,
+                url: "/Device/DeviceCreate",
+                success: function (result) {
+                    if (result == "added") {
+                        $("#BrandName").val('');
+                        $("#Description").val('');
+
+
+                        swal({
+                            title: "Saved",
+                            text: "Saved Successfully",
+                            icon: "success",
+                            button: "Ok",
+                            confirmButtonColor: "#1ab394",
+                        });
+                        $('.close-custom-button').click();
+                        $.ajax({
+                            url: '/Device/LoadDevices',
+                            data: { obj: null },
+                            type: 'POST',
+                            success: function (objOperations) {
+                                DestroyDT();
+                                $("#LoadDevicesDiv").html(objOperations);
+                                applyDT();
+
+                            }
+                        });
+
+
+                    }
+                    else if (result == "updated") {
+                        $("#BrandName").val('');
+                        swal({
+                            title: "Update",
+                            text: "Updated Successfully",
+                            icon: "success",
+                            button: "Ok",
+                            confirmButtonColor: "#1ab394",
+                        });
+                        $('.close-custom-button').click();
+                        $.ajax({
+                            url: '/Device/LoadDevices',
+                            data: { obj: null },
+                            type: 'POST',
+                            success: function (objOperations) {
+                                DestroyDT();
+                                $("#LoadDevicesDiv").html(objOperations);
+                                applyDT();
+                            }
+                        });
+
+
+
+                    }
+                    else if (result == "exists") {
+                        var s = $("#BrandName").val();
+                        swal("Warning!", s + " Already exists as a Brand", "warning");
+                    }
+                    else {
+                        $('.close-custom-button').click();
+                        swal("Error!", "Error Accured", "error");
+
+                    }
+                }
+            });
+            //var table = $('#DevicesTable').DataTable();
+
+        }
+        $("#SaveBrandForm").on("click", function (e) {
+            if ($("#BrandName :selected").val() == null || $("#BrandName").val().trim() == '') {
+                swal("Warning", "Please Enter Brand Name", "warning")
+                e.preventDefault();
+                return false;
+            }
+
+            if ($("#RPMServiceId :selected").val() == null || $("#RPMServiceId").val().trim() == '') {
+                swal("Warning", "Please Enter Device Type", "warning")
+                e.preventDefault();
+                return false;
+            }
+            if ($("#ModelNumber :selected").val() == null || $("#ModelNumber").val().trim() == '') {
+                swal("Warning", "Please Enter Model Number", "warning")
+                e.preventDefault();
+                return false;
+            }
+            if ($("#SerialNumber").val().trim() == '') {
+                swal("Warning", "Please Serial Number", "warning")
+                e.preventDefault();
+                return false;
+            }
+            if ($("#VendorName :selected").val() == null || $("#VendorName").val().trim() == '') {
+                swal("Warning", "Please Select Vender", "warning")
+                e.preventDefault();
+                return false;
+            }
+
+            if ($("#DatePurchase").val().trim() == '') {
+                swal("Warning", "Please Select Purchase Date", "warning")
+                e.preventDefault();
+                return false;
+            }
+            if ($("#DeviceStatusId :selected").val() == null || $("#DeviceStatusId").val().trim() == '') {
+                swal("Warning", "Please Select Device Current Status", "warning")
+                e.preventDefault();
+                return false;
+            }
+            if ($("#IsActive :selected").val() == null || $("#IsActive").val().trim() == '') {
+                swal("Warning", "Please Select IsActive Status", "warning")
+                e.preventDefault();
+                return false;
+            }
+
+
+            if ($("#BrandName").val().trim() != "") {
+                var valdata = $("#AddBrandForm").serialize();
+                AddOrEdit(valdata);
+            }
+
+        });
+        var applyDT = function () {
+
+
+
+            $("#DevicesTable").dataTable({
+                "order": [[0, "desc"]],
+
+            });
+
+
+        }
+
+        var DestroyDT = function () {
+            $('#DevicesTable').DataTable().clear().destroy();
+        }
+
+        function loadpartialviewdata() {
+            resetFilterstoSingle();
+            var data = $("#filterTickets").serialize()
+            $.ajax({
+                async: false,
+                url: '/Device/LoadDevices',
+                //data: '{model:' + JSON.stringify(check) + '}',
+                data: data,
+                type: 'POST',
+                success: function (objOperations) {
+                    DestroyDT();
+                    $("#LoadDevicesDiv").html(objOperations);
+                    applyDT();
+                }
+            });
+        }
+
+        var LastAppliedFilter;
+        $(".ResetFilter").change(function () {
+            LastAppliedFilter = $(this).attr("id");
+      
+        })
+        var resetFilterstoSingle = function () {
+            $(".ResetFilter").each(function () {
+                if (LastAppliedFilter != null) {
+                    if ($(this).attr('id') != LastAppliedFilter) {
+                        $(this).val('');
+                    }
+                }
+            })
+        }
+    </script>
+}
+
+
+

@@ -1,0 +1,185 @@
+﻿@model CCM.Models.PhysicianGroup_SalesStaff_Mapping
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" type="text/css" />
+
+<style>
+    /*Date Picker**/
+    li .form-control {
+        margin: 0px !important;
+    }
+
+    .form-control {
+        border: 2px solid !important;
+        border-radius: 3px !important;
+        padding: 5px !important;
+    }
+    /*Date Picker **/
+    .search_combo {
+        display: none;
+    }
+
+    .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+        background-color: #dcdcdc !important;
+    }
+
+    .multiselect-container {
+        max-height: 300px;
+        overflow: auto;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>PhysicianGroup and Enroller Mapping : Create</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label class="control-label">Enrollers</label>
+                @*<select class="form-control"></select>*@
+
+                @Html.DropDownList("ClinicID", new SelectList(ViewBag.SalesStaff as List<CCM.Models.SaleStaff>, "Id", "FirstName"), new { @class = "form-control selectpicker border-input search_combo", role = "menu", @autofocus = "true" })
+            </div>
+            <div id="FetchPhysicians" class="clearfix">
+                <div class="col-sm-12"><label class="control-label">Physician groups</label></div>
+
+                <div id="SelectedCodeListControl" class="col-sm-6" style="text-align:left;padding-top:10px;">
+                    <input type="text" id="searchInput" placeholder="Search for names.." class="form-control border-input">
+                    <table class="table table-responsive" id="table">
+                        <thead>
+                            <tr>
+                                <th style="display:none"></th>
+                                <th><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
+
+                                <th><label class="control-label">Name</label></th>
+                                @*<th><label class="control-label">Last Name</label></th>*@
+                                <th><label class="control-label">Email</label></th>
+                            </tr>
+                        </thead>
+                        <tbody id="PhysiciansSelectedTable">
+                            @{
+
+                                var physicians = ViewBag.PhysiciansGroupId as List<CCM.Models.PhysiciansGroup>;}
+                            @foreach (var item in physicians)
+                            {
+                                <tr class="row-select">
+                                    <td class="id" hidden>@item.Id</td>
+                                    <td class="check"><label class="custom-checkbox"><input type="checkbox" class="checkboxselect" /><span></span></label></td>
+                                    <td>@item.GroupName</td>
+                                    <td>@item.Email</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <a href="Index" id="back-to-list" class="btn btn-default">Back to List</a>
+
+                <input type="button" value="Create" id="btnSubmit" class="btn btn-default" />
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+    </div>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $('#example-select-all').on('click', function () {
+        // Check/uncheck all checkboxes in the table
+
+        var ischecked = this.checked;
+        // Check/uncheck all checkboxes in the table
+        $('.checkboxselect').each(function () {
+
+            var display = $(this).closest('tr').css("display");
+            if (display != "none") {
+                $(this).prop('checked', ischecked);
+            }
+        });
+        //$('.checkboxselect').prop('checked', this.checked);
+    });
+    $("#searchInput").on("keyup", function () {
+        debugger;
+        var value = $(this).val();
+        $("table tr").each(function (index) {
+            if (index !== 0) {
+                var $row = $(this);
+                //Filter down tds that match indexOf check
+                var matches = $row.find('td').filter(function (ix, item) {
+                    return $(item).text().toUpperCase().indexOf(value.toUpperCase()) > -1;
+                });
+
+                //if matches exist then show else hide
+                if (matches.length != 0) {
+                    $row.show();
+                }
+                else {
+                    $row.hide();
+                }
+            }
+        });
+    })
+    $(document).ready(function () {
+
+        //Combo Search
+        $('#ClinicID').multiselect({
+            includeSelectAllOption: false,
+            buttonWidth: 1000,
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
+        });
+
+        //$('#table').DataTable({
+        //    pageLength: 25,
+        //    scrollY: "50vh",
+        //    order: [[2, "desc"]]
+        //});
+        var Doctors = []
+        $('#btnSubmit').click(function () {
+
+            $('.row-select input:checked').each(function () {
+                var id, name;
+                id = $(this).closest('tr').find('.id').html();
+                Doctors.push(id);
+            })
+            $.ajax({
+                type: "POST",
+                url: '/PhysicianGroupEnroller/SaveSaleStaffMapping',
+                data: {
+                    "SalesStaffIDs": $("#ClinicID").val(), 'PhyGrpID': Doctors
+                },
+                success: function (data) {
+                    location.href = '/PhysicianGroupEnroller/Index'
+                },
+                error: function () {
+                    alert('Failed');
+                }
+            })
+        });
+    });
+</script>

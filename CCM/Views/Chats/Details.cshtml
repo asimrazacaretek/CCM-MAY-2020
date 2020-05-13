@@ -1,0 +1,203 @@
+﻿@model IList<CCM.Models.GroupchatsdetailsViewModel>
+
+@using Newtonsoft.Json;
+<style>
+    .chatdetailswrapper {
+        float: left;
+        width: 100%;
+        height: auto;
+        overflow-y: hidden;
+        overflow-x: hidden;
+    }
+
+    .msgandtime {
+    }
+
+    .msgbody {
+        padding: 5px 10px;
+        border: 0px solid;
+        margin: 0;
+        padding-left: 0;
+        padding-right:0 !important;
+    }
+
+    .sendermsg {
+        font-weight: 300;
+    }
+
+    .receivermsg {
+        font-weight: 300;
+    }
+
+    .sendertime {
+        font-size: 1em;
+        font-weight: normal;
+        text-align: right;
+        width: 100%;
+        color: white;
+    }
+
+    .receivername {
+        color: #083dd2;
+        border-bottom: 0px solid;
+    }
+
+    .receivetime {
+        font-size: 1em;
+        font-weight: normal;
+        text-align: left;
+        width: 100%;
+        color: #928888;
+    }
+
+    .sendername {
+        color: #08d208;
+        border-bottom: 1px solid;
+    }
+
+    .Sender {
+        float: left;
+        width: 100%;
+    }
+
+    .Receiver {
+        float: left;
+        width: 100%;
+    }
+
+    .receivermsgbody {
+        padding: .75rem 1rem;
+        border-radius: .625rem;
+        position: relative;
+        display: inline-block;
+        background: #f1f0f0;
+        padding: .75rem 1rem;
+        border-radius: .625rem;
+        position: relative;
+        display: inline-block;
+        font-size:11px;
+    }
+
+    .sendermsgbody {
+        text-align: right;
+        float: right;
+        position: relative;
+        background: #1dc9b7;
+        color: #fff;
+        text-align: left;
+        padding: .75rem 1rem;
+        border-radius: .625rem;
+        position: relative;
+        display: inline-block;
+        font-size:11px;
+    }
+</style>
+<div class="chatdetailswrapper">
+    <input id="lastid" type="hidden" value="@ViewBag.LastID" />
+    @foreach (var gcd in Model)
+    {
+        if (gcd.senderclass == "Sender")
+        {
+            if (gcd.attachment == true)
+            {
+                <div class="msgbody @gcd.senderclass" style=" text-decoration:underline">
+                    <div class="sendermsgbody">
+                        <div onclick="DwonloadGroupdoc(@gcd.msgid.ToString())" style="cursor:pointer" class="msgandtime" >
+                            <label class="sendermsg" style="cursor:pointer"><span class='fa fa-file cstm-file-icon pull-right'></span>@gcd.Message</label><br />
+                            <label class="sendertime">
+                                @gcd.timesent
+                                @*@{
+                                        var datesent = Convert.ToDateTime(gcd.timesent).ToString("MM/dd/yyyy HH:mm:ss");
+                                    }
+                                    <script>
+                                        @*var date = parseJsonDate(@datesent) != null ? parseJsonDate(@datesent) : '-----';
+                                        debugger;
+                                        var abc = getChatTime(parseJsonDate('@datesent'));
+                                    </script>*@
+                            </label>
+                        </div>
+                    </div>
+
+
+                </div>
+            }
+            else
+            {
+                <div class="msgbody @gcd.senderclass">
+                    <div class="sendermsgbody">
+                        <div class="msgandtime">
+                            <label class="sendermsg">@gcd.Message</label><br />
+                            <label class="sendertime">
+                                @gcd.timesent
+                                @*@{
+                                        var datesent = Convert.ToDateTime(gcd.timesent).ToString("MM/dd/yyyy HH:mm:ss");
+                                    }
+                                    <script>
+                                        @*var date = parseJsonDate(@datesent) != null ? parseJsonDate(@datesent) : '-----';
+                                        debugger;
+                                        var abc = getChatTime(parseJsonDate('@datesent'));
+                                    </script>*@
+                            </label>
+                        </div>
+                    </div>
+
+
+                </div>
+            }
+
+        }
+        else
+        {
+            if (gcd.attachment == true)
+            {
+                <div class="msgbody @gcd.senderclass" style=" text-decoration:underline">
+                    <div class="receivermsgbody">
+        
+                      
+                        <label class="receivername">@gcd.sender</label><br />
+                        <div onclick="DwonloadGroupdoc(@gcd.msgid.ToString())" class="msgandtime" style="cursor:pointer; text-decoration:underline">
+                            <label class="receivermsg" style="cursor:pointer"><span class='fa fa-file cstm-file-icon pull-right'></span>@gcd.Message</label><br />
+                            <label class="receivetime">
+                                @gcd.timesent
+                                @*@{
+                                                        var datesent = JsonConvert.SerializeObject(gcd.timesent);
+                                                    }
+                                                    <script>
+                                    var date = parseJsonDate(@datesent) != null ? parseJsonDate(@datesent) : '-----';
+                                    getChatTime(date)
+                                                    </script>*@
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="msgbody @gcd.senderclass">
+                    <div class="receivermsgbody">
+                        <label class="receivername">@gcd.sender</label><br />
+                        <div class="msgandtime">
+                            <label class="receivermsg">@gcd.Message</label><br />
+                            <label class="receivetime">
+                                @gcd.timesent
+                                @*@{
+                                                        var datesent = JsonConvert.SerializeObject(gcd.timesent);
+                                                    }
+                                                    <script>
+                                    var date = parseJsonDate(@datesent) != null ? parseJsonDate(@datesent) : '-----';
+                                    getChatTime(date)
+                                                    </script>*@
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+        }
+
+    }
+</div>
+
+
+

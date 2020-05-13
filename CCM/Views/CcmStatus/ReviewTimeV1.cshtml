@@ -1,0 +1,994 @@
+﻿@model CCM.Models.ReviewTimeViewModel
+
+@*<h1>
+        @ViewBag.Message<br />
+        @ViewBag.ErrorLine
+    </h1>*@
+
+@functions {
+    private static string TrimTimeSpan(TimeSpan reviewTime)
+    {
+        try
+        {
+            return reviewTime > TimeSpan.Zero ? reviewTime.ToString().Substring(0, reviewTime.ToString().IndexOf('.')) : reviewTime.ToString();
+        }
+        catch (Exception ex)
+        {
+            return "00:00:00";
+
+        }
+
+    }
+}
+
+
+@*<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" type="text/css" />*@
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet" />
+
+<link href="~/Content/bootstrap/bootstrap-multiselect.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-multiselect.js"></script>
+<style>
+</style>
+@try
+{
+    if (true )
+    {
+        @Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model?.PatientId, cycleId = ViewBag.CurrentPage })
+    }
+    if (Model.ReviewTimeCcm.Count > 0)
+    {
+        <div class="row">
+
+
+            <div class="upperarea card col-md-12 no-padding">
+
+
+                <h3 class="pageTitle text-info">CARE PLAN REVIEW</h3>
+
+                @*@Html.ActionLink("View Final Care Plan PDF", "GenerateFinalCarePdf", "FinalCarePlan", new { patientId = Model.PatientId }, new { @class = "btn btn-success", target = "_blank" })*@
+                @Html.ActionLink("Generate Plan PDF",
+                                    "GenerateFinalCarePdfForVersion", "FinalCarePlan",
+                                    new { patientId = Model.PatientId, version = ViewBag.Version },
+                                    new { @class = "btn btn-success logdetails", target = "_blank" })
+                @*@Html.ActionLink("Total: " + TrimTimeSpan(Model.TotalReviewTime), "ReviewTimeV1", "CcmStatus", new { patientId = Model.PatientId, cycle = "0" }, new { @class = "btn btn-success", id = ViewBag.CurrentPage == 0 ? "currentPage" : "" })*@
+                @*@if (User.IsInRole("QAQC") && ViewBag.CurrentPage > 0)
+                                    {
+                    <a class="btn btn-success">View Final Care Plan</a>
+                                    }*@
+
+                @{
+                    var currentcycletime = "";
+                    if (ViewBag.CurrentPage > 0 && Model.ReviewTimeCycles.Where(x => x.CycleId == ViewBag.CurrentPage).Count() > 0)
+                    {
+                        currentcycletime = TrimTimeSpan(Model.ReviewTimeCycles.Where(x => x.CycleId == ViewBag.CurrentPage).FirstOrDefault().TotalReviewTime);
+                    }
+                    <input type="hidden" id="currentcycletime" value="@currentcycletime" />
+                }
+                @if (!User.IsInRole("QAQC"))
+                {
+                    <div class="btnandcheckmain col-mg-12 float-left">
+                        @foreach (var rtcItem in Model.ReviewTimeCycles)
+                        {
+                            var alreadybilled = Model.billingCycles.Where(item => item.Cycle == rtcItem.CycleId).FirstOrDefault();
+                            if (alreadybilled != null)
+                            {
+                                <div class="btnandcheckpaid">
+
+
+
+                                    @if (rtcItem.CycleId > 0)
+                                    {
+                                        <input type="checkbox" id="chkcycle@(rtcItem.CycleId)" value="@rtcItem.CycleId" class="chkforcomapre" />
+                                    }
+                                    @Html.ActionLink($"Cycle {rtcItem.CycleId}: " + " (" + rtcItem.StartDate.Date.ToString("MMM") + "-" + rtcItem.StartDate.Date.ToString("yy") + ") " + TrimTimeSpan(rtcItem.TotalReviewTime), "ReviewTimeV1", "CcmStatus", new { patientId = Model.PatientId, cycle = rtcItem.CycleId }, new { @class = "btncycles", id = ViewBag.CurrentPage == rtcItem.CycleId })
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="btnandcheck">
+
+
+
+                                    @if (rtcItem.CycleId > 0)
+                                    {
+                                        <input type="checkbox" id="chkcycle@(rtcItem.CycleId)" value="@rtcItem.CycleId" class="chkforcomapre" />
+                                    }
+                                    @Html.ActionLink($"Cycle {rtcItem.CycleId}: " + " (" + rtcItem.StartDate.Date.ToString("MMM") + "-" + rtcItem.StartDate.Date.ToString("yy") + ") " + TrimTimeSpan(rtcItem.TotalReviewTime), "ReviewTimeV1", "CcmStatus", new { patientId = Model.PatientId, cycle = rtcItem.CycleId }, new { @class = "btncycles", id = ViewBag.CurrentPage == rtcItem.CycleId })
+
+                                </div>
+                            }
+
+                        }
+                        <input type="button" id="btnCompareCycles" value="Comapre" class="btn btn-danger" onclick="comparaecycleforreview()" />
+
+                    </div>
+                    <br />
+                }
+
+
+                <input type="hidden" id="patientid" value="@Model.PatientId" />
+                <input type="hidden" id="cycle" value="@ViewBag.CurrentPage" />
+                <br /><br />
+            </div>
+            <div class="row">
+                @if ( Model.ReviewTimeCycles.Where(x => x.CycleId == ViewBag.CurrentPage).Count() > 0)
+                {
+                    if (Model.BillingCycleDetails.Count > 0)
+                    {
+                        <div class="col-md-12">
+                            <h3 class="cyclelocked">Cycle: @ViewBag.CurrentPage (Locked)</h3>
+                            @{
+                                var alreadybilled = Model.billingCycles.Where(item => item.Cycle == ViewBag.CurrentPage).FirstOrDefault();
+                                if (alreadybilled != null)
+                                {
+                                    <label style="">Billing Code 1: @alreadybilled.BillingCode1</label><br />
+                                    <label style="">Billing Code 2: @alreadybilled.BillingCode2</label>
+                                }
+                            }
+
+                        </div>
+
+                    }
+                    else
+                    {
+                        <h3>Cycle: @ViewBag.CurrentPage</h3>
+                    }
+                }
+
+                <div class="col-md-8">
+
+
+                    <h5>Total Time Spent Reviewing <b>Care Plan</b>: @TrimTimeSpan(ViewBag.TotalTimeSpent) (hh:mm:ss)</h5>
+                    <table class="display" id="table">
+                        <thead>
+                            <tr>
+                                @if (ViewBag.CurrentPage > 0)
+                                {
+
+                                    <th><input type="checkbox" id="chkreviewtimeccmall"></th>
+
+                                }
+
+                                <th>Date_Time</th>
+                                <th>Page</th>
+
+                                <th>Review_Time</th>
+                                <th>Activity</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ReviewTimeCcm)
+                            {
+                                <tr>
+                                    @{ var reviewTime = (TimeSpan)item.ReviewTime; }
+                                    @if (ViewBag.CurrentPage > 0)
+                                    {
+                                        if (User.IsInRole("Admin"))
+                                        {
+                                            var alreadysubmit = Model.BillingCycleDetails.Where(x => x.RecordingID == item.Id).FirstOrDefault();
+                                            if (alreadysubmit != null)
+                                            {
+                                                <th><input type="checkbox" id="chkreviewtimeccm@(item.Id)" class="checkboxforsubmitreviews" value="@item.Id" data-time="@reviewTime.ToString(@"hh\:mm\:ss")" checked="checked" onchange="calculatetotalminutesforselected()"></th>
+                                            }
+                                            else
+                                            {
+                                                <th><input type="checkbox" id="chkreviewtimeccm@(item.Id)" class="checkboxforsubmitreviews" value="@item.Id" data-time="@reviewTime.ToString(@"hh\:mm\:ss")" onchange="calculatetotalminutesforselected()"></th>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (ViewBag.isLocked == false)
+                                            {
+                                                <th><input type="checkbox" id="chkreviewtimeccm@(item.Id)" class="checkboxforsubmitreviews" value="@item.Id" data-time="@reviewTime.ToString(@"hh\:mm\:ss")" onchange="calculatetotalminutesforselected()"></th>
+                                            }
+                                            else
+                                            {
+
+                                                var alreadysubmit = Model.BillingCycleDetails.Where(x => x.RecordingID == item.Id).FirstOrDefault();
+                                                if (alreadysubmit != null)
+                                                {
+                                                    <th><input type="checkbox" id="chkreviewtimeccm@(item.Id)" class="checkboxforsubmitreviews" value="@item.Id" data-time="@reviewTime.ToString(@"hh\:mm\:ss")" checked="checked" disabled="disabled"></th>
+                                                }
+                                                else
+                                                {
+                                                    <th><input type="checkbox" id="chkreviewtimeccm@(item.Id)" class="checkboxforsubmitreviews" value="@item.Id" data-time="@reviewTime.ToString(@"hh\:mm\:ss")" disabled="disabled"></th>
+                                                }
+
+                                            }
+                                        }
+
+
+                                    }
+
+                                    <td>
+                                        @Convert.ToDateTime(item.StartTime).ToString("g")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Page)
+                                    </td>
+                                    <td>
+
+                                        @reviewTime.ToString(@"hh\:mm\:ss")
+                                    </td>
+                                    <td style="white-space:pre-line">
+                                        <span>  @item.Activity</span>
+
+                                        @*@{
+                                                if (item.Activity.Length > 100)
+                                                {
+                                                    @item.Activity.Substring(0, 100);
+                                                    <br />
+                                                    <a onclick="showactivitylink(@item.Id)" style="cursor:pointer">Details</a>
+                                                }
+                                                else
+                                                {
+                                                    @item.Activity;
+                                                }
+                                            }
+
+                                            <div id="activity@(item.Id)" style="display:none">
+
+                                            </div>*@
+
+                                    </td>
+                                    <td>
+                                        @CCM.HelperExtensions.GetUserNamebyID(item.UserId)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <br />
+
+                    <br />
+                    <div>
+                        <label>Total Time for Selected records: </label>
+                        <label id="totselectedtime" class="form-control border-input"></label>
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#call">CALL History</a></li>
+                        <li><a data-toggle="tab" href="#text">TEXT History</a></li>
+                        <li><a data-toggle="tab" href="#email">EMAIL History</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        @* Call Tab *@
+                        <div id="call" class="tab-pane fade in active">
+                            <h5>Total Time Spent On <b>Phone With Patient</b>: @ViewBag.TotalCallTime (hh:mm:ss)</h5>
+
+                            <div id="callHistoryPartialView">
+                                Call History Loading . . .
+                            </div>
+                        </div>
+
+                        @* Text Tab *@
+                        <div id="text" class="tab-pane fade">
+                            <br /><br />
+                            <div id="textHistoryPartialView">
+                                Text History Loading . . .
+                            </div>
+                        </div>
+
+                        @* Email Tab *@
+                        <div id="email" class="tab-pane fade">
+                            <br /><br />
+                            <div id="emailHistoryPartialView">
+                                Email History Loading . . .
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if ((User.IsInRole("QAQC")) && ViewBag.isLocked == false && ViewBag.CurrentPage > 0)
+            {
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <label>Approval status</label>
+                        @Html.DropDownList(
+                        "SubmissionStatus",
+                        new SelectList(
+                            new[]
+                            {
+                                new {Value = "Approved",  Text = "Approved"},
+                                new {Value = "Rejected",  Text = "Rejected"}
+
+                            },
+                            "Value", "Text"),
+                        "Select Approval status", new { @class = "form-control border-input", id = "SubmissionStatus" })
+                    </div>
+                    <br />
+                    <br />
+                    <div class="col-md-12" id="rejectedsubmit" style="display:none;margin-top:15px;float:left">
+                        <div class="col-md-4">
+                            <label>Reason for Rejection</label>
+                            @Html.DropDownList("RejectionReason", (IEnumerable<SelectListItem>)ViewBag.Reasons, null, new { @class = "form-control border-input multiselect" })
+                        </div>
+                        <br />
+
+                        <div class="col-md-4">
+                            <label>Feed Back</label>
+                            @Html.TextArea("FeedBack", new { @class = "form-control border-input", rows = "5" })
+
+                        </div>
+                        <br />
+                        <div class="form-group" style="margin-top:10px;">
+                            <div class="col-md-10">
+                                <input type="button" value="Submit" class="btn btn-success" onclick="updateccmstatustobacktoinprogress()" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <label>Approval status</label>
+                        @Html.DropDownList(
+                        "SubmissionStatus",
+                        new SelectList(
+                            new[]
+                            {
+                                new {Value = "Approved",  Text = "Approved"},
+                                new {Value = "Rejected",  Text = "Rejected"}
+
+                            },
+                            "Value", "Text"),
+                        "Select Approval status", new { @class = "form-control border-input", id = "SubmissionStatus" })
+                    </div>
+                    <br />
+                    <br />
+                    <div class="col-md-12" id="rejectedsubmit" style="display:none;margin-top:15px;float:left">
+                        <div class="col-md-4">
+                            <label>Reason for Rejection</label>
+                            @Html.DropDownList("RejectionReason", (IEnumerable<SelectListItem>)ViewBag.Reasons, null, new { @class = "form-control border-input multiselect"})
+                        </div>
+                        <br />
+                        <div class="col-md-4">
+                            <label>Feed Back</label>
+                            @Html.TextArea("FeedBack", new { @class = "form-control border-input", rows = "5" })
+
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                <input type="button" value="Submit" style="margin-top:10px;" class="btn btn-success" onclick="updateccmstatustobacktoinprogress()" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <br /><br />
+
+            <div class="col-md-12" id="billingcodesdiv" style="display:none">
+
+
+                @if (User.IsInRole("Admin") && ViewBag.CurrentPage > 0)
+                {
+                    <hr />
+                    <div class="col-lg-4">
+
+                        @using (Html.BeginForm())
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.PatientId)
+
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                @Html.Label("CCM Billing Code", htmlAttributes: new { @class = "col-md-12" })
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(
+                                        item => item.BillingCode1,
+                                        new SelectList(
+                                            new[]
+                                            {
+                                                new {Value = "CPT99490", Text = "CCM 20 Minutes - CPT 99490"},
+
+                                                new {Value = "CPT99487", Text = "Complex CCM 60 Minutes - CPT 99487"},
+                                            },
+                                            "Value", "Text", Model),
+                                        "Select Billing Code", new { @class = "form-control border-input" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.Label("CCM Billing Code Additional", htmlAttributes: new { @class = "col-md-12" })
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(
+                                        item => item.BillingCode2,
+                                        new SelectList(
+                                            new[]
+                                            {
+
+                                                new {Value = "CPT99489", Text = "Complex CCM 30 Minutes - CPT 99487 + 99489"},
+
+                                            },
+                                            "Value", "Text", Model),
+                                        "Select Billing Code", new { @class = "form-control border-input" })
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-md-12">
+                                <label>Feed Back</label>
+                                @Html.TextArea("FeedBack1", new { @class = "form-control border-input", rows = "5" })
+
+                            </div>
+                            <br />
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    <input type="button" value="Submit" class="btn btn-success" onclick="addreviewtimesforbilling()" />
+                                </div>
+                            </div>
+
+                        </div>
+                        }
+                    </div>
+
+                }
+
+                @if (User.IsInRole("QAQC") && ViewBag.isLocked == false && ViewBag.CurrentPage > 0)
+                {
+                    <hr />
+                    <div class="col-lg-4">
+
+                        @using (Html.BeginForm())
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.PatientId)
+
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                @Html.Label("CCM Billing Code", htmlAttributes: new { @class = "col-md-12" })
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(
+                                        item => item.BillingCode1,
+                                        new SelectList(
+                                            new[]
+                                            {
+                                                new {Value = "CPT99490", Text = "CCM 20 Minutes - CPT 99490"},
+
+                                                new {Value = "CPT99487", Text = "Complex CCM 60 Minutes - CPT 99487"},
+                                            },
+                                            "Value", "Text", Model),
+                                        "Select Billing Code", new { @class = "form-control border-input" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.Label("CCM Billing Code Additional", htmlAttributes: new { @class = "col-md-12" })
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(
+                                        item => item.BillingCode2,
+                                        new SelectList(
+                                            new[]
+                                            {
+
+                                                new {Value = "CPT99489", Text = "Complex CCM 30 Minutes - CPT 99487 + 99489"},
+
+                                            },
+                                            "Value", "Text", Model),
+                                        "Select Billing Code", new { @class = "form-control border-input" })
+                                </div>
+                            </div>
+
+                            <br />
+                            <div class="col-md-12">
+                                <label>Feed Back</label>
+                                @Html.TextArea("FeedBack1", new { @class = "form-control border-input", rows = "5" })
+
+                            </div>
+                            <br />
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    <input type="button" value="Submit" class="btn btn-success" onclick="addreviewtimesforbilling()" />
+                                </div>
+                            </div>
+
+                        </div>
+                        }
+                    </div>
+
+                }
+
+            </div>
+            @if (ViewBag.isLocked == true)
+            {
+                <input type="hidden" id="billingcycleid" value="@ViewBag.BillingCycleID" />
+                <div class="col-lg-8">
+
+                    <div class="col-md-12">
+                        <label>Comments</label>
+                        @Html.TextArea("BillingCycleComment", new { @class = "form-control border-input", rows = "5" })
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <div class="col-md-10">
+                            <input type="button" value="Submit" class="btn btn-success" onclick="addcommentsforbilling()" />
+                        </div>
+                    </div>
+                    <br />
+                    @if (Model.BillingCycleComments.Count > 0)
+                    {
+                        <div class="col-mg-12">
+                            <br />
+                            <table class="display" id="table1">
+                                <thead>
+                                    <tr>
+
+                                        <th>Details</th>
+                                        <th>Date Created</th>
+                                        <th>Comment by</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.BillingCycleComments)
+                                    {
+                                        <tr>
+
+
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Comments)
+                                            </td>
+                                            <td>
+                                                @Convert.ToDateTime(item.CreatedOn).ToString("g")
+
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CreatedBy)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <br />
+                        </div>
+                    }
+
+                </div>
+            }
+            <div class="modal fade" id="ActivityDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" id="exampleModalLabel">Activity details</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+
+
+                        <div class="modal-body">
+                            <div id="ActivityDetails">
+
+                            </div>
+
+
+
+
+                        </div>
+
+
+                        <div class="modal-footer">
+
+                            <input type="button" value="Close" class="btn btn-success" data-dismiss="modal" />
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="CompareCycleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" id="exampleModalLabel">Patient Cycle Comparison for:  @ViewBag.PatientName</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+
+
+                        <div class="modal-body">
+                            <div id="comparecyclesdiv">
+
+                            </div>
+
+
+
+
+                        </div>
+
+
+                        <div class="modal-footer">
+
+                            <input type="button" value="Close" class="btn btn-success" data-dismiss="modal" />
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <h3>No Activity found against the cycle @ViewBag.CurrentPage</h3>
+    }
+
+}
+catch (Exception ex)
+{
+    <h1>@ex.Message</h1>
+    <h1>@ex.InnerException</h1>
+
+}
+
+@section Scripts {
+    @*<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>*@
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.colVis.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/colreorder/1.5.1/js/dataTables.colReorder.min.js" type="text/javascript"></script>
+    <script>
+        function showactivitylink(id) {
+            $("#ActivityDetails").html($("#activity"+id).html());
+            $("#ActivityDialog").modal("show");
+        }
+        function calculatetotalminutesforselected() {
+            GetTotalTimeofSelectedReview();
+            var totalminutes = 0;
+            //$(".checkboxforsubmitreviews").each(function () {
+            //    if ($(this).prop('checked') == true) {
+
+            //        totalminutes += toSeconds($(this).attr("data-time"));
+            //    }
+            //});
+            //var result =
+            //    fill(Math.floor(totalminutes / 3600), 2) + ':' +
+            //    fill(Math.floor(totalminutes / 60) % 60, 2) + ':' +
+            //    fill(totalminutes % 60, 2);
+            //$("#totselectedtime").text(result);
+        }
+        function Pageload() {
+            $('#table').DataTable({
+                pageLength: 100,
+                scrollY: "50vh",
+                "dom": "Blfrtip",
+                'columnDefs': [{
+                    'targets': 0,
+                    'searchable': false,
+                    'orderable': false
+
+                }],
+                buttons: [{
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: ["thead th:not(.noExport)", ':visible']
+                    }
+                },
+                    , {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    exportOptions: {
+                        columns: ["thead th:not(.noExport)", ':visible']
+                    }
+                }],
+
+            });
+            $('#table1').DataTable({
+                pageLength: 25,
+                scrollY: "50vh",
+                "order": []
+
+            });
+             $("#callHistoryPartialView").load('@Url.Action("_CallHistoryPartial", "ContactPatient", new {patientId = Model.PatientId})');
+            $("#textHistoryPartialView").load('@Url.Action("_TextHistoryPartial", "ContactPatient", new {patientId = Model.PatientId})');
+            $("#emailHistoryPartialView").load('@Url.Action("_EmailHistoryPartial", "ContactPatient", new {patientId = Model.PatientId})');
+            calculatetotalminutesforselected();
+        }
+        $(document).ready(function () {
+            Pageload();           
+            $("#SubmissionStatus").change(function () {
+                if ($("#SubmissionStatus option:selected").text() == "Approved") {
+                    $("#billingcodesdiv").show();
+                    $("#rejectedsubmit").hide();
+                }
+                if ($("#SubmissionStatus option:selected").text() == "Rejected") {
+                    $("#rejectedsubmit").show();
+                    $("#billingcodesdiv").hide();
+                }
+
+            });
+            $(".checkboxforsubmitreviews").change(function () {
+                calculatetotalminutesforselected();
+            });
+            @* Load Partial Views *@
+            
+           
+            $(".checkboxforsubmitreviews").change(function () {
+                calculatetotalminutesforselected();
+            });
+          
+            $("#chkreviewtimeccmall").change(function () {
+
+                var ischecked = $(this).prop("checked");
+                $(".checkboxforsubmitreviews").each(function () {
+                    $(this).prop('checked', ischecked);
+
+                });
+                calculatetotalminutesforselected();
+
+
+            });
+          //  $('.multiselect').multiselect();
+        });
+        function toSeconds(s) {
+            var p = s.split(':');
+            return parseInt(p[0], 10) * 3600 + parseInt(p[1], 10) * 60 + parseInt(p[2], 10);
+        }
+
+        function fill(s, digits) {
+            s = s.toString();
+            while (s.length < digits) s = '0' + s;
+            return s;
+        }
+        function GetMinutes(timeStr) {
+
+            var str = timeStr.split(':');
+            if (str.length == 3) {
+                var hours = parseInt(str[0]);
+                var mins = parseInt(str[1]);
+                var seconds = parseInt(str[2]);
+                var totalMins = (hours * 60) + mins +( seconds/60);
+
+                return totalMins;
+            }
+            else {
+                var hours = parseInt(str[0]);
+                var mins = parseInt(str[1]);
+                var seconds = parseInt(str[2]);
+                var totalMins = (hours * 60) + mins + (seconds / 60);
+
+                return totalMins;
+            }
+
+        };
+        function updateccmstatustobacktoinprogress() {
+            swal({
+                title: "Are you sure?",
+                text: "Are you sure to send back this cycle for more work?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $(".loader").show();
+                        $.ajax({
+                            type: "POST",
+
+                            url: "/CcmFlow/BacktoProgess",
+                            data: {
+                                'patientId': $("#patientid").val(), 'Cycle': $("#cycle").val(), 'Reason': $("#RejectionReason").val(), 'FeedBack': $("#FeedBack").val()
+                            },
+                            success: function (result) {
+                                window.location = "/CcmStatus/Index?status=Clinical Sign-Off";
+
+                            }, error: function (result) {
+                                $(".loader").hide();
+                            }
+                        });
+                    } else {
+
+                    }
+                });
+        }
+        function addcommentsforbilling() {
+            if ($("#BillingCycleComment").val() !="") {
+                $(".loader").show();
+                $.ajax({
+                    type: "POST",
+
+                    url: "/CcmStatus/Addcommentsforbilling",
+                    data: {
+                        'comments': $("#BillingCycleComment").val(), 'BillingCycleID': $("#billingcycleid").val()
+                    },
+                    success: function (result) {
+
+                        $(".loader").hide();
+                        if (result == "True") {
+                            swal({
+                                title: "Success", text: "Submitted successfully!", type:
+                                    "success"
+                            }).then(function () {
+                                location.reload();
+                            }
+                            );
+
+                        }
+                    }, error: function (result) {
+                        $(".loader").hide();
+                    }
+                });
+            }
+        }
+        function addreviewtimesforbilling() {
+            var allowed = false;
+            if ($("#BillingCode1").val() == "") {
+                swal("Select billing code");
+                return false;
+            }
+            var RecordingIDs = [];
+            var RecordingTimes = [];
+            var totalminutes = 0;
+            $(".checkboxforsubmitreviews").each(function () {
+                if ($(this).prop('checked') == true) {
+                    RecordingIDs.push($(this).val());
+                    RecordingTimes.push($(this).attr("data-time"));
+                    totalminutes += toSeconds($(this).attr("data-time"));
+                }
+            });
+            debugger;
+            //var result =
+            //    fill(Math.floor(totalminutes / 3600), 2) + ':' +
+            //    fill(Math.floor(totalminutes / 60) % 60, 2) + ':' +
+            //    fill(totalminutes % 60, 2);
+            //var currentcycleminutes = result.split(':');
+
+            //        var totalminutes =parseInt( currentcycleminutes[1]);
+            //        var totalhours =parseInt( currentcycleminutes[0]);
+            //        var totalseconds =parseInt( currentcycleminutes[2]);
+            //        if (totalhours > 0) {
+            //            allowed = true;
+
+            //        }
+            //        else {
+            //            if (totalminutes >= 20) {
+            //                allowed = true;
+            //            }
+            //        }
+
+
+            ////var totalminutesforallowed = parseFloat((totalminutes % (60 * 24)) % 60);
+            //if (allowed ==false) {
+            //    swal("Total Time for selected Review Encounters is  less than 20 minutes therefore it is not eligibile for billing.");
+            //    return false;
+
+            //}
+            if (RecordingIDs.length > 0) {
+                var texttobshow = "";
+                if ($("#billingcycleid").val() != undefined) {
+                    texttobshow = "This cycle has already been submitted for billing,would you like to update this!";
+                }
+                else {
+                    texttobshow = "Once submitted, you will not be able to edit this cycle!";
+                }
+                swal({
+                    title: "Are you sure?",
+                    text: texttobshow,
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            $(".loader").show();
+                            $.ajax({
+                                type: "POST",
+
+                                url: "/CcmStatus/Addreviewtimesforbilling",
+                                data: {
+                                    'patientId': $("#patientid").val(), 'RecordingIDs': RecordingIDs, 'cycle': $("#cycle").val(), 'BillingCode1': $("#BillingCode1").val(), 'BillingCode2': $("#BillingCode2").val(), 'timeSpans': RecordingTimes, 'isUpdate': false,'FeedBack':$("#FeedBack1").val()
+                                },
+                                success: function (result) {
+
+                                    $(".loader").hide();
+                                    if (result == "True") {
+
+                                        swal({
+                                            title: "Success", text: "Submitted successfully!", type:
+                                                "success"
+                                        }).then(function () {
+                                            window.location = "/CcmStatus/Index?status=Clinical Sign-Off";
+                                        }
+                                        );
+                                    }
+                                    else {
+                                        swal(result);
+                                    }
+                                }, error: function (result) {
+                                    $(".loader").hide();
+                                }
+                            });
+                        } else {
+
+                        }
+                    });
+
+            }
+            else {
+                swal("Please select atleast one record.");
+                return false;
+            }
+
+        }
+        function addbillingcycles() {
+
+        }
+        function GetTotalTimeofSelectedReview() {
+            var RecordingTimes = [];
+
+            $(".checkboxforsubmitreviews").each(function () {
+                if ($(this).prop('checked') == true) {
+                    RecordingTimes.push($(this).val());
+
+                }
+            });
+            debugger;
+            $.ajax({
+                type: "POST",
+
+                url: "/CcmStatus/GetTotalTimeforSelectedReviews",
+                data: {
+                    'timeSpans': RecordingTimes
+                },
+                success: function (result) {
+                    $("#totselectedtime").html(result);
+
+                }, error: function (result) {
+
+                }
+            });
+        }
+        function comparaecycleforreview() {
+
+            var CycleIDs = [];
+
+            $(".chkforcomapre").each(function () {
+                if ($(this).prop('checked') == true) {
+                    CycleIDs.push($(this).val());
+
+                }
+            });
+            if (CycleIDs.length >= 2) {
+                $(".loader").show();
+                $.ajax({
+                    type: "POST",
+
+                    url: "/CcmStatus/ReviewTimeComparison",
+                    data: {
+                        'patientId': $("#patientid").val(), 'cyclesforreivew': CycleIDs, 'cycle': 0
+                    },
+                    success: function (result) {
+                        $("#comparecyclesdiv").html(result);
+                        $("#CompareCycleModal").modal('show');
+                        $(".loader").hide();
+
+                    }, error: function (result) {
+                        $(".loader").hide();
+                    }
+                });
+            }
+            else {
+                swal("Please select atleast two cycles.");
+            }
+        }
+    </script>
+}

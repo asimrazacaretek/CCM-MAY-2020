@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "patient ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("ManualSyncPatientReading", "APIManulSyncReading", FormMethod.Post, new { }))
+{
+    <div class="row">
+        <div style="float: right; margin-right: 50px;">
+            <button style="margin-top: 17px;" type="button" onclick="syncdata()" class="btn btn-success">Patient Device Reading Manual Sync</button>
+        </div>
+    </div>
+}
+@section Scripts {
+
+    <script> 
+        $(document).ready(function () {
+            
+        })
+
+        function syncdata() {
+            $(".loader").show("");
+            $.ajax({
+                type: "GET",
+                url: "/APIManulSyncReading/ManualSyncPatientReading",
+                success: function (data) {
+                    $(".loader").hide();
+                    swal({
+                        title: 'Patient Device Reading Manul Sync',
+                        text: 'Syncing Completed Sucessfully!',
+                        type: 'warning',
+                        showCancelButton: true,
+                      
+                    }); 
+                },
+                error: function (error) {
+                    $(".loader").hide();
+                    alert("Error");
+                }
+            }) 
+        }
+
+    </script>
+    }

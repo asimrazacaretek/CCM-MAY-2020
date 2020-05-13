@@ -1,0 +1,77 @@
+﻿@model IEnumerable<CCM.Models.PatientNotes>
+
+<div class="tablefixwidth">
+
+    <input type="button" id="btnsetimportantnotes" value="Set Important Notes" class="btn btn-success" onclick="setimportantnotes()" />
+    <table id="Patientnotestable" class="display nowrap" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Show on Front</th>
+                <th>Notes</th>
+                <th>Module/Page</th>
+                <th>Date Created</th>
+                <th>Created By</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @if (item.isToShowinPopup == true)
+                    {
+                        <td><input type="checkbox" id="chkshowonpopup@(item.Id)" class="checkboxforshowonpopup" value="@item.Id" checked="checked"></td>
+                    }
+                    else
+                    {
+                        <td><input type="checkbox" id="chkshowonpopup@(item.Id)" class="checkboxforshowonpopup" value="@item.Id"></td>
+                    }
+
+                    <td>@item.Notes</td>
+                    <td>@item.Module</td>
+                    <td>
+                        @Convert.ToDateTime(item.CreatedOn).ToString("g")
+                    </td>
+                    <td> @CCM.HelperExtensions.GetUserNamebyID(item.CreatedBy)</td>
+
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $('#Patientnotestable').DataTable({
+        pageLength: 25,
+        scrollY: "50vh",
+        "ordering": false,
+        "sScrollX": "100%",
+        "scrollX": true
+    });
+    function setimportantnotes() {
+        var notesIds = [];
+        var checkboxvalues = [];
+        $(".checkboxforshowonpopup").each(function () {
+                notesIds.push($(this).val());
+                checkboxvalues.push($(this).prop('checked'));
+        }); 
+        debugger;
+        $.ajax({
+            type: "POST",
+
+            url: "/Patient/SetImportantNotes",
+            data: {
+                'notesIds': notesIds,'checkboxvalues':checkboxvalues
+            },
+            success: function (result) {
+                swal("Successfully saved.");
+                getimportantnotes();
+
+
+            }, error: function (result) {
+
+            }
+        });
+    }
+</script>

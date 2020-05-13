@@ -1,0 +1,239 @@
+﻿@model CCM.Models.PatientLifestyle_DietAndHabit
+
+<style>
+    #checkbox2, #checkbox3 {
+        width: 25px;
+        height: 22px;
+        margin-left: 20px;
+    }
+
+    #checkbox1 {
+        width: 25px;
+        height: 22px;
+        margin-left: 0;
+    }
+
+    #checkboxLabel {
+        font-weight: lighter;
+        font-size: 1em;
+        margin-top: 3px;
+        margin-left: -5px;
+    }
+</style>
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })
+
+<div class="container">
+    <h3 class="pageTitle text-info">DIET & HABIT</h3>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+
+        <br /><br />
+        <div class="form-horizontal">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DietaryRestrictions, htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.TextAreaFor(model => model.DietaryRestrictions, new { @class = "form-control border-input", rows = "5" })
+                    @Html.ValidationMessageFor(model => model.DietaryRestrictions, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <br /><p><label class="greenText">Meal Choices</label></p>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Breakfast, htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Breakfast, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Breakfast, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Lunch, htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Lunch, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Lunch, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Dinner, htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Dinner, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.Dinner, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <br><br />
+            <p><label class="greenText">Lifestyle Habits</label></p>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DoExcercise, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-8 addressRadio">
+                    @Html.RadioButtonFor(model => model.DoExcercise, true)
+                    @Html.Label("Yes", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.DoExcercise, false)
+                    @Html.Label("No", new { @class = "lighterLabel" })
+                </div>
+                @Html.ValidationMessageFor(model => model.DoExcercise, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="row" style="margin-top: -10px;">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ExcerciseHowOften, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.ExcerciseHowOften, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.ExcerciseHowOften, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ExcerciseWhatKind, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.ExcerciseWhatKind, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.ExcerciseWhatKind, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseTobacco, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-8 addressRadio">
+                    @Html.RadioButtonFor(model => model.UseTobacco, true)
+                    @Html.Label("Yes", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.UseTobacco, false)
+                    @Html.Label("No", new { @class = "lighterLabel" })
+                </div>
+                @Html.ValidationMessageFor(model => model.UseTobacco, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="row" style="margin-top: -10px;">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TobaccoHowOften, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.TobaccoHowOften, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.TobaccoHowOften, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TobaccoUseDuration, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.TobaccoUseDuration, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.TobaccoUseDuration, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="form-group">
+                @Html.LabelFor(model => model.AlcoholId, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-8 addressRadio">
+                    @Html.RadioButtonFor(model => model.AlcoholId, 1)
+                    @Html.Label("Frequent", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.AlcoholId, 2)
+                    @Html.Label("Moderate", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.AlcoholId, 3)
+                    @Html.Label("None", new { @class = "lighterLabel" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseCaffeine, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-8 addressRadio">
+                    @Html.RadioButtonFor(model => model.UseCaffeine, true)
+                    @Html.Label("Yes", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.UseCaffeine, false)
+                    @Html.Label("No", new { @class = "lighterLabel" })
+                </div>
+                @Html.ValidationMessageFor(model => model.UseCaffeine, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group" style="margin-top: -10px;">
+                @Html.LabelFor(model => model.CaffeineQuantity, htmlAttributes: new { @class = "col-md-12" })
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.CaffeineQuantity, new { htmlAttributes = new { @class = "form-control border-input" } })
+                    @Html.ValidationMessageFor(model => model.CaffeineQuantity, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <br />
+            <div class="form-group">
+                @Html.LabelFor(model => model.HaveHypoglycemia, htmlAttributes: new { @class = "col-md-12" })
+                <span class="col-md-7">(Do You Get Headaches, Dizzy, Or Irritable If You Miss A Meal?)</span>
+                <div class="col-md-5 addressRadio">
+                    @Html.RadioButtonFor(model => model.HaveHypoglycemia, true)
+                    @Html.Label("Yes", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.HaveHypoglycemia, false)
+                    @Html.Label("No", new { @class = "lighterLabel" })
+                </div>
+                @Html.ValidationMessageFor(model => model.HaveHypoglycemia, "", new { @class = "text-danger" })
+            </div>
+
+            <br />
+            <div class="form-group">
+                @Html.LabelFor(model => model.OnSpecialDiet, htmlAttributes: new { @class = "col-md-12" })
+                <span class="col-md-7">(Gluten Free, Casien Free, Atkins, Paleo, etc.?)</span>
+                <div class="col-md-5 addressRadio">
+                    @Html.RadioButtonFor(model => model.OnSpecialDiet, true)
+                    @Html.Label("Yes", new { @class = "lighterLabel" })
+
+                    @Html.RadioButtonFor(model => model.OnSpecialDiet, false)
+                    @Html.Label("No", new { @class = "lighterLabel" })
+                </div>
+                @Html.ValidationMessageFor(model => model.OnSpecialDiet, "", new { @class = "text-danger" })
+            </div>
+
+            <br />
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Update" class="btn btn-success logdetails" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+        </SCRIPT>
+    }
+}

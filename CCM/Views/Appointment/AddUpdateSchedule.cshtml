@@ -1,0 +1,342 @@
+﻿@model CCM.Models.EditViewModel
+<h2>Addupdate Schedule</h2>
+<div class="col-md-12 pull-left">
+    <div class="row">
+        <div class="col-lg-10 col-sm-offset-1 gen-form-bg">
+            <div class="tabs-sch">
+                <h2>General</h2>
+                <fieldset>
+                    <div class="col-md-12 col-sm-6 pull-left">
+                        @if (User.IsInRole("Sales"))
+                        {<label for="shoemodel">User</label>}
+                        else
+                        {
+                            <label for="shoemodel">Users</label>
+                        }
+                       
+                        @Html.DropDownList("PhysicianIDNew", (IEnumerable<SelectListItem>)ViewBag.Doctor, null, htmlAttributes: new { @class = "form-control" })
+                        <br />
+                    </div>
+                    <div class="col-md-7">
+                        <label class="text-orange" style="text-align: right;color:blue">*Please Select Monday Timing 1st then Click on Checkbox for Bulk Assign*</label>
+                    </div>
+                    <div class="col-md-3 pull-left">
+                        <input type="checkbox" id="chkbulk" class="checkbox check-mark" />
+                        <label>Bulk Time Change</label>
+                    </div>
+
+                    <div class="table-responsive col-md-12 pull-left">
+                        <table class=" table ">
+                            <tr>
+                                <th>
+                                    Days
+                                </th>
+
+                                <th>
+                                    Start Time
+                                </th>
+                                <th>
+                                    End Time
+                                </th>
+                                <th>
+                                    Is Holiday
+                                </th>
+                                @*<th></th>*@
+                            </tr>
+
+                            @for (int i = 0; i < ViewBag.DayList.Count; i++)
+                            {
+                                <tr class="row-select" id="tr@(ViewBag.DayList[i])">
+                                    <td>
+                                        <label class="day-@i">@ViewBag.DayList[i]</label>
+                                    </td>
+                                    <td>
+                                        <div class=" date" id="dtp1">
+                                            <input type="text" id="txtStart" name="StartTime" value="@Model.list[i].StartTime" class="form-control datetime Starttime-@i timepicker" style="margin-top: 0;" />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class=" date" id="dtp2">
+                                            <input type="text" id="txtEnd" name="EndTime" value="@Model.list[i].EndTime" class="form-control datetime EndTime-@i timepicker" style="margin-top: 0;" />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <label class="custom-checkbox">
+                                            <input type="checkbox" class="IsHollyDay-@i" data-weekname="@ViewBag.DayList[i]" id="chk@(ViewBag.DayList[i])" onchange="enabledisablerow('@ViewBag.DayList[i]')" />
+                                            <span></span>
+                                        </label>
+                                    </td>
+
+                                </tr>
+                            }
+                            <tr>
+                                <td><label>From Date to Till Date</label></td>
+                                <td><input type="date" id="fromdate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" /></td>
+                                <td><input type="date" id="tilldate" class="form-control" disabled /></td>
+                                <td><label class="custom-checkbox"><input type="checkbox" id="IdTillDate" onchange="settilldateenabledisable()" /> <span>Is Repeated</span></label></td>
+                            </tr>
+
+                        </table>
+                    </div>
+                    <div class="input-group pull-right">
+                        <input type="button" class="btn btn-default " id="btnSubmit" value="Submit" />
+                    </div>
+                </fieldset>
+                @if (!User.IsInRole("Sales"))
+                {
+                <h2>Holidays</h2>
+                <fieldset>
+                    <div class="col-md-12 pull-left">
+                        @*<button class="btn btn-default " value="Holidays" onclick="showholidaysview()">
+                                Holidays
+                            </button>*@
+                        <div class="col-sm-12">
+
+
+                            <div class="col-md=12" id="holidaysdiv">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>From Date</label>
+                                        <input type="date" id="fromdateH" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>Till Date</label>
+                                        <input type="date" id="tilldateH" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled />
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label style="display: block;">&nbsp;</label>
+                                        <label class="custom-checkbox">
+                                            <input type="checkbox" id="IdTillDateH" onchange="settilldateenabledisableH()" /> <span>Is Multiple</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <textarea id="remarksH" class="form-control" placeholder="Remarks"></textarea>
+                                    </div>
+                                </div>
+                                <br />
+                                <button class="btn btn-primary m-b" value="Holidays" onclick="addholidays()"> Add Holidays</button>
+                                <br />
+                                <br />
+
+                                <div id="allholidays">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+
+
+    <script>
+        function enabledisablerow(id) {
+
+            var ischecked = $("#chk" + id).prop("checked");
+            if (ischecked == true) {
+                $("#tr" + id + " #txtStart").attr('disabled', 'disabled');
+                $("#tr" + id + " #txtEnd").attr('disabled', 'disabled');
+            }
+            else {
+                $("#tr" + id + " #txtStart").removeAttr('disabled');
+                $("#tr" + id + " #txtEnd").removeAttr('disabled');
+
+            }
+        }
+        function settilldateenabledisable() {
+            var ischecked = $("#IdTillDate").prop("checked");
+            if (ischecked == false) {
+                $("#tilldate").attr('disabled', 'disabled');
+            }
+            else {
+                $("#tilldate").removeAttr('disabled');
+            }
+        }
+        function settilldateenabledisableH() {
+            var ischecked = $("#IdTillDateH").prop("checked");
+            if (ischecked == false) {
+                $("#tilldateH").attr('disabled', 'disabled');
+            }
+            else {
+                $("#tilldateH").removeAttr('disabled');
+            }
+        }
+        function addholidays() {
+            $.ajax({
+                type: "GET",
+                url: '/Appointment/AddHolidays',
+                data: {
+                    'FromDate': $("#fromdateH").val(), 'ToDate': $("#tilldateH").val(), 'isRepeated': $("#IdTillDateH").prop("checked"), 'PhysicianID': $("#PhysicianIDNew").val(), 'remarksH': $("#remarksH").val()
+                },
+                success: function (data) {
+                    showallholidays();
+                },
+                error: function () {
+                    Showerrormsg1('Failed');
+                }
+            })
+        }
+        function GetAllHolidays() {
+            $.ajax({
+                type: "GET",
+                url: '/Appointment/GetAllHolidays',
+                data: { 'PhysicianID': $("#PhysicianIDNew").val() },
+
+                success: function (data) {
+                    $("#allholidays").html(data);
+                },
+                error: function () {
+                    Showerrormsg1('Failed');
+                }
+            })
+        }
+        function showallholidays() {
+            $.ajax({
+                type: "GET",
+                url: '/Appointment/GetAllHolidays',
+                data: { 'PhysicianID': $("#PhysicianIDNew").val() },
+                success: function (data) {
+                    $("#allholidays").html(data);
+                },
+                error: function () {
+                    Showerrormsg1('Failed');
+                }
+            })
+        }
+        function deleteorderH(ID) {
+            swal({
+                title: "Are you sure?",
+                text: "You want to delete!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $("#spinner").show();
+                    $.ajax({
+                        type: "GET",
+                        url: "/Appointment/DeletePhysicianHoliday/",
+
+                        data: {
+                            "ID": ID
+                        },
+                        success: function (data) {
+                            $("#spinner").hide();
+                            if (data == true) {
+
+                                showallholidays();
+
+                            }
+
+
+
+                        },
+                        error: function (data) {
+                            $("#spinner").hide();
+                        }
+
+                    });
+
+                } else {
+                    return false;
+                }
+            });
+
+        }
+        $(document).ready(function () {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+
+            today = yyyy + '-' + mm + '-' + dd;
+            document.getElementById("fromdate").setAttribute("min", today);
+            var Shedule = [];
+            var Obj = { Day: '', Subject: '', StartTime: '', EndTime: '', IsHollyDay: false }
+            $('#btnSubmit').click(function () {
+                var ischecked = $("#IdTillDate").prop("checked");
+                if (ischecked == true) {
+                    if ($("#tilldate").val() == "") {
+                        return;
+                    }
+
+                }
+                Shedule = [];
+
+
+                for (var i = 0; i < 7; i++) {
+                    Obj = { WeekDayName: '', Subject: '', StartTime: '', EndTime: '', IsHollyDay: false }
+                    Obj.WeekDayName = $('.day-' + i).text();
+                    Obj.Subject = $('.Subject-' + i).val();
+                    Obj.StartTime = $('.Starttime-' + i).val();
+                    Obj.EndTime = $('.EndTime-' + i).val();
+                    Obj.IsHollyDay = $('.IsHollyDay-' + i).is(':checked');
+                    Shedule.push(Obj);
+                }
+                console.log(Shedule);
+
+                $.ajax({
+                    type: "POST",
+                    url: '/appointment/AddUpdateSchedule',
+                    data:
+                    {
+                        "list": Shedule, "ScheduleValidTill": $("#tilldate").val().toString(), "ScheduleValidFrom": $("#fromdate").val().toString(), "IsTillDate": $('#IdTillDate').is(':checked'), "PhysicianIDNew": $("#PhysicianIDNew").val()
+                    },
+                    success: function (data) {
+                        location.href = "/Appointment/ManageSchedules?LiasionID="+$("#PhysicianIDNew").val();
+                    },
+                    error: function () {
+                        Showerrormsg1('Failed');
+                    }
+                })
+            });
+
+
+
+            //$(".tabs-sch").steps({
+            //    headerTag: "h2",
+            //    bodyTag: "fieldset",
+            //    enableAllSteps: true,
+            //    enableFinishButton: false,
+            //    enablePagination: false,
+            //    titleTemplate: "#title#"
+            //});
+            showallholidays();
+            $('.timepicker').timepicker({
+
+                interval: 20,
+
+                dropdown: true,
+                scrollbar: true
+            });
+            //$('.datetime').datetimepicker({
+            //    format: 'LT'
+            //    //stepping: 15
+            //    //format: 'DD/MM/YYYY HH:mm A'
+            //});
+
+            $('#chkbulk').click(function () {
+                if ($(this).is(":checked")) {
+                    var start = $(".Starttime-0").val();
+                    $('input[name="StartTime"]').val(start);
+
+                    var start = $(".EndTime-0").val();
+                    $('input[name="EndTime"]').val(start);
+                }
+            });
+        });
+    </script>
+}

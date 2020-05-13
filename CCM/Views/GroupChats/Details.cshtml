@@ -1,0 +1,150 @@
+﻿@model IList<CCM.Models.GroupchatdetailsViewModel>
+
+
+<style>
+    .chatdetailswrapper {
+        float: left;
+        width: 100%;
+        padding: 10px 20px;
+        height: 65vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .msgandtime {
+    }
+
+    .msgbody {
+        padding: 5px 10px;
+        border: 0px solid;
+        margin: 0;
+    }
+
+    .sendermsg {
+        font-weight: normal;
+    }
+
+    .receivermsg {
+        font-weight: normal;
+    }
+
+    .sendertime {
+        font-size: 1em;
+        font-weight: normal;
+        text-align: right;
+        width: 100%;
+        color: #776a6a;
+    }
+
+    .receivername {
+        color: #083dd2;
+        border-bottom: 0px solid;
+    }
+
+    .receivetime {
+        font-size: 1em;
+        font-weight: normal;
+        text-align: right;
+        width: 100%;
+        color: #928888;
+    }
+
+    .sendername {
+        color: #08d208;
+        border-bottom: 1px solid;
+    }
+
+    .Sender {
+        float: left;
+        width: 100%;
+    }
+
+    .Receiver {
+        float: left;
+        width: 100%;
+    }
+
+    .receivermsgbody {
+        padding: 10px 15px 0 10px;
+        border: 0px solid;
+        position: relative;
+        border-radius: 6px;
+        float: left;
+        min-width: 26%;
+        max-width: 100%;
+        background-color: white;
+        box-shadow: 0 2px 2px rgb(143, 146, 158);
+    }
+
+    .sendermsgbody {
+        position: relative;
+        padding: 10px 15px 0 10px;
+        border: 0px solid;
+        border-radius: 6px;
+        float: right;
+        min-width: 26%;
+        max-width: 100%;
+        background-color: #cff7da;
+        box-shadow: 0 3px 2px 0px rgb(143, 146, 158);
+    }
+
+        .sendermsgbody::after {
+            content: "";
+            position: absolute;
+            height: 0;
+            width: 0;
+            right: -33px;
+            top: 0px;
+            border: 25px solid transparent;
+            border-left: 15px solid #cff7da;
+            border-top: 1px #cff7da;
+        }
+
+    .receivermsgbody::after {
+        content: "";
+        position: absolute;
+        height: 0;
+        width: 0;
+        left: -32px;
+        top: 0px;
+        border: 25px solid transparent;
+        border-right: 15px solid white;
+        border-top: 1px white;
+    }
+</style>
+<div class="chatdetailswrapper">
+    <input id="lastid" type="hidden" value="@ViewBag.LastID" />
+    @foreach (var gcd in Model)
+    {
+        if (gcd.senderclass == "Sender")
+        {
+            <div class="msgbody @gcd.senderclass">
+                <div class="sendermsgbody">
+
+                    <div class="msgandtime">
+                        <label class="sendermsg">@gcd.Message</label><br />
+                        <label class="sendertime">@gcd.timesent.ToString("ddd, dd MMM yyy hh:mm tt")</label>
+                    </div>
+                </div>
+
+
+            </div>
+        }
+        else
+        {
+            <div class="msgbody @gcd.senderclass">
+                <div class="receivermsgbody">
+                    <label class="receivername">@gcd.sender</label><br />
+                    <div class="msgandtime">
+                        <label class="receivermsg">@gcd.Message</label><br />
+                        <label class="receivetime">@gcd.timesent.ToString("ddd, dd MMM yyy hh:mm tt")</label>
+                    </div>
+                </div>
+            </div>
+
+        }
+
+    }
+</div>
+
+

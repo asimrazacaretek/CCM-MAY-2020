@@ -1,0 +1,120 @@
+﻿@*@model CCM.Models.Icd10Codes*@
+
+<style>
+    .form-horizontal .control-label {
+        text-align: left;
+    }
+</style>
+<div class="custom-title">
+    <h3>Questions</h3>
+</div>
+<div class="row">
+    <br />
+    <h3 class="greenText"><b>Add Questions </b></h3>
+    <hr id="line">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Enter Question</label>
+                <input type="text" id="txtQuestions" class="form-control" /><br />
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Question Type</label>
+                <select id="QType" class="form-control">
+                    <option>Radio</option>
+                    <option>Checkbox</option>
+                    <option>Options</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Section Type</label>
+                <select id="QType" class="form-control">
+                    <option>Caugh</option>
+                    <option>Chronic</option>
+                    <option>Options</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Survey Type</label>
+                <select id="QType" class="form-control">
+                    <option>General</option>
+                    <option>Annual</option>
+                    <option>Weekly</option>
+                    <option>Monthly</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Add Answers</label>
+                <div class="col-sm-9"> <input type="text" id="txtAnswers" class="form-control" /></div>
+                <div class="col-sm-3"><button id="btnAddAns" class="btn btn-success" onclick="addAnswer()"><i class="fa fa-plus-square"></i>Add</button></div>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="panel-body">
+                <table class="table table-hover" id="tblanswer">
+                    <thead>
+                        <tr>
+                            <th>Answer</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <button class="btn btn-success">
+                <i class="fa fa-save"></i>Save
+            </button>
+            <button class="btn btn-danger logdetails" id="btnCancel">Cancel</button>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-12" id="divQuesionsList"></div>
+</div>
+<script>
+    function addAnswer() {
+        var isvalid = true; 
+        $("#tblanswer tbody tr .txtAnswers").each(function () {
+            if ($(this).text() == $("#txtAnswers").val()) {
+                swal("Answer already exists.");
+                isvalid = false
+                return false;
+            }
+        });
+        if (isvalid == false || $("#txtAnswers").val() =="") {
+            return false;
+        }
+        debugger;
+        var rowcount = ($("#tblanswer tbody tr").length) + 1;
+
+        $("#tblanswer").find('tbody').append($('<tr id="answerrow' + rowcount + '">')
+            .append($('<td>')
+                .append($('<input type="hidden" name="txtAnswers"  value="' + $("#txtAnswers").val() + '"><label class="txtAnswers">' + $("#txtAnswers").val() + '</label>')
+                )
+            )
+            .append($('<td>')
+                .append($('<i class="fa fa-trash text-warning" onclick="deleteAnsrow(' + rowcount + ')">')
+                )
+            ));
+    }
+    $("#btnCancel").on("click", function () {
+        $("input[type=text], textarea").val("");
+    })
+    function deleteAnsrow(id) {
+        $("#answerrow" + id).remove();
+    }
+
+</script>

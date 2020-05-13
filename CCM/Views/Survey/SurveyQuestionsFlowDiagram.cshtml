@@ -1,0 +1,838 @@
+﻿<!--Script Help Link https://codepen.io/anon/pen/QXXMqB-->
+@model List<CCM.Models.SurveyFlowNextNode>
+@*.SurveyFlowView*@
+
+<style>
+    .node {
+        cursor: pointer;
+    }
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node text {
+            font: 10px sans-serif;
+        }
+
+    .link {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 1.5px;
+    }
+
+    #mybody {
+        /*overflow: hidden;*/
+        overflow: auto;
+        cursor: grab;
+        text-align: center;
+        background-color: white;
+    }
+</style>
+
+<div id="mybody"></div>
+
+<script>
+    var MappingData = {};
+    var root = {};
+    var IdQorA = 0;
+    var mySurveyID = 0;
+    var myChildren = [];
+    var _myChildren = {};
+    $(document).ready(function () {
+        debugger;
+        getAllQuestionsMapping();
+
+        _nodes = @Html.Raw(Json.Encode(Model));
+
+
+        _nodes.forEach(myNodes);
+        function myNodes(item) {
+            mySurveyID = item.SurveyId;
+            IdQorA++;
+            if (IdQorA == 1) {
+                myChildren.push(
+                    {
+                        "name": item.QuestionText,//item.ParentQuestionID.toString(),
+                        "parentQuestionID": item.ParentQuestionID,
+                        "childQuestionID": item.ChildQuestionID,
+                        "children": [],
+                        "IsQorA": "Q",
+                        "IsFirstOrLast":item.IsFirstOrLast,
+                        "SurveyId": item.SurveyId,
+                        "AnswerIds": item.AnswerIds
+
+                    });
+            }
+            IdQorA++;
+            myChildren[0].children.push({
+                        "name": item.AnswerText,//item.AnswerIds,
+                        "parentQuestionID": item.ParentQuestionID,
+                        "childQuestionID": item.ChildQuestionID,
+                        "children": [],
+                        "IsQorA": "A",
+                        "IsFirstOrLast":item.IsFirstOrLast,
+                        "SurveyId": item.SurveyId,
+                        "AnswerIds": item.AnswerIds
+                    });
+        }
+
+       root = {
+            "name": $('#ddlSurveryName option:selected').text(),//"Survey",
+            "parentQuestionID": 0,
+            "childQuestionID": 0,
+            "children": myChildren,
+            "IsQorA": "S",
+            "IsFirstOrLast":"SurveyNode",
+            "SurveyId": mySurveyID,
+            "AnswerIds": "SA"
+        }
+        @*root = @Html.Raw(Json.Encode(Model));*@ @*@Html.Raw(Json.Encode(ViewBag._myjsonFlowData.Data));*@
+    });
+
+    var margin = {
+        top: 20,
+        right: 120,
+        bottom: 20,
+        left: 120
+    },
+        width = 960 - margin.right - margin.left,
+        height = 800 - margin.top - margin.bottom;
+
+
+
+
+  //     root = {
+  //"name": "Question #2",
+  //"parentQuestionID": 0,
+  //"childQuestionID": 0,
+  //"children": [
+  //  {
+  //    "name": "1",
+  //    "parentQuestionID": 2,
+  //    "childQuestionID": 12,
+  //        "children": [
+  //            {
+  //                "name": "57",
+  //                "parentQuestionID": 12,
+  //                "childQuestionID": 13,
+  //                "children": [
+  //                    {
+  //                        "name": "yahoo",
+  //                        "parentQuestionID": 12,
+  //                        "childQuestionID": 13,
+  //                        "children": null
+  //                    }]
+  //      },
+  //      {
+  //        "name": "58",
+  //        "parentQuestionID": 12,
+  //        "childQuestionID": 31,
+  //        "children": null
+  //      }
+  //    ]
+  //  },
+  //  {
+  //    "name": "2",
+  //    "parentQuestionID": 2,
+  //    "childQuestionID": 3,
+  //    "children": [
+  //      {
+  //        "name": "",
+  //        "parentQuestionID": 3,
+  //        "childQuestionID": 4,
+  //        "children": null
+  //      }
+  //    ]
+  //  },
+  //  {
+  //    "name": "3",
+  //    "parentQuestionID": 2,
+  //    "childQuestionID": 3,
+  //    "children": [
+  //      {
+  //        "name": "",
+  //        "parentQuestionID": 3,
+  //        "childQuestionID": 4,
+  //        "children": null
+  //      }
+  //    ]
+  //  }
+  //]
+  //  };
+
+
+
+
+//   var root = {
+//  "name": "72",
+//  "qId": 0,
+//  "answerIds": null,
+//  "children": [
+//    {
+//      "name": "73",
+//      "qId": 73,
+//      "answerIds": null,
+//      "children": [
+//        {
+//          "name": "218,219",
+//          "qId": 76,
+//          "answerIds": null,
+//          "children": [
+//            {
+//              "name": "76",
+//              "qId": 76,
+//              "answerIds": null,
+//              "children": [
+//                {
+//                  "name": "229,230,231,232,229,230,229,231,230,231,229,232,230,232,231,232,229,230,231,229,230,232,229,231,232,230,231,232,229,230,231,232",
+//                  "qId": 78,
+//                  "answerIds": null,
+//                  "children": [
+//                    {
+//                      "name": "78",
+//                      "qId": 78,
+//                      "answerIds": null,
+//                      "children": [
+//                        {
+//                          "name": "236,237",
+//                          "qId": 86,
+//                          "answerIds": null,
+//                          "children": [
+//                            {
+//                              "name": "86",
+//                              "qId": 86,
+//                              "answerIds": null,
+//                              "children": [
+//                                {
+//                                  "name": "249,250,251,252,253,249,250,249,251,250,251,249,252,250,252,251,252,249,253,250,253,251,253,252,253,249,250,251,249,250,252,249,251,252,250,251,252,249,250,253,249,251,253,250,251,253,249,252,253,250,252,253,251,252,253,249,250,251,252,249,250,251,253,249,250,252,253,249,251,252,253,250,251,252,253,249,250,251,252,253",
+//                                  "qId": 87,
+//                                  "answerIds": null,
+//                                  "children": [
+//                                    {
+//                                      "name": "87",
+//                                      "qId": 87,
+//                                      "answerIds": null,
+//                                      "children": [
+//                                        {
+//                                          "name": "254,255,256,257",
+//                                          "qId": 88,
+//                                          "answerIds": null,
+//                                          "children": [
+//                                            {
+//                                              "name": "88",
+//                                              "qId": 88,
+//                                              "answerIds": null,
+//                                              "children": [
+//                                                {
+//                                                  "name": "258,259",
+//                                                  "qId": 89,
+//                                                  "answerIds": null,
+//                                                  "children": [
+//                                                    {
+//                                                      "name": "89",
+//                                                      "qId": 89,
+//                                                      "answerIds": null,
+//                                                      "children": [
+//                                                        {
+//                                                          "name": "260,261",
+//                                                          "qId": 90,
+//                                                          "answerIds": null,
+//                                                          "children": [
+//                                                            {
+//                                                              "name": "90",
+//                                                              "qId": 90,
+//                                                              "answerIds": null,
+//                                                              "children": [
+//                                                                {
+//                                                                  "name": "262,263",
+//                                                                  "qId": 91,
+//                                                                  "answerIds": null,
+//                                                                  "children": [
+//                                                                    {
+//                                                                      "name": "91",
+//                                                                      "qId": 91,
+//                                                                      "answerIds": null,
+//                                                                      "children": [
+//                                                                        {
+//                                                                          "name": "264,265",
+//                                                                          "qId": 92,
+//                                                                          "answerIds": null,
+//                                                                          "children": [
+//                                                                            {
+//                                                                              "name": "92",
+//                                                                              "qId": 92,
+//                                                                              "answerIds": null,
+//                                                                              "children": [
+//                                                                                {
+//                                                                                  "name": "266,267,268,269",
+//                                                                                  "qId": 93,
+//                                                                                  "answerIds": null,
+//                                                                                  "children": [
+//                                                                                    {
+//                                                                                      "name": "93",
+//                                                                                      "qId": 93,
+//                                                                                      "answerIds": null,
+//                                                                                      "children": [
+//                                                                                        {
+//                                                                                          "name": "270,271,272,273,274,270,271,270,272,271,272,270,273,271,273,272,273,270,274,271,274,272,274,273,274,270,271,272,270,271,273,270,272,273,271,272,273,270,271,274,270,272,274,271,272,274,270,273,274,271,273,274,272,273,274,270,271,272,273,270,271,272,274,270,271,273,274,270,272,273,274,271,272,273,274,270,271,272,273,274",
+//                                                                                          "qId": 94,
+//                                                                                          "answerIds": null,
+//                                                                                          "children": [
+//                                                                                            {
+//                                                                                              "name": "94",
+//                                                                                              "qId": 94,
+//                                                                                              "answerIds": null,
+//                                                                                              "children": [
+//                                                                                                {
+//                                                                                                  "name": "95",
+//                                                                                                  "qId": 95,
+//                                                                                                  "answerIds": null,
+//                                                                                                  "children": [
+//                                                                                                    {
+//                                                                                                      "name": "290,291,292,293,294,295,296,290,291,290,292,291,292,290,293,291,293,292,293,290,294,291,294,292,294,293,294,290,295,291,295,292,295,293,295,294,295,290,296,291,296,292,296,293,296,294,296,295,296,290,291,292,290,291,293,290,292,293,291,292,293,290,291,294,290,292,294,291,292,294,290,293,294,291,293,294,292,293,294,290,291,295,290,292,295,291,292,295,290,293,295,291,293,295,292,293,295,290,294,295,291,294,295,292,294,295,293,294,295,290,291,296,290,292,296,291,292,296,290,293,296,291,293,296,292,293,296,290,294,296,291,294,296,292,294,296,293,294,296,290,295,296,291,295,296,292,295,296,293,295,296,294,295,296,290,291,292,293,290,291,292,294,290,291,293,294,290,292,293,294,291,292,293,294,290,291,292,295,290,291,293,295,290,292,293,295,291,292,293,295,290,291,294,295,290,292,294,295,291,292,294,295,290,293,294,295,291,293,294,295,292,293,294,295,290,291,292,296,290,291,293,296,290,292,293,296,291,292,293,296,290,291,294,296,290,292,294,296,291,292,294,296,290,293,294,296,291,293,294,296,292,293,294,296,290,291,295,296,290,292,295,296,291,292,295,296,290,293,295,296,291,293,295,296,292,293,295,296,290,294,295,296,291,294,295,296,292,294,295,296,293,294,295,296,290,291,292,293,294,290,291,292,293,295,290,291,292,294,295,290,291,293,294,295,290,292,293,294,295,291,292,293,294,295,290,291,292,293,296,290,291,292,294,296,290,291,293,294,296,290,292,293,294,296,291,292,293,294,296,290,291,292,295,296,290,291,293,295,296,290,292,293,295,296,291,292,293,295,296,290,291,294,295,296,290,292,294,295,296,291,292,294,295,296,290,293,294,295,296,291,293,294,295,296,292,293,294,295,296,290,291,292,293,294,295,290,291,292,293,294,296,290,291,292,293,295,296,290,291,292,294,295,296,290,291,293,294,295,296,290,292,293,294,295,296,291,292,293,294,295,296,290,291,292,293,294,295,296",
+//                                                                                                      "qId": 96,
+//                                                                                                      "answerIds": null,
+//                                                                                                      "children": [
+//                                                                                                        {
+//                                                                                                          "name": "96",
+//                                                                                                          "qId": 96,
+//                                                                                                          "answerIds": null,
+//                                                                                                          "children": [
+//                                                                                                            {
+//                                                                                                              "name": "297,298,299,297,298,297,299,298,299,297,298,299",
+//                                                                                                              "qId": 97,
+//                                                                                                              "answerIds": null,
+//                                                                                                              "children": [
+//                                                                                                                {
+//                                                                                                                  "name": "97",
+//                                                                                                                  "qId": 97,
+//                                                                                                                  "answerIds": null,
+//                                                                                                                  "children": [
+//                                                                                                                    {
+//                                                                                                                      "name": "98",
+//                                                                                                                      "qId": 98,
+//                                                                                                                      "answerIds": null,
+//                                                                                                                      "children": [
+//                                                                                                                        {
+//                                                                                                                          "name": "301,302",
+//                                                                                                                          "qId": 99,
+//                                                                                                                          "answerIds": null,
+//                                                                                                                          "children": [
+//                                                                                                                            {
+//                                                                                                                              "name": "99",
+//                                                                                                                              "qId": 99,
+//                                                                                                                              "answerIds": null,
+//                                                                                                                              "children": [
+//                                                                                                                                {
+//                                                                                                                                  "name": "303,304,305,303,304,303,305,304,305,303,304,305",
+//                                                                                                                                  "qId": 100,
+//                                                                                                                                  "answerIds": null,
+//                                                                                                                                  "children": [
+//                                                                                                                                    {
+//                                                                                                                                      "name": "100",
+//                                                                                                                                      "qId": 100,
+//                                                                                                                                      "answerIds": null,
+//                                                                                                                                      "children": [
+//                                                                                                                                        {
+//                                                                                                                                          "name": "306,307",
+//                                                                                                                                          "qId": 101,
+//                                                                                                                                          "answerIds": null,
+//                                                                                                                                          "children": [
+//                                                                                                                                            {
+//                                                                                                                                              "name": "101",
+//                                                                                                                                              "qId": 101,
+//                                                                                                                                              "answerIds": null,
+//                                                                                                                                              "children": [
+//                                                                                                                                                {
+//                                                                                                                                                  "name": "308,309",
+//                                                                                                                                                  "qId": 102,
+//                                                                                                                                                  "answerIds": null,
+//                                                                                                                                                  "children": [
+//                                                                                                                                                    {
+//                                                                                                                                                      "name": "102",
+//                                                                                                                                                      "qId": 102,
+//                                                                                                                                                      "answerIds": null,
+//                                                                                                                                                      "children": []
+//                                                                                                                                                    }
+//                                                                                                                                                  ]
+//                                                                                                                                                }
+//                                                                                                                                              ]
+//                                                                                                                                            }
+//                                                                                                                                          ]
+//                                                                                                                                        }
+//                                                                                                                                      ]
+//                                                                                                                                    }
+//                                                                                                                                  ]
+//                                                                                                                                }
+//                                                                                                                              ]
+//                                                                                                                            }
+//                                                                                                                          ]
+//                                                                                                                        }
+//                                                                                                                      ]
+//                                                                                                                    }
+//                                                                                                                  ]
+//                                                                                                                }
+//                                                                                                              ]
+//                                                                                                            }
+//                                                                                                          ]
+//                                                                                                        }
+//                                                                                                      ]
+//                                                                                                    }
+//                                                                                                  ]
+//                                                                                                }
+//                                                                                              ]
+//                                                                                            }
+//                                                                                          ]
+//                                                                                        }
+//                                                                                      ]
+//                                                                                    }
+//                                                                                  ]
+//                                                                                }
+//                                                                              ]
+//                                                                            }
+//                                                                          ]
+//                                                                        }
+//                                                                      ]
+//                                                                    }
+//                                                                  ]
+//                                                                }
+//                                                              ]
+//                                                            }
+//                                                          ]
+//                                                        }
+//                                                      ]
+//                                                    }
+//                                                  ]
+//                                                }
+//                                              ]
+//                                            }
+//                                          ]
+//                                        }
+//                                      ]
+//                                    }
+//                                  ]
+//                                }
+//                              ]
+//                            }
+//                          ]
+//                        }
+//                      ]
+//                    }
+//                  ]
+//                }
+//              ]
+//            }
+//          ]
+//        }
+//      ]
+//    }
+//  ]
+//};
+
+    //var root = {
+    //    "QA":"test",
+    //    "name": "flare",
+    //    "children": [{
+    //        "name": "_display",
+    //        "children": [{
+    //            "QA":"test",
+    //            "name": "DirtySprite",
+    //            "children": []
+    //        }, {
+    //            "name": "LineSprite"
+    //        }, {
+    //            "name": "RectSprite"
+    //        }, {
+    //            "name": "TextSprite"
+    //        }]
+    //    }, {
+    //        "QA":"test",
+    //        "name": "_flex",
+    //        "children": [{
+    //            "name": "FlareVis"
+    //        }]
+    //    }]
+    //};
+
+
+    var i = 0,
+        duration = 750,
+        rectW = 60,
+        rectH = 30;
+
+    var tree = d3.layout.tree().nodeSize([70, 40]);
+    var diagonal = d3.svg.diagonal()
+        .projection(function (d) {
+            return [d.x + rectW / 2, d.y + rectH / 2];
+        });
+
+    var svg = d3.select("#mybody").append("svg").attr("width", 1300).attr("height", 1000)
+        .call(zm = d3.behavior.zoom().scaleExtent([0.3, 3]).on("zoom", redraw)).append("g")
+        .attr("transform", "translate(" + 350 + "," + 20 + ")");
+
+    //necessary so that zoom knows where to zoom and unzoom from
+    zm.translate([350, 20]);
+
+    root.x0 = 0;
+    root.y0 = height / 2;
+
+    function collapse(d) {
+        if (d.children) {
+            d._children = d.children;
+            d._children.forEach(collapse);
+            d.children = null;
+        }
+    }
+
+    root.children.forEach(collapse);
+    update(root);
+
+    d3.select("#mybody").style("height", "800px");
+
+    function update(source) {
+      
+       
+        // Compute the new tree layout.
+        var nodes = tree.nodes(root).reverse(),
+            links = tree.links(nodes);
+
+        // Normalize for fixed-depth.
+        nodes.forEach(function (d) {
+            d.y = d.depth * 180;
+        });
+
+        // Update the nodes…
+        var node = svg.selectAll("g.node")
+            .data(nodes, function (d) {
+                return d.id || (d.id = ++i);
+            });
+
+        // Enter any new nodes at the parent's previous position.
+        var nodeEnter = node.enter().append("g")
+            .attr("class", "node")
+            .attr("transform", function (d) {
+                return "translate(" + source.x0 + "," + source.y0 + ")";
+            })
+            .on("click", click);
+
+        //nodeEnter.append("rect")
+        //    .attr("width", rectW)
+        //    .attr("height", rectH)
+        //    .attr("stroke", "black")
+        //    .attr("stroke-width", 1)
+        //    .style("fill", function (d) {
+        //        return d._children ? "lightsteelblue" : "#fff";
+        //    });
+
+        nodeEnter.append("circle")
+            .attr("r", 10)
+            .attr("cx", 30)
+            .attr("cy", 5)
+            .attr("stroke", "black")
+            .attr("stroke-width", 1)
+            .style("fill", function (d) {
+                return d._children ? "lightsteelblue" : "#fff";
+            });
+
+        //nodeEnter.append("text")
+        //    .attr("x", rectW / 2)
+        //    .attr("y", rectH / 2)
+        //    .attr("dy", ".35em")
+        //    .attr("text-anchor", "middle")
+        //    .text(function (d) {
+        //        return d.name;
+        //    });
+
+        nodeEnter.append("text")
+            .attr("x", rectW / 2)
+            .attr("y", -15)
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .text(function (d) {
+                if (d.name.length > 13) { return d.name.slice(0, 13)+'...'; }
+                else { return d.name; }
+            });
+
+        // Here we add an SVG title element the contents of which is effectively rendered in a tooltip  
+       nodeEnter.append("svg:title")
+          .text(function(d) { return d.name; });
+
+        // Transition nodes to their new position.
+        var nodeUpdate = node.transition()
+            .duration(duration)
+            .attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+
+        nodeUpdate.select("rect")
+            .attr("width", rectW)
+            .attr("height", rectH)
+            .attr("stroke", "black")
+            .attr("stroke-width", 1)
+            .style("fill", function (d) {
+                return d._children ? "lightsteelblue" : "#fff";
+            });
+
+        nodeUpdate.select("text")
+            .style("fill-opacity", 1);
+
+        // Transition exiting nodes to the parent's new position.
+        var nodeExit = node.exit().transition()
+            .duration(duration)
+            .attr("transform", function (d) {
+                return "translate(" + source.x + "," + source.y + ")";
+            })
+            .remove();
+
+        nodeExit.select("rect")
+            .attr("width", rectW)
+            .attr("height", rectH)
+            //.attr("width", bbox.getBBox().width)""
+            //.attr("height", bbox.getBBox().height)
+            .attr("stroke", "black")
+            .attr("stroke-width", 1);
+
+        nodeExit.select("text");
+
+        // Update the links…
+        var link = svg.selectAll("path.link")
+            .data(links, function (d) {
+                return d.target.id;
+            });
+
+        // Enter any new links at the parent's previous position.
+        link.enter().insert("path", "g")
+            .attr("class", "link")
+            .attr("x", rectW / 2)
+            .attr("y", rectH / 2)
+            .attr("d", function (d) {
+                var o = {
+                    x: source.x0,
+                    y: source.y0
+                };
+                return diagonal({
+                    source: o,
+                    target: o
+                });
+            });
+
+        // Transition links to their new position.
+        link.transition()
+            .duration(duration)
+            .attr("d", diagonal);
+
+        // Transition exiting nodes to the parent's new position.
+        link.exit().transition()
+            .duration(duration)
+            .attr("d", function (d) {
+                var o = {
+                    x: source.x,
+                    y: source.y
+                };
+                return diagonal({
+                    source: o,
+                    target: o
+                });
+            })
+            .remove();
+
+        // Stash the old positions for transition.
+        nodes.forEach(function (d) {
+            d.x0 = d.x;
+            d.y0 = d.y;
+        });
+    }
+
+    // Toggle children on click.
+    function click(d) {
+        debugger;
+        if (d.IsQorA == "A" || d.IsQorA == "") {
+            IdQorA = 0;
+            _myChildren = {};
+            $(MappingData.surveyQuestionSequenceMappings).each(function () {
+                var item = $(this)[0];
+                if (d.childQuestionID == item.ParentQuestionID) {
+                    //Start 31-07-2019
+                    var QAText = {};
+                    $(MappingData.surveyQuestions).each(function () {
+                        var item1 = $(this)[0];
+                        if (item1.Id == item.ParentQuestionID) {
+                            QAText = item1;//.QuestionText;
+                        }
+                    });
+                    //End 31-07-2019
+                    IdQorA++;
+                    if (IdQorA == 1) {
+                        _myChildren = {
+                            "name": QAText.QuestionText,//item.ParentQuestionID.toString(),
+                            "parentQuestionID": item.ParentQuestionID,
+                            "childQuestionID": item.ChildQuestionID,
+                            "children": [],
+                            "IsQorA": "Q",
+                            "IsFirstOrLast": item.IsFirstOrLast,
+                            "SurveyId": item.SurveyId,
+                            "AnswerIds": item.AnswerIds
+
+                        };
+                    }
+                    IdQorA++;
+                    //Start 31-07-2019
+                    var AnswerText = "";
+                    item.AnswerIds.split(',').forEach(function (aa) {
+                        var i = item.AnswerIds.split(',').length;
+                        //if (a.Id == parseInt(item.AnswerIds.split(','))) { AnswerText = a.AnswerText; }
+                        QAText.surveyAnswers.forEach(function (a) {
+                            if (i == 1) {
+                                if (a.Id == parseInt(aa)) { AnswerText = a.AnswerText; }
+                            }
+                            else {
+                                if (AnswerText == "") {
+                                    if (a.Id == parseInt(aa)) { AnswerText = a.AnswerText; }
+                                }
+                                else {
+                                    if (a.Id == parseInt(aa)) { AnswerText = AnswerText + ", " + a.AnswerText; }
+                                }
+                            }
+                        });
+                    });
+                    if (_myChildren.AnswerIds == "")
+                    { AnswerText = QAText.surveyAnswers[0].ClinicalNotes; }
+                    //End 31-07-2019
+                    debugger;
+                    _myChildren.children.push({
+                        "name": AnswerText,//item.AnswerIds,
+                        "parentQuestionID": item.ParentQuestionID,
+                        "childQuestionID": item.ChildQuestionID,
+                        "children": [],
+                        "IsQorA": "A",
+                        "IsFirstOrLast": item.IsFirstOrLast,
+                        "SurveyId": item.SurveyId,
+                        "AnswerIds": item.AnswerIds
+                    });
+                    //d.parent.children[0]._children = [];
+                    //d.parent.children[0]._children.push(_myChildren)
+                    d._children = [];
+                    d._children.push(_myChildren);
+                    d.children = null;
+                }
+            });
+        }
+            //MappingData.surveyQuestions.forEach(_questions);
+            //function _questions(item) {
+
+            //}
+
+        debugger;
+        if (d.children) {
+            d._children = d.children;
+            d.children = null;
+        } else {
+           d.children = d._children;
+            d._children = null;
+        }
+         
+        update(d);
+
+    }
+
+    //Redraw for zoom
+    function redraw() {
+        //console.log("here", d3.event.translate, d3.event.scale);
+        svg.attr("transform",
+            "translate(" + d3.event.translate + ")"
+            + " scale(" + d3.event.scale + ")");
+    }
+
+
+
+    //Get Next Node 30-07-2019
+
+    function getAllQuestionsMapping() {
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Survey/FlowAllNextNode",
+            data: {
+                'SurveryId': $("#ddlSurveryName").val(), 'SectionId': $("#ddlSurverySections").val(), 'SurveryTypeId': $("#ddlSurveryType").val()
+            },
+            success: function (result) {
+                $(".loader").hide();
+                console.log(result);
+                MappingData = result;
+                //$("#surveyquestionsflow").hide();
+                //$("#surveyquestionsmapping").show();
+                //$("#surveyquestionsmapping").html(result);
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+
+    //End Get Next Node 30-07-2019
+
+
+    //Get Next Node 29-07-2019
+    function FlowNode(_surveyId, _ChildQuestionId, _IsFirstOrLast,currentnode) {
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Survey/FlowNextNode",
+            data: {
+                'SurveryId': $("#ddlSurveryName").val(), 'ChildQuestionID': _ChildQuestionId, 'IsFirstOrLast': _IsFirstOrLast
+            },
+            success: function (result) {
+                debugger;
+                //___________________________________
+
+                result.forEach(_myNodes);
+                function _myNodes(item) {
+                    IdQorA++;
+                    if (IdQorA == 1) {
+                        myChildren.push(
+                            {
+                                "id": 3,
+                                "name": item.ParentQuestionID,
+                                "parentQuestionID": item.ParentQuestionID,
+                                "childQuestionID": item.ChildQuestionID,
+                                "children": [],
+                                "IsQorA": "Q",
+                                "IsFirstOrLast":item.IsFirstOrLast,
+                                "SurveyId": item.SurveyId,
+                                "AnswerIds": item.AnswerIds
+
+                            });
+                    }
+                    IdQorA++;
+                    //myChildren[0].children.push({
+                    //            "id": IdQorA,
+                    //            "name": item.AnswerIds,
+                    //            "parentQuestionID": item.ParentQuestionID,
+                    //            "childQuestionID": item.ChildQuestionID,
+                    //            "children": [],
+                    //            "IsQorA": "A",
+                    //            "IsFirstOrLast":item.IsFirstOrLast,
+                    //            "SurveyId": item.SurveyId,
+                    //            "AnswerIds": item.AnswerIds
+                    //        });
+                }
+                currentnode._children = [];
+                currentnode._children.push(myChildren);
+                //return myChildren;
+                //___________________________________
+
+                $(".loader").hide();
+                //$("#surveyquestionsmapping").hide();
+                //$("#surveyquestionsflow").show();
+                //$("#surveyquestionsflow").html(result);
+            }, error: function (result) {
+
+                $(".loader").hide();
+            }
+        });
+    }
+    //End Get Next Node 29-07-2019
+
+</script>

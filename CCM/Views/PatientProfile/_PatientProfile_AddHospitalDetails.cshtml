@@ -1,0 +1,354 @@
+﻿@model CCM.Models.PatientProfile_HospitalDetails
+<style>
+    .lblbold {
+        text-align: left;
+        font-weight: bold;
+        color: green;
+        font-size: 16px;
+        border: 1px solid;
+    }
+
+    .modal {
+        position: fixed;
+        top: 35%;
+        right: 0;
+        bottom: 0;
+        left: 10%;
+        z-index: 1040;
+        display: none;
+        /* overflow: auto; */
+        overflow-y: hidden !important;
+    }
+
+    .modal-content {
+        position: relative;
+        background-color: #fff;
+        border: 1px solid #999;
+        border: 1px solid rgba(0,0,0,0.2);
+        border-radius: 6px;
+        outline: 0;
+        -webkit-box-shadow: 0 3px 9px rgba(0,0,0,0.5);
+        box-shadow: 0 3px 9px rgba(0,0,0,0.5);
+        background-clip: padding-box;
+    }
+
+    .modal-backdrop.fade.in {
+        display: none;
+    }
+    .modal-footer{
+        margin-top:0 !important;
+       margin-right:15px !important;
+    }
+</style>
+@using (Html.BeginForm("PatientProfile_AddHospitalDetails", "PatientProfile", FormMethod.Post, new { @class = "form-horizontal", id = "form_AddHospital", role = "form", enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.PatientId)
+    <input type="hidden" id="FullName" name="FullName" class="fullname" />
+    <input type="hidden" id="NPI" name="NPI" />
+    <input type="hidden" id="Phone" name="Phone" />
+    <input type="hidden" id="Rate" name="Rate" />
+    <input type="hidden" id="TotalDays" name="TotalDays" />
+    <input type="hidden" id="City" name="City" />
+    <input type="hidden" id="Country" name="Country" />
+    <input type="hidden" id="State" name="State" />
+
+    <div class="form-horizontal">
+        <h4>Hospital Hisotry</h4>
+        <hr />
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.HospitalName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-12" style="padding: 0px;">
+                        @Html.DropDownListFor(item => item.HospitalsId,
+                        new SelectList(ViewBag.hospitals, "Value", "Text", Model),"Select Hospitals"
+                        , new { @class = "form-control border-input", @id = "HospitalsId",onchange = "hospitaldetails()"  })
+                        @Html.ValidationMessageFor(model => model.HospitalsId, "", new { @class = "text-danger" })
+                    </div>
+                    @*<div class="col-md-1" style="padding:0px; text-align:right;">
+                        <button id="btnNewHospital" class="btn btn-success logdetails" style="padding:6px !important; " data-toggle="modal" data-target="#myModalhospital"><i class="fa fa-plus-square"></i></button>
+                    </div>*@
+                </div>
+            </div>
+            <div class="col-md-2"><label>City :</label><span class="City"></span></div>
+            <div class="col-md-2">
+                <label>Country : </label><span class="Country"></span>
+            </div>
+            <div class="col-md-2">
+                <label>State : </label><span class="State"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Search</label>
+            <div class="col-md-4"><input type="text" id="searchnpi" class="form-control border-input" placeholder="Search by NPI,Name or Number" required="required" /></div>
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.FullName, "FullName : ")
+                <span class="FullName"></span>
+
+                @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+            </div>
+
+
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.NPI, "NPI : ")
+                <span class="NPI"></span>
+                @Html.ValidationMessageFor(model => model.NPI, "", new { @class = "text-danger" })
+            </div>
+
+
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Phone, "Phone : ")
+                <span class="Phone"></span>
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.ICD10Codes, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-input" id="ICD10Codes" name="ICD10Codes" required="required">
+                    @Html.ValidationMessageFor(model => model.ICD10Codes, "", new { @class = "text-danger", })
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ICD10Codes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.Editor("ICD10Codes", new { htmlAttributes = new { @class = "form-control border-input validaterefillinfo", id = "ICD10Codes", required = "required" } })
+                @Html.ValidationMessageFor(model => model.ICD10Codes, "", new { @class = "text-danger", })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @*@Html.LabelFor(model => model.Doctors, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-2">
+                    @Html.DropDownListFor(item => item.PhysicianId,
+                    new SelectList(ViewBag.physcians, "Value", "Text", Model)
+                    , new { @class = "form-control border-input",@id="ddldoctors" })
+                    @Html.ValidationMessageFor(model => model.PhysicianId, "", new { @class = "text-danger" })
+                </div>*@
+
+
+            @Html.LabelFor(model => model.Department, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.Department, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                @*@Html.DropDownListFor(item => item.DepartmentId,
+                    new SelectList(ViewBag.department, "Value", "Text", Model)
+                    , new { @class = "form-control border-input",@id="ddldepartment" })*@
+                @Html.ValidationMessageFor(model => model.Department, "", new { @class = "text-danger" })
+            </div>
+
+
+            @Html.LabelFor(model => model.StayType, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.DropDownList("StayType", new List<SelectListItem>
+                    { new SelectListItem {Value = "Initial Hospitalization",  Text = "Initial Hospitalization"},
+                    new SelectListItem {Value = "Re-Admission",  Text = "Re-Admission"}
+                    }, "Type Of Stay", new { @class = "form-control border-input" })
+                @Html.ValidationMessageFor(model => model.StayType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Reason, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.Reason, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Reason, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.AdmitDate, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.AdmitDate, new { htmlAttributes = new { @class = "form-control", required = "required", onchange = "totalamount()" } })
+                @Html.ValidationMessageFor(model => model.AdmitDate, "", new { @class = "text-danger" })
+
+            </div>
+
+            @Html.LabelFor(model => model.DischargeDate, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.DischargeDate, new { htmlAttributes = new { @class = "form-control", required = "required", onchange = "totalamount()" } })
+                @Html.ValidationMessageFor(model => model.DischargeDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top:10px;">
+            <div class="col-md-3">
+                @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-8" })
+                <label class="Rate control-label col-md-3 col-md-offset-1 lblbold">1500</label>
+            </div>
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.TotalDays, htmlAttributes: new { @class = "control-label col-md-6" })
+                <label class="control-label TotalDays col-md-4 lblbold" style="text-align:left;font-weight:bold;">0</label>
+            </div>
+            <div class="col-md-4">
+                <label class="control-label col-md-8" style="margin-top:-8px">Estimated Amount Paid by insurance for stay in hospital :</label>
+                <label class="control-label col-md-4 lblbold" id="totalAmount">0$</label>
+            </div>
+            <div class="col-md-3 text-right">
+                <button type="button" class="btn btn-success" data-dismiss="modal" id="AddBtn" onclick="SubmitForm('form_AddHospital','Saved')"><i class="fa fa-plus-square"></i>Save Visit</button>
+                <button type="button" class="btn btn-danger " data-dismiss="modal" id="btnCancel"><i class="fa fa-window-close"></i>Close</button>
+                @*<input type="button" value="Save Visit" id="AddBtn" class="btn btn-success logdetails "  />
+                <input type="button" value="Cancel"  class="btn btn-danger logdetails" />*@
+            </div>
+
+            @*<div class="col-md-2">
+                <label id="Rate">1500</label>
+                @*<input type="number" class="form-control" id="Rate" name="Rate" value="1500" onchange="totalamount()" />*@
+            @*@Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })*@
+
+        </div>
+
+
+
+        @*@Html.LabelFor(model => model.TotalDays, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                <label class="control-label TotalDays">0</label>
+                @*<input type="number" class="form-control" id="TotalDays" name="TotalDays" readonly="readonly" value="0" onchange="totalamount()" />
+                @Html.ValidationMessageFor(model => model.TotalDays, "", new { @class = "text-danger" })
+                <label class="txt-center text-danger">Total Nights in Hospital autimatically calculated</label>
+            </div>*@
+
+
+    </div>
+
+    <hr />
+}
+
+@*<div id="myModalhospital" class="modal fade in" role="dialog" style=" padding-right: 0px;">
+    <div class="modal-dialog">
+
+         Modal content
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">Add New Hospital</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="col-md-3">Hospital Name</label>
+                        <div class="col-md-12"><input type="text" id="txthospitalName" class="form-control" /></div>
+                    </div>
+                   
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-4">
+                            <label>City</label>
+                            <input type="text" id="txtCityName" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>Country</label>
+                            <input type="text" id="txtCountryName" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>State</label>
+                            <input type="text" id="txtStateName" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-success" data-dismiss="modal"><i class="fa fa-plus-square" onclick="NewHospital()"></i>Add</button>
+                        <button type="button" class="btn btn-danger " data-dismiss="modal"><i class="fa fa-window-close"></i>Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+    </div>*@
+<script>
+    new Def.Autocompleter.Search('ICD10Codes', 'https://clinicaltables.nlm.nih.gov/api/icd10cm/v3/search?sf=code,name',
+        { tableFormat: true, valueCols: [0, 1], colHeaders: ['Code', 'Name'] });
+
+    new Def.Autocompleter.Search('searchnpi', 'https://clinicaltables.nlm.nih.gov/api/npi_idv/v3/search?df=NPI,name.full,addr_practice.full,addr_mailing.full,addr_practice.phone,addr_mailing.phone,provider_type'
+                                                                        /*{ tableFormat: true, valueCols: [0], colHeaders: ['NPI', 'Name', 'Gender', 'Type', 'Practice Address', 'Mailing Address', 'Phone1', 'Phone2'] }*/);
+    Def.Autocompleter.Event.observeListSelections('searchnpi', function () {
+        if ($("#searchnpi").val() != "") {
+            var drugField = $('#searchnpi')[0];
+            var drugFieldVal = drugField.value;
+            var searchvalues = drugFieldVal.split(' - ');
+            var autocomp = drugField.autocomp;
+            $("#NPI").val(searchvalues[0]);
+            $("#FullName").val(searchvalues[1]);
+            //$("#Speciality").val(searchvalues[6]);
+            //$("#Address1").val(searchvalues[2]);
+            //$("#Address2").val(searchvalues[3]);
+            $("#Phone").val(searchvalues[4]);
+            //$("#MobilePhoneNumber").val(searchvalues[5]);
+            $(".Phone").text(searchvalues[4]);
+            $(".NPI").text(searchvalues[0]);
+            $(".FullName").text(searchvalues[1]);
+        }
+    });
+
+    function hospitaldetails() {
+        debugger;
+        var hospitalid = $("#HospitalsId").val();
+        URL = "/PatientProfile/HospitalDetails?hospitalId=" + hospitalid;
+        $.ajax({
+            url: URL,
+            type: "GET",
+
+            success: function (result) {
+                $(".loader").hide();
+                var res = result.split("/");
+                $(".City").text(res[0]); $(".Country").text(res[1]); $(".State").text(res[2]);
+                $("#City").val(res[0]); $("#Country").val(res[1]); $("#State").val(res[2]);
+            }
+        });
+    }
+    function NewHospital() {
+        var name = $("#txthospitalName").val();
+        var city = $("#txtCityName").val();
+        var country = $("#txtCountryName").val();
+        var state = $("#txtStateName").val();
+        URL = "/PatientProfile/HospitalDetails?hospitalId=" + hospitalid;
+        $.ajax({
+            url: URL,
+            type: "GET",
+
+            success: function (result) {
+                $(".loader").hide();
+                var res = result.split("/");
+                $(".City").text(res[0]); $(".Country").text(res[1]); $(".State").text(res[2]);
+                $("#City").val(res[0]); $("#Country").val(res[1]); $("#State").val(res[2]);
+            }
+        });
+    }
+
+    $("#btnCancel").on("click", function () {
+        $("#divAddHospital").css("display", "none");
+        $("#btnAddHospital").show();
+        $("#btnAddHospital").css("display", "block");
+    });
+    function totalamount() {
+        debugger;
+        var admitdate = Date.parse($("#AdmitDate").val());
+        var dischardate = Date.parse($("#DischargeDate").val());
+        var difference = (dischardate - admitdate);
+        var diffDays = Math.ceil(difference / (1000 * 3600 * 24));
+
+        $(".TotalDays").text(diffDays);
+
+        var rate = $(".Rate").text();
+        var days = $(".TotalDays").text();
+
+        $("#Rate").val(rate); $("#TotalDays").val(diffDays);
+        var total = 0;
+        if (rate != undefined && days != undefined) {
+            total = parseInt(rate) * parseInt(days);
+        }
+        $("#totalAmount").text(total + ".00 $ ");
+    }
+    $("#btnNewHospital").click(function () {
+        $("#txthospitalName").focus();
+    });
+</script>
+

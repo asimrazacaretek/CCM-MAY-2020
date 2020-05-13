@@ -1,0 +1,795 @@
+﻿@model TicketListViewModel
+@using Microsoft.AspNet.Identity
+@using CCM.Helpers
+@using CCM.Models.ENUMS_
+@using CCM.Models
+@{
+    ViewBag.Title = "TicketsCreated";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var openStatusCount = Model.ticketCreated.Where(x => x.Status == ETicketStatus.OPEN).Count();
+    var InProgressStatusCount = Model.ticketCreated.Where(x => x.Status == ETicketStatus.IN_PROGRESS).Count();
+    var ResolveStatusCount = Model.ticketCreated.Where(x => x.Status == ETicketStatus.RESOLVED).Count();
+    var UnResolveStatusCount = Model.ticketCreated.Where(x => x.Status == ETicketStatus.UNRESOLVED).Count();
+
+}
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.css" />
+
+<link href="~/Content/CardCss.css" rel="stylesheet" />
+<script src="~/Scripts/imageuploadify.min.js" type="text/javascript"></script>
+<script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+@* Select2 *@
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.js"></script>`
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<style>
+    .background-forDashboard {
+        background: white;
+        background-size: cover;
+        height: 100%;
+        box-shadow: black -2px -3px 24px 3px;
+        margin: 15px;
+    }
+
+    #donutchart {
+        height: 100%;
+        width: 100%;
+    }
+
+    #LineChatGenrated {
+        border-radius: 10px;
+    }
+
+    .mt-3 {
+        margin-top: 1.5rem;
+    }
+
+    .custom-card {
+        background-color: white;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        border-radius: 4px;
+        overflow-y: auto;
+    }
+
+        .custom-card .heading {
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bolder;
+            border-bottom: 1px solid darkgrey;
+            border-bottom-style: dotted;
+            background: #0364bd;
+            color: white;
+        }
+
+        .custom-card .data-list {
+            padding: 10px 10px;
+            border-bottom: 1px solid darkgray;
+            border-bottom-style: dotted;
+        }
+
+            .custom-card .data-list .dummy-image {
+                font-size: 17px;
+                padding: 8px;
+                background-color: lightgray;
+                border-radius: 50%;
+            }
+
+            .custom-card .data-list .person-name ul {
+                font-size: 13px;
+                padding: 0;
+                list-style: none;
+                position: absolute;
+                left: 20%;
+                margin-top: -27px;
+                margin-left: 3px
+            }
+
+            .custom-card .data-list .count ul {
+                list-style: none;
+            }
+
+            .custom-card .data-list .person-name small, .custom-card .data-list .count small {
+                color: gray !important;
+            }
+
+    .canvasjs-chart-canvas {
+        position: relative !important;
+        border-radius: 4px;
+    }
+
+    .canvasjs-chart-container {
+        border-radius: 4px;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    .box-shadow {
+        box-shadow: grey -2px 4px 12px;
+    }
+
+    .TicketGeneral {
+        font-size: 17px;
+        padding: 15px;
+        border-radius: 4px;
+    }
+
+    .color-white {
+        color: white;
+    }
+
+    .filter-icons {
+        position: absolute;
+        top: 20px;
+        background: #909090;
+        color: white;
+        padding: 6px;
+        font-size: 8px;
+    }
+
+    .filter-label, .filter-input {
+        margin-left: 40px;
+    }
+
+    .filter-label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .filter-input input {
+        height: 33px;
+        border: 2px solid #66615b;
+        border-radius: 4px;
+    }
+
+    @@media (min-width: 992px) {
+        .col-md-2 {
+            width: 19.666667%;
+        }
+    }
+
+    .filters-row-custom {
+        padding: 18px;
+        border-radius: 4px;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .Chartslinks {
+        padding: 20px;
+        font-size: 15px;
+        text-decoration: underline;
+        cursor: pointer;
+        color: blue;
+    }
+
+    .select2-choice {
+        height: 34px !important;
+        border-radius: 0px;
+        border-color: black;
+        border: 3px solid thick;
+        padding: 4px 0px 4px 4px;
+    }
+
+    .select2-container {
+        width: 100%;
+    }
+
+        .select2-container .select2-choice > .select2-chosen {
+            padding-top: 4px;
+            min-width: 100%;
+            max-width: 100%;
+        }
+
+    .TicketAssigneeClass .select2-container {
+        width: 155px !important;
+    }
+
+    .TickettypeClass .select2-container {
+        width: 153px !important;
+    }
+
+    .ticketSubjectDashboardClass .select2-container {
+        width: 136px !important;
+    }
+
+    .borderlesscoloumn {
+        border: none !important;
+    }
+
+    .ticketsStatus .select2-container {
+        width: 136px !important;
+    }
+
+    #ticketrows {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    #ticketuser {
+        padding-left: 38px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+        margin-left: -14px;
+    }
+</style>
+<style>
+    .imageuploadify-overlay {
+        display: none;
+    }
+
+    .imageuploadify-images-list i {
+        color: #3AA0FF;
+        display: block;
+        font-size: 5em;
+        text-align: center;
+        margin: .5em auto;
+        margin-bottom: 7px;
+        /* padding-bottom: 12px; */
+    }
+
+    span.imageuploadify-message {
+        font-size: 24px;
+        border-top: 1px solid #3AA0FF;
+        border-bottom: 1px solid #3AA0FF;
+        padding: 10px;
+        display: inline-block;
+        color: #3AA0FF;
+    }
+
+    .imageuploadify-images-list button.btn-default {
+        display: block;
+        color: #3AA0FF;
+        border-color: #3AA0FF;
+        border-radius: 1em;
+        margin: 25px auto;
+        width: 100%;
+        max-width: 500px;
+        cursor: pointer;
+    }
+
+    .imageuploadify {
+        border: 2px dashed #d2d2d2;
+        position: relative;
+        min-height: 250px;
+        min-width: 250px;
+        max-width: 100% !important;
+        margin: auto;
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        text-align: center;
+        background-color: #fff;
+        color: #3AA0FF;
+        top: 10px;
+    }
+
+    .imageuploadify-container img {
+        max-width: 100px;
+        max-height: 100px;
+        text-align: left;
+    }
+
+    .error {
+        color: red
+    }
+
+    #TicketCreationListView .modal-dialog {
+        width: 900px;
+    }
+
+    .select2-drop-active, .select2-drop-mask {
+        position: absolute !important;
+        z-index: 1000000000000000000000000000000 !important;
+    }
+
+    .CommentPartialView thead tr th {
+        text-align: center !important;
+    }
+</style>
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.css" />
+<link href="~/Content/CustomStyle.css" rel="stylesheet" />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 col-sm-4">
+            <div class="wrimagecard wrimagecard-topimage">
+
+                <div class="wrimagecard-topimage_header" style="background-color:  rgba(250, 188, 9, 0.1)">
+                    <center><i class="fa fa-folder-open" style="margin-left: -45px;color:#fabc09"> </i></center>
+                </div>
+                <div class="wrimagecard-topimage_title">
+                    <h4 style="margin-left:39px">
+                        OPEN TICKETS
+                        <div style="margin-top:10px;margin-left: 39px;font-family: sans-serif;font-weight: bolder;">@openStatusCount</div>
+                        <div class="pull-right badge" id="WrInformation"></div>
+                    </h4>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-4">
+            <div class="wrimagecard wrimagecard-topimage">
+
+                <div class="wrimagecard-topimage_header" style="background-color:  rgba(51, 105, 232, 0.1)">
+                    <center><i class="fa fa-spinner" style="margin-left: -45px;color:#3369e8"> </i></center>
+                </div>
+                <div class="wrimagecard-topimage_title">
+                    <h4>
+                        IN PROGRESS TICKETS
+                        <div style="margin-top:10px;margin-left: 80px;font-family: sans-serif;font-weight: bolder;">@InProgressStatusCount</div>
+                        <div class="pull-right badge" id="WrGridSystem"></div>
+                    </h4>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-4">
+            <div class="wrimagecard wrimagecard-topimage">
+
+                <div class="wrimagecard-topimage_header" style="background-color: rgba(22, 160, 133, 0.1)">
+                    <center><i class="fa fa-check" style="margin-left: -45px;color:#16A085"> </i></center>
+                </div>
+                <div class="wrimagecard-topimage_title">
+                    <h4 style="margin-left:14px">
+                        RESOLVED TICKETS
+                        <div style="margin-top:10px;margin-left: 66px;font-family: sans-serif;font-weight: bolder;">@ResolveStatusCount</div>
+                        <div class="pull-right badge" id="WrInformation"></div>
+                    </h4>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-4">
+            <div class="wrimagecard wrimagecard-topimage">
+
+                <div class="wrimagecard-topimage_header" style="background-color:  rgba(213, 15, 37, 0.1)">
+                    <center><i class="fa fa-ban" style="margin-left: -45px;color:#d50f25"> </i></center>
+                </div>
+                <div class="wrimagecard-topimage_title">
+                    <h4 style="margin-left:5px">
+                        UNRESOLVED TICKETS
+                        <div style="margin-top:10px;margin-left: 66px;font-family: sans-serif;font-weight: bolder;">@UnResolveStatusCount</div>
+                        <div class="pull-right badge" id="WrInformation"></div>
+                    </h4>
+                </div>
+
+
+            </div>
+        </div>
+
+
+
+
+    </div>
+</div>
+@using (Html.BeginForm("_TicketListView", "Chats", FormMethod.Post, new { @id = "filterTickets1", role = "form" }))
+{
+    <div class="row mt-3 filters-row-custom box-shadow">
+        <div class="col-md-2">
+            <div class="filters">
+                <span class="filter-icons">
+                    <i class="fa fa-calendar fa-2x"></i>
+                </span>
+                <span class="filter-label">
+                    Start Date
+                </span>
+                <div class="filter-input">
+
+                    @Html.TextBoxFor(x => x.startDate, new { @type = "date", @class = "pickerdate" })
+
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="filters">
+                <span class="filter-icons">
+                    <i class="fa fa-calendar fa-2x"></i>
+                </span>
+                <span class="filter-label">
+                    End Date
+                </span>
+                <div class="filter-input">
+                    @Html.TextBoxFor(x => x.enddate, new { @type = "date", @class = "pickerdate" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="filters">
+                <span class="filter-icons">
+                    <i class="fa fa-dollar fa-2x"></i>
+                </span>
+                <span class="filter-label">
+                    Ticket Subject
+                </span>
+
+                <div class="filter-input ticketSubjectDashboardClass">
+                    @Html.DropDownListFor(x => x.subjectName, CCM.Helpers.CommonFunctions.GetTicketSubject(), "Ticket Subject", new { @required = "required", @class = "border-input" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="filters">
+                <span class="filter-icons">
+                    <i class="fa fa-user fa-2x"></i>
+                </span>
+                <span class="filter-label ">
+                    Ticket Types
+                </span>
+                <div class="filter-input TickettypeClass">
+                    @Html.DropDownListFor(x => x.tickettype, CCM.Helpers.CommonFunctions.GetTicketType(), "Ticket Types", new { @required = "required", @class = "border-input" })
+                </div>
+            </div>
+        </div>
+
+        @*<div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fas fa-user-edit fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Ticket Assignee
+                    </span>
+                    <div class="filter-input TicketAssigneeClass">
+                        @Html.DropDownListFor(x => x.ticketassignee, CCM.Helpers.CommonFunctions.GetAssigneeUsers(User.Identity.GetUserId()), "Ticket Assignee", new { @required = "required", @class = " border-input" })
+                    </div>
+
+                </div>
+            </div>*@
+
+
+        <div class="col-md-2">
+            <div class="filters">
+                <span class="filter-icons">
+                    <i class="fa fa-tasks fa-2x"></i>
+                </span>
+                <span class="filter-label">
+                    Ticket Status
+                </span>
+                <div class="filter-input ticketsStatus">
+                    @Html.DropDownListFor(x => x.status, CCM.Helpers.CommonFunctions.GetTicketStatusAll(), "Ticket Status", new { @class = " border-input" })
+                </div>
+
+            </div>
+        </div>
+        @*<div class="col-md-2">
+                <div class="filters">
+                    <span class="filter-icons">
+                        <i class="fa fa-user-circle fa-2x"></i>
+                    </span>
+                    <span class="filter-label">
+                        Created By
+                    </span>
+                    <div class="filter-input TicketAssigneeClass">
+                        @Html.DropDownListFor(x => x.createdBy, CCM.Helpers.CommonFunctions.GetAssigneeUsers(User.Identity.GetUserId()), "Created By", new { @required = "required" })
+                    </div>
+
+                </div>
+            </div>*@
+        <div class="col-md-2">
+            <div class="filters">
+                <span class="filter-icons">
+                    <i class="fa fa-user fa-2x"></i>
+                </span>
+                <span class="filter-label ">
+                    Ticket Priority
+                </span>
+                <div class="filter-input TickettypeClass">
+                    @Html.DropDownListFor(x => x.Priority, CCM.Helpers.CommonFunctions.GetTicketPriority(), "Ticket Priority", new { @required = "required", @class = "border-input" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="filters">
+                <span class="filter-icons">
+                    <i class="fa fa-user fa-2x"></i>
+                </span>
+                <span class="filter-label ">
+                    Ticket Resolution
+                </span>
+                <div class="filter-input TickettypeClass">
+                    @Html.DropDownListFor(item => item.TicketResolutionId, CCM.Helpers.CommonFunctions.GetTicketResolution(), "Select Ticket Resolution", new { @readonly = "readonly", @required = "required", @class = "border-input" })
+
+                </div>
+            </div>
+        </div>
+        @*onclick="getDashboardData('TicketAdminDashboard','Save')"*@
+        <div style="float: right;
+    margin-right: 50px;">
+            <button style="margin-top: 17px;" type="button" onclick="loadCreateTicketpartialviewdata()" class="btn btn-success">Load</button>
+        </div>
+
+    </div>
+}
+
+<a style="margin-top: 15px;margin-left:15px" role="button" id="ButonOpen" class=" btn btn-primary" data-toggle="modal" data-target="#TicketCreationListView">
+
+    <i class="fas fa-money-bill"></i> Generate Ticket
+</a>
+<div id="ticketCreatedpartialview" style="margin-top:15px">
+
+    @Html.Partial("_TicketCreated", Model.ticketCreated)
+
+</div>
+
+<!-- The Modal -->
+<div id="TicketAssigneeViewModal">
+    <div class="modal-background">
+        <div class="modal" id="MyTicketAssigneeTicket" style="position:absolute" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg" style="width:1200px;">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Created Ticket</h4>
+                        @*<button type="button"  data-dismiss="modal"></button>*@
+                        @*<a href="/Chats/ListViewTicket" role="button" class="close close-custom-button-view-ticket">&times;</a>*@
+                        <button type="button" class="close close-custom-button-MyTicketview-ticket" data-dismiss="modal">&times;</button>
+
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body" id="MyTicketModalBody" style="max-height: 800px; overflow: scroll; min-height: 650px;">
+                        @*@{
+                                Html.RenderAction("AssigneeTicket");
+                            }*@
+                    </div>
+                    <div class="row" style="margin-top: 15px;margin-bottom: 10px;">
+                        <div class="form-group">
+                            <div class="col-md-3 pull-right">
+                                @*<input id="buttonAssigneeTicketGenerationForm" type="button" value="Save" class="btn btn-primary" />
+                                    <input id="resetAssigneeTicketGenerationForm" type="button" value="Reset" class="btn btn-default" />*@
+                                <a style="float: right;" data-dismiss="modal" role="button" class="btn btn-default close-custom-button-view-ticket">Close</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal -->
+<div id="modal-container">
+    <div class="modal-background">
+        <div id="TicketCreationListView" data-backdrop="static" class="modal fade" role="dialog" data-keyboard="false">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content slideInLeft animated">
+                    <div class="modal-header">
+                        <h5 class="modal-title">CCM Health Ticketing System</h5>
+                        <button type="button" class="close close-custom-button" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+
+
+                        @Html.Partial("UserTicketGeneration", new UserTicketGeneration())
+                        @*<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="ticketid" value="@ViewBag.TicketId" />
+<input type="hidden" id="ticketstatus" value="@ViewBag.TicketStatus" />
+@* Select2 Script Library *@
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.js"></script>
+
+
+<script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script>
+        $(document).ready(function () {
+   
+        if ($("#ticketid").val() != "" && $("#ticketstatus").val() != "") {
+            openMyTicketing($("#ticketid").val(), $("#ticketstatus").val());
+        }
+        })
+
+
+    function loadCreateTicketpartialviewdata() {
+
+      var data =  $("#filterTickets1").serialize()
+        $.ajax({
+            async: false,
+            url: '/chats/_TicketCreated',
+            //data: '{model:' + JSON.stringify(check) + '}',
+            data: data,
+            type: 'POST',
+            success: function (objOperations) {
+                console.log(objOperations);
+                $("#ticketCreatedpartialview").html(objOperations);
+                 $('#CreatedByMeList').DataTable({
+                pageLength: 10,
+                columnDefs: [{ type: 'date', 'targets': [5] }],
+                order: [[5, 'desc']]
+            });
+               // $("#ticketpartialview").load(window.location + " #ticketpartialview");
+            }
+        });
+}
+
+    $('#CreatedByMeList').DataTable({
+        pageLength: 10,
+        columnDefs: [{ type: 'date', 'targets': [10] }],
+        order: [[10, 'desc']]
+    });
+    $("#PhyId").select2({
+        placeholder: {
+            id: '-1', // the value of the option
+            text: 'Select an option'
+        },
+        allowClear: true
+    });
+    $("#TicketGenerationId,#Priority,#ticketassignee,#tickettype,#TypeId, #PriorityId,#TicketResolutionId,#StatusId,#status,#createdBy,#subjectName").select2({
+    });
+
+    $('#patient').select2({
+        data: mockData(),
+        placeholder: 'search',
+        //multiple: true,
+        dropdownParent: $("#TicketCreationListView"),
+        // query with pagination
+        query: function (q) {
+            debugger;
+            var pageSize,
+                results,
+                that = this;
+            pageSize = 20; // or whatever pagesize
+            results = [];
+            if (q.term && q.term !== '') {
+                // HEADS UP; for the _.filter function i use underscore (actually lo-dash) here
+                results = _.filter(that.data, function (e) {
+                    return e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0;
+                });
+            } else if (q.term === '') {
+                results = that.data;
+            }
+            q.callback({
+                results: results.slice((q.page - 1) * pageSize, q.page * pageSize),
+                more: results.length >= q.page * pageSize,
+            });
+        },
+    });
+    function mockData(val) {
+        var arr = [];
+
+        $.ajax({
+            url: "/Chats/getPatient?val=" + val,
+            type: "get"
+
+        }).done(function (res) {
+
+            //for (var i = 0; i < 20000; i++) {
+            //    arr.push({
+            //        id: i,
+            //        text: 'te ststr ing to shuffle' + ' ' + i,
+            //    });
+            //}
+
+            $.each(res, function (i, obj) {
+                console.log(obj);
+
+                arr.push({
+                    id: obj.Value,
+                    text: obj.Text,
+                });
+            });
+
+        });
+
+        return arr;
+
+    }
+
+</script>
+
+@section Scripts {
+
+    <script>
+
+
+        function openMyTicketing(userTicketId, statusname) {
+            debugger;
+
+            $('#TicketAssigneeViewModal').removeAttr('class').addClass("ViewMyTicketbtn");
+            $('body').addClass('modal-active');
+
+
+            $.ajax({
+                url: "/Chats/getMyTicketPartialView?userTicketId=" + userTicketId + "&Ticket_status=" + statusname,
+                type: "get"
+            }).done(function (res) {
+                if (res === "noticketId") {
+                    swal("Error!", "Error !!! UserTicketId Not Match:", "error");
+
+                } else if (res.indexOf("error_error") >= 0) {
+                    swal("Error!", "Error !!!" + res, "error");
+
+                }
+                else {
+                    $("#MyTicketModalBody").html(res);
+                    $('#AssigneeUpload').imageuploadify();
+                    $("#MyTicketAssigneeTicket").modal({ backdrop: 'static', keyboard: false });
+
+                    $('.close-custom-button-view-ticket').click(function (e) {
+                        debugger;
+                        $("#MyTicketAssigneeTicket").modal("hide");
+                        $('#TicketAssigneeViewModal').addClass('out');
+                        $('body').removeClass('modal-active');
+                    });
+                }
+                $("#resetAssigneeTicketGenerationForm").click(function () {
+                    $('#AssigneeTicketGenerationForm').trigger("reset");
+                    $(".imageuploadify-container").remove();
+                });
+
+                $('.close-custom-button-MyTicketview-ticket').click(function (e) {
+                    $('#TicketAssigneeViewModal').addClass('out');
+                    $('body').removeClass('modal-active');
+                });
+
+            });
+        }
+
+        function clear() {
+            $('#AssigneeTicketGenerationForm').trigger("reset");
+            $(".imageuploadify-container").remove();
+
+        }
+
+
+        $('#ButonOpen').click(function () {
+           
+            $('#modal-container').removeAttr('class').addClass("ButonOpen");
+            $('body').addClass('modal-active');
+        });
+        $('.close-custom-button').click(function () {
+            debugger;
+            $('#modal-container').addClass('out');
+            $('body').removeClass('modal-active');
+        });
+        $('#ViewMyTicketbtn').click(function () {
+            $('#AssigneeViewModal').removeAttr('class').addClass("ViewTicketbtn");
+            $('body').addClass('modal-active');
+        });
+        $('.close-custom-button-view-ticket').click(function (e) {
+            debugger;
+            $('#AssigneeViewModal').addClass('out');
+            $('body').removeClass('modal-active');
+        });
+        $('#ViewMyTicketbtn').click(function () {
+            $('#TicketAssigneeViewModal ').removeAttr('class').addClass("ViewMyTicketbtn");
+            $('body').addClass('modal-active');
+        });
+           $(".resetuserticketgeneration").click(function () {
+            debugger;
+            console.log("Call");
+            $("#ticketHonorId,#s2id_TicketGenerationId, #s2id_TypeId, #s2id_PriorityId,#s2id_StatusId,#s2id_patient,#s2id_DropDownAssignee,#creatorNotes,#s2id_PhyId").select2("val", "");
+            $("#TAT,#creatorNotes").val("");
+            $(".imageuploadify-container").remove();
+        });
+
+
+    </script>
+}
+

@@ -1,0 +1,865 @@
+﻿@model List<CCM.Models.PatientSurvey>
+@*<div class="custom-title">
+        <h3>Surveys</h3>
+    </div>*@
+
+<link href="~/Content/multiselect/bootstrap-multiselect.css" rel="stylesheet" />
+<input type="hidden" id="patientidsurvey" value="@ViewBag.PatientId" />
+<style>
+    .radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {
+        margin-left: 5px !important
+    }
+
+    .checkbox:hover, .radio {
+    }
+
+    .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+        background-color: #ccc !important;
+        opacity: 1;
+        text-decoration: none;
+    }
+
+    .dropdown label {
+        display: block;
+    }
+
+    h4 {
+        white-space: pre;
+    }
+    .progress {
+        position: relative;
+        margin-bottom: 0px !important;
+    }
+
+    .progress-value {
+        position: absolute;
+        left: 50%;
+    }
+    .multiselect-container {
+        max-height: 300px;
+        overflow: auto;
+    }
+    #surveyquestions {
+        float: left;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    a{
+        cursor:pointer;
+    }
+</style>
+<div class="row">
+    <div class="card">
+        <div class="col-md-12">
+            <p>
+                <b>Name: </b>@ViewBag.PatientName
+                <br />
+                <b>DOB: </b>@ViewBag.DOB
+                <br />
+                <b>Diagnosis: </b>
+                @ViewBag.Diagnosis
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <br />
+    <div class="tablefixwidth">
+        <table id="Patientsurveytable" class="display nowrap" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Survey</th>
+                    <th>Survey Type</th>
+                    <th>Section</th>
+                    <th>Date created</th>
+                    <th>Taken by</th>
+                    <th>Completed %</th>
+                    <th>Details</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Survey.SurveyName</td>
+                        <td>@item.SurveyType.TypeName</td>
+                        <td>@item.SurveySection.SectionName.Replace("&nbsp;", " ")</td>
+                        <td>
+                            @Convert.ToDateTime(item.CreatedOn).ToString("g")
+                        </td>
+                        <td>
+                            @HelperExtensions.GetUserNamebyID(item.CreatedBy)
+                        </td>
+                        <td>@item.IsCompleted %</td>
+                        <td>
+                            @*<a onclick="loadsurveyForEdit(@item.PatientId,@item.Id,@item.SurveyId,@item.SurveyTypeId,@item.SurveySectionId)">Continue |</a>*@
+                            @if (item.IsCompleted != 100)
+                            {
+                                <a onclick="loadsurveyForEdit(@item.PatientId,@item.Id,@item.SurveyId,@item.SurveyTypeId,@item.SurveySectionId)">Continue |</a>
+                            }
+                            <a onclick="loadsurvey(@item.PatientId,@item.Id)">Details</a>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <h3 class="greenText"><b>Add Survey</b></h3>
+    <hr id="line">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Survey Name</label>
+                @*<select id="ddlSurvey"></select>*@
+
+                @Html.DropDownList("SurveyName",
+                  new SelectList(ViewBag.surveys, "Value", "Text", Model),
+                  "--Survey--", new {@class = "form-control border-input", id = "ddlSurveryName" })
+
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Survey Type</label>
+                @*<select id="ddlSurvey"></select>*@
+
+                @Html.DropDownList("SurveyType",
+                  new SelectList(ViewBag.SurveyType, "Value", "Text", Model),
+                  new {@class = "form-control border-input", id = "ddlSurveryType" })
+
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Sections</label>
+                @Html.DropDownList("SurveySections",
+                    new SelectList(ViewBag.SurveySections, "Value", "Text", Model),
+                   new {@class = "form-control border-input", id = "ddlSurverySections" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <br />
+                <button id="btnLoad" class="btn btn-success">
+                    <i class="fa fa-search"></i>Load
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="surveyquestions">
+
+    </div>
+</div>
+<script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+<script>
+    var backquestionid = [];
+    var sequencemappings = [];
+    $(document).ready(function () {
+        $('#Patientsurveytable').DataTable({
+            pageLength: 10,
+
+            "ordering": false,
+            "sScrollX": "100%",
+            "scrollX": true
+        });
+        $("#btnLoad").click(function () {
+            loadquestions();
+        });
+        $('#ddlSurverySections, #ddlSurveryName , #ddlSurveryType').multiselect({
+            includeSelectAllOption: true,
+
+            buttonWidth: 250,
+
+            enableFiltering: true
+        });
+        // $('.mdb-select').materialSelect();
+
+
+    });
+    function loadsurvey(patientid, id) {
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Patient/SurveyResultAsyncID",
+            data: {
+                'Id': id, 'PatientId': patientid
+            },
+            success: function (result) {
+                debugger;
+                $(".loader").hide();
+                $("#surveyquestions").html(result);
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+   
+
+    function GetPercentage(last) {
+        if (last == true) {
+            $(".progress-bar").css("width", "100%");
+            $(".progress-value").html("100%");
+            $("#txtPercent").val("100");
+            $("#txtSurveyCompleted").val("100");
+        }
+        else {
+            var currentQ = backquestionid.length;
+            var total = $("#totalQ").val();
+            var percent = Math.round((parseFloat(currentQ) / parseFloat(total)) * 100);
+            var progressVal = percent + "%";
+            $(".progress-bar").css("width", progressVal);
+            $(".progress-value").html(progressVal);
+            $("#txtPercent").val(progressVal);
+        }
+    }
+    function loadsurveyForEdit(patientid, id, surveyid, typeid, sectionid) {
+        $(".loader").show();
+        var surveyarr = [];
+        surveyarr.push(surveyid);
+        $("#ddlSurveryName").val(surveyarr);
+        $("#ddlSurveryName").multiselect("refresh");
+
+        var surveytypearr = [];
+        surveytypearr.push(typeid);
+        $("#ddlSurveryType").val(surveytypearr);
+        $("#ddlSurveryType").multiselect("refresh");
+
+        var surveysectionarr = [];
+        surveysectionarr.push(sectionid);
+        $("#ddlSurverySections").val(surveysectionarr);
+        $("#ddlSurverySections").multiselect("refresh");
+        $("#txtPercent").val("0");
+        $("#surveyquestions").html("");
+        backquestionid = [];
+        $.ajax({
+            type: "GET",
+            url: "/Survey/GetjsonSequnceMapping",
+            data: {
+                'SurveyId': surveyid, 'SurveyTypeId': typeid, 'SurveySectionId': sectionid
+            },
+            success: function (result) {
+                debugger;
+                sequencemappings = result;
+                $.ajax({
+                    type: "GET",
+                    url: "/Survey/_SurveyQuestionsEdit",
+                    data: {
+                        'Id': id, 'PatientId': patientid, 'SurveyId': surveyid, 'SurveyTypeId': typeid, 'SurveySectionId': sectionid
+                    },
+                    success: function (partialViewResult) {
+                        $(".loader").hide();
+                        $("#surveyquestions").html(partialViewResult).promise().done(function () {
+                            debugger;
+                            var nextquestionid = $(".surveyquestionanswer").first().attr("data-id");
+                            var nextquesttype = $("#surveyquestion" + nextquestionid).attr("data-questype");
+                            if (nextquesttype == "TextBox") {
+                                $("#Qanswer" + nextquestionid).val($("#Qanswer" + nextquestionid).attr("data-clinicalnotes"));
+                            }
+                        });
+                        //$(".surveyquestionanswer").first().fadeIn(1000);
+                    }, error: function (result) {
+                        $(".loader").hide();
+                    }
+                });
+
+                //$(".loader").hide();
+
+                //$.each(result, function (key, value) {
+                //    debugger;
+                //    sequencemappings.push(value);
+                //});
+
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+
+
+
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/Survey/_SurveyQuestionsEdit",
+        //    data: {
+        //        'Id': id, 'PatientId': patientid, 'SurveyId': surveyid, 'SurveyTypeId': typeid, 'SurveySectionId': sectionid
+        //    },
+        //    success: function (partialViewResult) {
+        //        $(".loader").hide();
+        //        $("#surveyquestions").html(partialViewResult).promise().done(function () {
+        //        });
+        //    }, error: function (result) {
+        //        debugger;
+        //        $(".loader").hide();
+        //    }
+        //});
+    }
+
+
+
+    function loadquestions() {
+        //Check For if Already Continues Survey
+        //Get Survey Length
+        //$(".progress-value").html();
+        /////IsParitalOrLast
+        //$("#txtPercent").val('')
+        //if ($("#txtSurveyCompleted").val())
+        backquestionid = [];
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Survey/SurveyQuestions",
+            data: {
+                'SurveryId': $("#ddlSurveryName").val(), 'SectionId': $("#ddlSurverySections").val(), 'SurveryTypeId': $("#ddlSurveryType").val(), 'PatientId': $("#patientidsurvey").val()
+            },
+            success: function (result) {
+                $(".loader").hide();
+                $("#surveyquestions").html(result);
+                if ($("#surveyquestions").html().length > 0) {
+                    var a = 0;
+                }
+
+            }, error: function (result) {
+                debugger;
+                $(".loader").hide();
+            }
+        });
+    }
+    function laodnextquestion(questionid) {
+        var listchildquestions = $("#sequencemappings").val();
+        var checklast = false;
+        var questype = $("#surveyquestion" + questionid).attr("data-questype");
+
+        var selectedanswers = [];
+        if (questype == "Checkbox") {
+            $("#surveyquestion" + questionid + " .chkanswers").each(function () {
+                if ($(this).prop("checked") == true) {
+                    selectedanswers.push($(this).val());
+                }
+            });
+            if (selectedanswers.length) {
+                var selectedanswerstr = selectedanswers.join(",");
+                $(sequencemappings).each(function () {
+                    var lstitem = $(this)[0];
+                    if (lstitem.AnswerIds == selectedanswerstr) {
+                        backquestionid.push(questionid);
+                        //backquestionid = questionid;
+                        if (lstitem.ChildQuestionID == 0) {
+                            return false;
+                        }
+                        //  $("#btnSubmit").show();
+
+                        var nextquestionid = lstitem.ChildQuestionID;
+
+                        $("#surveyquestion" + questionid).hide();
+                        $("#surveyquestion" + nextquestionid).fadeIn(1000);
+                        //Load default text if next is textbox
+                        debugger;
+                        var nextquesttype = $("#surveyquestion" + nextquestionid).attr("data-questype");
+                        if (nextquesttype == "TextBox") {
+                            if ($("#Qanswer" + nextquestionid).val() == "") {
+                                $("#Qanswer" + nextquestionid).val($("#Qanswer" + nextquestionid).attr("data-clinicalnotes"))
+                            }
+
+                        }
+                        var lastQ = $("#txtLastQ").val();
+                        if (nextquestionid == lastQ) {
+                            debugger;
+                            checklast = true;
+                            $("#nextbtn" + nextquestionid).hide();
+                        } else {
+                            checklast = false;
+                            $("#nextbtn" + nextquestionid).show();
+                        }
+                    }
+                });
+                GetPercentage(checklast);
+            }
+            else {
+                swal("Please select atleast one answer");
+            }
+        }
+        else {
+            if (questype == "Radio") {
+                $("#surveyquestion" + questionid + " .radioanswers").each(function () {
+                    if ($(this).prop("checked") == true) {
+                        selectedanswers.push($(this).val());
+                    }
+                    debugger;
+                    if (questionid == 13) {
+                        var a = "test";
+                    }
+                });
+                if (selectedanswers.length) {
+                    debugger;
+                    var selectedanswerstr = selectedanswers.join(",");
+                    $(sequencemappings).each(function () {
+                        var lstitem = $(this)[0];
+                        if (lstitem.AnswerIds == selectedanswerstr) {
+                            //backquestionid = questionid;
+                            backquestionid.push(questionid);
+                            if (lstitem.ChildQuestionID == 0) {
+                                return false;
+                            }
+                            debugger;
+                            var nextquestionid = lstitem.ChildQuestionID;
+
+                            $("#surveyquestion" + questionid).hide();
+                            $("#surveyquestion" + nextquestionid).fadeIn(1000);
+                            //Load default text if next is textbox
+                            debugger;
+                            var nextquesttype = $("#surveyquestion" + nextquestionid).attr("data-questype");
+                            if (nextquesttype == "TextBox") {
+                                if ($("#Qanswer" + nextquestionid).val() == "") {
+                                    $("#Qanswer" + nextquestionid).val($("#Qanswer" + nextquestionid).attr("data-clinicalnotes"))
+                                }
+                            }
+                            var lastQ = $("#txtLastQ").val();
+                            if (nextquestionid == lastQ) {
+                                debugger;
+                                checklast = true;
+                                $("#nextbtn" + nextquestionid).hide();
+                            } else {
+                                checklast = false;
+                                $("#nextbtn" + nextquestionid).show();
+                            }
+                        }
+                    });
+                    GetPercentage(checklast);
+                }
+                else {
+                    swal("Please select atleast one answer");
+                }
+            }
+            else {
+                if (questype == "TextBox" || questype == "TextArea") {
+                    var txtanswer = $("#Qanswer" + questionid).val();
+                    if (txtanswer.trim() == "") {
+                        swal("Please write the answer for this quesiton");
+                        return false;
+                    }
+                    $(sequencemappings).each(function () {
+                        var lstitem = $(this)[0];
+                        if (lstitem.AnswerIds == "" && lstitem.ParentQuestionID == questionid) {
+                            //for Update given Q Answer Val
+                            $("#surveyquestion" + questionid).find("#Qanswer" + questionid).attr("data-isanswered", true);
+
+                            backquestionid.push(questionid);
+                            var nextquestionid = lstitem.ChildQuestionID;
+                            if (lstitem.ChildQuestionID == 0) {
+                                return false;
+                            }
+                            $("#surveyquestion" + questionid).hide();
+                            $("#surveyquestion" + nextquestionid).fadeIn(1000);
+                            //Load default text if next is textbox
+                            debugger;
+                            var nextquesttype = $("#surveyquestion" + nextquestionid).attr("data-questype");
+                            if (nextquesttype == "TextBox") {
+                                if ($("#Qanswer" + nextquestionid).val() == "") {
+                                    $("#Qanswer" + nextquestionid).val($("#Qanswer" + nextquestionid).attr("data-clinicalnotes"))
+                                }
+                            }
+                            var lastQ = $("#txtLastQ").val();
+                            if (nextquestionid == lastQ) {
+                                checklast = true;
+                                $("#nextbtn" + nextquestionid).hide();
+                            } else {
+                                checklast = false;
+                                $("#nextbtn" + nextquestionid).show();
+                            }
+                        }
+                    });
+                    GetPercentage(checklast);
+                }
+                else {
+
+                }
+            }
+        }
+        var currentQ = backquestionid.length;
+        var total = $("#totalQ").val();
+        var percent = Math.round((parseFloat(currentQ) / parseFloat(total)) * 100);
+        $("#txtSurveyCompleted").val(percent);
+    }
+
+    //function loadsurveyForEdit(patientid, id, surveyid, typeid, sectionid) {
+    //    $(".loader").show();
+    //    var surveyarr = [];
+    //    surveyarr.push(surveyid);
+    //    $("#ddlSurveryName").val(surveyarr);
+    //    $("#ddlSurveryName").multiselect("refresh");
+
+    //    var surveytypearr = [];
+    //    surveytypearr.push(typeid);
+    //    $("#ddlSurveryType").val(surveytypearr);
+    //    $("#ddlSurveryType").multiselect("refresh");
+
+    //    var surveysectionarr = [];
+    //    surveysectionarr.push(sectionid);
+    //    $("#ddlSurverySections").val(surveysectionarr);
+    //    $("#ddlSurverySections").multiselect("refresh");
+    //    $("#txtPercent").val("0");
+    //    $("#surveyquestions").html("");
+    //    backquestionid = [];
+    //    $.ajax({
+    //        type: "GET",
+    //        url: "/Survey/GetjsonSequnceMapping",
+    //        data: {
+    //            'SurveyId': surveyid, 'SurveyTypeId': typeid, 'SurveySectionId': sectionid
+    //        },
+    //        success: function (result) {
+    //            debugger;
+    //            sequencemappings = result;
+    //            $.ajax({
+    //                type: "GET",
+    //                url: "/Survey/_SurveyQuestionsEdit",
+    //                data: {
+    //                    'Id': id, 'PatientId': patientid, 'SurveyId': surveyid, 'SurveyTypeId': typeid, 'SurveySectionId': sectionid
+    //                },
+    //                success: function (partialViewResult) {
+    //                    $(".loader").hide();
+    //                    $("#surveyquestions").html(partialViewResult).promise().done(function () { });
+    //                    //$(".surveyquestionanswer").first().fadeIn(1000);
+    //                }, error: function (result) {
+    //                    $(".loader").hide();
+    //                }
+    //            });
+
+    //            //$(".loader").hide();
+
+    //            //$.each(result, function (key, value) {
+    //            //    debugger;
+    //            //    sequencemappings.push(value);
+    //            //});
+
+    //        }, error: function (result) {
+    //            $(".loader").hide();
+    //        }
+    //    });
+
+
+
+    //    //$.ajax({
+    //    //    type: "GET",
+    //    //    url: "/Survey/_SurveyQuestionsEdit",
+    //    //    data: {
+    //    //        'Id': id, 'PatientId': patientid, 'SurveyId': surveyid, 'SurveyTypeId': typeid, 'SurveySectionId': sectionid
+    //    //    },
+    //    //    success: function (partialViewResult) {
+    //    //        $(".loader").hide();
+    //    //        $("#surveyquestions").html(partialViewResult).promise().done(function () {
+    //    //        });
+    //    //    }, error: function (result) {
+    //    //        debugger;
+    //    //        $(".loader").hide();
+    //    //    }
+    //    //});
+    //}
+    //function loadquestions() {
+    //    //Check For if Already Continues Survey
+    //    //Get Survey Length
+    //    //$(".progress-value").html();
+    //    /////IsParitalOrLast
+    //    //$("#txtPercent").val('')
+    //    //if ($("#txtSurveyCompleted").val())
+
+    //    $(".loader").show();
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/Survey/SurveyQuestions",
+    //        data: {
+    //            'SurveryId': $("#ddlSurveryName").val(), 'SectionId': $("#ddlSurverySections").val(), 'SurveryTypeId': $("#ddlSurveryType").val(), 'PatientId': $("#patientidsurvey").val()
+    //        },
+    //        success: function (result) {
+    //            $(".loader").hide();
+    //            $("#surveyquestions").html(result);
+    //            if ($("#surveyquestions").html().length > 0) {
+    //                var a = 0;
+    //            }
+
+    //        }, error: function (result) {
+    //            debugger;
+    //            $(".loader").hide();
+    //        }
+    //    });
+    //}
+    //function laodnextquestion(questionid) {
+    //    var listchildquestions = $("#sequencemappings").val();
+    //    var checklast = false;
+    //    var questype = $("#surveyquestion" + questionid).attr("data-questype");
+
+    //    var selectedanswers = [];
+    //    if (questype == "Checkbox") {
+    //        $("#surveyquestion" + questionid + " .chkanswers").each(function () {
+    //            if ($(this).prop("checked") == true) {
+    //                selectedanswers.push($(this).val());
+    //            }
+    //        });
+    //        if (selectedanswers.length) {
+    //            var selectedanswerstr = selectedanswers.join(",");
+    //            $(sequencemappings).each(function () {
+    //                var lstitem = $(this)[0];
+    //                if (lstitem.AnswerIds == selectedanswerstr) {
+    //                    backquestionid.push(questionid);
+    //                    //backquestionid = questionid;
+    //                    if (lstitem.ChildQuestionID == 0) {
+    //                        return false;
+    //                    }
+    //                    //  $("#btnSubmit").show();
+
+    //                    var nextquestionid = lstitem.ChildQuestionID;
+
+    //                    $("#surveyquestion" + questionid).hide();
+    //                    $("#surveyquestion" + nextquestionid).fadeIn(1000);
+
+    //                    var lastQ = $("#txtLastQ").val();
+    //                    if (nextquestionid == lastQ) {
+    //                        debugger;
+    //                        checklast = true;
+    //                        $("#nextbtn" + nextquestionid).hide();
+    //                    } else {
+    //                        checklast = false;
+    //                        $("#nextbtn" + nextquestionid).show();
+    //                    }
+    //                }
+    //            });
+    //            GetPercentage(checklast);
+    //        }
+    //        else {
+    //            swal("Please select atleast one answer");
+    //        }
+    //    }
+    //    else {
+    //        if (questype == "Radio") {
+    //            $("#surveyquestion" + questionid + " .radioanswers").each(function () {
+    //                if ($(this).prop("checked") == true) {
+    //                    selectedanswers.push($(this).val());
+    //                }
+    //                debugger;
+    //                if (questionid == 13) {
+    //                    var a = "test";
+    //                }
+    //            });
+    //            if (selectedanswers.length) {
+    //                debugger;
+    //                var selectedanswerstr = selectedanswers.join(",");
+    //                $(sequencemappings).each(function () {
+    //                    var lstitem = $(this)[0];
+    //                    if (lstitem.AnswerIds == selectedanswerstr) {
+    //                        //backquestionid = questionid;
+    //                        backquestionid.push(questionid);
+    //                        if (lstitem.ChildQuestionID == 0) {
+    //                            return false;
+    //                        }
+    //                        debugger;
+    //                        var nextquestionid = lstitem.ChildQuestionID;
+
+    //                        $("#surveyquestion" + questionid).hide();
+    //                        $("#surveyquestion" + nextquestionid).fadeIn(1000);
+    //                        var lastQ = $("#txtLastQ").val();
+    //                        if (nextquestionid == lastQ) {
+    //                            debugger;
+    //                            checklast = true;
+    //                            $("#nextbtn" + nextquestionid).hide();
+    //                        } else {
+    //                            checklast = false;
+    //                            $("#nextbtn" + nextquestionid).show();
+    //                        }
+    //                    }
+    //                });
+    //                GetPercentage(checklast);
+    //            }
+    //            else {
+    //                swal("Please select atleast one answer");
+    //            }
+    //        }
+    //        else {
+    //            if (questype == "TextBox" || questype == "TextArea") {
+    //                $(sequencemappings).each(function () {
+    //                    var lstitem = $(this)[0];
+    //                    if (lstitem.AnswerIds == "" && lstitem.ParentQuestionID == questionid) {
+    //                        //for Update given Q Answer Val
+    //                        $("#surveyquestion" + questionid).find("#Qanswer" + questionid).attr("data-isanswered", true);
+
+    //                        backquestionid.push(questionid);
+    //                        var nextquestionid = lstitem.ChildQuestionID;
+    //                        if (lstitem.ChildQuestionID == 0) {
+    //                            return false;
+    //                        }
+    //                        $("#surveyquestion" + questionid).hide();
+    //                        $("#surveyquestion" + nextquestionid).fadeIn(1000);
+
+    //                        var lastQ = $("#txtLastQ").val();
+    //                        if (nextquestionid == lastQ) {
+    //                            checklast = true;
+    //                            $("#nextbtn" + nextquestionid).hide();
+    //                        } else {
+    //                            checklast = false;
+    //                            $("#nextbtn" + nextquestionid).show();
+    //                        }
+    //                    }
+    //                });
+    //                GetPercentage(checklast);
+    //            }
+    //            else {
+
+    //            }
+    //        }
+    //        var currentQ = backquestionid.length;
+    //        var total = $("#totalQ").val();
+    //        var percent = Math.round((parseFloat(currentQ) / parseFloat(total)) * 100);
+    //        $("#txtSurveyCompleted").val(percent);
+    //    }
+    //}
+
+    function loadpreviousquestion() {
+        //$("#btnSubmit").hide();
+
+        var previous = backquestionid.pop();
+        //var back = backquestionid.last()
+        GetPercentage(false);
+        $(".surveyquestionanswer").hide();
+        $("#surveyquestion" + previous).show();
+    }
+
+
+
+    function Submit() {
+        var Surveyid = 0;
+        var Sectionid = 0;
+        var SurveyTypeid = 0;
+
+        debugger;
+        var surveyParentID = $("#txtPatientSurveyID").val();
+        if (surveyParentID != "" && surveyParentID != undefined) {
+            surveyParentID = $("#txtPatientSurveyID").val();
+
+            Surveyid = $("#txtSurveyID").val();
+            Sectionid = $("#txtPatientSurveySectionID").val();
+            SurveyTypeid = $("#txtPatientSurveyTypeID").val();
+        }
+        else {
+            surveyParentID = 0;
+            Surveyid = $("#ddlSurveryName").val();
+            Sectionid = $("#ddlSurverySections").val();
+            SurveyTypeid = $("#ddlSurveryType").val();
+        }
+
+
+        var IsSurveyCompleted = 0;
+        var SurveyPercent = $("#txtPercent").val().replace('%', '');
+        var IsComplete = $("#txtSurveyCompleted").val();
+        if (IsComplete != "") {
+            if (parseInt(SurveyPercent) > parseInt(IsComplete)) {
+                IsSurveyCompleted = SurveyPercent;
+            }
+            else {
+                IsSurveyCompleted = IsComplete;
+            }
+        }
+
+        else {
+            IsSurveyCompleted = SurveyPercent;
+        }
+
+
+        var selectedanswers = []; var QuestionArray = []; var txtans = [];
+        var isallowedtosubmit = true;
+        $(".surveyquestionswrapper").each(function () {
+            $(".surveyquestionanswer").each(function () {
+                var qId = $(this).attr("data-id");
+                //var lastqid = $("#txtLastQ").val();
+                //if (lastqid == qId) {
+                //    if ($("#surveyquestion" + qId + " .answertxt").val() == "") {
+                //        swal("Please answer the last question.");
+                //        isallowedtosubmit = false;
+                //        return false;
+                //    }
+                //}
+                QuestionArray.push(qId);
+                var questype = $(this).attr("data-questype");
+                var ans = [];
+                if (questype == "Checkbox") {
+                    $("#surveyquestion" + qId + " .chkanswers").each(function () {
+                        if ($(this).prop("checked") == true) {
+                            ans.push($(this).val());
+                        }
+                    });
+                    txtans.push($("#surveyquestion" + qId + " .answertxt").val());
+                }
+                if (questype == "Radio") {
+                    $("#surveyquestion" + qId + " .radioanswers").each(function () {
+                        if ($(this).prop("checked") == true) {
+                            ans.push($(this).val());
+                        }
+                    });
+                    txtans.push($("#surveyquestion" + qId + " .answertxt").val());
+                }
+                if (questype == "TextBox" || questype == "TextArea") {
+                    ans.push("");
+                    txtans.push($("#surveyquestion" + qId + " .answertxt").val());
+                    //debugger;
+                    //var chkans = $("#surveyquestion" + qId).find("#Qanswer" + qId).attr("data-isanswered");
+                    //if (chkans == "true") {
+                    //    ans.push("0");
+                    //    txtans.push($("#surveyquestion" + qId + " .answertxt").val());
+                    //}
+                    //else {
+                    //    ans.push("");
+                    //    txtans.push("");
+                    //}
+                }
+                var answersList = ans.join(",");
+                selectedanswers.push(answersList);
+            });
+        });
+
+        if (isallowedtosubmit == false) {
+            return false;
+        }
+        //var questions = QuestionArray.join(",");
+        //  var answers = selectedanswers.join("|");
+        var patientid = $("#patientidsurvey").val();
+
+        swal({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this Survey!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Submit !',
+            preConfirm: function () {
+                return new Promise(function (resolve) {
+                    $(".loader").show();
+                    $.ajax({
+                        type: "POST",
+                        url: "/Survey/SurveySubmitAsync",
+                        data: {
+                            PatientSurveyID: surveyParentID,
+                            PatientID: patientid, SurveyId: Surveyid, SectionID: Sectionid,
+                            SurveyTypeId: SurveyTypeid,
+                            Questions: QuestionArray,
+                            Answers: selectedanswers,
+                            AnswerTxt: txtans,
+                            surveyCompletionPercent: IsSurveyCompleted
+                        },
+                        success: function (data) {
+                            $(".loader").hide();
+                            if (data == "True") {
+                                window.location.reload(true);
+                            }
+                            else
+                                swal("Error", "Request Cannot Processed!");
+                        },
+                        failure: function () { alert("not working..."); }
+                    });
+                });
+            },
+        }).catch(swal.noop);;
+        //swal("Sucess","Saved","Survey Submit");
+    }
+</script>

@@ -1,0 +1,1341 @@
+﻿@model IEnumerable<CCM.Models.Patient>
+@using CCM.Helpers
+@*<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet" />*@
+
+@*<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.5/css/fixedHeader.dataTables.min.css">*@
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+@*@if (!User.IsInRole("QAQC"))
+    {
+        @Html.Partial("_EnrollmentStatusLinks")
+    }*@
+@{
+    /**/
+
+    var status = ViewBag.Status == "Patient Not Seeing MD" ? "Not Seeing MD" : ViewBag.Status == "Enrolled" ? ViewBag.BillingCategory : ViewBag.Status;
+    if (status == "Unknown")
+    {
+        status = ViewBag.SubStatus;
+    }
+    status = status == "Enrolled" ? "Enrolled" : status;
+
+}
+@if (ViewBag.ForShareCarePlan == true)
+{
+    <h4 class="pageTitle">@ViewBag.Owner - Share CarePlan Queue</h4>
+}
+else
+{
+    if (status == "Ready for Clinical Sign-Off")
+    {
+        status = "Ready To Review by Counselor";
+    }
+    <h4 class="pageTitle">@ViewBag.Owner - @status Queue</h4>
+}
+
+
+<br />
+<br />
+<style>
+    .emptydivpadding {
+        padding: 17px 30px;
+        border-radius: 4px;
+        float: left;
+        margin-right: 5px;
+        cursor: pointer;
+    }
+
+    table.fixedHeader-floating {
+        top: 75px !important;
+    }
+
+    .whitecolor {
+        background: #e0e00d; /* Old browsers */
+        background: -moz-linear-gradient(45deg, #e0e00d 1%, #31ed86 44%, #31ed86 44%, #d24b5a 64%, #12a0ed 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(45deg, #e0e00d 1%,#31ed86 44%,#31ed86 44%,#d24b5a 64%,#12a0ed 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(45deg, #e0e00d 1%,#31ed86 44%,#31ed86 44%,#d24b5a 64%,#12a0ed 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0e00d', endColorstr='#12a0ed',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    }
+
+    .labelandcolor {
+        float: left;
+    }
+
+    .statustext {
+        margin-top: 5px;
+        float: left;
+        margin-right: 5px;
+    }
+
+    .dataTables_wrapper .dataTables_processing {
+        top: 0 !important;
+    }
+
+    #example td, #cptcodes {
+        white-space: pre;
+    }
+
+    .cptcodespan {
+        padding: 8px;
+        margin: 5px 5px;
+        float: left;
+        text-align: center;
+        cursor: pointer;
+        background-color: #0364bd;
+        color: white;
+        border-radius: 3px;
+        font-weight: normal;
+    }
+
+    #filterchart {
+        float: left;
+        width: 100%;
+        margin: 10px 0px;
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+    .icd10codesingle {
+        display: inline-block;
+        border: 1px solid #ccc;
+        padding: 5px;
+    }
+
+    .icd10tbl td, .ccmbillingcodetbl td {
+        border: 1px solid #909090 !important;
+    }
+    /*Date Picker**/
+    li .form-control {
+        margin: 0px !important;
+    }
+
+    .form-control {
+        border: 2px solid !important;
+        border-radius: 3px !important;
+        padding: 5px !important;
+    }
+    /*Date Picker **/
+    .search_combo {
+        display: none;
+    }
+
+    .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+        background-color: #dcdcdc !important;
+    }
+
+    .multiselect-container {
+        max-height: 300px;
+        overflow: auto;
+    }
+</style>
+<div class="searchbox">
+
+    <div class="seachboxdiv">
+        <label>From</label>
+
+        <input type="date" id="DateFrom" class="form-control border-input datefield" />
+    </div>
+    <div class="seachboxdiv">
+        <label>To</label>
+        <input type="date" id="DateTo" class="form-control border-input datefield" />
+    </div>
+
+
+    <div class="seachboxdiv">
+        <label>Filter Date Column</label>
+        <ul class="nav nav-tabs">
+            <li class="dropdown">
+                @Html.DropDownList(
+"datefiltercolumn",
+new SelectList(
+    new[]
+    {
+        new {Value = "Appointment",  Text = "Appointment"},
+        new {Value = "Date Entered",  Text = "Date Entered"},
+        new {Value = "Date of Service",  Text = "Date of Service"},
+        new {Value = "Date of Birth",  Text = "Date of Birth"},
+        new {Value = "Enrolled On",  Text = "Enrolled On"}
+
+    },
+    "Value", "Text"),
+"Select Date Filtered Column", new { @class = "form-control border-input search_combo", id = "datefiltercolumn" })
+            </li>
+        </ul>
+    </div>
+
+    @if (1 == 1)
+    {
+        <input type="hidden" id="forsharecareplan" value="@ViewBag.ForShareCarePlan" />
+        <input type="hidden" id="fromDashBoard" value="@ViewBag.fromDashBaord" />
+
+        if (User.IsInRole("Admin") || User.IsInRole("PhysiciansGroup") || User.IsInRole("LiaisonGroup") || User.IsInRole("Liaison") || User.IsInRole("QAQC") || User.IsInRole("Sales"))
+        {
+            if (!User.IsInRole("Liaison"))
+            {
+                //if (status == BillingCodeHelper.ccm.ToUpper())
+                //{
+
+                    <div class="seachboxdiv">
+                        <label>
+                            Post Counselor
+                        </label>
+                        @Html.DropDownList("Liaisons",
+                                            new SelectList(ViewBag.Liaisons, "Value", "Text", Model),
+                                            "---Post Counselor---", new { @class = "form-control border-input search_combo", id = "ddlLiaisons1" })
+                    </div>
+                // }
+                //else
+                //{
+                //    <div class="seachboxdiv">
+                //        <label>
+                //            Counselor
+                //        </label>
+                //        @Html.DropDownList("Liaisons",
+                //                            new SelectList(ViewBag.Liaisons, "Value", "Text", Model),
+                //                            "---Counselor---", new { @class = "form-control border-input search_combo", id = "ddlLiaisons1" })
+                //    </div>
+
+                //}
+
+            }
+            if (User.IsInRole("Admin") || User.IsInRole("QAQC"))
+            {
+                //if (status == BillingCodeHelper.ccm.ToUpper())
+                //{
+                <div class="seachboxdiv">
+                    <label>
+                        Post Translator
+                    </label>
+                    @Html.DropDownList("Translator",
+                                             new SelectList(ViewBag.translator, "Value", "Text", Model),
+                                             "---Post Translator---", new { @class = "form-control border-input search_combo", id = "ddltranslator" })
+                </div>
+                @*}
+                else
+                {
+
+                <div class="seachboxdiv">
+                    <label>
+                        Translator
+                    </label>
+                    @Html.DropDownList("Translator",
+                                        new SelectList(ViewBag.translator, "Value", "Text", Model),
+                                        "---Translator---", new { @class = "form-control border-input search_combo", id = "ddltranslator" })
+                </div>
+                }*@
+
+                <div class="seachboxdiv">
+                    <label>
+                        Physician Groups
+                    </label>
+                    @Html.DropDownList("physiciansGroup",
+                                   new SelectList(ViewBag.physiciansGroups, "Value", "Text", Model),
+                                   "---Physicians Groups---", new { @class = "form-control border-input search_combo", id = "ddlPhysiciansGroups1" })
+                </div>
+            }
+
+        }
+        <div class="seachboxdiv">
+            <label>
+                Physicians
+            </label>
+            @Html.DropDownList("physician",
+                      new SelectList(ViewBag.Physicians, "Value", "Text", Model),
+                      "---Physicians---", new { @class = "form-control border-input search_combo", id = "ddlPhysicians1" })
+        </div>
+        <div class="seachboxdiv">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FirstOrDefault().PreferredLanguage, "Preferred Language", htmlAttributes: new { @class = "" })
+                @Html.DropDownListFor(
+                item => item.FirstOrDefault().PreferredLanguage,
+                new SelectList(
+                    new[]
+                    {
+                            new { Value = "English",  Text = "English" },
+                            new { Value = "French",   Text = "French" },
+                            new { Value = "Hindi",    Text = "Hindi" },
+                            new { Value = "Japanese", Text = "Japanese" },
+                            new { Value = "Korean",   Text = "Korean" },
+                            new { Value = "Mandarin", Text = "Mandarin" },
+                            new { Value = "Other",    Text = "Other" },
+                            new { Value = "Russian",  Text = "Russian" },
+                            new { Value = "Spanish",  Text = "Spanish" }
+                        },
+                    "Value", "Text", Model),
+                "Language", new { @class = "form-control border-input search_combo", id = "ddlLanguages1" })
+                @Html.ValidationMessageFor(model => model.FirstOrDefault().PreferredLanguage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    }
+
+
+
+</div>
+<div class="col-md-12 float-left">
+    <div class="seachboxdiv col-md-2 pull-right">
+        <input type="button" value="Clear Filters" class="btn btn-success pull-right" style="margin-top:10px;" id="btnclear" onclick="clearfilters()" />
+    </div>
+
+</div>
+<br />
+
+<div class="tablefixwidth1">
+    @{
+        if (ViewBag.Status == "Enrolled")
+        {
+
+            <div class="colordefinations">
+                <div class="labelandcolor">
+                    <label class="yellow emptydivpadding" onclick="setsearchvalue('More Work Require')"></label>
+                    <label class="statustext">More Work Require</label>
+                </div>
+                <div class="labelandcolor">
+                    <label class="red emptydivpadding" onclick="setsearchvalue('No Work Done')"></label>
+                    <label class="statustext">No Work Done</label>
+                </div>
+                <div class="labelandcolor">
+                    <label class="green emptydivpadding" onclick="setsearchvalue('Minimum Requirements Meet')"></label>
+                    <label class="statustext">Minimum Requirements Meet</label>
+                </div>
+                <div class="labelandcolor">
+                    <label class="bluecolor emptydivpadding" onclick="setsearchvalue('Rejected')"></label>
+                    <label class="statustext">Rejected</label>
+                </div>
+                <div class="labelandcolor">
+                    <label class="whitecolor emptydivpadding" onclick="setsearchvalue('')"></label>
+                    <label class="statustext">All</label>
+                </div>
+            </div>
+            <div id="filterchart">
+
+            </div>
+        }
+
+
+    }
+    @if (User.IsInRole("Admin"))  //enable dropdown
+    {
+        <div class="col-md-12 admindiv" style="float:left;margin-bottom:10px;">
+            <a href='#' class='btn btn-primary' data-toggle='modal' data-target='#CycleStatuses'>Change Current Cycle Status Of Current Page Selections</a>
+
+        </div>
+
+    }
+    <br />
+
+    <div class="col-md-12 pull-left nopadding">
+        <label id="cptcodes"></label>
+    </div>
+    <table id="example" class="display nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th class="noExport">
+                    <input type="checkbox" name="select_all" value="1" id="example-select-all">
+                    <span>Select All</span>
+                </th>
+                <th class="noExport">
+                    <span>CMM Review</span>
+                </th>
+                <th>ID</th>
+                <th class="notshow">Hours In Queue</th>
+                <th>Patient Name</th>
+                <th>Gender</th>
+                <th>Date of Birth</th>
+                <th>Cycle</th>
+
+                <th> Counselor Appointment Date</th>
+                <th> Translator Appointment Date</th>
+                <th> Enroller Appointment Date</th>
+
+                <th>Physician</th>
+                <th>Date Of Service</th>
+                <th class="notshow">CPT Codes</th>
+             
+                <th>Date Entered in This Que</th>
+                <th class="notshow">Calling Status</th>
+                <th class="notshow">Enrolled On</th>
+                <th>Category </th>
+                <th class="notshow">Insurance Name</th>
+                <th class="notshow">Insurance ID</th>
+                <th class="notshow">EMR #</th>
+                <th class="notshow">Last Date Modified</th>
+                <th class="notshow">Post Counselor</th>
+                <th class="notshow">Review Encounter</th>
+                <th class="notshow">CMM Notes</th>
+                <th class="noExport">Activity</th>
+                <th class="notshow">Diagnosis</th>
+                <th class="notshow">Address</th>
+                <th class="notshow">Notes</th>
+                <th class="notshow">MedicareID</th>
+                <th class="notshow">MedicaidID</th>
+                <th class="notshow">OtherInsurance</th>
+                <th class="notshow">Approved by</th>
+                <th class="notshow">Rejected by</th>
+                <th class="noExport">Total Count To Be Shared</th>
+                <th class="noExport">Total Remaining</th>
+                <th class="noExport">Total Shared</th>
+                <th >Submitted By</th>
+                <th >Post Translator Name</th>
+                <th>Physician Group</th>
+                <th class="noExport">Share Care Plan</th>
+                @*<th>User</th>*@
+
+
+                @*
+                                    <th>Medicare Eligibility</th>
+                                    <th>Medicaid Eligibility</th>
+                                    <th>Capitated</th>
+                                    <th>Capitated From</th>
+                                    <th>Capitated To</th>
+                    <th>EMR Type</th>
+                     <th>Counselor Assigned On</th>*@
+
+
+
+
+
+
+
+
+
+
+
+            </tr>
+        </thead>
+
+    </table>
+    <div class="modal fade" id="CycleStatuses" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Change Cycle Status</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+
+
+                    <ul class="nav nav-tabs">
+                        <li class="dropdown">
+                            @Html.DropDownList(
+            "CycleStatus",
+            new SelectList(
+                new[]
+                {
+                    new {Value = "Enrolled",  Text = "Enrolled"},
+                    new {Value = "Clinical Sign-Off",  Text = "Clinical Sign-Off"},
+                     new {Value = "Expired",  Text = "Expired"},
+
+                },
+                "Value", "Text")
+            , new { @class = "form-control border-input", id = "CycleStatus" })
+                        </li>
+                    </ul>
+                    <div class="col-md-12">
+                        <label>Notes</label>
+                        @Html.TextArea("Notes", new { @class = "form-control border-input", rows = "5" })
+                    </div>
+                </div>
+
+
+                <div class="modal-footer" style="display:inline-block">
+                    <input type="button" value="Save" class="btn btn-warning" onclick="assigncyclestatus()" />
+                    <input type="button" value="Close" class="btn btn-success" data-dismiss="modal" />
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="Billingcategory" value="@ViewBag.BillingCategoryId"/>
+@section Scripts {
+    @*<script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js" type="text/javascript"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js" type="text/javascript"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js" type="text/javascript"></script>
+        <script src="//cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js" type="text/javascript"></script>
+        <script src="//cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js" type="text/javascript"></script>*@
+
+
+    @*<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.colVis.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/colreorder/1.5.1/js/dataTables.colReorder.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>*@
+    <script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+    <script>
+        function clearfilters() {
+            $("#ddlLanguages1").val("");
+            $("#ddlLiaisons1").val("");
+            $("#ddlPhysicians1").val("");
+            $("#ddlPhysiciansGroups1").val("");
+          
+            $("#DateTo").val("");
+            $("#datefiltercolumn").val("");
+
+            $("#ddlLanguages1").multiselect('refresh');
+            $("#ddlLiaisons1").multiselect('refresh');
+            $("#ddlPhysicians1").multiselect('refresh');
+            $("#ddlPhysiciansGroups1").multiselect('refresh');
+      
+            $("#DateTo").val("");
+            $("#datefiltercolumn").multiselect('refresh');
+            $("#ddltranslator").val("");
+            $("#ddltranslator").multiselect('refresh');
+            var now = new Date();
+
+            var day = ("01");
+            var month = ("0" + (now.getMonth() + 1)).slice(-2);
+
+            var firstdate = now.getFullYear() + "-" + (month) + "-" + (day);
+            $("#DateFrom").val(firstdate);
+            now = new Date();
+
+            day = ("0" + now.getDate()).slice(-2);
+            month = ("0" + (now.getMonth() + 1)).slice(-2);
+
+            var today = now.getFullYear() + "-" + (month) + "-" + (day);
+            $("#DateTo").val(today);
+
+            //$("#ddlLiaisons1").select2("destroy");
+            //$("#ddlLiaisons1").select2();
+            //$("#ddlPhysicians1").select2("destroy");
+            //$("#ddlPhysicians1").select2();
+            //$("#ddlPhysiciansGroups1").select2("destroy");
+            //$("#ddlPhysiciansGroups1").select2();
+            //$("#ddlLiaisons1").selectpicker('refresh');
+            //$("#ddlPhysicians1").selectpicker('refresh');
+            //$("#ddlPhysiciansGroups1").selectpicker('refresh');
+            table.ajax.reload();
+        }
+        function assigncyclestatus() {
+            var Patients = [];
+            var Cycles = [];
+            $(".chkassignpatients").each(function () {
+                if ($(this).prop('checked') == true) {
+                    Patients.push($(this).val());
+                    Cycles.push($(this).attr("data-cycle"));
+                }
+            });
+            if (Patients.length > 0) {
+                $(".loader").show();
+                $.ajax({
+                    type: "POST",
+
+                    url: "/CcmFlow/AssignCycleStatusBulk",
+                    data: {
+                        'Status': $("#CycleStatus").val(), 'Patients': Patients, 'Cycles': Cycles, 'Notes': $("#Notes").val() },
+                    success: function (result) {
+
+                        $(".loader").hide();
+                        if (result == "True") {
+                            location.reload();
+
+                        }
+                    }, error: function (result) {
+                        $(".loader").hide();
+                    }
+                });
+            }
+        }
+        var table;
+        var urltobesend;
+        function setsearchvalue(value) {
+
+            var val3 = value.replace("cpt,", "");
+          //  alert(val3);
+
+           // $(".dataTables_wrapper .dataTables_filter input").val(val3);
+            table.search(value).draw();
+            $("#example_filter").children().children().val("");
+        }
+
+        //$("#ddlLiaisons1").select2();
+
+        //$("#ddlPhysicians1").select2();
+
+        //$("#ddlPhysiciansGroups1").select2();
+        $(document).ready(function () {
+            $(".loader").show();
+            //Combo Search
+            $('#datefiltercolumn, #ddlLiaisons1, #ddltranslator, #ddlPhysiciansGroups1, #ddlPhysicians1, #ddlLanguages1').multiselect({
+                includeSelectAllOption: false,
+                buttonWidth: 155,
+                enableCaseInsensitiveFiltering: true,
+                enableFiltering: true
+            });
+
+            //$('.selectpicker').selectpicker({
+            //    liveSearch: true
+
+            //});
+            var now = new Date();
+
+            var day = ("01");
+            var month = ("0" + (now.getMonth() + 1)).slice(-2);
+
+            var firstdate = now.getFullYear() + "-" + (month) + "-" + (day);
+            $("#DateFrom").val(firstdate);
+            now = new Date();
+
+            day = ("0" + now.getDate()).slice(-2);
+            month = ("0" + (now.getMonth() + 1)).slice(-2);
+
+            var today = now.getFullYear() + "-" + (month) + "-" + (day);
+            $("#DateTo").val(today);
+            $("#datefiltercolumn").val(['Date Entered']);
+            $("#datefiltercolumn").multiselect('refresh');
+
+            debugger;
+            var fromDashBoard = $("#fromDashBoard").val();
+            if (fromDashBoard == "value") {
+
+            }
+            $(".datefield,#datefiltercolumn").change(function () {
+                $(".loader").show();
+                table.ajax.reload(function () {
+                    $(".loader").hide();
+                });
+            });
+            $("#ddlLiaisons1,#ddltranslator").change(function () {
+                $(".loader").show();
+                table.ajax.reload(function () {
+                    $(".loader").hide();
+                });
+            });
+            $("#ddlPhysicians1").change(function () {
+
+                $(".loader").show();
+                table.ajax.reload(function () {
+                    $(".loader").hide();
+                });
+            });
+            $("#ddlPhysiciansGroups1").change(function () {
+
+                $(".loader").show();
+                table.ajax.reload(function () {
+                    $(".loader").hide();
+                });
+            });
+            $("#ddlLanguages1").change(function () {
+
+                $(".loader").show();
+                table.ajax.reload(function () {
+                    $(".loader").hide();
+                });
+            });
+            $('#example-select-all').on('click', function () {
+                // Check/uncheck all checkboxes in the table
+                var rows = table.rows({ 'search': 'applied' }).nodes();
+                $('input[type="checkbox"]', rows).prop('checked', this.checked);
+            });
+            var status ="@ViewBag.Status";
+            var User ="@ViewBag.UserId";
+            var UserRolestr = "@ViewBag.UserRole";
+        
+            var billingcategoryId = parseInt($("#Billingcategory").val());
+            if (status == "Claims Submission") {
+                $("#datefiltercolumn").val(['Date of Service']);
+                $("#datefiltercolumn").multiselect('refresh');
+
+            }
+            debugger;
+            urltobesend = "/CcmStatus/LoadDrugData?status=" + status + "&userId=" + User + "&LiaisonId=" + liasionid + "&PhysicianID=" + physicianid + "&PhysicianGroupID=" + physiciangroupid + "&BillingcategoryId=" + billingcategoryId;
+            //$('#table').DataTable({
+            //    pageLength: 100,
+            //    scrollY: "60vh",
+            //    order: [[0, 'desc']],
+            //    dom: 'Bfrtip',
+            //    buttons: ['print', 'excelHtml5', 'pdfHtml5']
+            //});
+        var message="@ViewBag.Message";
+            if (message != "") {
+                swal(message);
+            }
+            var fortranslator = "@ViewBag.forTranslator";
+            var billingcategoryid ="@ViewBag.BillingcategoryId"
+            var liasionid = parseInt($("#ddlLiaisons1").val());
+            var translator = parseInt($("#ddltranslator").val());
+            var physicianid = parseInt($("#ddlPhysicians1").val());
+            var physiciangroupid = parseInt( $("#ddlPhysiciansGroups1").val());
+             table = $("#example").DataTable({
+                 fixedHeader: {
+                     header: true,
+                     footer: false
+                 },
+
+
+                 "processing": true, // for show progress bar
+                 "language": {
+            processing: '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="256px" height="32px" viewBox="0 0 128 16" xml:space="preserve"><path fill="#96a6d8" fill-opacity="0.42" d="M6.4,4.8A3.2,3.2,0,1,1,3.2,8,3.2,3.2,0,0,1,6.4,4.8Zm12.8,0A3.2,3.2,0,1,1,16,8,3.2,3.2,0,0,1,19.2,4.8ZM32,4.8A3.2,3.2,0,1,1,28.8,8,3.2,3.2,0,0,1,32,4.8Zm12.8,0A3.2,3.2,0,1,1,41.6,8,3.2,3.2,0,0,1,44.8,4.8Zm12.8,0A3.2,3.2,0,1,1,54.4,8,3.2,3.2,0,0,1,57.6,4.8Zm12.8,0A3.2,3.2,0,1,1,67.2,8,3.2,3.2,0,0,1,70.4,4.8Zm12.8,0A3.2,3.2,0,1,1,80,8,3.2,3.2,0,0,1,83.2,4.8ZM96,4.8A3.2,3.2,0,1,1,92.8,8,3.2,3.2,0,0,1,96,4.8Zm12.8,0A3.2,3.2,0,1,1,105.6,8,3.2,3.2,0,0,1,108.8,4.8Zm12.8,0A3.2,3.2,0,1,1,118.4,8,3.2,3.2,0,0,1,121.6,4.8Z"/><g transform="translate(36 0)"><path fill="#052aa3" fill-opacity="1" d="M-42.7,3.84A4.16,4.16,0,0,1-38.54,8a4.16,4.16,0,0,1-4.16,4.16A4.16,4.16,0,0,1-46.86,8,4.16,4.16,0,0,1-42.7,3.84Zm12.8-.64A4.8,4.8,0,0,1-25.1,8a4.8,4.8,0,0,1-4.8,4.8A4.8,4.8,0,0,1-34.7,8,4.8,4.8,0,0,1-29.9,3.2Zm12.8-.64A5.44,5.44,0,0,1-11.66,8a5.44,5.44,0,0,1-5.44,5.44A5.44,5.44,0,0,1-22.54,8,5.44,5.44,0,0,1-17.1,2.56Z"/><animateTransform attributeName="transform" type="translate" values="23 0;36 0;49 0;62 0;74.5 0;87.5 0;100 0;113 0;125.5 0;138.5 0;151.5 0;164.5 0;178 0" calcMode="discrete" dur="1560ms" repeatCount="indefinite"/></g></svg> '},
+
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+                 "stateSave": false,
+                 bDeferRender: true,
+                 colReorder: true,
+
+                 columnDefs: [{
+                     orderable: false,
+                     className: 'select-checkbox',
+                     targets: 0
+                 }],
+            "pageLength": 10,
+                'order': [2, 'asc'],
+            "ajax": {
+                "url": "/CcmStatus/LoadDrugData" ,
+                "type": "POST",
+                "datatype": "json",
+
+                "data": function (d) {
+                    console.log(d);
+                    d.status= status,
+                    d.userId= User,
+                        d.LiaisonId = $("#ddlLiaisons1").val()
+                    d.PhysicianID = $("#ddlPhysicians1").val(),
+                    d.forTranslator = fortranslator,
+                    d.PhysicianGroupID = $("#ddlPhysiciansGroups1").val(),
+                    d.DateFrom = $("#DateFrom").val(),
+                    d.DateTo = $("#DateTo").val(),
+                    d.SearchCol = $("#datefiltercolumn").val(),
+                    d.forcareplan = $("#forsharecareplan").val(),
+                    d.TranslatorID = $("#ddltranslator").val(),
+                        d.Languages = $("#ddlLanguages1").val(),
+                        d.BillingcategoryId=billingcategoryid
+                   
+                },
+                //"dataSrc": ""
+                 }, /*"destroy": true,*/
+                 //"dom": 'Blfrtip',
+                 "dom": '<"top"i>rt<"bottom"Blfrtip><"clear">',
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    ['10 rows', '25 rows', '50 rows', 'Show all']
+                 ],
+                 "drawCallback": function (settings) {
+                     debugger;
+                     $('.loader').hide();
+                     $("#filterchart").html("");
+                     if (status == "Enrolled") {
+
+                         if (settings.json.activeworkquechart != "") {
+                             $("#filterchart").html(settings.json.activeworkquechart);
+                         }
+                     }
+                     else {
+                         if (status == "Claims Submission" && $("#forsharecareplan").val() == "") {
+                             $("#cptcodes").html("");
+                             if (settings.json.cptcodestotal.length) {
+
+                                 if (1 == 1) {
+
+                                     var txt = "";
+                                     var totalcounts = 0;
+                                     for (i = 0; i <= settings.json.cptcodestotal.length - 1; i++) {
+
+                                         var name = settings.json.cptcodestotal[i].Name.trim().replace(" ", "+");
+                                       //  name = name.replace(/\CPT/g, "");
+                                         // var classname = name == "99490" ? "green" : name == "99487" ? "yellow" : "bluecolor";
+                                       //  var searchname = name == "99490" ? "99490" : name == "99491" ? "99491" : name == "99487" ? "99487" : "99489";
+                                         totalcounts += parseInt(settings.json.cptcodestotal[i].Count);
+                                         if (i == 0) {
+                                             txt = txt + "<span class='cptcodespan'  onclick=\"setsearchvalue('"+ "cpt," + name + "')\">" + name + " = " + settings.json.cptcodestotal[i].Count + "</span>";
+                                         }
+                                         else {
+                                             txt = txt + "" + "<span class='cptcodespan' onclick=\"setsearchvalue('"+ "cpt," + name + "')\">" + name + " = " + settings.json.cptcodestotal[i].Count + "</span>";
+                                         }
+
+                                     }
+                                     txt = txt + "<span class='cptcodespan' onclick=\"setsearchvalue('')\">Total = " + totalcounts + "</span>";
+                                     txt = txt + "<span class='btn btn-success' onclick=\"setsearchvalue('')\">Clear Filters</span>";
+                                     $("#cptcodes").html(txt);
+                                 }
+                             }
+                         }
+                         else {
+                             if (status == "Claims Submission" && $("#forsharecareplan").val() == "value") {
+                                 $("#cptcodes").html("");
+                                 if (settings.json.Totaltobeshared.length) {
+
+                                     if (1 == 1) {
+
+                                         var txt = "";
+                                         var totalcounts = 0;
+                                         for (i = 0; i <= settings.json.Totaltobeshared.length - 1; i++) {
+
+                                             var name = settings.json.Totaltobeshared[i].Name.trim();
+                                            // name = name.replace(/\CPT/g, "");
+                                             // var classname = name == "99490" ? "green" : name == "99487" ? "yellow" : "bluecolor";
+                                           //  var searchname = name == "99490" ? "99490" : name == "99491" ? "99491" : name == "99487" ? "99487" : "99489";
+                                             totalcounts += parseInt(settings.json.Totaltobeshared[i].Count);
+                                             if (i == 0) {
+                                                 txt = txt + "<span class='cptcodespan'  >" + name + " = " + settings.json.Totaltobeshared[i].Count + "</span>";
+                                             }
+                                             else {
+                                                 txt = txt + "" + "<span class='cptcodespan' >" + name + " = " + settings.json.Totaltobeshared[i].Count + "</span>";
+                                             }
+
+                                         }
+                                        // txt = txt + "<span class='cptcodespan' onclick=\"setsearchvalue('')\">Total = " + totalcounts + "</span>";
+                                        // txt = txt + "<span class='btn btn-success' onclick=\"setsearchvalue('')\">Clear Filters</span>";
+                                         $("#cptcodes").html(txt);
+                                     }
+                                 }
+                             }
+                         }
+                        //
+                     }
+
+                 },
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //if (status != "Enrolled") {
+                    //    $('td', nRow).css('background-color', aData.Color);
+                    //    $(nRow).find('td:eq(1)').css('background-color', aData.dateColor);
+                    //}
+
+                    //if (status == "Claims Submission") {
+                    //    $("#cptcodes").html("");
+                    //    if (aData.cPTCODEs.length) {
+
+                    //        var txt = "";
+                    //        var totalcounts = 0;
+                    //        for (i = 0; i <= aData.cPTCODEs.length - 1; i++) {
+
+                    //            var name = aData.cPTCODEs[i].Name.trim().replace(" ", "+");
+                    //            name = name.replace(/\CPT/g, "");
+                    //           // var classname = name == "99490" ? "green" : name == "99487" ? "yellow" : "bluecolor";
+                    //            var searchname = name == "99490" ? "99490" : name == "99487" ? "99487" : "99489";
+                    //            totalcounts += parseInt(aData.cPTCODEs[i].Count);
+                    //            if (i == 0) {
+                    //                txt = txt + "<span class='cptcodespan'  onclick=\"setsearchvalue('" + searchname + "')\">" + name + " = " + aData.cPTCODEs[i].Count + "</span>";
+                    //            }
+                    //            else {
+                    //                txt = txt + "" + "<span class='cptcodespan' onclick=\"setsearchvalue('" + searchname + "')\">" + name + " = " + aData.cPTCODEs[i].Count + "</span>";
+                    //            }
+
+                    //        }
+                    //        txt = txt + "<span class='cptcodespan' onclick=\"setsearchvalue('')\">Total = " + totalcounts + "</span>";
+                    //        txt = txt + "<span class='btn btn-success' onclick=\"setsearchvalue('')\">Clear Filters</span>";
+                    //        $("#cptcodes").html(txt);
+                    //    }
+                    //}
+
+
+
+                    if (status == "Enrolled") {
+
+                        //if (aData.activeworkquechart != "") {
+                        //    $("#filterchart").html(aData.activeworkquechart);
+                        //}
+                        if (aData.ccmnotes != "") {
+                            $(nRow).addClass("bluecolor");
+                        }
+                        else {
+                            if (aData.Activitytext == "Minimum Requirements Meet") {
+                                $(nRow).addClass("green");
+                            }
+                            else {
+                                if (aData.Activitytext == "More Work Require") {
+                                    $(nRow).addClass("yellow");
+                                }
+                                else {
+                                    $(nRow).addClass("red");
+                                }
+                            }
+                        }
+
+                    }
+                    if (status == "Clinical Sign-Off") {
+                    //    $('td', nRow).css('background-color', "#fbcd6c");
+                        $(nRow).addClass('gold');
+                    }
+
+
+                },
+                buttons: [/*'print',*/ {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: ['thead tr th:not(.noExport)', ':visible'],
+                        format: {
+                            body: function (data, row, column, node) {
+                                debugger;
+                                var datastr = data.toString();
+                                if (datastr.indexOf("<table") > -1) {
+                                    var htmltable = $.parseHTML(datastr);
+                                    var tbl =$(htmltable).map(function () {
+                                        return $(this).find('td').map(function () {
+                                            return $(this).html();
+                                        }).get();
+                                    }).get();
+                                    debugger;
+                                    return tbl;
+                                }
+                                else {
+                                    return data;
+                                }
+                             
+                            }
+                        }
+                    }
+                }
+                    , {
+                        extend: 'pdfHtml5',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL',
+                        exportOptions: {
+                            columns:['thead tr th:not(.noExport)', ':visible']
+                        }
+                    }, {
+                        extend: 'colvis',
+                        collectionLayout: 'fixed two-column'
+                    }
+
+                   ],
+                 "columns": [
+                     {
+                         'render': function (data, type, full, meta) {
+                             return '<input type="checkbox" name="id[]" value="'
+                                 + full.Id + '" class="chkassignpatients checkboxes"  data-cycle=' + full.Cycle + ' >';
+                         }},
+                {
+                    "render": function (data, type, full, meta) {
+                        if (status != "Enrolled" && UserRolestr == "QAQC") {
+                            return '<a class="btn btn-success btn-sm" href=' + full.CMMReviewLink + '>CMM Review</a>';
+                        }
+                        else {
+                            return '<a class="btn btn-success btn-sm" href=' + full.CMMReviewLink + '>Details</a>';
+                        }
+
+                    }
+
+                     },
+
+
+                { "data": "Id", "name": "Id", "autoWidth": true },
+                { "data": "DaysinQue", "name": "DaysinQue", "autoWidth": true },
+                { "data": "PatientName", "name": "PatientName", "autoWidth": true },
+                { "data": "Gender", "name": "Gender", "autoWidth": true },
+
+                     { "data": "BirthDate", "name": "BirthDate", "autoWidth": true  },
+                { "data": "Cyclestr", "name": "Cyclestr", "autoWidth": true },
+
+                     { "data": "CouncelorAppointmentDate", "name": "CouncelorAppointmentDate", "autoWidth": true },
+                     { "data": "TranslatorAppointmentDate", "name": "TranslatorAppointmentDate", "autoWidth": true },
+                     { "data": "EnrollerAppointmentDate", "name": "EnrollerAppointmentDate", "autoWidth": true },
+
+                     { "data": "DocFirstName", "name": "DocFirstName", "autoWidth": true },
+                { "data": "CcmClinicalSignOffDate", "name": "CcmClinicalSignOffDate", "autoWidth": true },
+
+                     //{ "data": "CcmBillingCode", "name": "CcmBillingCode", "autoWidth": true },
+                {
+                         'render': function (data, type, full, meta) {
+                             debugger;
+                             var ccmbillingcodes = full.CcmBillingCode.replace(/(\r\n|\n|\r)/gm, ";");
+                             if (ccmbillingcodes == "") {
+                                 return "";
+                             }
+
+                             var ccmbillingcodessarr = ccmbillingcodes.split(";");
+                             var table = "<table class='ccmbillingcodetbl'><tr>";
+
+                             for (i = 0; i <= ccmbillingcodessarr.length - 1; i++) {
+                                 table += "<td>" + ccmbillingcodessarr[i] + "</td>";
+                             }
+                             table += "</tr></table>";
+                             return table;
+
+                             }
+
+                     },
+
+                { "data": "DateEntered", "name": "DateEntered", "autoWidth": true },
+                { "data": "CallingStatus", "name": "CallingStatus", "autoWidth": true },
+                     { "data": "CcmEnrolledOn", "name": "CcmEnrolledOn", "autoWidth": true },
+                     { "data": "Category", "name": "Category", "autoWidth": true },
+
+
+                { "data": "insurancename", "name": "insurancename", "autoWidth": true },
+                { "data": "insuranceid", "name": "insuranceid", "autoWidth": true },
+                { "data": "emrnumber", "name": "emrnumber", "autoWidth": true },
+                { "data": "LastUpdatedDate", "name": "LastUpdatedDate", "autoWidth": true },
+
+                { "data": "liaisonName", "name": "liaisonName", "autoWidth": true },
+
+                     { "data": "ReviewTime", "name": "ReviewTime", "autoWidth": true },
+
+                //{
+                //    data: null, render: function (data, type, full, meta) {
+                //        debugger;
+                //        var currentCell = $("#example").DataTable().cells({ "row": meta.row, "column": meta.col }).nodes(0);
+                //        $.ajax({
+                //            url: '/CcmFlow/TotalReviewTime?patientId=' + full.Id + '&Cycle=' + full.Cycle
+                //        }).done(function (timespan) {
+                //            var totalTime = timespan.substr(0, timespan.indexOf('.'));
+                //            $(currentCell).text(totalTime === "" ? timespan : totalTime);
+                //            if (1==1) {
+                //                var totaltimespent = timespan.split(":");
+                //                var hours = parseInt(totaltimespent[0]);
+                //                var mins = parseInt(totaltimespent[1]);
+                //                var seconds = parseInt(totaltimespent[2]);
+                //                var totalMins = (hours * 60) + mins + (seconds / 60);
+
+                //              //  var currentCell1 = $('td', meta.row).css('background-color', aData.Color);;
+                //                if (status == "Enrolled") {
+                //                    if (totalMins == 0) {
+                //                        $("#patientandcycle" + full.Id + full.Cycle).text("No Activity Perform");
+                //                       // $('td', meta.row).css('background-color', "Red");
+                //                       // $('td', meta.row).addClass("red");
+                //                        $("#example").DataTable().rows(meta.row)
+                //                            .nodes()
+                //                            .to$()
+                //                            .addClass('red');
+                //                    }
+                //                    else {
+                //                        if (totalMins > 0 && totalMins < 15) {
+                //                            $("#patientandcycle" + full.Id + full.Cycle).text("More work require");
+                //                          //  $('td', meta.row).css("background-color", "Yellow");
+                //                           // $('td', meta.row).addClass("yellow");
+                //                            $("#example").DataTable().rows(meta.row)
+                //                                .nodes()
+                //                                .to$()
+                //                                .addClass('yellow');
+                //                        }
+                //                        else {
+                //                            if (totalMins >= 15) {
+                //                                $("#patientandcycle" + full.Id + full.Cycle).text("Minimum Requirements meet");
+                //                                $("#example").DataTable().rows(meta.row)
+                //                                    .nodes()
+                //                                    .to$()
+                //                                    .addClass('green');
+                //                            }
+                //                        }
+                //                    }
+                //                }
+
+                //            }
+
+                //        });
+                //        return null;
+
+
+
+
+                //    }
+                //},
+
+                { "data": "ccmnotes", "name": "ccmnotes", "autoWidth": true },
+
+                { "data": "Activitytext", "name": "Activitytext", "autoWidth": true },
+                    { "data": "ICD10Codes", "name": "ICD10Codes", "autoWidth": true },
+                     //{
+                     //    'render': function (data, type, full, meta) {
+                     //        debugger;
+                     //        var icd10codes = full.ICD10Codes.replace(/(\r\n|\n|\r)/gm, ";");
+                     //        if (icd10codes == "") {
+                     //            return "";
+                     //        }
+
+                     //        var icd10codesarr = icd10codes.split(";");
+                     //        var table = "<table class='icd10tbl'><tr>";
+
+                     //        for (i = 0; i <= icd10codesarr.length - 1; i++) {
+                     //            table += "<td>" + icd10codesarr[i] + "</td>";
+                     //        }
+                     //        table += "</tr></table>";
+                     //        return table;
+
+                     //        }
+
+                     //},
+                     { "data": "Address", "name": "Address", "autoWidth": true },
+                     { "data": "note", "name": "note", "autoWidth": true },
+                     { "data": "medicaidid", "name": "medicaidid", "autoWidth": true },
+                     { "data": "medicareid", "name": "medicareid", "autoWidth": true },
+                     { "data": "otherinsuranceid", "name": "otherinsuranceid", "autoWidth": true },
+                     { "data": "approvedby", "name": "approvedby", "autoWidth": true },
+                     { "data": "rejectedby", "name": "rejectedby", "autoWidth": true },
+                     //
+                     { "data": "TotalCountCarePlanTobeShared", "name": "TotalCountCarePlanTobeShared", "autoWidth": true },
+                     { "data": "TotalSharedRemining", "name": "TotalSharedRemining", "autoWidth": true },
+                     { "data": "TotalCareplanShared", "name": "TotalCareplanShared", "autoWidth": true },
+                     { "data": "SubmittedBy", "name": "SubmittedBy", "autoWidth": true },
+
+                     { "data": "TranslatorName", "name": "TranslatorName", "autoWidth": true },
+                     { "data": "PhysicianGroup", "name": "PhysicianGroup", "autoWidth": true },
+                     {
+                         "render": function (data, type, full, meta) {
+
+                             return '<a class="btn btn-success btn-sm" href=' + full.CMMReviewLink + '&forcareplan=true&cycle='+ full.Cycle +'>Share CarePlan</a>';
+
+                         }
+                     },
+                     //{ "data": "QAQCName", "name": "QAQCName", "autoWidth": true },
+                     //{ "data": "CCMUpdatedOn", "name": "note", "autoWidth": true },
+
+
+
+                //{
+                //    data: null, render: function (data, type, full, meta) {
+
+
+                //        return "<label id='patientandcycle"+full.Id+full.Cycle+"' ></label>"
+
+
+
+
+
+                //    }
+                //},
+
+                //{
+                //    data: null, render: function (data, type, full, meta) {
+
+                //        if (full.CcmStatus == "Claims Submission") {
+                //            return full.CcmBillingCode;
+                //        }
+                //        else {
+                //            return "";
+                //        }
+
+
+
+
+                //    }
+                //},
+                //{
+                //    data: null, render: function (data, type, full, meta) {
+
+                //        if (full.CcmStatus == "Claims Submission") {
+                //            return full.CcmBillingCode2;
+                //        }
+                //        else {
+                //            return "";
+                //        }
+
+
+
+
+
+                //    }
+                //},
+
+
+                //{ "data": "medicaideligibility", "name": "medicaideligibility", "autoWidth": true },
+                //{ "data": "medicareeligibility", "name": "medicareeligibility", "autoWidth": true },
+                //{ "data": "capitated", "name": "capitated", "autoWidth": true },
+                //{ "data": "capitatedfrom", "name": "capitatedfrom", "autoWidth": true },
+                //{ "data": "capitatedto", "name": "capitatedto", "autoWidth": true },
+
+                //{ "data": "emrtype", "name": "emrtype", "autoWidth": true },
+
+
+
+
+                //{ "data": "LiasionAssignedOn", "name": "LiasionAssignedOn", "autoWidth": true },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ],
+                 "initComplete": function (settings, json) {
+                    
+                 }
+
+
+
+
+
+
+
+
+             });
+
+
+            if (status != "Claims Submission") {
+                table.columns(11).visible(false);
+                table.columns(12).visible(false);
+                table.columns(13).visible(false);
+                 table.columns(17).visible(false);
+
+
+            }
+            else {
+                table.columns(13).visible(true);
+                table.columns(11).visible(true);
+                table.columns(12).visible(true);
+
+            }
+
+            if (status != "Enrolled") {
+                table.columns(3).visible(true);
+                table.columns(25).visible(false);
+                //table.columns(18).visible(false);
+            }
+            else {
+                table.columns(3).visible(false);
+                table.columns(25).visible(true);
+
+                //table.columns(18).visible(true);
+            }
+
+            if (UserRolestr != "Admin") {
+                table.columns(20).visible(false);
+            }
+            else {
+                table.columns(20).visible(true);
+            }
+
+            if (UserRolestr != "Admin" && UserRolestr != "Liaison" && UserRolestr != "QAQC") {
+                table.columns(1).visible(false);
+            }
+            else {
+                table.columns(1).visible(true);
+            }
+            if (status == "Claims Submission") {
+
+                table.columns(1).visible(false);
+                table.columns(3).visible(false);
+                table.columns(5).visible(false);
+                table.columns(8).visible(false);
+                table.columns(9).visible(false);
+                 table.columns(10).visible(false);
+
+
+                table.columns(13).visible(false);
+                table.columns(14).visible(false);
+                table.columns(15).visible(false);
+                table.columns(17).visible(true);
+
+
+                table.columns(18).visible(false);
+
+                table.columns(20).visible(false);
+                table.columns(21).visible(false);
+                table.columns(24).visible(false);
+                table.columns(26).visible(true);
+                table.columns(27).visible(true);
+                if ($("#forsharecareplan").val() == "value") {
+                    table.columns(12).visible(false);
+                    table.columns(13).visible(false);
+                    table.columns(14).visible(false);
+                    table.columns(15).visible(false);
+                    table.columns(16).visible(false);
+                    table.columns(18).visible(false);
+                    table.columns(19).visible(false);
+                    table.columns(20).visible(false);
+                    table.columns(21).visible(false);
+                    table.columns(22).visible(false);
+                    table.columns(23).visible(false);
+                    table.columns(24).visible(false);
+                    table.columns(25).visible(false);
+                    table.columns(26).visible(false);
+                    table.columns(27).visible(false);
+                    table.columns(28).visible(false);
+                    table.columns(29).visible(false);
+                    table.columns(30).visible(false);
+                    table.columns(31).visible(false);
+                    table.columns(32).visible(false);
+                    table.columns(36).visible(false);
+                    table.columns(39).visible(true);
+                }
+                else {
+                    table.columns(33).visible(false);
+                    table.columns(34).visible(false);
+                    table.columns(35).visible(false);
+                    table.columns(36).visible(true);
+                    table.columns(39).visible(false);
+                }
+
+            }
+            else {
+                $("#datefiltercolumn").children("option[value^='Date of Service']").hide();
+                table.columns(1).visible(true);
+                table.columns(3).visible(true);
+                table.columns(5).visible(true);
+
+                table.columns(8).visible(true);
+                table.columns(9).visible(true);
+                table.columns(10).visible(true);
+
+                table.columns(13).visible(true);
+                table.columns(14).visible(true);
+                table.columns(15).visible(true);
+                table.columns(19).visible(true);
+                table.columns(20).visible(true);
+                table.columns(21).visible(true);
+                table.columns(24).visible(true);
+                table.columns(26).visible(false);
+                table.columns(27).visible(false);
+                table.columns(33).visible(false);
+                table.columns(34).visible(false);
+                table.columns(35).visible(false);
+                table.columns(36).visible(false);
+
+                table.columns(39).visible(false);
+
+            }
+            if (status == "Claims Submission" || status == "Clinical Sign-Off" || status == "Enrolled" || status =="Expired") {
+                table.columns(0).visible(true);
+                $(".admindiv").show();
+            }
+            else {
+                table.columns(0).visible(false);
+                $(".admindiv").hide();
+            }
+            if (status == "Expired") {
+                table.columns(13).visible(false);
+            }
+            else {
+                table.columns(13).visible(true);
+            }
+            if (status == "Claims Submission") {
+                table.columns(17).visible(true);
+
+                table.columns(31).visible(true);
+                table.columns(32).visible(false);
+            }
+            else {
+                if (status == "Enrolled") {
+                    table.columns(31).visible(false);
+                    table.columns(32).visible(true);
+                }
+                else {
+                    table.columns(31).visible(false);
+                    table.columns(32).visible(false);
+                }
+            }
+
+
+
+        });
+    </script>
+}

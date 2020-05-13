@@ -1,0 +1,48 @@
+﻿@model List<CCM.Models.SurveyDependent>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Sr. No.</th>
+            <th>Survey Name</th>
+            <th>Survey Type</th>
+            <th>Survey Section</th>
+        </tr>
+    </thead>
+    @{ int i = 1;}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @i
+            </td>
+
+
+            <td>
+                @Html.DisplayFor(modelItem => item.survey)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.surveyType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.surveySection)
+            </td>
+
+
+        </tr>
+        i += 1;
+    }
+
+</table>
+<script>
+    $(document).ready(function () {
+            lsttable =  $('.table').DataTable(
+            {
+                responsive: true,
+                pageLength: 25,
+                    "scrollY": "50vh",
+            });;
+
+          
+        });
+</script>

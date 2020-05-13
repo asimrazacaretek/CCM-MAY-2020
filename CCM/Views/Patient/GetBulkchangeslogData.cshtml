@@ -1,0 +1,19 @@
+﻿@model IEnumerable<CCM.Models.ViewModels.BulkChangesViewModel>
+@{
+    Layout = null;
+}
+
+@try
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.id</td>
+            <td>@item.Title</td>
+            <td>@item.CreatedBy</td>
+            <td>@item.CreatedOn</td>
+
+        </tr>
+    }
+}
+catch (Exception e) { }

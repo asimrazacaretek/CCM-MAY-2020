@@ -1,0 +1,283 @@
+﻿@model CCM.Models.PatientProfile_Contact
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })
+
+<div class="container">
+    <h3 class="pageTitle text-info">CONTACT INFORMATION</h3>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+
+        <br/><br/>
+             <div class="form-horizontal">
+                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                 <div class="row">
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.CellPhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.EditorFor(model => model.CellPhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                 @Html.ValidationMessageFor(model => model.CellPhoneNumber, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.CellPhoneContactWay, " ", htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.LabelFor(model => model.CellPhoneContactWay, "Best Way To Contact", htmlAttributes: new { style = "float: left" })
+                                 @Html.RadioButtonFor(model => model.CellPhoneContactWay, true)
+                                 @Html.Label("Call")
+                                 @Html.RadioButtonFor(model => model.CellPhoneContactWay, false)
+                                 @Html.Label("Text")
+                             </div>
+                         </div>
+                     </div>
+
+                 </div>
+
+                 <div class="row">
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             <div class="col-md-12">
+                                 @Html.LabelFor(model => model.CellPhonePermission, htmlAttributes: new { style = "float: left" })
+                                 @Html.RadioButtonFor(model => model.CellPhonePermission, true)
+                                 @Html.Label("Yes")
+                                 @Html.RadioButtonFor(model => model.CellPhonePermission, false)
+                                 @Html.Label("No")
+                                 @Html.ValidationMessageFor(model => model.CellPhonePermission, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             <div class="col-md-12">
+                                 @Html.Label("Best Time To Call", htmlAttributes: new { style = "float: left" })
+                                 @Html.RadioButtonFor(model => model.CellPhoneCallTime, true)
+                                 @Html.Label("Daytime")
+                                 @Html.RadioButtonFor(model => model.CellPhoneCallTime, false)
+                                 @Html.Label("Evening")
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+
+                 <br />
+                 <div class="row">
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.CellPhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.EditorFor(model => model.CellPhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                 @Html.ValidationMessageFor(model => model.CellPhoneNumber1, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.CellPhoneNumber2, htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.EditorFor(model => model.CellPhoneNumber2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                 @Html.ValidationMessageFor(model => model.CellPhoneNumber2, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="form-group">
+                     @Html.LabelFor(model => model.HomePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                     <div class="col-md-6">
+                         @Html.EditorFor(model => model.HomePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "0000000000" } })
+                         @Html.ValidationMessageFor(model => model.HomePhoneNumber, "", new { @class = "text-danger" })
+                     </div>
+                 </div>
+
+                 <div class="row">
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             <div class="col-md-12">
+                                 @Html.LabelFor(model => model.HomePhonePermission, htmlAttributes: new { style = "float: left" })
+                                 @Html.RadioButtonFor(model => model.HomePhonePermission, true)
+                                 @Html.Label("Yes")
+                                 @Html.RadioButtonFor(model => model.HomePhonePermission, true)
+                                 @Html.Label("No")
+                                 @Html.ValidationMessageFor(model => model.HomePhonePermission, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             <div class="col-md-12">
+                                 @Html.Label("Best Time To Call", htmlAttributes: new { style = "float: left" })
+                                 @Html.RadioButtonFor(model => model.HomePhoneCallTime, true)
+                                 @Html.Label("Daytime")
+                                 @Html.RadioButtonFor(model => model.HomePhoneCallTime, false)
+                                 @Html.Label("Evening")
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+
+                 <br />
+                 <div class="row">
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.HomePhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.EditorFor(model => model.HomePhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                 @Html.ValidationMessageFor(model => model.HomePhoneNumber1, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.HomePhoneNumber2, htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.EditorFor(model => model.HomePhoneNumber2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                 @Html.ValidationMessageFor(model => model.HomePhoneNumber2, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="form-group">
+                     @Html.LabelFor(model => model.WorkPhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                     <div class="col-md-6">
+                         @Html.EditorFor(model => model.WorkPhoneNumber, new { htmlAttributes = new { @class = "form-control border-input", placeholder = "0000000000" } })
+                         @Html.ValidationMessageFor(model => model.WorkPhoneNumber, "", new { @class = "text-danger" })
+                     </div>
+                 </div>
+
+                 <div class="row">
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             <div class="col-md-12">
+                                 @Html.LabelFor(model => model.WorkPhonePermission, htmlAttributes: new { style = "float: left" })
+                                 @Html.RadioButtonFor(model => model.WorkPhonePermission, true)
+                                 @Html.Label("Yes")
+                                 @Html.RadioButtonFor(model => model.WorkPhonePermission, true)
+                                 @Html.Label("No")
+                                 @Html.ValidationMessageFor(model => model.WorkPhonePermission, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             <div class="col-md-12">
+                                 @Html.Label("Best Time To Call", htmlAttributes: new { style = "float: left" })
+                                 @Html.RadioButtonFor(model => model.WorkPhoneCallTime, true)
+                                 @Html.Label("Daytime")
+                                 @Html.RadioButtonFor(model => model.WorkPhoneCallTime, false)
+                                 @Html.Label("Evening")
+                             </div>
+                         </div>
+                     </div>
+                 </div><br />
+                 <div class="row">
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.WorkPhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.EditorFor(model => model.WorkPhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                 @Html.ValidationMessageFor(model => model.WorkPhoneNumber1, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.WorkPhoneNumber2, htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.EditorFor(model => model.WorkPhoneNumber2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                 @Html.ValidationMessageFor(model => model.WorkPhoneNumber2, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="row">
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.EmergencyNumber, htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.EditorFor(model => model.EmergencyNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                 @Html.ValidationMessageFor(model => model.EmergencyNumber, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.EmergencyNumber1, htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.EditorFor(model => model.EmergencyNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                 @Html.ValidationMessageFor(model => model.EmergencyNumber1, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+                     <div class="col-md-6">
+                         <div class="form-group">
+                             @Html.LabelFor(model => model.EmergencyNumber2, htmlAttributes: new { @class = "col-md-12" })
+                             <div class="col-md-12">
+                                 @Html.EditorFor(model => model.EmergencyNumber2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                                 @Html.ValidationMessageFor(model => model.EmergencyNumber2, "", new { @class = "text-danger" })
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="form-group">
+                     @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "col-md-12" })
+                     <div class="col-md-6">
+                         @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control border-input" } })
+                         @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                     </div>
+                 </div>
+
+                 <div class="form-group">
+                     <div class="col-md-12">
+                         @Html.LabelFor(model => model.EmailPermission, htmlAttributes: new { style = "float: left" })
+                         @Html.RadioButtonFor(model => model.EmailPermission, true)
+                         @Html.Label("Yes")
+                         @Html.RadioButtonFor(model => model.EmailPermission, false)
+                         @Html.Label("No")
+                         @Html.ValidationMessageFor(model => model.EmailPermission, "", new { @class = "text-danger" })
+                     </div>
+                 </div>
+
+                 <br />
+                 <div class="form-group">
+                     <div class="col-md-12">
+                         <input type="submit" value="Update" class="btn btn-success logdetails" />
+                     </div>
+                 </div>
+             </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+      
+
+        function reviewTimePost() {
+            $.ajax({
+                url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                type: "POST",
+                async: true,
+                success: function () {
+
+
+
+                },
+                error: function (error) {
+                    Showerrormsg1(error.statusText);
+                }
+            });
+        }
+        </SCRIPT>
+    }
+}

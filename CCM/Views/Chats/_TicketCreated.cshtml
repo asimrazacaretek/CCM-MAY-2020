@@ -1,0 +1,132 @@
+﻿@using Microsoft.AspNet.Identity
+@using CCM.Models.ENUMS_
+@using CCM.Models
+@model List<TicketsCreatedViewModel>
+
+@if (Model.Any())
+{
+    <table id="CreatedByMeList">
+        <thead>
+            <tr>
+                <th>Ticket Id</th>
+                <th>
+                    Subject Name
+                </th>
+                <th>
+                    Owner Name
+                </th>
+                <th>
+                    Prority
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Patient Id
+                </th>
+                <th>
+                    Patient Name
+                </th>
+                <th>
+                    Patient Status
+                </th>
+                <th>
+                    Patient Sub Status
+                </th>
+                <th>
+                    CreatedBy
+                </th>
+                <th>
+                    Created Date
+                </th>
+                <th>
+                    Ticket Resolution
+                </th>
+                <th>
+                    Hours
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @item.UserTicketGenerationId
+                </td>
+                <td>
+                    @item.subjectName
+                </td>
+                <td>
+                    @item.ticketHonourId
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelitem => item.UserTicketGeneration.Priority.priorityLevel) - @Html.DisplayFor(modelitem => item.UserTicketGeneration.Priority.priorityMinute)
+                </td>
+                <td>
+                    @item.TypeName
+                </td>
+                <td>
+                    @item.PatientId
+                </td>
+                <td>
+                     @if (item.PatientId != 0) {
+                  
+                    <b>  @Html.ActionLink(item.PatientName, "Details", "Patient", new { id = item.PatientId },htmlAttributes: new { @style="color:#1a8cf7;cursor:pointer"})</b>}
+                
+                        else
+                        {   <p>
+                    @item.PatientName
+                    </p>
+                         
+                        }
+                 
+                 
+                </td>
+                <td>
+                    @item.Pstatus
+                </td>
+                <td>
+                    @item.Psubstatus
+                </td>
+                <td>
+                    @item.CreatorName
+                </td>
+                <td>
+                    @item.CreatedDate
+                </td>
+                <td>
+                    @item.TicketResolution
+                </td>
+                <td>
+                    @Html.Action("TotalHours", "Chats", new { @createdDate = item.CreatedDate })
+                </td>
+
+                <td>
+                    @item.Status
+                </td>
+
+                <td>
+                    <button onclick="openMyTicketing('@item.UserTicketGenerationId','@item.Status')" id="ViewMyTicketbtn" class="btn btn-info ViewMyTicketbtn">View Ticket</button>
+                </td>
+
+            </tr>
+
+            }
+
+        </tbody>
+    </table>
+}
+else
+{
+    <h5 class="jumbotron">No Created Tickets Available</h5>
+
+}

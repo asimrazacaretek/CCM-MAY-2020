@@ -1,0 +1,176 @@
+﻿@model IEnumerable<CCM.Models.Patient>
+
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet" />
+
+@Html.Partial("_EnrollmentStatusLinks")
+
+<table id="table" class="display">
+    <thead>
+        <tr>
+            <th>Days In Queue</th>
+            @if (ViewBag.Status == "Claims Submission")
+            {
+                <th>Date Of Service</th>
+                <th>Billing Code1</th>
+                <th>Billing Code2</th>
+            }
+            <th>Date Entered</th>
+            <th>Cycle</th>
+            @if (User.IsInRole("Admin"))
+            { <th>Counselor</th> }
+            <th>Patient Name</th>
+            <th>Gender</th>
+            <th>Date of Birth</th>
+            @if (ViewBag.Status != "Claims Submission")
+            { <th>Appointment Date</th> }
+            <th>Physician</th>
+            <th>Review Encounter</th>
+            <th>
+                @if (User.IsInRole("Liaison") || User.IsInRole("Admin"))
+                { <span>CMM Review</span> }
+            </th>
+        </tr>
+    </thead>   
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var color     = "";
+            var dayLapsed = 0;
+            var dateColor = "";
+            var today     = DateTime.Today.Date;
+
+            var dateEntered = item?.CcmStatus == "Enrolled"          ? Convert.ToDateTime(item.CCMEnrolledOn)
+                            : item?.CcmStatus == "Clinical Sign-Off" ? Convert.ToDateTime(item.CcmClinicalSignOffDate)
+                            : Convert.ToDateTime(item?.CcmClaimSubmissionDate);
+
+            var yearDifference = today.Year - Convert.ToDateTime(dateEntered).Year > 0
+                               ? today.Year - Convert.ToDateTime(dateEntered).Year
+                               : 1;
+
+            if (item?.CcmReconciliationDate != null)
+            {
+                var reconciledDate = Convert.ToDateTime(item.CcmReconciliationDate).Date;
+                var dayOfYear      = today.Year > Convert.ToDateTime(reconciledDate).Year
+                                   ? today.DayOfYear + 365 * yearDifference : today.DayOfYear;
+
+                dayLapsed = dayOfYear - Convert.ToDateTime(reconciledDate).DayOfYear;
+                color     = dayLapsed >   0 && dayLapsed <  30 ? "lightskyblue"
+                          : dayLapsed >= 30 && dayLapsed <= 33 ? "lightgreen"
+                          : dayLapsed >= 34 && dayLapsed <= 45 ? "#ffff7f"
+                          : dayLapsed >= 45 ?  "#F5A08E" :  "";
+            }
+            else
+            {
+                dayLapsed = (today.Year > Convert.ToDateTime(dateEntered).Year ? today.DayOfYear  + 365 * yearDifference : today.DayOfYear)
+                          - Convert.ToDateTime(dateEntered).DayOfYear;
+                dateColor = dayLapsed >= 30 && dayLapsed <= 45 ? "#ffff7f" : dayLapsed >= 45  ? "#F5A08E" : "";
+            }
+
+            <tr style="background-color: @color">
+                <td style="background-color: @dateColor">@dayLapsed</td>
+                @if (item?.CcmStatus.ToLower() == "claims submission")
+                {
+                    <td>
+                        @if (Convert.ToDateTime(item.CcmClinicalSignOffDate).Year != 0001)
+                        {
+                            @Convert.ToDateTime(item.CcmClinicalSignOffDate).ToShortDateString()
+                        }
+                    </td>
+
+                    var billingCode1 = item.CcmBillingCode  == "CCM 20 Minutes - CPT 99490"         ? "99490"
+                                     : item.CcmBillingCode  == "Complex CCM 60 Minutes - CPT 99489" ? "99489"
+                                     : item.CcmBillingCode  == "Complex CCM 30 Minutes - CPT 99487" ? "99487" : "";
+
+                    var billingCode2 = item.CcmBillingCode2 == "CCM 20 Minutes - CPT 99490"         ? "99490"
+                                     : item.CcmBillingCode2 == "Complex CCM 60 Minutes - CPT 99489" ? "99489"
+                                     : item.CcmBillingCode2 == "Complex CCM 30 Minutes - CPT 99487" ? "99487" : "";
+                    <td>@billingCode1</td>
+                    <td>@billingCode2</td>
+                }
+                <td>@dateEntered.ToShortDateString()</td>
+                <td>@Html.DisplayFor(modelItem => item.Cycle)</td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Liaison.FirstName)
+                        @Html.DisplayFor(modelItem => item.Liaison.LastName)
+                    </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName),
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Gender)</td>
+                <td>
+                    @{
+                        var age = (int.Parse(DateTime.Today.ToString("yyyyMMdd")) - int.Parse(item.BirthDate.ToString("yyyyMMdd"))) / 10000;
+                    }
+                    @item.BirthDate.ToShortDateString() (@age Years)
+                </td>
+                @if (ViewBag.Status != "Claims Submission")
+                { <td>@Html.DisplayFor(modelItem => item.AppointmentDate)</td> }
+                <td>
+                    @Html.DisplayFor(modelItem => item.Physician.FirstName)
+                    @Html.DisplayFor(modelItem => item.Physician.LastName)
+                </td>
+                <td id="@item.Id">
+                    <script>
+                        $.ajax({
+                            type: "GET",
+                            url: "/CcmFlow/TotalReviewTime?patientId=" + @item.Id,
+                            success: function(timespan) {
+                                var totalTime = timespan.substr(0, timespan.indexOf('.'));
+                                $("#@item.Id").text(totalTime === "" ? timespan : totalTime);
+                            }
+                        });
+                    </script>
+                </td>
+                <td>
+                    @if (User.IsInRole("Liaison") || User.IsInRole("Admin"))
+                    {
+                        if (item.EnrollmentStatus == "Enrolled" && item.CcmStatus == "Enrolled")
+                        {
+                            @Html.ActionLink("CMM-Review", "Create", "PatientProfile", new { patientId = item.Id }, null)
+                        }
+                        else if (item.EnrollmentStatus == "Enrolled" && item.CcmStatus == "Clinical Sign-Off")
+                        {
+                            @Html.ActionLink("CMM-Review", "ReviewTimeV1", "CcmStatus", new { patientId = item.Id }, null)
+                        }
+                        else if (User.IsInRole("Admin"))
+                        {
+                            @Html.ActionLink("Review", "ReviewClaimSubmission", "CcmStatus", new { patientId = item.Id, userId = ViewBag.UserId }, null)
+                        }
+                    }
+                    else if (User.IsInRole("Physician") || User.IsInRole("PhysiciansGroup"))
+                    {
+                        @Html.ActionLink("CMM-Review", "ReviewTimeV1", "CcmStatus", new { patientId = item.Id }, null)
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js" type="text/javascript"></script>
+
+    <script> 
+        $(document).ready(function () {
+
+            $('#table').DataTable({
+                pageLength: 100,
+                scrollY: "60vh",
+                order: [[0, 'desc']],
+                dom: 'Bfrtip',
+                buttons: [ 'print', 'excelHtml5', 'pdfHtml5' ]
+            });
+        });
+    </script>
+}

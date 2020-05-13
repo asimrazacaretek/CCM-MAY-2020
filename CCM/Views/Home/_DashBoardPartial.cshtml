@@ -1,0 +1,400 @@
+﻿@{
+    var totalBillingCodes = Model.Code99490 + Model.Code99487 + Model.Code99489;
+    var discrepancies     = Model.InClaimSubmission - totalBillingCodes;
+}
+
+
+<style>
+    a:focus, a:hover { color: green;}
+</style>
+
+
+<div class="row">
+    <div class="col-lg-4 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="stats">
+                            <u class="text-warning">Calls Due</u> <br />
+                            <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, date = DateTime.Today.Date })">Today: <b>@Model.CallsDueToday</b></a><br />
+                            <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, date = DateTime.Today.Date.AddDays(1) })">Tomorrow: <b>@Model.CallsDueTomorrow</b></a>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <a href="@Url.Action("Index", "Patient", new { userId = Model.UserId })">
+                            <div class="numbers">
+                                <p>Total Patients</p>
+                                @Model.TotalPatients
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, date = DateTime.Today.Date.AddDays(-1) })">Past Due: @Model.PastCallDues</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-8">
+                        <div>
+                            <a href="@Url.Action("Index", "CcmStatus", new { userId = Model.UserId, status = "Enrolled" })">CCM: <b>@Model.InCcm</b><br /></a>
+                            <a href="@Url.Action("Index", "CcmStatus", new { userId = Model.UserId, status = "Clinical Sign-Off" })">Clinical Sign-Off: <b>@Model.InClinicalSignOff</b><br /></a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                            <a href="@Url.Action("Index", "CcmStatus", new { userId = Model.UserId, status = "Claims Submission" })">Claims Submission: <b>@Model.InClaimSubmission</b></a>
+                            }
+                            else
+                            { <span>Claims Submission: <b>@Model.InClaimSubmission</b></span> }
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="numbers">
+                            <p>Enrolled</p>
+                            @{
+                                var totalEnrolled = Model.InCcm + Model.InClinicalSignOff + Model.InClaimSubmission;
+                            }
+                            @totalEnrolled
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        @{
+                            var enrollePercentage = Model.TotalPatients > 0 ? (decimal)totalEnrolled * 100 / (decimal)Model.TotalPatients : 0;
+                        }
+                        @enrollePercentage.ToString("0.00")%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-7">
+                        @if (User.IsInRole("Admin") && string.IsNullOrEmpty(Model.UserId))
+                        {
+                        <div class="stats">
+                            Assigned: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>@Model.Assigned</b><br />
+                            <a href="@Url.Action("NotAssigned", "EnrollmentStatus")">Not Assigned: <b>@Model.NotAssigned</b><br /></a>
+                        </div>
+                        }
+                        else
+                        {
+                        <div class="icon-big icon-danger text-center">
+                            <i class="ti-pulse"></i>
+                        </div>
+                        }
+                    </div>
+                    <div class="col-xs-5">
+                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, status = "Not Enrolled" })">
+                            <div class="numbers">
+                                <p>Not Enrolled</p>
+                                @Model.NotEnrolled
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <i class="ti-timer"></i> In the last hour
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <div class="icon-big icon-info text-center">
+                            <i class="ti-user"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, status = "In Progress" })">
+                            <div class="numbers">
+                                <p>In Progress</p>
+                                @Model.InProgress
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <i class="ti-reload"></i> Updated now
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+</div>
+
+@*<br />
+<div class="row">
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <div class="icon-big icon-warning text-center">
+                            <i class="ti-headphone-alt"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-9">
+                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, status = "Left Voice Message" })">
+                            <div class="numbers">
+                                <p>Left Voice Message</p>
+                                @Model.LeftVoiceMessage
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <i class="ti-reload"></i> Updated now
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <div class="icon-big icon-success text-center">
+                            <i class="ti-headphone-alt"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-9">
+                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, status = "Invalid Phone Number" })">
+                            <div class="numbers">
+                                <p>Invalid Phone Number</p>
+                                @Model.InvalidPhoneNumber
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <i class="ti-calendar"></i> Last day
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <div class="icon-big icon-danger text-center">
+                            <i class="ti-face-sad"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-9">
+                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, status = "Patient Not Seeing MD" })">
+                            <div class="numbers">
+                                <p>Not Seeing Physician</p>
+                                @Model.PatientNotSeeingMd
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <i class="ti-timer"></i> In the last hour
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <div class="stats">
+                            99490: <b>@Model.Code99490</b><br />
+                            99489: <b>@Model.Code99489</b><br/>
+                            <span class="text-warning">Total: &nbsp;&nbsp; @totalBillingCodes</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="numbers">
+                            <p>Total Revenue</p>
+                            $@Model.TotalRevenue
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div>
+                        @if (discrepancies > 0)
+                        {
+                            <span class="text-danger">* Claims without billing codes: @discrepancies</span>
+                        }
+                        else
+                        {
+                            <div class="stats">
+                        <i class="ti-reload"></i> Updated now
+                    </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<div class="row">
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <div class="icon-big icon-danger text-center">
+                            <i class="ti-heart-broken"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, status = "Not Qualified" })">
+                            <div class="numbers">
+                                <p>Not Qualified</p>
+                                @Model.NotQualified
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <i class="ti-timer"></i> In the last hour
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <div class="icon-big icon-warning text-center">
+                            <i class="ti-face-sad"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, status = "Refused" })">
+                            <div class="numbers">
+                                <p>Refused</p>
+                                @Model.Refused
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <i class="ti-reload"></i> Updated now
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="icon-big icon-warning text-center">
+                            <i class="ti-alert"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <a href="@Url.Action("Index", "EnrollmentStatus", new { userId = Model.UserId, status = "Deceased" })">
+                            <div class="numbers">
+                                <p>Deceased</p>
+                                @Model.Deceased
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <i class="ti-reload"></i> Updated now
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <div class="icon-big icon-info text-center">
+                            <i class="ti-wallet"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="numbers">
+                            <p>Yearly Earnings</p>
+                            $@Model.YearlyEarnings
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <i class="ti-reload"></i> Updated now
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <div class="icon-big icon-info text-center">
+                            <i class="ti-alert"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="numbers">
+                            <p>Not Eligible</p>
+                            @Model.NotEligible
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr />
+                    <div class="stats">
+                        <i class="ti-reload"></i> Updated now
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@

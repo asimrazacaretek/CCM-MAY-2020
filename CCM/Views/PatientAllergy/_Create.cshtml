@@ -1,0 +1,217 @@
+﻿@model CCM.Models.PatientMedicalHistory_Allergy
+
+
+@*@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })*@
+
+<div>
+    <div class="custom-title">
+        <h3>FOOD, DRUG & OTHER ALLERGIES</h3>
+    </div>
+    @using (Html.BeginForm("_Create", "PatientAllergy", FormMethod.Post,
+          new { id = "frmCreatePatientAllergy", @class = "frmStyle" }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <p class="greenText" style="margin:15px 0; font-size: 1.2em"><b>Drug Allergies</b></p>
+
+            @* Drug Allergies Labels *@
+            <div class="row">
+                <div class="col-md-6 shiftDown">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Medication1, htmlAttributes: new { @class = "col-md-12" })
+                    </div>
+                </div>
+
+                <div class="col-md-6 shiftDown">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MedicationResponse1, htmlAttributes: new { @class = "col-md-12" })
+                    </div>
+                </div>
+            </div>
+
+            @* Drug Allergies 1 *@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Medication1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.Medication1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.MedicationResponse1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.MedicationResponse1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Drug Allergies 2 *@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Medication2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.Medication2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.MedicationResponse2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.MedicationResponse2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Drug Allergies 3 *@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Medication3, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.Medication3, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.MedicationResponse3, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.MedicationResponse3, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <p class="greenText" style="margin:15px 0; font-size: 1.2em"><b>Food/Other Allergies</b></p>
+
+            @* Food Allergies Labels *@
+            <div class="row">
+                <div class="col-md-6 shiftDown">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Food1, htmlAttributes: new { @class = "col-md-12" })
+                    </div>
+                </div>
+
+                <div class="col-md-6 shiftDown">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FoodResponse1, htmlAttributes: new { @class = "col-md-12" })
+                    </div>
+                </div>
+            </div>
+
+            @* Food Allergies 1 *@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Food1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.Food1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.FoodResponse1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.FoodResponse1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Food Allergies 2 *@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Food2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.Food2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.FoodResponse2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.FoodResponse2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Food Allergies 3 *@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Food3, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.Food3, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.FoodResponse3, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.FoodResponse3, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="button" value="Update" class="btn btn-success logdetails" onclick="SubmitForm('frmCreatePatientAllergy','Update')" />
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+        </SCRIPT>
+    }
+}

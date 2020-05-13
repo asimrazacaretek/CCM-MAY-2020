@@ -1,0 +1,215 @@
+﻿@model CCM.Models.Patient
+
+<style>
+    body { margin-left: -100px; }
+    hr   { margin-top: -5px; }
+</style>
+
+
+<div class="row">
+    <div class="col-sm-6">
+        <h3>Patient Details</h3><hr /><br/><br/>
+        <h3>@Model.FirstName @Model.LastName</h3>
+
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.PatientChronicCondition1.ChronicCondition1Type)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PatientChronicCondition1.ChronicCondition1Type)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PatientChronicCondition2.ChronicCondition2Type)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PatientChronicCondition2.ChronicCondition2Type)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Gender)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Gender)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PreferredLanguage)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PreferredLanguage)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.OtherLanguage)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.OtherLanguage)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BirthDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BirthDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Address1)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Address1)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Address2)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Address2)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.City)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.City)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Zipcode)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Zipcode)
+            </dd>
+
+            <dt>
+                CCM Enrolled On
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CCMEnrolledOn)
+            </dd>
+
+            <dt>
+                CCM Enrolled By
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Liaison.FirstName) @Html.DisplayFor(model => model.Liaison.LastName)
+            </dd>           
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BestContactTime)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BestContactTime)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.MobilePhoneNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.MobilePhoneNumber)
+            </dd>
+            
+            <dt>
+                @Html.DisplayNameFor(model => model.WorkPhoneNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.WorkPhoneNumber)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.HomePhoneNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.HomePhoneNumber)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.MedicareIdNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.MedicareIdNumber)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.MedicaidIdNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.MedicaidIdNumber)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.OtherInsuranceIdNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.OtherInsuranceIdNumber)
+            </dd>                     
+        </dl>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="row">
+            <h3>Send a message to your pharmacist.</h3><hr />
+            <div id="sendMessage">
+                Please Wait..... <img src="https://stubwire-public.storage.googleapis.com/website/stubwire_v3/images/loading.gif" alt="" />
+            </div>
+        </div>
+
+        @if (ViewBag.MessagesCount > 0)
+        {
+            <br />
+            <div class="row">
+                <h3>Your Messages</h3>
+                <div id="viewMessages">
+                    Please Wait..... <img src="https://stubwire-public.storage.googleapis.com/website/stubwire_v3/images/loading.gif" alt="" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#sendMessage").load('/MessageNotifications/_NewMessagePartial');
+        });
+    </script>
+
+    @if (ViewBag.MessagesCount > 0)
+    {
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#viewMessages").load('/MessageNotifications/_MessagesPartial', { patientId: @Model.Id });
+            });
+        </script>
+    }
+}

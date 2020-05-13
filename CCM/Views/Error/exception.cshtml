@@ -1,0 +1,14 @@
+﻿@using CCM.Models
+
+@{   
+
+    ViewBag.Title = "exception";
+    AlertModel alert = (AlertModel)Session["Alert"];
+
+}
+
+@if (alert != null)
+{
+    @Html.Partial("/Views/Shared/_AlertView.cshtml", alert);
+}
+

@@ -1,0 +1,994 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>My CCM Health - Chronic Care Management</title>
+
+    <link href="/Content/bootstrap.min.css" rel="stylesheet">
+    <link href="/Content/Site0306.css" rel="stylesheet">
+
+    <link href="/dashboard/assets/css/paper-dashboard.css" rel="stylesheet" type="text/css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Muli:400,300" rel="stylesheet" type="text/css">
+    <link href="/dashboard/assets/css/themify-icons.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.css" rel="stylesheet" type="text/css">
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script type="text/javascript" src="//media.twiliocdn.com/sdk/js/client/v1.3/twilio.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print">
+    <link href="https://fonts.googleapis.com/css?family=Cabin|Lato|Montserrat|Open+Sans|Open+Sans+Condensed:300|Oswald|Oxygen|Roboto|Roboto+Condensed|Ubuntu" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.5/css/fixedHeader.dataTables.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.css">
+    <link href="/Content/Plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet">
+    <link href="/Content/Plugins/magiczoomplus/magiczoomplus.module.css" rel="stylesheet">
+    <script src="/Scripts/modernizr-2.6.2.js"></script>
+
+    <style>
+        body {
+            overflow-y: scroll !important;
+        }
+
+        #myBtn {
+            display: none; /* Hidden by default */
+            position: fixed; /* Fixed/sticky position */
+            bottom: 45px; /* Place the button at the bottom of the page */
+            right: 30px; /* Place the button 30px from the right */
+            z-index: 99; /* Make sure it does not overlap */
+            border: none; /* Remove borders */
+            outline: none; /* Remove outline */
+            background-color: #0364bd; /* Set a background color */
+            color: white; /* Text color */
+            cursor: pointer; /* Add a mouse pointer on hover */
+            padding: 5px 15px;
+            border-radius: 10px;
+            font-size: 33px;
+        }
+
+        .phonenumberlink, .emaillink {
+            float: left;
+            width: 100%;
+        }
+
+        .dropdownBtns {
+            padding: 2px !important;
+            font-size: 13px !important;
+            color: white !important;
+            margin-bottom: -10px !important;
+            margin: 9px 4px 9px 4px !important;
+        }
+
+        .dropdownBtns2 {
+            padding: 2px !important;
+            font-size: 13px !important;
+            color: white !important;
+            margin-bottom: -10px !important;
+            margin: 9px 4px 9px 4px !important;
+        }
+
+        #myBtn:before {
+            content: '\f106';
+            font-family: fontawesome;
+            font-weight: 400;
+            vertical-align: top;
+        }
+
+        #myBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+
+        .msg {
+            width: 100%;
+            font-size: 20px;
+            text-align: center;
+            color: red;
+            font-family: monospace;
+            letter-spacing: 1.5px;
+        }
+
+        #TwilioCallModalR .modal-dialog {
+            width: 560px;
+        }
+
+        #TwilioCallModal .modal-dialog {
+            width: 1260px;
+        }
+
+        #activityul {
+            margin-top: 0px !important;
+            cursor: pointer;
+            height: 100%;
+        }
+
+            #activityul > li {
+                border-bottom: 1px solid #ccc;
+            }
+
+        #PatientNotes {
+            margin-bottom: 5px;
+        }
+
+        .modal-footer {
+            border-top: 0px solid;
+        }
+
+        .swal2-container {
+            z-index: 106000000;
+        }
+
+        #surveyul {
+            margin-top: 0px;
+            margin-left: 5px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .headerright {
+            float: left;
+            width: 84%;
+        }
+
+        .timerandmsg {
+            float: left;
+            width: 65%;
+        }
+
+        .warningmsg {
+            margin-bottom: 0px;
+            color: white;
+            font-size: 11px;
+            top: -21px;
+            position: relative;
+        }
+
+        .fa-sign-out-alt {
+            color: white;
+        }
+
+        .logouta {
+            margin: 9px 0px !important;
+        }
+
+        .fa-sign-out-alt:hover {
+            color: gray;
+        }
+
+        .alogo {
+            float: left;
+            width: 83%;
+        }
+
+        .headerleft {
+            float: left;
+            width: 15%;
+        }
+
+        .logoimg {
+            width: 100%;
+            height: 52px;
+        }
+
+
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: #F5F5F5;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            background-color: #F5F5F5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122,153,217)), color-stop(0.72, rgb(73,125,189)), color-stop(0.86, rgb(28,58,148)));
+        }
+
+        button.dt-button.buttons-columnVisibility.active {
+            background: #012f59 !important;
+            color: white !important;
+            border: 1px solid #fff !important;
+        }
+
+        table.fixedHeader-floating {
+            top: 60px !important;
+        }
+
+        .checkboxes {
+            width: 25px;
+            height: 23px;
+            margin-top: 0;
+        }
+
+        .buttons-colvis {
+            text-transform: capitalize;
+        }
+
+        #totalcountsmaingroupchat {
+            display: none;
+            float: right;
+            margin-top: -29px;
+            margin-right: 7px;
+            background: red;
+            padding: 5px;
+        }
+
+        #BADialogE #bamodaldialogE {
+            width: auto !important;
+            height: 99%;
+            overflow: auto;
+        }
+
+            #BADialogE #bamodaldialogE .modal-content {
+                height: 100%;
+                height: 99%;
+                overflow: auto;
+            }
+
+        /*Style for Dropdown Search Combo*/
+        .dropdown-menu > li > a {
+            padding: 10px 15px !important;
+        }
+
+        .input-group-btn, .radio input[type="radio"], .radio-inline input[type="radio"] {
+            display: none;
+        }
+
+        .input-group-addon {
+            padding: 0px 7px;
+        }
+
+        .checkbox, .radio {
+            padding-left: 15px;
+            margin-bottom: 3px;
+            margin-top: 3px;
+        }
+
+        /*.loginicon {
+            border-radius: 10%;
+            background: black;
+            padding: 5px;
+            float: right;
+            margin-top: 15px;
+            color: white;
+        }
+
+        .dropdown-menu > li > a {
+            padding: 10px 15px !important;
+        }
+
+        .glyphicon {
+            line-height: 1;
+            padding-right: 5px;
+        }
+
+        .navbar .navbar-nav > li > a {
+            padding-top: 15px;
+            padding-bottom: 15px;
+            margin: 0 !important;
+            margin-bottom: 5px !important;
+        }*/
+
+        .txtwhite {
+            color: white !important;
+            border-top-color: white !important;
+            border-bottom-color: white !important
+        }
+
+        .topbar .topbar-divider {
+            width: 0;
+            border-right: 1px solid #e3e6f0;
+            height: calc(4.375rem - 2rem);
+            margin: auto 1rem;
+        }
+
+        .img-profile {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        .rounded-circle {
+            border-radius: 50% !important;
+        }
+
+        .topbar .nav-item .nav-link {
+            height: 4.375rem;
+            display: flex;
+            align-items: center;
+            padding: 0 .75rem;
+        }
+
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: .25rem 1.5rem;
+            clear: both;
+            font-weight: 400;
+            color: #3a3b45;
+            text-align: inherit;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+        }
+
+        .dropdown-divider {
+            height: 0;
+            margin: .5rem 0;
+            overflow: hidden;
+            border-top: 1px solid #eaecf4;
+        }
+
+        .glyphicon {
+            padding-right: 5px !important;
+        }
+        /*End Style for Dropdown Search Combo*/
+        .badge {
+            position: absolute;
+            top: 1px;
+            right: 4px;
+            padding: 3px 5px;
+            border-radius: 50%;
+            background-color: red;
+            color: white;
+        }
+
+        .modal-header .close {
+            margin-top: -25px !important;
+            padding: 4px 8px !important;
+        }
+
+        .close:hover, .close:focus {
+            color: black !important;
+            text-decoration: none !important;
+            cursor: pointer !important;
+            border-radius: 50% !important;
+            background-color: #fff !important;
+        }
+
+        .custom-postion {
+            margin-top: 20px;
+            margin-right: 25px;
+            cursor: pointer;
+        }
+
+            .custom-postion span {
+                font-weight: bolder;
+                position: absolute;
+                top: -10px;
+                background: red;
+                left: 20px;
+                font-size: 16px;
+                text-shadow: none;
+                border-radius: 50%;
+                width: 25px;
+            }
+
+        .modal {
+            /*position:static !important;*/
+            overflow: auto;
+        }
+
+        #SingnalR {
+            font-family: Roboto,"Helvetica Neue",Helvetica,Arial !important;
+            font-size: 1.3125rem !important;
+            letter-spacing: .1px !important;
+        }
+
+        .js-modal-messenger .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+            background-color: #1d76c8;
+        }
+
+        body.modal-open {
+            margin-right: 0 !important;
+        }
+
+        .sidebar {
+            position: fixed !important;
+            margin-top: 10px;
+        }
+
+        .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+            color: #fff;
+            text-decoration: none;
+            background-color: #ddd;
+            outline: 0;
+        }
+
+        .sidebar .nav, .off-canvas-sidebar .nav {
+            margin-top: 16px;
+            overflow-x: hidden;
+            height: 91vh;
+        }
+
+        #appointmentsul {
+            height: 100% !important;
+        }
+
+        #ticketul {
+            height: max-content !important;
+        }
+
+        #BillingCodeul {
+            height: max-content !important;
+        }
+
+        .dataTables_processing {
+            background-color: #e2e2e2 !important;
+            background: none !important
+        }
+
+        .dropbtn {
+            /*background-color: #3498DB;*/
+            color: white;
+            padding: 7px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+            .dropbtn:hover, .dropbtn:focus {
+                /*background-color: #2980B9*/;
+            }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn:hover, .dropbtn:focus, .dropbtn:active, .dropbtn.active {
+            background: #75b457 !important;
+            color: #fff;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #0364bd;
+            min-width: 201px;
+            /*overflow: auto;*/
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            margin-top: -8px;
+            margin-left: -2px;
+        }
+
+            .dropdown-content a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+            }
+
+        /*.dropdown a:hover {
+            background-color: #ddd;
+        }*/
+
+        .show {
+            display: block;
+        }
+
+        .dropdownBtns:hover {
+            background: #1a7f45 !important;
+        }
+
+        .dropdownBtns2:hover {
+            background: #1a7f45 !important;
+        }
+
+
+        .dropdownCounter {
+            display: inline-block;
+            position: relative;
+        }
+
+        .dd-button {
+            /*display: inline-block;
+            background-color: #ffffff;
+            cursor: pointer;
+            white-space: nowrap;*/
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+
+
+
+
+        .dd-input {
+            display: none;
+        }
+
+        .dd-menu {
+            position: absolute;
+            top: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 0;
+            margin: 2px 0 0 0;
+            box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
+            background-color: #ffffff;
+            list-style-type: none;
+        }
+
+        .dd-input + .dd-menu {
+            display: none;
+        }
+
+        .dd-input:checked + .dd-menu {
+            display: block;
+            background: #0364bd;
+            /* border-radius: 16px 13px 16px 16px; */
+            border: 1px solid #0364bd;
+            box-shadow: 1px 2px 8px 0px black;
+            margin-left: -19px;
+        }
+
+        .dd-menu li {
+            padding: 1px 10px;
+            cursor: pointer;
+            background: #004788;
+            font-size: 15px;
+            white-space: nowrap;
+            margin-top: 1px;
+            margin-bottom: 2px;
+            /* border-radius: 40px; */
+            /* border-radius: 1px; */
+            font-weight: 200;
+            color: white;
+            text-align: center;
+        }
+
+
+
+            .dd-menu li a {
+                display: block;
+                margin: -10px -20px;
+                padding: 10px 20px;
+            }
+
+            .dd-menu li.divider {
+                padding: 0;
+                border-bottom: 1px solid #cccccc;
+            }
+
+        .mz-expand {
+            background-color: #000000a3 !important;
+        }
+
+        .clearTicketNotifications:hover {
+            color: #424242ba;
+        }
+        .clr {
+            background-color: #0363bd;
+            padding: 20px;
+            margin-top: -6px;
+            color: #fff;
+            font-size: 20px;
+        }
+        .cd{
+            margin-top:20px;
+            margin-bottom:20px;
+            padding:5px;
+        }
+        .btn-primary {
+            border-color: #0362bd;
+            background-color: #0362bd;
+            color: white;
+            width: 91px;
+            
+        }
+            .btn-primary:hover {
+                border-color: #0362bd;
+                background-color: #0362bd;
+                color: white;
+                
+            }
+    </style>
+
+</head>
+<body>
+    <div class="container-fluid navbar navbar-default navbar-fixed-top">
+        <div class="navbar-header headerleft" style="color: white">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a href="/" class="alogo">
+                <img id="logo" src="/images/CCM Logo Final.png" class="logoimg" alt="">
+            </a>
+            <a class="hideshowsidebar" title="Toggle Menu"><i class="fa fa-bars" style="font-size:1.2em;color:white"></i></a>
+
+        </div>
+
+        <div class="navbar-collapse collapse headerright">
+
+
+
+
+            <ul id="navbarnotify" class="nav navbar-nav navbar-right">
+
+                <li class="dropdown  ticketnotifycountclass" title="Notifications" id="">
+                    <a href="#" class="dropdown-toggle txtwhite" style="padding: 8px 10px 0px 0px; font-size: 12px;" data-toggle="modal" data-target=".js-modal-Notifications" id="singalLayoutIcon">
+                        <span id="ticketNotificationCount" class="txtwhite ticketnotifycount bcbfb545-1d9e-40a5-b823-3616c5fc4050" style="background: red; border-radius: 23px 23px 23px 23px; padding: 2px 7px 2px 6px; font-size: 11px; position: absolute; z-index: 1; left: 19px; top: 6px;display:none"></span>
+                        <i class="fas fa-ticket-alt fa-2x txtwhite"></i>
+                    </a>
+                    <ul id="msgnotiful" class="dropdown-menu"></ul>
+                </li>
+
+                <li class="dropdown" title="Chat Notifications">
+                    <a href="#" class="dropdown-toggle txtwhite" data-toggle="modal" data-target=".js-modal-messenger" id="singalLayoutIcon">
+                        <span class="glyphicon glyphicon-comment"></span><span class="badge frnotif bcbfb545-1d9e-40a5-b823-3616c5fc4050"></span>
+                    </a>
+                    <ul id="msgnotiful" class="dropdown-menu"></ul>
+                </li>
+                <li class="dropdown" title="Added into new groups">
+                    <a href="#" class="dropdown-toggle txtwhite" data-toggle="modal" data-target=".js-modal-messenger" id="GroupLayoutIcon">
+                        <span class="fa fa-user-plus fa-fw" aria-hidden="true"></span><span class="badge newgroup bcbfb545-1d9e-40a5-b823-3616c5fc4050"></span>
+                    </a>
+                </li>
+
+
+
+                <li class="nav-item dropdown no-arrow" style="cursor:pointer;">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-left: 0;">
+                        <span class="mr-2 d-none d-lg-inline txtwhite small" style="padding-right: 10px !important;">Stan Gutkin</span>
+
+                        <img src="/images/admin.jpg" class="img-profile rounded-circle">
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <li class="divider"></li>
+                        <form action="/Account/LogOff" class="navbar-right" id="logoutForm" method="post">
+                       
+
+                            <ul class="nav navbar-nav" style="margin-right: 62px;color: #66615b !important;font-size: 14px;">
+                                <li>
+                                    <!--
+                                    <a class="btn btn-xs btn-success" href="/Manage/ChangePassword" title="Change Password">Stan - Change Password</a>
+                                    -->
+                                </li>
+                                <li>
+                                    <a href="javascript:document.getElementById('logoutForm').submit()" class="logouta" title="Log Out" style="color: #66615b;">
+                                        <span class="glyphicon glyphicon-off"></span>
+                                        <span>Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </form>
+                    </ul>
+                </li>
+
+
+            </ul>
+        </div>
+    </div>
+    <br/><br/><br/><br/><br/><br/>
+    <br/>
+    @RenderBody()
+
+
+
+    <script src="~/Content/BootToast/bootoast.js"></script>
+    <!--Reference the autogenerated SignalR hub script. -->
+    @* SignalR releated *@
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/imageuploadify.min.js" type="text/javascript"></script>
+    @* Auto Complete Plugin For Auto Suggestion From DB *@
+
+    <script src="~/Scripts/jquery.autocomplete.js"></script>
+    <script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.js"></script>
+
+    <script type="text/javascript">
+        // Ticket
+        $(function () {
+            var ticket = $.connection.ticketHub;
+            ticket.client.frnotify2 = function (receiverId, NotificationViewMidal) {
+
+                var res = JSON.parse(NotificationViewMidal.AssigneeName);
+                if (res.length > 0) {
+                    $(".ticketnotifycount." + receiverId).text(res.length);
+                    $("#ticketNotificationCount").show();
+
+                }
+                $(".ticketnotifycount." + receiverId).text(res.length);
+                   var HtmltoAppend = "";
+                    var userid='';
+                for (var i = 0; i < res.length; i++) {
+                    alert(res[i].Id);
+                    var newNotificationHtml = "<li class='searchablediv clearNotifactionsLink  '" + userid + "'> <a href='#'  onClick='clearNotifcations(" + res[i].TicketId +" )'  class='clearTicketNotifications d-table w-100 px-2 py-2 text-dark hover-white'> <div class='d-table-cell align-middle status status-indicator status-sm '>  </div> <div class='d-table-cell w-100 align-middle pl-2 pr-2'> <div class='text-truncate  text-truncate-md ticketnotifycount '> <b>" + res[i].AssigneeName + "</b> Assigned You a ticket <div class='row'> <table id='ticketnotifyTable'> <tr> <td> <small class='font-italic'> <b>TicketId</b> : " + res[i].TicketId + " </small> </td> <td> <small class='font-italic'> <b>Type</b> : " + res[i].TicketType + " </small> </td> <td> <small class='font-italic'> <b>Priority</b> : " + res[i].Priority + " </small> </td> </tr> <tr> <td> <small class='font-italic'> <b>PatientId</b> : " + res[i].patientId + " </small> </td> <td> <small class='font-italic'> <b>Status</b> : " + res[i].Status + " </small> </td> </tr> <tr> <td colspan='2'> <small class='font-italic' style='float: left;white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 190px;'> <b>Creator Notes</b> : " + res[i].CreatorNotes + "</small> </td> <td style='text-align: left;'> <small class='font-italic text-success'>" + res[i].Time + "</small> </td> </tr> </table> </div> </div> </div> </a> </li>";
+                        HtmltoAppend += newNotificationHtml;
+                        if (res[i + 1] != null) {
+                            HtmltoAppend += "<li><div class='Notifyspacer'></div></li>";
+                        }
+                    }
+                $("#UserNotificationList").html("");
+                    $("#UserNotificationList").html(HtmltoAppend);
+
+
+            }
+
+            $('#UploadImagesforTickets').imageuploadify();
+
+            //$('#DropDownAssignee').multiselect({
+            //    includeSelectAllOption: false,
+            //    enableCaseInsensitiveFiltering: true,
+            //    enableFiltering: true,
+            //    buttonWidth: '220px',
+            //    maxHeight: 200,
+
+            //});
+
+            $("#DropDownAssignee").select2({
+               placeholder: {
+                   id: '-1', // the value of the option
+                   text: 'Select an option'
+                 },
+                allowClear: true
+            });
+
+
+            $.connection.hub.start().done(function () {
+
+                $("#ticketCreateButton").click(function (e) {
+                    //alert("clicked");
+                    debugger;
+                    var Form = 'UserTicketGenerationForm';
+                    var AddUpdate = 'Save';
+                    var toUserId = $("#DropDownAssignee").val();
+
+                    $("#uploadFiles").val("");
+                    var form = $("#" + Form);
+                    if ($("#TicketGenerationId").val() == "") {
+                        swal("Warning", "Please select ticket subject", "warning");
+                        e.preventDefault();
+                        return false;
+                    }
+                    if ($("#TypeId").val() == "") {
+                        swal("Warning", "Please select ticket type", "warning");
+                        e.preventDefault();
+                        return false;
+                    }
+                    if ($("#PriorityId").val() == "") {
+                        swal("Warning", "Please select Ticket priority", "warning");
+                        e.preventDefault();
+                        return false;
+                    }
+                    if ($("#StatusId").val() == "" || $("#StatusId").val() == null) {
+                        swal("Warning", "Please select ticket status", "warning");
+                        e.preventDefault();
+                        return false;
+                    }
+                    if ($("#DropDownAssignee").val() == "") {
+                        swal("Warning", "Please select assignee user", "warning");
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    form.validate();
+                    var formdata = false;
+                    $('.imageuploadify-container').each(function () {
+                        var src = $(this).find('img').attr("src");
+                        if ($("#uploadFiles").val() == "")
+                    $("#uploadFiles").val(src);
+                else {
+                    var oldstr = $("#uploadFiles").val();
+                    src = oldstr + "|" + src;
+                    $("#uploadFiles").val(src);
+                }
+            });
+
+
+            if (window.FormData) {
+                formdata = new FormData(form[0]);
+            }
+            if (form.valid() == false) {
+                return false;
+            }
+
+            var urltosend = form.attr('action');
+                    var datatosend = formdata ? formdata : form.serialize();
+                    debugger;
+            $(".loader").show();
+
+            $.ajax({
+                type: 'POST',
+                url: urltosend,
+                data: datatosend,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (json) {
+
+                    $(".loader").hide();
+                    //alert(json);
+                    if (json == "True") {
+                        
+                        ticket.server.ticketnotify(toUserId, '','');
+                        $("#TicketCreationForEveryOne").modal("hide");
+                        $("#TicketCreationListView").modal("hide");
+                        var msg = "Saved Successfully";
+                        var titl = "Ticket";
+                        //if (AddUpdate == "Update") {
+                        //    titl = "Updated!";
+                        //    msg = "Updated Successfully!";
+                        //}
+                        //else
+                        clear2();
+
+                        swal({
+                            title: titl,
+                            text: msg,
+                            icon: "success",
+                            button: "Ok",
+                            confirmButtonColor: "#1ab394",
+                        });
+                        //$("#s2id_TicketGenerationId, #s2id_TypeId, #s2id_PriorityId,#s2id_StatusId,#s2id_patient,#TAT,#s2id_DropDownAssignee,#creatorNotes").trigger('refresh');
+                       // $("#ticketHonorId,#s2id_TicketGenerationId, #s2id_TypeId, #s2id_PriorityId,#s2id_StatusId,#s2id_patient,#s2id_DropDownAssignee,#creatorNotes,,#s2id_PhyId").select2("val", "");
+                        //$("#TAT,#creatorNotes").val("");
+                        $('.close-custom-button').click();
+                        window.location.href = "TicketsCreated";
+
+                        //window.location.href = "/Chats/AdminListViewTicket";
+                    }
+                    else {
+                        swal("Error!", "Error Accured :" + json, "error");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $(".loader").hide();
+                    var err = eval("(" + xhr.responseText + ")");
+                    swal("Error!", "Error Accured :" + err.Message, "error");
+                }
+            });
+                 return false;
+                });
+            });
+
+        });
+
+
+
+
+
+        //$('#PriorityId').change(function () {
+        //    var id = $(this).val();
+        //    console.log("VP1 Call");
+
+        //    $.ajax({
+        //        url: "/Chats/getPriorityTime?id=" + id,
+        //        type: "get"
+        //    }).done(function (response) {
+        //        debugger;
+        //        if (response) {
+        //            $("#TAT").attr('value', response);
+        //        } else {
+        //            $("#TAT").attr('value', 'Not Found');
+        //        }
+        //    });
+
+        //});
+
+        //$('#DropDownAssignee').change(function () {
+        //    var userId = $(this).val();
+
+        //    $.ajax({
+        //        url: "/Chats/getPatient?userId=" + userId,
+        //        type: "get"
+        //    }).done(function (response) {
+        //        if (response === "error") {
+        //            swal("Error!", "Error Accured :" , "error");
+        //        } else {
+        //            $("#patientDiv").html(response);
+        //            $("#PatientId").multiselect({
+        //                includeSelectAllOption: false,
+        //                enableCaseInsensitiveFiltering: true,
+        //                enableFiltering: true,
+        //                buttonWidth: '540px',
+        //                maxHeight: 200,
+        //            });
+        //        }
+        //    });
+
+        //});
+
+        $("#resetticketcreatebutton").click(function () {
+            clear2();
+
+        });
+
+        function clear2() {
+            debugger;
+            //$('#DropDownAssignee').val(['Select Assignee User']).multiselect('refresh')
+            $('#UserTicketGenerationForm').trigger("reset");
+            $(".imageuploadify-container").remove();
+            //$("#patientDiv").html("");
+
+        }
+
+
+        function myFunctionDropdown() {
+            var val = Number($(".patId").val());
+
+            $.ajax({
+                type: "POST",
+                url: "/CcmFlow/CheckHospitalVisit?patientId=" +val,
+                success: function (result) {
+                    debugger;
+                    if (result == "NotVisited") {
+
+                        swal("Warning", "You must enter the Hospital Visits for patient !", "warning");
+                        return false;
+                    }
+                    else {
+
+                    document.getElementById("myDropdown").classList.toggle("show");
+                    }
+
+                }
+            });
+
+
+
+
+        }
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+        $(".nav-link").click(function () {
+            $(".uperareafix").css("display", "grid");
+        })
+    </script>
+
+
+
+    @* User Ticket Generation Form Script  End*@
+
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>*@
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.colVis.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/colreorder/1.5.1/js/dataTables.colReorder.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/Scripts/html2canvas.js"></script>
+    <script src="~/Scripts/ImageMinifier.js"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+</body>
+</html>

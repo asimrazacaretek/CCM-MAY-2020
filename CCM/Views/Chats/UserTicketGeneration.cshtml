@@ -1,0 +1,360 @@
+﻿@model CCM.Models.UserTicketGeneration
+
+@using Microsoft.AspNet.Identity;
+
+<link href="~/Content/BootToast/bootoast.css" rel="stylesheet" />
+
+
+@{
+    var listSelectListItem = (List<SelectListItem>)ViewBag.ListPhysicanManagerPerson;
+    var listselectForLiason = (List<SelectListItem>)ViewBag.ListLiasonManagersPersons;
+}
+
+<style>
+    .autocomplete-suggestions {
+        border: 1px solid #999;
+        background: #FFF;
+        overflow: auto;
+    }
+
+    .autocomplete-suggestion {
+        padding: 2px 5px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .autocomplete-selected {
+        background: #F0F0F0;
+    }
+
+    .autocomplete-suggestions strong {
+        font-weight: normal;
+        color: #3399FF;
+    }
+
+    .autocomplete-group {
+        padding: 2px 5px;
+    }
+
+        .autocomplete-group strong {
+            display: block;
+            border-bottom: 1px solid #000;
+        }
+
+
+    .imageuploadify-overlay {
+        display: none;
+    }
+
+    .imageuploadify-images-list i {
+        color: #3AA0FF;
+        display: block;
+        font-size: 5em;
+        text-align: center;
+        margin: .5em auto;
+        margin-bottom: 7px;
+        /* padding-bottom: 12px; */
+    }
+
+    span.imageuploadify-message {
+        font-size: 24px;
+        border-top: 1px solid #3AA0FF;
+        border-bottom: 1px solid #3AA0FF;
+        padding: 10px;
+        display: inline-block;
+        color: #3AA0FF;
+    }
+
+    .imageuploadify-images-list button.btn-default {
+        display: block;
+        color: #3AA0FF;
+        border-color: #3AA0FF;
+        border-radius: 1em;
+        margin: 25px auto;
+        width: 100%;
+        max-width: 500px;
+        cursor: pointer;
+    }
+
+    .imageuploadify {
+        border: 2px dashed #d2d2d2;
+        position: relative;
+        min-height: 250px;
+        min-width: 250px;
+        max-width: 100% !important;
+        margin: auto;
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        text-align: center;
+        background-color: #fff;
+        color: #3AA0FF;
+        top: 10px;
+    }
+
+    .imageuploadify-container img {
+        max-width: 100px;
+        max-height: 100px;
+        text-align: left;
+    }
+
+    .a {
+        float: left;
+        margin-left: -32px
+    }
+
+    .form-le {
+        width: 250px;
+    }
+
+    .Upload-for-Ticket {
+        margin-left: -25px;
+        margin-right: 17px;
+        padding-left: 0px;
+    }
+
+    .select2-container {
+        width: 250px;
+    }
+</style>
+
+@*<input id="patient" style="width:50%;" placeholder="Type PatientName,PatientId,DOB" />*@
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <h4>User Ticket Creation</h4>
+        </div>
+    </div>
+    <div class="row">
+        @using (Html.BeginForm("UserTicketGeneration", "Chats", FormMethod.Post, new { @id = "UserTicketGenerationForm", role = "form", enctype = "multipart/form-data" }))
+        {
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.Label("Ticket Subject", htmlAttributes: new { @class = "control-label , a" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.DropDownListFor(item => item.TicketGenerationId, CCM.Helpers.CommonFunctions.GetTicketSubject(),
+                                                      "Select Ticket Subject", new { @required = "required", @class = "border-input , form-le" })
+                                @Html.ValidationMessageFor(model => model.TicketGenerationId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                @Html.Label("Ticket Type", htmlAttributes: new { @class = "control-label , a" })
+                            </div>
+                            <div class="col-md-8" style="margin-right:10px;">
+                                @Html.DropDownListFor(
+                               item => item.TypeId, CCM.Helpers.CommonFunctions.GetTicketType(),
+                               "Select Ticket Type", new { @required = "required", @class = " border-input   , form-le" })
+                                @Html.ValidationMessageFor(model => model.TypeId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                @Html.Label("Ticket Priority", htmlAttributes: new { @class = "control-label ,  a" })
+                            </div>
+                            <div class="col-md-8" style="margin-right:10px;">
+                                @Html.DropDownListFor(
+                                item => item.PriorityId, CCM.Helpers.CommonFunctions.GetTicketPriority(),
+                                "Select Ticket Priority", new { @required = "required", @class = "border-input  form-le" })
+                                @Html.ValidationMessageFor(model => model.PriorityId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                @Html.Label("Ticket Status", htmlAttributes: new { @class = "control-label , a" })
+                            </div>
+                            <div class="col-md-8" style="margin-right:10px;">
+                                @Html.DropDownListFor(
+                                item => item.StatusId, CCM.Helpers.CommonFunctions.GetTicketStatus(),
+                                null, new { @readonly = "readonly", @required = "required", @class = "border-input , form-le" })
+                                @Html.ValidationMessageFor(model => model.StatusId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    @{
+                        if (User.IsInRole("LiaisonGroup"))
+                        {
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        @Html.Label("Ticket Owner", htmlAttributes: new { @class = "control-label , a" })
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.DropDownListFor(item => item.ticketHonorId, listselectForLiason.Where(x=>x.Selected!=false), "Select Liaison User", new { @id = "LiaId", @class = "form-control, a" })
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else if (User.IsInRole("Admin"))
+                        {
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        @Html.Label("Ticket Owner", htmlAttributes: new { @class = "control-label , a" })
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.DropDownListFor(item => item.ticketHonorId, CCM.Helpers.CommonFunctions.GetAssigneeUsers(User.Identity.GetUserId()).Where(x=>x.Selected!=false), "Select Any User", new { @id = "PhyId", @class = "form-control, a" ,@value="-1"})
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+
+
+                    <div class="form-group">
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                @Html.Label("Patient Id", htmlAttributes: new { @class = "control-label , a" })
+                            </div>
+                            <div class="col-md-9 ">
+                                @*@Html.TextBoxFor(
+                                    item => item.PatientId, new { @type = "number",@min="22", @required = "", @class = "form-control border-input , form-le" })
+                                     @Html.ValidationMessageFor(model => model.PatientId, "", new { @class = "text-danger" })*@
+                                <input name="PatientId" id="patient" style="width:250px;" placeholder="Type PatientName,PatientId,DOB" />
+
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                @Html.Label("Ticket TAT", htmlAttributes: new { @class = "control-label , a " })
+                            </div>
+                            <div class="col-md-8" style="margin-right:10px;">
+                                @Html.TextBox("TAT", null, new { @required = "required", @id = "TAT", @placeholder = "H=20-M=40-L=60", @class = "form-control border-input , form-le", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>*@
+                    <div class="form-group">
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                @Html.Label("Assignee User", htmlAttributes: new { @class = "control-label  a" })
+                            </div>
+                            <div class="col-md-8" style="margin-right:10px;">
+
+                                @Html.DropDownListFor(
+                               item => item.UserId, CCM.Helpers.CommonFunctions.GetAssigneeUsers(User.Identity.GetUserId()).Where(x=>x.Selected!=false), "Select Assignee User",
+                              new { @required = "required", @class = " border-input  , form-le", @id = "DropDownAssignee", value = "" })
+                                @Html.ValidationMessageFor(model => model.UserId, "", new { @id = "valUserId", @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div id="patientDiv" class="form-group">
+
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" name="uploadFiles" id="uploadFiles" />
+                    </div>
+
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="Upload-for-Ticket">
+                        <input type="file" id="UploadImagesforTickets" accept="image/*" multiple />
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="form-group">
+                        <div class="row mt-4">
+                            <div class="col-md-2">
+                                @*@Html.LabelFor(model => model.creatorNotes, "CreatorNotes", htmlAttributes: new { @class = "control-label  ",@style="padding-left:14px;" })*@
+                                @Html.Label("Creator Notes", htmlAttributes: new { @class = "control-label  a" })
+                            </div>
+                            <div class="col-md-10" style="margin-left: -36px;width: 682px;">
+                                @Html.TextAreaFor(model => model.creatorNotes, new { @required = "required", @class = "form-control border-input", rows = "5", @style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.creatorNotes, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-10 pull-right">
+                        <input id="ticketCreateButton" type="button" value="Create" class="btn btn-default" />
+                        <input id="resetticketcreatebutton" type="button" value="Reset" class="btn btn-default" />
+                        <button type="button" class="btn btn-default close-custom-button resetuserticketgeneration" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+
+
+        }
+
+    </div>
+
+    @*<input id="test" style="width:100%;" placeholder="type a number, scroll for more results" />*@
+</div>
+
+@*<script type="text/javascript"> 
+      $('#PriorityId').change(function () {
+            var id = $(this).val();
+            console.log("VP1 Call");
+
+            $.ajax({
+                url: "/Chats/getPriorityTime?id=" + id,
+                type: "get"
+            }).done(function (response) {
+                debugger;
+                if (response) {
+                    $('input[name=TAT').val('');
+                    $("#TAT").val(response); 
+                } else {
+                    $("#TAT").val('Not Found'); 
+                }
+            });
+
+        });
+</script>*@
+
+<script>
+    $(document).ready(function () {
+        $("#DropDownAssignee").val("");
+      $("#TypeId").val("");
+        $("#StatusId").val("");
+
+
+        $("#StatusId").select2({
+            placeholder: {
+                id: '-1', // the value of the option
+                text: 'Select an option'
+            },
+            allowClear: true
+        });
+
+        $("#TypeId").select2({
+            placeholder: {
+                id: '-1', // the value of the option
+                text: 'Select an option'
+            },
+            allowClear: true
+        });
+        $("#DropDownAssignee").select2({
+            placeholder: {
+                id: '-1', // the value of the option
+                text: 'Select an option'
+            },
+            allowClear: true
+        });
+    })
+
+</script>

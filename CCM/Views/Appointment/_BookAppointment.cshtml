@@ -1,0 +1,844 @@
+﻿@{
+    ViewData["Title"] = "Appointment";
+}
+<style>
+    .bootstrap-select .dropdown-menu {
+        margin-left: 0 !important;
+        border: 1px solid;
+        padding: 5px;
+    }
+
+    .form-control {
+        border: 1px solid;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.7/dist/css/bootstrap-select.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.7/dist/js/bootstrap-select.min.js"></script>
+<div class="col-md-12 pull-left">
+    <div class="col-sm-offset-1 col-sm-10  col-lg-offset-2 col-lg-8">
+        <label>Select a Counselor/Enroller/Translator</label>
+        <label class="color-indictor pull-right">
+            <span class="blue-avail">Available</span>&nbsp;&nbsp;
+            <span class="white-notavail">Not Available</span>
+        </label>
+        @Html.DropDownList("ddlAllDoctors", new SelectList(ViewBag.AllDoctors as List<CCM.Models.LiaisonDropdown>, "SId", "SName"), new { @class = "form-control", role = "menu" })
+        <label class="col-md-12" style="color:red;font-size:1.0em;">If dropdown list is empty that means no counselor or translator assigned.Please assign Counselor or translator.</label>
+        <br />
+        <div id="calender"></div>
+    </div>
+</div>
+<style>
+</style>
+<script type="text/javascript">
+    function closebyid(id) {
+        $("#" + id).modal("hide");
+    }
+</script>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="closebyid('myModal')">&times;</button>
+                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+            </div>
+            <div class="modal-body clearfix">
+                <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                    <span class="glyphicon glyphicon-remove"></span> Remove
+                </button>
+                @*<button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                        <span class="glyphicon glyphicon-pencil"></span> Edit
+                    </button>*@
+                <p id="pDetails"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="closebyid('myModal')">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalSave" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="closebyid('myModalSave')">&times;</button>
+                <h4 class="modal-title">Save Event</h4>
+            </div>
+            <div class="modal-body clearfix">
+                <form class="col-md-12 form-horizontal">
+
+                    <input type="hidden" id="hdEventID" value="0" />
+                    @*<div class="form-group">
+                            <label>Doctor</label>
+                            @Html.DropDownList("ddlAllDoctors", new SelectList(ViewBag.AllDoctors as List<Physician>, "ID", "FullName"), "Please select", new { @class = "form-control selectpicker", role = "menu" })
+                            <select id="ddhours"><option value="0">--Select Country--</option></select>
+                            <select id="ddmint"><option value="0">--Select Country--</option></select>
+                        </div>*@
+                    <div class="form-group">
+                        <input type="hidden" id="hfForEnroller" value="@ViewBag.ForEnrollers" />
+                        @if (ViewBag.ForEnrollers == "")
+                        {
+                            <label>Patient</label>
+                            @Html.DropDownList("txtSubject", new SelectList(ViewBag.POByClinic as List<CCM.Models.PatientsViewModelAppointment>, "Id", "Description"), new { @class = "form-control  border-input", role = "menu" })
+                            <input type="text" id="txtSubject123" class="form-control" style="display:none" />
+                        }
+                        else
+                        {
+                            <label>Subject/Person</label>
+                            <input type="text" id="txtSubjectE" class="form-control" />
+
+                        }
+
+                    </div>
+                    <div class="form-group">
+                        <label>Start</label>
+                        <div class="input-group date" id="dtp2">
+                            <input type="text" id="txtStart" class="form-control" style="margin-top: 0;" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                            <div class="checkbox">
+                                <label><input type="checkbox" id="chkIsFullDay" checked="checked" />  Is Full Day event</label>
+                            </div>
+                        </div>*@
+                    <div class="form-group" id="divEndDate">
+                        <label>End</label>
+                        <div class="input-group date" id="dtp1">
+                            <input type="text" id="txtEnd" class="form-control" style="margin-top: 0;" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <button type="button" id="btnSave" class="btn btn-default">Save</button>
+                        <button type="button" class="btn btn-default" onclick="closebyid('myModalSave')">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />*@
+
+
+@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>*@
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+<script>
+        $(document).ready(function () {
+
+            initalizecalender();
+        });
+         function initalizecalender()
+         {
+             debugger;
+           var Test = [];
+        var DoctorResult = [];
+        var PaientsAppointments = [];
+        var DoctorTimeInterval = [];
+        var AvailableTimeInterval = [];
+        var calendarstarttime = '';
+        var calendarendtime = '';
+        var Issave = false;
+        var selectedDate = '';
+        var PatientId = '@ViewBag.PatientId';
+        var DoctorId = '@ViewBag.DoctorId';
+        var ClinicId = '@ViewBag.ClinicId';
+        var isEdit = false;
+        var AppointmenId = 0;
+        var find = false; var Dulicate = false;
+
+
+            //$(".selectpicker").selectpicker({
+            //    liveSearch: true
+            //});
+            DoctorId = $("#ddlAllDoctors").val();
+            var events = [];
+            var selectedEvent = null;
+            FetchEventAndRenderCalendar();
+            var patientappointmentId = 0
+        function FetchEventAndRenderCalendar() {
+            events = [];
+            $.ajax({
+                type: "GET",
+                url: "/Appointment/GetPatientAppointment?Id=" + DoctorId,
+                success: function (data) {
+                    $.each(data, function (i, v) {
+                        events.push({
+                            eventID: v.ID,
+                            title: v.Subject,
+                            start: moment(v.StartTime),
+                            end: v.EndTime != null ? moment(v.EndTime) : null,
+                            patientID: v.PatientID,
+                            doctorID: v.LiaisonID,
+                            hours: moment.duration(v.StartTime).hours(),
+                            mints: moment.duration(v.StartTime).minutes(),
+                            patientappointmentId: v.ID,
+                            isMigrated: v.UpdateOn == null? true:false
+                        });
+                    });
+
+                    //GenerateCalender(events);
+                    GetDoctorById(DoctorId);
+                    $('#ddlAllDoctors').val(DoctorId);
+                },
+                error: function (error) {
+                    Showerrormsg1('failed');
+                }
+            });
+        }
+
+        function GenerateCalender(events) {
+            var mintime = "00:00:00";
+            var maxtime = "23:59:00";
+            if (events.length > 0) {
+                mintime = events[0].actualStartTime == undefined ? "00:00:00" : moment(events[0].actualStartTime).format("HH:mm:ss");
+
+                maxtime = events[0].actualEndTime == undefined ? "23:59:00" : moment(events[0].actualEndTime).format("HH:mm:ss");
+            }
+
+            $('#calender').fullCalendar('destroy');
+            setTimeout(function () {
+                $('#calender').fullCalendar({
+                    contentHeight: "auto",
+                    header: {
+                        left: 'prev,next ,today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                    },
+                    minTime: mintime,
+                    maxTime: maxtime,
+                    defaultDate: new Date(),
+                    slotDuration: '00:05:00',
+                    slotLabelInterval: 5,
+                    slotLabelFormat: 'h:mm a',
+                    //defaultDate: '2016-01-12',
+                    slotMinutes: 5,
+                    events: events,
+                    eventAfterRender: function (event, $el, view) {
+                        if (event.isMigrated == true) {
+                            $el.css('background', '#aebcd1');
+                            $el.css('color', 'black');
+                        }
+
+
+                    },
+                    eventClick: function (calEvent, jsEvent, view) {
+
+                        selectedDate = calEvent.start.format("MM/DD/YYYY");
+                        selectedEvent = calEvent;
+                        $('#myModal #eventTitle').text(calEvent.title);
+                        var $description = $('<div/>');
+                        $description.append($('<p/>').html('<b>Start:</b>' + calEvent.start.format("DD-MMM-YYYY hh:mm a")));
+                        if (calEvent.end != null) {
+                            $description.append($('<p/>').html('<b>End:</b>' + calEvent.end.format("DD-MMM-YYYY hh:mm a")));
+                        }
+                        $description.append($('<p/>').html('<b>Patient:</b>' + calEvent.title));
+                        $('#myModal #pDetails').empty().html($description);
+
+                        $('#myModal').modal();
+                    },
+                    selectable: true,
+                    select: function (start, end, view) {
+
+                        selectedDate = moment(start).format('MM/DD/YYYY');
+                        CheckValidDate(start, end)
+                    },
+                    editable: true,
+
+                    eventDrop: function (event) {
+                        var data = {
+                            EventID: event.eventid,
+                            Subject: event.title,
+                            StartTime: event.start.format('DD/MM/YYYY hh:mm A'),
+                            EndTime: event.end != null ? event.end.format('DD/MM/YYYY hh:mm A') : null
+
+                        };
+                        SaveEvent(data);
+                    },
+                    viewRender: function (view, element) {
+
+                        if ($("#ddlAllDoctors").val() != "" && view.name == "agendaDay") {
+                            var intervalStart = view.intervalStart;
+                            var intervalEnd = view.intervalEnd;
+                            selectedDate = moment(intervalStart).format('MM/DD/YYYY');
+                            CheckValidDateNew(intervalStart, intervalEnd);
+                        }
+
+                        //alert('new view: ' + intervalStart);
+                        //alert('new view: ' + intervalEnd);
+                    }
+                });
+            }, 100);
+
+            //$(".fc-agendaDay-button").unbind("click").click(function () {
+            //    if ($("#ddlAllDoctors").val() != "") {
+            //        debugger;
+            //        var intervalStart = moment($(".fc-center h2").html()).format('MM/DD/YYYY');
+            //        var intervalEnd = moment($(".fc-center h2").html()).format('MM/DD/YYYY');
+            //        selectedDate = moment(intervalStart).format('MM/DD/YYYY');
+            //        CheckValidDateNew(intervalStart, intervalEnd);
+            //    }
+            //});
+        }
+
+        $('#btnSave').click(function () {
+
+            var txtstart = moment(selectedDate + ' ' + $('#txtStart').val().trim(), 'MM/DD/YYYY hh:mm A');//getAsDate(selectedDate, $('#txtStart').val().trim());
+            var txtend = moment(selectedDate + ' ' + $('#txtEnd').val().trim(), 'MM/DD/YYYY hh:mm A');//getAsDate(selectedDate, $('#txtEnd').val().trim());
+
+            Issave = true;
+
+            CheckValidDate(txtstart, txtend);
+            return false;
+
+        });
+
+        function getAsDate(day, time)
+        {
+                    var hours = Number(time.match(/^(\d+)/)[1]);
+                    var minutes = Number(time.match(/:(\d+)/)[1]);
+                    var AMPM = time.match(/\s(.*)$/)[1];
+                    if (AMPM == "pm" && hours < 12) hours = hours + 12;
+                    if (AMPM == "am" && hours == 12) hours = hours - 12;
+                    var sHours = hours.toString();
+                    var sMinutes = minutes.toString();
+                    if (hours < 10) sHours = "0" + sHours;
+                    if (minutes < 10) sMinutes = "0" + sMinutes;
+                    time = sHours + ":" + sMinutes + ":00";
+                    var d = new Date(day + time);
+                    //var n = d.toISOString().substring(0, 10);
+                    var newDate = d;
+
+                    return newDate;
+            }
+        function CheckValidDateNew(start, end) {
+
+            find = false;
+            Dulicate = false;
+            PaientsAppointments = [];
+            AvailableTimeInterval = [];
+            if (PaientsAppointments.length == 0) {
+                $.ajax({
+                    type: "GET",
+                    async: false,
+                    url: "/Appointment/DoctorTime?DoctorId=" + $("#ddlAllDoctors").val() + "&Date=" + moment(start).format('MM/DD/YYYY') + "&Time=" + $('#txtStart').val().toString(),
+                    success: function (data) {
+
+                        PaientsAppointments = data;
+                        if (isEdit == true) {
+                            for (var i = 0; i < PaientsAppointments.length; i++) {
+                                if (PaientsAppointments[i].ID == patientappointmentId) {
+                                    PaientsAppointments.splice(i, 1);
+                                }
+                            }
+                        }
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1('failed');
+                    }
+                });
+            }
+
+            if (PaientsAppointments.length > 0) {
+
+
+                for (var i = 0; i < PaientsAppointments.length; i++) {
+                    //intervals(moment(PaientsAppointments[i].startTime, 'YYYY-MM-DD hh:mm a'), moment(PaientsAppointments[i].endTime, 'YYYY-MM-DD hh:mm a'))
+
+                    if (new Date(PaientsAppointments[i].StartTime) <= new Date(moment(start).add(1, 'm').format('MM/DD/YYYY hh:mm A')) && new Date(moment(PaientsAppointments[i].EndTime).format('MM/DD/YYYY hh:mm A')) >= new Date(moment(start).add(1, 'm').format('MM/DD/YYYY hh:mm A'))) {
+                        //alert();
+                        Dulicate = true;
+                    }
+
+                    if (new Date(PaientsAppointments[i].StartTime) <= new Date(moment(end).add(-1, 'm').format('MM/DD/YYYY hh:mm A')) && new Date(moment(PaientsAppointments[i].EndTime).format('MM/DD/YYYY hh:mm A')) >= new Date(moment(end).add(-1, 'm').format('MM/DD/YYYY hh:mm A'))) {
+                        Dulicate = true;
+                        //alert();
+                    }
+                }
+            }
+            Test = DoctorResult;
+            if ($("#ddlAllDoctors").val() == "") {
+                Showerrormsg1("Please Select a Doctor")
+            }
+            if (Test.length == 0) {
+
+            }
+            else {
+
+                // $(".fc-widget-content").css({ "background-color": "blue", "font-weight": "bold" }).text("This time is cleared")
+                $(".fc-widget-content").hide();
+                for (var i = 0; i < Test.length; i++) {
+
+                    if (moment(Test[i].start).format('DD/MM/YYYY') == moment(start).format('DD/MM/YYYY')) {
+                        DoctorTimeInterval = intervals(Test[i].actualStartTime, Test[i].actualEndTime)
+                        //$('#calender').fullCalendar('changeView', 'agendaDay', start);
+                        //$('.fc-event-container').remove();
+                        setTimeout(function () {
+                            if (PaientsAppointments.length == 0) {
+                                FindAvailableTime(AvailableTimeInterval, DoctorTimeInterval);
+                            }
+                            for (var j = 0; j < PaientsAppointments.length; j++) {
+                                var result = intervals(moment(PaientsAppointments[j].StartTime).format('YYYY-MM-DD hh:mm a'), moment(PaientsAppointments[j].EndTime).format('YYYY-MM-DD hh:mm a'));
+                                AvailableTimeInterval = AvailableTimeInterval.concat(result);
+                                if (PaientsAppointments.length - 1 == j) {
+                                    FindAvailableTime(AvailableTimeInterval, DoctorTimeInterval);
+                                }
+
+                            }
+
+
+                        }, 200);
+
+                        setTimeout(function () {
+                            $(".fc-widget-content").show();
+                        }, 200);
+                        return
+                    }
+                }
+                setTimeout(function () {
+                    $(".fc-widget-content").show();
+                }, 200);
+                $('#calendar').fullCalendar('unselect');
+
+
+
+            }
+
+
+        }
+        function CheckValidDate(start, end) {
+            debugger;
+            find = false;
+            Dulicate = false;
+
+            if (PaientsAppointments.length == 0) {
+                $.ajax({
+                    type: "GET",
+                    async: false,
+                    url: "/Appointment/DoctorTime?DoctorId=" + $("#ddlAllDoctors").val() + "&Date=" + moment(start).format('MM/DD/YYYY') + "&Time=" + $('#txtStart').val().toString(),
+                    success: function (data) {
+
+                        PaientsAppointments = data;
+                        if (isEdit == true) {
+                            for (var i = 0; i < PaientsAppointments.length; i++) {
+                                if (PaientsAppointments[i].id == patientappointmentId) {
+                                    PaientsAppointments.splice(i, 1);
+                                }
+                            }
+                        }
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1('failed');
+                    }
+                });
+            }
+
+            if (PaientsAppointments.length > 0) {
+
+
+                for (var i = 0; i < PaientsAppointments.length; i++) {
+                    //intervals(moment(PaientsAppointments[i].startTime, 'YYYY-MM-DD hh:mm a'), moment(PaientsAppointments[i].endTime, 'YYYY-MM-DD hh:mm a'))
+
+                    if (new Date(moment(PaientsAppointments[i].StartTime).format('MM/DD/YYYY hh:mm A')) <= new Date(moment(start).add(1, 'm').format('MM/DD/YYYY hh:mm A')) && new Date(moment(PaientsAppointments[i].EndTime).format('MM/DD/YYYY hh:mm A')) >= new Date(moment(start).add(1, 'm').format('MM/DD/YYYY hh:mm A'))) {
+                        //alert();
+                        Dulicate = true;
+                    }
+
+                    if (new Date(moment(PaientsAppointments[i].StartTime).format('MM/DD/YYYY hh:mm A')) <= new Date(moment(end).add(-1, 'm').format('MM/DD/YYYY hh:mm A')) && new Date(moment(PaientsAppointments[i].EndTime).format('MM/DD/YYYY hh:mm A')) >= new Date(moment(end).add(-1, 'm').format('MM/DD/YYYY hh:mm A'))) {
+                        Dulicate = true;
+                        //alert();
+                    }
+                }
+            }
+            Test = DoctorResult;
+            if (($('#calender').fullCalendar('getView').type == 'month') && !Issave) {
+                //PaientsAppointments = [];
+
+                if ($("#ddlAllDoctors").val() == "") {
+                    Showerrormsg1("Please Select a Doctor")
+                }
+                if (Test.length == 0) {
+
+                }
+                else {
+                    $(".fc-widget-content").hide();
+                    for (var i = 0; i < Test.length; i++) {
+
+                        if (moment(Test[i].start).format('DD/MM/YYYY') == moment(start).format('DD/MM/YYYY')) {
+                            DoctorTimeInterval = intervals(Test[i].actualStartTime, Test[i].actualEndTime)
+                            $('#calender').fullCalendar('changeView', 'agendaDay', start);
+                            $('.fc-event-container').remove();
+                            setTimeout(function () {
+                                if (PaientsAppointments.length == 0) {
+                                    debugger;
+                                    FindAvailableTime(AvailableTimeInterval, DoctorTimeInterval);
+                                }
+                                for (var j = 0; j < PaientsAppointments.length; j++) {
+                                    debugger;
+                                    var starttimetest = moment(PaientsAppointments[j].StartTime).format('YYYY-MM-DD hh:mm a');
+                                    var result = intervals(moment(PaientsAppointments[j].StartTime).format('YYYY-MM-DD hh:mm a'), moment(PaientsAppointments[j].EndTime).format('YYYY-MM-DD hh:mm a'))
+
+                                    AvailableTimeInterval = AvailableTimeInterval.concat(result);
+                                    if (PaientsAppointments.length - 1 == j) {
+                                        FindAvailableTime(AvailableTimeInterval, DoctorTimeInterval);
+                                    }
+
+                                }
+
+
+                            }, 200);
+                            setTimeout(function () {
+                                $(".fc-widget-content").show();
+                            }, 200);
+
+                            return
+                        }
+                    }
+                    setTimeout(function () {
+                        $(".fc-widget-content").show();
+                    }, 200);
+                    Showerrormsg1("Doctor is not available on this day")
+
+                }
+            }
+            else {
+
+                if (($('#calender').fullCalendar('getView').type == 'agendaDay') && !Issave && 1 == 2) {
+
+                }
+                else {
+
+                    var avaibaletime = '';
+                    for (var i = 0; i < Test.length; i++) {
+
+
+                        if (moment(Test[i].start).format('DD/MM/YYYY') == moment(start).format('DD/MM/YYYY')) {
+                            if (new Date(Test[i].actualStartTime) <= new Date(moment(start).format('YYYY-MM-DD hh:mm a')) && new Date(Test[i].actualEndTime) >= new Date(moment(end).format('YYYY-MM-DD hh:mm a'))) {
+                                //$('#calender').fullCalendar('changeView', 'agendaDay', start);
+                                find = true;
+                                //alert("find moment(Test[i].start).format('HH:mm A')");
+                                //return
+                            }
+                            avaibaletime = moment(Test[i].actualStartTime).format('YYYY-MM-DD hh:mm a')
+                        }
+                    }
+                    if (find && !Dulicate && !Issave) {
+
+                        $('#txtStart').val(moment(start).format('hh:mm A'));
+                        $('#txtEnd').val(moment(end).format('hh:mm A'));
+
+
+                        $('#myModal').modal('hide');
+                        $('#myModalSave').modal();
+                    }
+                    if (find && !Dulicate && Issave) {
+                        var subject = "";
+                        var patientid = "";
+                        if ($("#hfForEnroller").val() == "") {
+                            if ($('#txtSubject').val().trim() == "") {
+                                alert("Please select Patient");
+                                return;
+                            }
+                            patientid = $('#txtSubject').val().trim();
+                            subject = $("#txtSubject option:selected").text();
+                        }
+                        else {
+                            if ($('#txtSubjectE').val().trim() == "") {
+                                alert("Please enter name for this appointment.");
+                                return;
+                            }
+                            patientid = "0";
+                            subject = $("#txtSubjectE").val();
+                        }
+
+                        $.ajax({
+                            type: "POST",
+                            url: '/Appointment/SavePatientAppointment',
+                            data: {
+                                "DoctorID": $("#ddlAllDoctors").val(), 'Subject': patientid, 'StartTime': moment(start).format('HH:mm A'), 'EndTime': moment(end).format('HH:mm A'), 'Date': moment(end).format('MM/DD/YYYY HH:mm A'), 'hour': $('#ddhours').val(), 'mint': $("#ddmint").val(), 'AppointmentId': patientappointmentId, 'PatientName': subject
+                            },
+                            success: function (data) {
+                                if (data == true) {
+                                    // window.location = "/Patient/TotalPatients";
+                                    //Refresh the calender
+                                    FetchEventAndRenderCalendar();
+                                    // $("#ddlAllDoctors").val("")
+                                    var patientid = $("#patientidh").val();
+                                    Issave = false;
+                                    swal({
+                                        title: "Saved",
+                                        text: "Appointment saved successfully.",
+                                        icon: "success",
+                                        button: "Ok",
+                                        confirmButtonColor: "#1ab394",
+                                    });
+                                    if ($("#currentcontroller").val() == "Patient Details") {
+                                        AjaxRefresh1('Patient', '_Details', patientid, '');
+                                    }
+                                        $('#myModalSave').modal('hide');
+                                       $("#BADialog").modal("hide");
+                                  //
+                                    //swal({
+                                    //    title: "Saved",
+                                    //    text: "Appointment saved successfully. Please click on Patient Details tab for refresh",
+                                    //    icon: "success",
+                                    //    button: "Ok",
+                                    //    confirmButtonColor: "#1ab394",
+                                    //}).then(function () {
+                                    //    $('#myModalSave').modal('hide');
+                                    //    $("#BADialog").modal("hide");
+                                    //});
+
+
+                                }
+                            },
+                            error: function () {
+                                Showerrormsg1('Failed');
+                            }
+                        });
+                    }
+
+
+
+                    $('#calendar').fullCalendar('unselect');
+                }
+
+
+            }
+        }
+        function intervalsClear(startString, endString) {
+            var start = moment(startString, 'YYYY-MM-DD hh:mm a');
+            var end = moment(endString, 'YYYY-MM-DD hh:mm a');
+
+            // round starting minutes up to nearest 15 (12 --> 15, 17 --> 30)
+            // note that 59 will round up to 60, and moment.js handles that correctly
+            start.minutes(Math.ceil(start.minutes() / 5) * 5);
+
+            var result = [];
+
+            var current = moment(start);
+
+            while (current < end) {
+
+                result.push(current.format('HH:mm:ss'));
+                var time = current.format('HH:mm:ss');
+                $("[data-time ='" + time + "']").children('td').eq(1).css({ "background-color": "white", "font-weight": "bold" }).text("")
+
+
+                current.add(5, 'minutes');
+            }
+
+            return result;
+        }
+        function intervals(startString, endString) {
+            debugger;
+            var start = moment(startString, 'YYYY-MM-DD hh:mm a');
+            var end = moment(endString, 'YYYY-MM-DD hh:mm a');
+
+            // round starting minutes up to nearest 15 (12 --> 15, 17 --> 30)
+            // note that 59 will round up to 60, and moment.js handles that correctly
+            start.minutes(Math.ceil(start.minutes() / 5) * 5);
+
+            var result = [];
+
+            var current = moment(start);
+
+            while (current < end) {
+
+                result.push(current.format('HH:mm:ss'));
+                var time = current.format('HH:mm:ss');
+                $("[data-time ='" + time + "']").children('td').eq(1).css({ "background-color": "#f3bcbc", "font-weight": "bold" }).text("This time is booked")
+
+
+                current.add(5, 'minutes');
+            }
+
+            return result;
+        }
+
+        function FindAvailableTime(arr2, arr1) {
+            debugger;
+            //const arr1 = [1, 2, 3, 4, 5];
+            //const arr2 = [1, 3, 8];
+
+            let unique1 = arr1.filter((o) => arr2.indexOf(o) === -1);
+            let unique2 = arr2.filter((o) => arr1.indexOf(o) === -1);
+            for (var i = 0; i < unique1.length; i++) {
+                $("[data-time ='" + unique1[i] + "']").children('td').eq(1).css({ "background-color": "#aee6ae", "font-weight": "bold" }).text("Click here to book an appointment")
+            }
+            const unique = unique1.concat(unique2);
+
+            console.log(unique)
+
+        }
+
+
+
+        $('#btnEdit').click(function ()
+        {
+                isEdit = true;
+                //Open modal dialog for edit event
+                openAddEditForm();
+            })
+        $('#btnDelete').click(function ()
+        {
+                if (selectedEvent != null && confirm('Are you sure to remove this appointment?')) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Appointment/DeletePatientAppointment',
+                        data: { 'eventID': selectedEvent.eventID },
+                        success: function (data) {
+                            if (data == true) {
+                                //window.location = "/Patient/TotalPatients";
+                                //Refresh the calender
+                                FetchEventAndRenderCalendar();
+                                $('#myModal').modal('hide');
+                            }
+                        },
+                        error: function () {
+                            Showerrormsg1('Failed');
+                        }
+                    })
+                }
+            })
+
+            $('#dtp2').datetimepicker({
+                //format: 'LT',
+                stepping: 5,
+                 format: 'hh:mm a'
+
+                //format: 'DD/MM/YYYY HH:mm A'
+            });
+            $('#dtp1').datetimepicker({
+                stepping: 5,
+                format: 'hh:mm a'
+
+                //format: 'DD/MM/YYYY HH:mm A'
+            });
+
+
+            var timetable = [];
+        function openAddEditForm()
+        {
+                $.ajax({
+                    type: "GET",
+                    url: "/Appointment/GetDoctorByID?Id=" + selectedEvent.doctorID,
+                    success: function (data) {
+                        if (!data) {
+                            events = [];
+                        }
+                        else {
+
+                            Test = []
+                            events = []
+                            $.each(data, function (i, v) {
+                                Test.push({
+
+                                    actualStartTime: moment(v.StartTime).format('YYYY-MM-DD hh:mm a'),
+                                    actualEndTime: moment(v.EndTime).format('YYYY-MM-DD hh:mm a'),
+                                    start: moment(v.StartTime).format('YYYY-MM-DD'),
+                                    end: moment(v.EndTime).format('YYYY-MM-DD'), //v.endTime != null ? moment(v.endTime).toString() : null,
+
+                                    overlap: false,
+                                    rendering: 'background',
+                                    color: '#000'                                });
+                            })
+
+                        }
+                        DoctorResult = Test;
+                    },
+                    error: function (error) {
+                        Showerrormsg1('failed');
+                    }
+                });
+                if (selectedEvent != null) {
+                    $('#ddhours').val(selectedEvent.start.format('H'));
+                   // $('#txtSubject').val(selectedEvent.patientID.toString());
+                    $('#txtSubject').selectpicker('val', selectedEvent.patientID);
+
+                    $('#txtStart').val(selectedEvent.start.format('hh:mm A'));
+                    //$('#ddlAllDoctors').val(selectedEvent.doctorID);
+                    $('#chkIsFullDay').change();
+                    $('#txtEnd').val(selectedEvent.end.format('hh:mm A'));
+                   // $("#ddlAllDoctors").val(selectedEvent.doctorID);
+                    $("#ddlAllDoctors").selectpicker('val', selectedEvent.doctorID);
+                    //$('#ddmint').val(selectedEvent.start.format('m'));
+                    //$('#ddThemeColor').val(selectedEvent.patientappointmentId);
+                    patientappointmentId = selectedEvent.patientappointmentId;
+                }
+
+                $('#myModal').modal('hide');
+                $('#myModalSave').modal();
+            }
+
+        $('#ddlAllDoctors').change(function () {
+            DoctorId = $(this).val();
+            FetchEventAndRenderCalendar();
+            GetDoctorById($(this).val());
+        });
+        function GetDoctorById(Id) {
+            $.ajax({
+                type: "GET",
+                url: "/Appointment/GetDoctorByID?Id=" + Id,
+                success: function (data) {
+                    if (!data) {
+                        //events = [];
+                        Test = []
+                        const Test1 = Test.concat(events);
+                        DoctorResult = Test;
+                        GenerateCalender(Test1);
+                    }
+                    else {
+
+                        var Test = []
+                        //events = []
+                        $.each(data, function (i, v) {
+                            Test.push({
+
+                                actualStartTime: moment(v.StartTime).format('YYYY-MM-DD hh:mm a'),
+                                actualEndTime: moment(v.EndTime).format('YYYY-MM-DD hh:mm a'),
+                                start: moment(v.StartTime).format('YYYY-MM-DD'),
+                                end: moment(v.EndTime).format('YYYY-MM-DD'), //v.endTime != null ? moment(v.endTime).toString() : null,
+
+                                overlap: false,
+                                rendering: 'background',
+                                color: '#476ae8'
+                            });
+                        })
+
+                        const Test1 = Test.concat(events);
+                        DoctorResult = Test;
+                        GenerateCalender(Test1);
+                    }
+
+                },
+                error: function (error) {
+                    Showerrormsg1('failed');
+                }
+            })
+
+        }
+    }
+</script>
+
+
+

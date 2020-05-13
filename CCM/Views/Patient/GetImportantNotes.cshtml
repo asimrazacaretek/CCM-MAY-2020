@@ -1,0 +1,85 @@
+﻿@model IEnumerable<CCM.Models.PatientNotes>
+@if (Model.Count() > 0)
+{
+    @*<div class="importnotesarea col-md-12 border-input">
+            <div class="custom-title">
+
+
+                <h4 class="pageTitle" data-toggle="collapse" href="#importantnotesid" role="button" aria-expanded="true" aria-controls="importantnotesid">
+                    Important Notes
+                    <i class="fa fa-caret-down pull-right"></i>
+                </h4>
+            </div>
+            <div id="importantnotesid" class="expand-section in">
+                @{int i = 1;}
+                @foreach (var item in Model)
+                {
+                    <div class="notesitem">
+                        <label>
+                            <b>@i.ToString() .</b>
+                            @item.Notes
+                        </label>
+                    </div>
+                    i = i + 1;
+                }
+            </div>
+
+        </div>*@
+    <div class="custom-title">
+
+
+        <h4 class="pageTitle" data-toggle="collapse" href="#importantnotesid" role="button" aria-expanded="true" aria-controls="importantnotesid">
+            Important Notes
+            <i class="fa fa-caret-down pull-right"></i>
+        </h4>
+    </div>
+    <div id="importantnotesid" class="expand-section in">
+        <div class="tablefixwidth">
+
+
+            <table id="Patientnotestableimp" class="display nowrap" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+
+                        <th>Notes</th>
+                        <th>Module/Page</th>
+                        <th>Date Created</th>
+                        <th>Created By</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td>@item.Notes</td>
+                            <td>@item.Module</td>
+                            <td>
+                                @Convert.ToDateTime(item.CreatedOn).ToString("g")
+                            </td>
+                            <td> @CCM.HelperExtensions.GetUserNamebyID(item.CreatedBy)</td>
+
+
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                importanttable = $('#Patientnotestableimp').DataTable({
+                    pageLength: 10,
+
+                    "ordering": false,
+                    "sScrollX": "100%",
+                    "scrollX": true
+                });
+            });
+           
+        </script>
+        }
+
+

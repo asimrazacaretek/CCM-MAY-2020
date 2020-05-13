@@ -1,0 +1,123 @@
+namespace CCM.Migrations
+{
+    using System;
+    using System.Data.Entity.Migrations;
+    
+    public partial class historytablenew : DbMigration
+    {
+        public override void Up()
+        {
+            CreateTable(
+                "dbo.Patient_History",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        UpdatedOn = c.DateTime(),
+                        UpdatedBy = c.String(maxLength: 100, unicode: false),
+                        CreatedOn = c.DateTime(),
+                        CreatedBy = c.String(maxLength: 100, unicode: false),
+                        Prefix = c.String(maxLength: 50, unicode: false),
+                        FirstName = c.String(nullable: false, maxLength: 100, unicode: false),
+                        MiddleName = c.String(maxLength: 100, unicode: false),
+                        LastName = c.String(nullable: false, maxLength: 100, unicode: false),
+                        Suffix = c.String(maxLength: 50, unicode: false),
+                        BirthDate = c.DateTime(nullable: false),
+                        Gender = c.String(),
+                        PreferredLanguage = c.String(maxLength: 100, unicode: false),
+                        OtherLanguage = c.String(maxLength: 100, unicode: false),
+                        Photo = c.Binary(),
+                        PhotoEmrRecords = c.Binary(),
+                        PhotoEmrRecords2 = c.Binary(),
+                        PhotoEmrRecords3 = c.Binary(),
+                        PhotoEmrRecords4 = c.Binary(),
+                        PhotoEmrRecords5 = c.Binary(),
+                        PhotoEmrRecords6 = c.Binary(),
+                        PhotoEmrRecords7 = c.Binary(),
+                        PhotoEmrRecords8 = c.Binary(),
+                        PhotoEmrRecords9 = c.Binary(),
+                        PhotoEmrRecords10 = c.Binary(),
+                        PhotoEmrRecords11 = c.Binary(),
+                        PhotoEmrRecords12 = c.Binary(),
+                        PhotoEmrRecords13 = c.Binary(),
+                        PhotoEmrRecords14 = c.Binary(),
+                        PhotoEmrRecords15 = c.Binary(),
+                        BestContactTime = c.Int(),
+                        MobilePhoneNumber = c.String(),
+                        AllowText = c.Boolean(),
+                        WorkPhoneNumber = c.String(),
+                        HomePhoneNumber = c.String(),
+                        EmergencyNumber = c.String(),
+                        Email = c.String(maxLength: 100, unicode: false),
+                        AllowEmail = c.Boolean(),
+                        Address1 = c.String(maxLength: 100, unicode: false),
+                        Address2 = c.String(maxLength: 100, unicode: false),
+                        City = c.String(maxLength: 50, unicode: false),
+                        State = c.String(maxLength: 50, unicode: false),
+                        Zipcode = c.String(),
+                        BuildingType = c.String(maxLength: 50, unicode: false),
+                        DeliveryPermisison = c.Boolean(),
+                        DeliveryInstruction = c.String(maxLength: 8000, unicode: false),
+                        MedicareIdNumber = c.String(maxLength: 100, unicode: false),
+                        MedicaidIdNumber = c.String(maxLength: 100, unicode: false),
+                        OtherInsuranceIdNumber = c.String(maxLength: 100, unicode: false),
+                        CaretakerFirstName = c.String(maxLength: 100, unicode: false),
+                        CaretakerLastName = c.String(maxLength: 100, unicode: false),
+                        CaretakerPhoneNumber = c.String(),
+                        CaretakerRelationship = c.String(maxLength: 100, unicode: false),
+                        Notes = c.String(),
+                        EnrollmentNotes = c.String(),
+                        CCMEnrolledOn = c.DateTime(),
+                        CCMEnrolledBy = c.String(maxLength: 100, unicode: false),
+                        EnrollmentStatus = c.String(),
+                        CcmStatus = c.String(),
+                        CcmClinicalSignOffDate = c.DateTime(),
+                        CcmClaimSubmissionDate = c.DateTime(),
+                        CcmReconciliationDate = c.DateTime(),
+                        AppointmentDate = c.DateTime(),
+                        CcmBillingCode = c.String(),
+                        CcmBillingCode2 = c.String(),
+                        FinalCarePlanPdf = c.Binary(),
+                        Cycle = c.Int(nullable: false),
+                        LiasionAssignedOn = c.DateTime(),
+                        LiasionAssignedBy = c.String(),
+                        CallingStatus = c.String(maxLength: 100, unicode: false),
+                        CallingNote = c.String(),
+                        LiaisonId = c.Int(),
+                        PhysicianId = c.Int(nullable: false),
+                        PatientChronicCondition1Id = c.Int(),
+                        PatientChronicCondition2Id = c.Int(),
+                        EnrollmentSubStatus = c.String(maxLength: 100, unicode: false),
+                        EnrollmentSubStatusReason = c.String(maxLength: 100, unicode: false),
+                        EMRNumber = c.String(nullable: false, maxLength: 100, unicode: false),
+                        EMRType = c.String(maxLength: 100, unicode: false),
+                        EnrollmentStatusNotes = c.String(),
+                        PicassoChecked = c.String(maxLength: 5, unicode: false),
+                        PicassoCheckedOn = c.DateTime(),
+                        CapitatedPatient = c.String(maxLength: 5, unicode: false),
+                        CapitatedFrom = c.DateTime(),
+                        CapitatedTo = c.DateTime(),
+                        ProfileId = c.Int(),
+                        ContactId = c.Int(),
+                        AddressId = c.Int(),
+                        UrgencyContactId = c.Int(),
+                        InsuranceId = c.Int(),
+                        MedicalStatusId = c.Int(),
+                        MedicalConditionId = c.Int(),
+                        FamilyHistoryId = c.Int(),
+                        AllergyId = c.Int(),
+                        MedicationOtcId = c.Int(),
+                        WorkAndRelationshipId = c.Int(),
+                        DietAndHabitId = c.Int(),
+                        LifeStressId = c.Int(),
+                        NutritionalSupplementId = c.Int(),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+        }
+        
+        public override void Down()
+        {
+            DropTable("dbo.Patient_History");
+        }
+    }
+}

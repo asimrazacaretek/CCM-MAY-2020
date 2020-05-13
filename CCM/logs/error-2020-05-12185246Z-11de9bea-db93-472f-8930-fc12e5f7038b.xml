@@ -1,0 +1,989 @@
+﻿<error errorId="11de9bea-db93-472f-8930-fc12e5f7038b" application="/LM/W3SVC/2/ROOT" host="CCM-STAGING" type="System.Data.SqlClient.SqlException" message="Conversion failed when converting date and/or time from character string." source=".Net SqlClient Data Provider" detail="System.Data.Entity.Core.EntityCommandExecutionException: An error occurred while reading from the store provider's data reader. See the inner exception for details. ---&gt; System.Data.SqlClient.SqlException: Conversion failed when converting date and/or time from character string.&#xD;&#xA;   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)&#xD;&#xA;   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)&#xD;&#xA;   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)&#xD;&#xA;   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean&amp; dataReady)&#xD;&#xA;   at System.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean&amp; moreRows)&#xD;&#xA;   at System.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean&amp; more)&#xD;&#xA;   at System.Data.SqlClient.SqlDataReader.Read()&#xD;&#xA;   at System.Data.Entity.Core.Common.Internal.Materialization.Shaper`1.StoreRead()&#xD;&#xA;   --- End of inner exception stack trace ---&#xD;&#xA;   at System.Data.Entity.Core.Common.Internal.Materialization.Shaper`1.HandleReaderException(Exception e)&#xD;&#xA;   at System.Data.Entity.Core.Common.Internal.Materialization.Shaper`1.StoreRead()&#xD;&#xA;   at System.Data.Entity.Core.Common.Internal.Materialization.Shaper`1.SimpleEnumerator.MoveNext()&#xD;&#xA;   at System.Data.Entity.Internal.LazyEnumerator`1.MoveNext()&#xD;&#xA;   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)&#xD;&#xA;   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)&#xD;&#xA;   at CCM.Controllers.CcmStatusController.LoadDrugData(String status, String userId, Nullable`1 DateFrom, Nullable`1 DateTo, String SearchCol, Int32 LiaisonId, Int32 PhysicianID, Int32 PhysicianGroupID, String forcareplan, Int32 TranslatorID, String forTranslator, String Languages, Nullable`1 BillingcategoryId) in C:\Users\asim.raza\Source\Workspaces\CCM\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\Controllers\CcmStatusController.cs:line 491&#xD;&#xA;   at lambda_method(Closure , ControllerBase , Object[] )&#xD;&#xA;   at System.Web.Mvc.ActionMethodDispatcher.Execute(ControllerBase controller, Object[] parameters)&#xD;&#xA;   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)&#xD;&#xA;   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.&lt;BeginInvokeSynchronousActionMethod&gt;b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.&lt;InvokeActionMethodFilterAsynchronouslyRecursive&gt;b__3d()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.&lt;&gt;c__DisplayClass46.&lt;InvokeActionMethodFilterAsynchronouslyRecursive&gt;b__3f()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.&lt;&gt;c__DisplayClass33.&lt;BeginInvokeActionMethodWithFilters&gt;b__32(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.&lt;&gt;c__DisplayClass21.&lt;&gt;c__DisplayClass2b.&lt;BeginInvokeAction&gt;b__1c()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.&lt;&gt;c__DisplayClass21.&lt;BeginInvokeAction&gt;b__1e(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeAction(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Controller.&lt;BeginExecuteCore&gt;b__1d(IAsyncResult asyncResult, ExecuteCoreState innerState)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncVoid`1.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Controller.EndExecuteCore(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Controller.&lt;BeginExecute&gt;b__15(IAsyncResult asyncResult, Controller controller)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncVoid`1.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Controller.EndExecute(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Controller.System.Web.Mvc.Async.IAsyncController.EndExecute(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.MvcHandler.&lt;BeginProcessRequest&gt;b__5(IAsyncResult asyncResult, ProcessRequestState innerState)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncVoid`1.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.MvcHandler.EndProcessRequest(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.MvcHandler.System.Web.IHttpAsyncHandler.EndProcessRequest(IAsyncResult result)&#xD;&#xA;   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()&#xD;&#xA;   at System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)&#xD;&#xA;   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean&amp; completedSynchronously)" user="stanadmin@gmail.com" time="2020-05-12T18:52:46.8886976Z">
+  <serverVariables>
+    <item name="ALL_HTTP">
+      <value string="HTTP_CONNECTION:close&#xD;&#xA;HTTP_CONTENT_LENGTH:9904&#xD;&#xA;HTTP_CONTENT_TYPE:application/x-www-form-urlencoded; charset=UTF-8&#xD;&#xA;HTTP_ACCEPT:application/json, text/javascript, */*; q=0.01&#xD;&#xA;HTTP_ACCEPT_ENCODING:gzip, deflate, br&#xD;&#xA;HTTP_ACCEPT_LANGUAGE:en-US,en;q=0.9&#xD;&#xA;HTTP_COOKIE:__RequestVerificationToken=rUgj58ktX7aX_xu1jk99oTP1f_bONpGULdKig5jAiW47ltOPvq6kQh_jXmbkdrUUL70fDqdosoQES2oUoGtCB-1WQg8hercsq8emQ6l0Qw81; ASP.NET_SessionId=bufmawpgpizkadd1ylobfppo; ccmhealthlive=bMzTw8jP0aFz9kTi__pwVE9yHCvVERHOqHlHVo3sHVV65Im3M5YR_5zlB2ignn9FXhpmuVZFmtFS0g2RkzQTtObfZHj-UXU-JaXnoPEmFPa90BWH75S6F1rCieByDplGnZnkXU3NYc4EVTfDYy027wLu-MO6PAzovLQZBgEb2rQKuOEJUQHGR6Y7pYnfu89EARTmiUqPQd4Inscu0G1J8qoD1VzaRcGntdrvrLQeQSqP4mPayw3koPk4COCs0iwRX_pTplUMcGb8dIbS-n4x4m9A-UEWr3fWomMmvsUgnlBczApx2IYrY1klHUUFDrinN_ixyeKz-wA1WgnMMpEBqP7gMKE2310Pga7OSyBE7yWlTmkSb-BK1bTvV6tlBylQNslM60qqDD1ubUtvO6xCAStv1g6ScAuTN69NfEufOWJXCfx7Wf1hkiYqiNxAHfLseE7mthE2KOW1fkMgzYA1EB17Hr5SVHdH5RlRujSXqVQgPYVVvwQQe8c2cHsM0-fwOC1lmWidNd5z-d_duYcKFKNBu4P8RtRcNTcWK3MPf7o&#xD;&#xA;HTTP_HOST:localhost:44356&#xD;&#xA;HTTP_REFERER:https://localhost:44356/CcmStatus?status=Claims%20Submission&#xD;&#xA;HTTP_USER_AGENT:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36&#xD;&#xA;HTTP_X_REQUESTED_WITH:XMLHttpRequest&#xD;&#xA;HTTP_ORIGIN:https://localhost:44356&#xD;&#xA;HTTP_SEC_FETCH_SITE:same-origin&#xD;&#xA;HTTP_SEC_FETCH_MODE:cors&#xD;&#xA;HTTP_SEC_FETCH_DEST:empty&#xD;&#xA;" />
+    </item>
+    <item name="ALL_RAW">
+      <value string="Connection: close&#xD;&#xA;Content-Length: 9904&#xD;&#xA;Content-Type: application/x-www-form-urlencoded; charset=UTF-8&#xD;&#xA;Accept: application/json, text/javascript, */*; q=0.01&#xD;&#xA;Accept-Encoding: gzip, deflate, br&#xD;&#xA;Accept-Language: en-US,en;q=0.9&#xD;&#xA;Cookie: __RequestVerificationToken=rUgj58ktX7aX_xu1jk99oTP1f_bONpGULdKig5jAiW47ltOPvq6kQh_jXmbkdrUUL70fDqdosoQES2oUoGtCB-1WQg8hercsq8emQ6l0Qw81; ASP.NET_SessionId=bufmawpgpizkadd1ylobfppo; ccmhealthlive=bMzTw8jP0aFz9kTi__pwVE9yHCvVERHOqHlHVo3sHVV65Im3M5YR_5zlB2ignn9FXhpmuVZFmtFS0g2RkzQTtObfZHj-UXU-JaXnoPEmFPa90BWH75S6F1rCieByDplGnZnkXU3NYc4EVTfDYy027wLu-MO6PAzovLQZBgEb2rQKuOEJUQHGR6Y7pYnfu89EARTmiUqPQd4Inscu0G1J8qoD1VzaRcGntdrvrLQeQSqP4mPayw3koPk4COCs0iwRX_pTplUMcGb8dIbS-n4x4m9A-UEWr3fWomMmvsUgnlBczApx2IYrY1klHUUFDrinN_ixyeKz-wA1WgnMMpEBqP7gMKE2310Pga7OSyBE7yWlTmkSb-BK1bTvV6tlBylQNslM60qqDD1ubUtvO6xCAStv1g6ScAuTN69NfEufOWJXCfx7Wf1hkiYqiNxAHfLseE7mthE2KOW1fkMgzYA1EB17Hr5SVHdH5RlRujSXqVQgPYVVvwQQe8c2cHsM0-fwOC1lmWidNd5z-d_duYcKFKNBu4P8RtRcNTcWK3MPf7o&#xD;&#xA;Host: localhost:44356&#xD;&#xA;Referer: https://localhost:44356/CcmStatus?status=Claims%20Submission&#xD;&#xA;User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36&#xD;&#xA;x-requested-with: XMLHttpRequest&#xD;&#xA;origin: https://localhost:44356&#xD;&#xA;sec-fetch-site: same-origin&#xD;&#xA;sec-fetch-mode: cors&#xD;&#xA;sec-fetch-dest: empty&#xD;&#xA;" />
+    </item>
+    <item name="APPL_MD_PATH">
+      <value string="/LM/W3SVC/2/ROOT" />
+    </item>
+    <item name="APPL_PHYSICAL_PATH">
+      <value string="C:\Users\asim.raza\Source\Workspaces\CCM\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\" />
+    </item>
+    <item name="AUTH_TYPE">
+      <value string="ApplicationCookie" />
+    </item>
+    <item name="AUTH_USER">
+      <value string="stanadmin@gmail.com" />
+    </item>
+    <item name="AUTH_PASSWORD">
+      <value string="*****" />
+    </item>
+    <item name="LOGON_USER">
+      <value string="stanadmin@gmail.com" />
+    </item>
+    <item name="REMOTE_USER">
+      <value string="stanadmin@gmail.com" />
+    </item>
+    <item name="CERT_COOKIE">
+      <value string="" />
+    </item>
+    <item name="CERT_FLAGS">
+      <value string="" />
+    </item>
+    <item name="CERT_ISSUER">
+      <value string="" />
+    </item>
+    <item name="CERT_KEYSIZE">
+      <value string="256" />
+    </item>
+    <item name="CERT_SECRETKEYSIZE">
+      <value string="2048" />
+    </item>
+    <item name="CERT_SERIALNUMBER">
+      <value string="" />
+    </item>
+    <item name="CERT_SERVER_ISSUER">
+      <value string="CN=localhost" />
+    </item>
+    <item name="CERT_SERVER_SUBJECT">
+      <value string="CN=localhost" />
+    </item>
+    <item name="CERT_SUBJECT">
+      <value string="" />
+    </item>
+    <item name="CONTENT_LENGTH">
+      <value string="9904" />
+    </item>
+    <item name="CONTENT_TYPE">
+      <value string="application/x-www-form-urlencoded; charset=UTF-8" />
+    </item>
+    <item name="GATEWAY_INTERFACE">
+      <value string="CGI/1.1" />
+    </item>
+    <item name="HTTPS">
+      <value string="on" />
+    </item>
+    <item name="HTTPS_KEYSIZE">
+      <value string="256" />
+    </item>
+    <item name="HTTPS_SECRETKEYSIZE">
+      <value string="2048" />
+    </item>
+    <item name="HTTPS_SERVER_ISSUER">
+      <value string="CN=localhost" />
+    </item>
+    <item name="HTTPS_SERVER_SUBJECT">
+      <value string="CN=localhost" />
+    </item>
+    <item name="INSTANCE_ID">
+      <value string="2" />
+    </item>
+    <item name="INSTANCE_META_PATH">
+      <value string="/LM/W3SVC/2" />
+    </item>
+    <item name="LOCAL_ADDR">
+      <value string="::1" />
+    </item>
+    <item name="PATH_INFO">
+      <value string="/CcmStatus/LoadDrugData" />
+    </item>
+    <item name="PATH_TRANSLATED">
+      <value string="C:\Users\asim.raza\Source\Workspaces\CCM\CCM-V1-22Apr2019-B-21Aug2019-ET\CCM\CCM\CcmStatus\LoadDrugData" />
+    </item>
+    <item name="QUERY_STRING">
+      <value string="" />
+    </item>
+    <item name="REMOTE_ADDR">
+      <value string="::1" />
+    </item>
+    <item name="REMOTE_HOST">
+      <value string="::1" />
+    </item>
+    <item name="REMOTE_PORT">
+      <value string="50511" />
+    </item>
+    <item name="REQUEST_METHOD">
+      <value string="POST" />
+    </item>
+    <item name="SCRIPT_NAME">
+      <value string="/CcmStatus/LoadDrugData" />
+    </item>
+    <item name="SERVER_NAME">
+      <value string="localhost" />
+    </item>
+    <item name="SERVER_PORT">
+      <value string="44356" />
+    </item>
+    <item name="SERVER_PORT_SECURE">
+      <value string="1" />
+    </item>
+    <item name="SERVER_PROTOCOL">
+      <value string="HTTP/1.1" />
+    </item>
+    <item name="SERVER_SOFTWARE">
+      <value string="Microsoft-IIS/10.0" />
+    </item>
+    <item name="URL">
+      <value string="/CcmStatus/LoadDrugData" />
+    </item>
+    <item name="HTTP_CONNECTION">
+      <value string="close" />
+    </item>
+    <item name="HTTP_CONTENT_LENGTH">
+      <value string="9904" />
+    </item>
+    <item name="HTTP_CONTENT_TYPE">
+      <value string="application/x-www-form-urlencoded; charset=UTF-8" />
+    </item>
+    <item name="HTTP_ACCEPT">
+      <value string="application/json, text/javascript, */*; q=0.01" />
+    </item>
+    <item name="HTTP_ACCEPT_ENCODING">
+      <value string="gzip, deflate, br" />
+    </item>
+    <item name="HTTP_ACCEPT_LANGUAGE">
+      <value string="en-US,en;q=0.9" />
+    </item>
+    <item name="HTTP_COOKIE">
+      <value string="__RequestVerificationToken=rUgj58ktX7aX_xu1jk99oTP1f_bONpGULdKig5jAiW47ltOPvq6kQh_jXmbkdrUUL70fDqdosoQES2oUoGtCB-1WQg8hercsq8emQ6l0Qw81; ASP.NET_SessionId=bufmawpgpizkadd1ylobfppo; ccmhealthlive=bMzTw8jP0aFz9kTi__pwVE9yHCvVERHOqHlHVo3sHVV65Im3M5YR_5zlB2ignn9FXhpmuVZFmtFS0g2RkzQTtObfZHj-UXU-JaXnoPEmFPa90BWH75S6F1rCieByDplGnZnkXU3NYc4EVTfDYy027wLu-MO6PAzovLQZBgEb2rQKuOEJUQHGR6Y7pYnfu89EARTmiUqPQd4Inscu0G1J8qoD1VzaRcGntdrvrLQeQSqP4mPayw3koPk4COCs0iwRX_pTplUMcGb8dIbS-n4x4m9A-UEWr3fWomMmvsUgnlBczApx2IYrY1klHUUFDrinN_ixyeKz-wA1WgnMMpEBqP7gMKE2310Pga7OSyBE7yWlTmkSb-BK1bTvV6tlBylQNslM60qqDD1ubUtvO6xCAStv1g6ScAuTN69NfEufOWJXCfx7Wf1hkiYqiNxAHfLseE7mthE2KOW1fkMgzYA1EB17Hr5SVHdH5RlRujSXqVQgPYVVvwQQe8c2cHsM0-fwOC1lmWidNd5z-d_duYcKFKNBu4P8RtRcNTcWK3MPf7o" />
+    </item>
+    <item name="HTTP_HOST">
+      <value string="localhost:44356" />
+    </item>
+    <item name="HTTP_REFERER">
+      <value string="https://localhost:44356/CcmStatus?status=Claims%20Submission" />
+    </item>
+    <item name="HTTP_USER_AGENT">
+      <value string="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36" />
+    </item>
+    <item name="HTTP_X_REQUESTED_WITH">
+      <value string="XMLHttpRequest" />
+    </item>
+    <item name="HTTP_ORIGIN">
+      <value string="https://localhost:44356" />
+    </item>
+    <item name="HTTP_SEC_FETCH_SITE">
+      <value string="same-origin" />
+    </item>
+    <item name="HTTP_SEC_FETCH_MODE">
+      <value string="cors" />
+    </item>
+    <item name="HTTP_SEC_FETCH_DEST">
+      <value string="empty" />
+    </item>
+  </serverVariables>
+  <form>
+    <item name="draw">
+      <value string="1" />
+    </item>
+    <item name="columns[0][data]">
+      <value string="0" />
+    </item>
+    <item name="columns[0][name]">
+      <value string="" />
+    </item>
+    <item name="columns[0][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[0][orderable]">
+      <value string="false" />
+    </item>
+    <item name="columns[0][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[0][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[1][data]">
+      <value string="1" />
+    </item>
+    <item name="columns[1][name]">
+      <value string="" />
+    </item>
+    <item name="columns[1][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[1][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[1][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[1][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[2][data]">
+      <value string="Id" />
+    </item>
+    <item name="columns[2][name]">
+      <value string="Id" />
+    </item>
+    <item name="columns[2][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[2][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[2][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[2][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[3][data]">
+      <value string="DaysinQue" />
+    </item>
+    <item name="columns[3][name]">
+      <value string="DaysinQue" />
+    </item>
+    <item name="columns[3][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[3][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[3][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[3][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[4][data]">
+      <value string="PatientName" />
+    </item>
+    <item name="columns[4][name]">
+      <value string="PatientName" />
+    </item>
+    <item name="columns[4][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[4][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[4][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[4][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[5][data]">
+      <value string="Gender" />
+    </item>
+    <item name="columns[5][name]">
+      <value string="Gender" />
+    </item>
+    <item name="columns[5][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[5][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[5][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[5][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[6][data]">
+      <value string="BirthDate" />
+    </item>
+    <item name="columns[6][name]">
+      <value string="BirthDate" />
+    </item>
+    <item name="columns[6][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[6][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[6][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[6][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[7][data]">
+      <value string="Cyclestr" />
+    </item>
+    <item name="columns[7][name]">
+      <value string="Cyclestr" />
+    </item>
+    <item name="columns[7][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[7][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[7][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[7][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[8][data]">
+      <value string="CouncelorAppointmentDate" />
+    </item>
+    <item name="columns[8][name]">
+      <value string="CouncelorAppointmentDate" />
+    </item>
+    <item name="columns[8][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[8][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[8][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[8][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[9][data]">
+      <value string="TranslatorAppointmentDate" />
+    </item>
+    <item name="columns[9][name]">
+      <value string="TranslatorAppointmentDate" />
+    </item>
+    <item name="columns[9][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[9][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[9][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[9][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[10][data]">
+      <value string="EnrollerAppointmentDate" />
+    </item>
+    <item name="columns[10][name]">
+      <value string="EnrollerAppointmentDate" />
+    </item>
+    <item name="columns[10][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[10][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[10][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[10][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[11][data]">
+      <value string="DocFirstName" />
+    </item>
+    <item name="columns[11][name]">
+      <value string="DocFirstName" />
+    </item>
+    <item name="columns[11][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[11][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[11][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[11][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[12][data]">
+      <value string="CcmClinicalSignOffDate" />
+    </item>
+    <item name="columns[12][name]">
+      <value string="CcmClinicalSignOffDate" />
+    </item>
+    <item name="columns[12][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[12][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[12][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[12][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[13][data]">
+      <value string="13" />
+    </item>
+    <item name="columns[13][name]">
+      <value string="" />
+    </item>
+    <item name="columns[13][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[13][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[13][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[13][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[14][data]">
+      <value string="DateEntered" />
+    </item>
+    <item name="columns[14][name]">
+      <value string="DateEntered" />
+    </item>
+    <item name="columns[14][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[14][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[14][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[14][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[15][data]">
+      <value string="CallingStatus" />
+    </item>
+    <item name="columns[15][name]">
+      <value string="CallingStatus" />
+    </item>
+    <item name="columns[15][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[15][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[15][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[15][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[16][data]">
+      <value string="CcmEnrolledOn" />
+    </item>
+    <item name="columns[16][name]">
+      <value string="CcmEnrolledOn" />
+    </item>
+    <item name="columns[16][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[16][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[16][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[16][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[17][data]">
+      <value string="Category" />
+    </item>
+    <item name="columns[17][name]">
+      <value string="Category" />
+    </item>
+    <item name="columns[17][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[17][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[17][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[17][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[18][data]">
+      <value string="insurancename" />
+    </item>
+    <item name="columns[18][name]">
+      <value string="insurancename" />
+    </item>
+    <item name="columns[18][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[18][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[18][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[18][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[19][data]">
+      <value string="insuranceid" />
+    </item>
+    <item name="columns[19][name]">
+      <value string="insuranceid" />
+    </item>
+    <item name="columns[19][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[19][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[19][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[19][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[20][data]">
+      <value string="emrnumber" />
+    </item>
+    <item name="columns[20][name]">
+      <value string="emrnumber" />
+    </item>
+    <item name="columns[20][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[20][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[20][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[20][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[21][data]">
+      <value string="LastUpdatedDate" />
+    </item>
+    <item name="columns[21][name]">
+      <value string="LastUpdatedDate" />
+    </item>
+    <item name="columns[21][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[21][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[21][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[21][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[22][data]">
+      <value string="liaisonName" />
+    </item>
+    <item name="columns[22][name]">
+      <value string="liaisonName" />
+    </item>
+    <item name="columns[22][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[22][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[22][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[22][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[23][data]">
+      <value string="ReviewTime" />
+    </item>
+    <item name="columns[23][name]">
+      <value string="ReviewTime" />
+    </item>
+    <item name="columns[23][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[23][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[23][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[23][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[24][data]">
+      <value string="ccmnotes" />
+    </item>
+    <item name="columns[24][name]">
+      <value string="ccmnotes" />
+    </item>
+    <item name="columns[24][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[24][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[24][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[24][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[25][data]">
+      <value string="Activitytext" />
+    </item>
+    <item name="columns[25][name]">
+      <value string="Activitytext" />
+    </item>
+    <item name="columns[25][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[25][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[25][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[25][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[26][data]">
+      <value string="ICD10Codes" />
+    </item>
+    <item name="columns[26][name]">
+      <value string="ICD10Codes" />
+    </item>
+    <item name="columns[26][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[26][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[26][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[26][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[27][data]">
+      <value string="Address" />
+    </item>
+    <item name="columns[27][name]">
+      <value string="Address" />
+    </item>
+    <item name="columns[27][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[27][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[27][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[27][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[28][data]">
+      <value string="note" />
+    </item>
+    <item name="columns[28][name]">
+      <value string="note" />
+    </item>
+    <item name="columns[28][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[28][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[28][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[28][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[29][data]">
+      <value string="medicaidid" />
+    </item>
+    <item name="columns[29][name]">
+      <value string="medicaidid" />
+    </item>
+    <item name="columns[29][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[29][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[29][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[29][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[30][data]">
+      <value string="medicareid" />
+    </item>
+    <item name="columns[30][name]">
+      <value string="medicareid" />
+    </item>
+    <item name="columns[30][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[30][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[30][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[30][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[31][data]">
+      <value string="otherinsuranceid" />
+    </item>
+    <item name="columns[31][name]">
+      <value string="otherinsuranceid" />
+    </item>
+    <item name="columns[31][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[31][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[31][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[31][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[32][data]">
+      <value string="approvedby" />
+    </item>
+    <item name="columns[32][name]">
+      <value string="approvedby" />
+    </item>
+    <item name="columns[32][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[32][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[32][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[32][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[33][data]">
+      <value string="rejectedby" />
+    </item>
+    <item name="columns[33][name]">
+      <value string="rejectedby" />
+    </item>
+    <item name="columns[33][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[33][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[33][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[33][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[34][data]">
+      <value string="TotalCountCarePlanTobeShared" />
+    </item>
+    <item name="columns[34][name]">
+      <value string="TotalCountCarePlanTobeShared" />
+    </item>
+    <item name="columns[34][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[34][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[34][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[34][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[35][data]">
+      <value string="TotalSharedRemining" />
+    </item>
+    <item name="columns[35][name]">
+      <value string="TotalSharedRemining" />
+    </item>
+    <item name="columns[35][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[35][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[35][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[35][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[36][data]">
+      <value string="TotalCareplanShared" />
+    </item>
+    <item name="columns[36][name]">
+      <value string="TotalCareplanShared" />
+    </item>
+    <item name="columns[36][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[36][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[36][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[36][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[37][data]">
+      <value string="SubmittedBy" />
+    </item>
+    <item name="columns[37][name]">
+      <value string="SubmittedBy" />
+    </item>
+    <item name="columns[37][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[37][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[37][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[37][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[38][data]">
+      <value string="TranslatorName" />
+    </item>
+    <item name="columns[38][name]">
+      <value string="TranslatorName" />
+    </item>
+    <item name="columns[38][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[38][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[38][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[38][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[39][data]">
+      <value string="PhysicianGroup" />
+    </item>
+    <item name="columns[39][name]">
+      <value string="PhysicianGroup" />
+    </item>
+    <item name="columns[39][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[39][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[39][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[39][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="columns[40][data]">
+      <value string="40" />
+    </item>
+    <item name="columns[40][name]">
+      <value string="" />
+    </item>
+    <item name="columns[40][searchable]">
+      <value string="true" />
+    </item>
+    <item name="columns[40][orderable]">
+      <value string="true" />
+    </item>
+    <item name="columns[40][search][value]">
+      <value string="" />
+    </item>
+    <item name="columns[40][search][regex]">
+      <value string="false" />
+    </item>
+    <item name="order[0][column]">
+      <value string="2" />
+    </item>
+    <item name="order[0][dir]">
+      <value string="asc" />
+    </item>
+    <item name="start">
+      <value string="0" />
+    </item>
+    <item name="length">
+      <value string="10" />
+    </item>
+    <item name="search[value]">
+      <value string="" />
+    </item>
+    <item name="search[regex]">
+      <value string="false" />
+    </item>
+    <item name="status">
+      <value string="Claims Submission" />
+    </item>
+    <item name="userId">
+      <value string="" />
+    </item>
+    <item name="LiaisonId">
+      <value string="" />
+    </item>
+    <item name="PhysicianID">
+      <value string="" />
+    </item>
+    <item name="forTranslator">
+      <value string="" />
+    </item>
+    <item name="PhysicianGroupID">
+      <value string="" />
+    </item>
+    <item name="DateFrom">
+      <value string="2020-05-01" />
+    </item>
+    <item name="DateTo">
+      <value string="2020-05-12" />
+    </item>
+    <item name="SearchCol">
+      <value string="Date of Service" />
+    </item>
+    <item name="forcareplan">
+      <value string="" />
+    </item>
+    <item name="TranslatorID">
+      <value string="" />
+    </item>
+    <item name="Languages">
+      <value string="" />
+    </item>
+    <item name="BillingcategoryId">
+      <value string="" />
+    </item>
+  </form>
+  <cookies>
+    <item name="__RequestVerificationToken">
+      <value string="rUgj58ktX7aX_xu1jk99oTP1f_bONpGULdKig5jAiW47ltOPvq6kQh_jXmbkdrUUL70fDqdosoQES2oUoGtCB-1WQg8hercsq8emQ6l0Qw81" />
+    </item>
+    <item name="ASP.NET_SessionId">
+      <value string="bufmawpgpizkadd1ylobfppo" />
+    </item>
+    <item name="ccmhealthlive">
+      <value string="bMzTw8jP0aFz9kTi__pwVE9yHCvVERHOqHlHVo3sHVV65Im3M5YR_5zlB2ignn9FXhpmuVZFmtFS0g2RkzQTtObfZHj-UXU-JaXnoPEmFPa90BWH75S6F1rCieByDplGnZnkXU3NYc4EVTfDYy027wLu-MO6PAzovLQZBgEb2rQKuOEJUQHGR6Y7pYnfu89EARTmiUqPQd4Inscu0G1J8qoD1VzaRcGntdrvrLQeQSqP4mPayw3koPk4COCs0iwRX_pTplUMcGb8dIbS-n4x4m9A-UEWr3fWomMmvsUgnlBczApx2IYrY1klHUUFDrinN_ixyeKz-wA1WgnMMpEBqP7gMKE2310Pga7OSyBE7yWlTmkSb-BK1bTvV6tlBylQNslM60qqDD1ubUtvO6xCAStv1g6ScAuTN69NfEufOWJXCfx7Wf1hkiYqiNxAHfLseE7mthE2KOW1fkMgzYA1EB17Hr5SVHdH5RlRujSXqVQgPYVVvwQQe8c2cHsM0-fwOC1lmWidNd5z-d_duYcKFKNBu4P8RtRcNTcWK3MPf7o" />
+    </item>
+  </cookies>
+</error>

@@ -1,0 +1,678 @@
+﻿
+<link href="~/Content/Evaluation/EvaluationWizard.css" rel="stylesheet" />
+
+<!------ Include the above in your HEAD tag ---------->
+<script src="https://cdn.rawgit.com/atatanasov/gijgo/master/dist/combined/js/gijgo.min.js" type="text/javascript"></script>
+<link href="https://cdn.rawgit.com/atatanasov/gijgo/master/dist/combined/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+<style>
+
+    .category-title {
+        font-size: 9px !important;
+        float: left;
+        margin-top: 13px;
+        color: white;
+        font-weight: 500;
+        outline: auto;
+        padding: 5px;
+    }
+
+    .theme-padding {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    /*Checkboxes styles*/
+    /*input[type="checkbox"] {
+        display: none;
+    }*/
+
+    /*input[type="checkbox"] + label {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+            input[type="checkbox"] + label:last-child {
+                margin-bottom: 0;
+            }
+
+            input[type="checkbox"] + label:before {
+                content: '';
+                display: block;
+                width: 20px;
+                height: 20px;
+                border: 1px solid #0364bd;
+                position: absolute;
+                left: 0;
+                top: 0;
+                opacity: .6;
+                -webkit-transition: all .12s, border-color .08s;
+                transition: all .12s, border-color .08s;
+            }
+
+        input[type="checkbox"]:checked + label:before {
+            width: 10px;
+            top: -5px;
+            left: 5px;
+            border-radius: 0;
+            opacity: 1;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }*/
+
+    body section:not(:nth-child(2)) {
+        background-color: #e9ecef;
+    }
+
+    section ul li {
+        padding: 10px;
+    }
+
+        section ul li:nth-child(even) {
+            background-color: #f3f3f3;
+        }
+
+        section ul li:nth-child(odd) {
+            background-color: white;
+        }
+
+        section ul li label:first-child {
+            font-weight: 500;
+        }
+</style>
+
+<section class="form-box">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12 form-wizard">
+
+                <!-- Form Wizard -->
+                <form role="form" action="" method="post">
+
+                    <h3>Create Evalution Form</h3>
+
+                    <!-- Form progress -->
+                    <div class="form-wizard-steps form-wizard-tolal-steps-4">
+                        <div class="form-wizard-progress">
+                            <div class="form-wizard-progress-line" data-now-value="12.25" data-number-of-steps="4" style="width: 12.25%;"></div>
+                        </div>
+                        <!-- Step 1 -->
+                        <div class="form-wizard-step active">
+                            <div class="form-wizard-step-icon">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                            </div>
+                            <p>Personal</p>
+                        </div>
+                        <!-- Step 1 -->
+                        <!-- Step 2 -->
+                        <div class="form-wizard-step">
+                            <div class="form-wizard-step-icon">
+                                <i class="fa fa-location-arrow" aria-hidden="true"></i>
+                            </div>
+                            <p>Contact</p>
+                        </div>
+                        <!-- Step 2 -->
+                        <!-- Step 3 -->
+                        @*<div class="form-wizard-step">
+                                <div class="form-wizard-step-icon"><i class="fa fa-briefcase" aria-hidden="true"></i></div>
+                                <p>Official</p>
+                            </div>
+                            <!-- Step 3 -->
+                            <!-- Step 4 -->
+                            <div class="form-wizard-step">
+                                <div class="form-wizard-step-icon"><i class="fa fa-money" aria-hidden="true"></i></div>
+                                <p>Payment</p>
+                            </div>*@
+                        <!-- Step 4 -->
+                    </div>
+                    <!-- Form progress -->
+                    <!-- Form Step 1 -->
+                    <fieldset>
+
+                        <h4>
+                            <span>Step 1 - 2</span>
+                        </h4>
+                        <div class="form-group">
+                            <label>Select Billing Category:<span>*</span></label>
+                            @Html.DropDownList("BillingCategories", new SelectList(ViewBag.BillingCategories, "Id", "Name", ""), "--Select--", new { @class = "custom-form-control wizard-dd required", @id = "BillingCategoryId" })
+
+                        </div>
+                        <div class="form-group">
+                            <label>Evaluation Form Name: <span>*</span></label>
+                            <input type="text" name="FormName" id="FormName" placeholder="Form Name" class="custom-form-control wizard-dd required">
+                        </div>
+
+                        <div class="form-wizard-buttons">
+                            <button type="button" id="nextbtnEvalutionForm " class="btn btn-next">Next</button>
+                        </div>
+                    </fieldset>
+                    <!-- Form Step 1 -->
+                    <!-- Form Step 2 -->
+                    <fieldset>
+
+                        <h4>
+                            <span>Step 2 - 2</span>
+                        </h4>
+                        <div id="ResetFormdata">
+                            <div class="row">
+                                <div class="form-group">
+                                    <label>Select Question: <span>*</span></label>
+                                    @Html.DropDownList("Questions", new SelectList(ViewBag.Questions, "Id", "Question", ""), "--Select--", new { @class = "custom-form-control wizard-dd required", @id = "MainQuestion",Style="width: 93%;" })
+
+                                    <span><input type="button" class="fa fa-refresh reset-main-question" id="removeCurrentQuestion" value="Reset" style="width:58px"><span class="fa fa fa-sync reload-btn-sync"></span></span>
+                                </div>
+                                <div class="form-group" id="AskforSubQuestionDiv">
+                                    <label>Do you want to add Sub-Question: <span>*</span></label>
+                                    <div class="row">
+                                        <label class="switch">
+                                            <input type="checkbox" id="askSubQuestion" name="askSubQuestion">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+
+                                </div>
+                                <div class="form-group" id="MainAnswerTypeDiv" style="display:none">
+                                    <label>Select Answer Type <span>*</span></label>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <input type="radio" class="custom-radio" id="TextType" value="text" name="AnswerType">
+                                            <label for="TextType">Text Type</label>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="radio" class="custom-radio" id="RadioType" value="radio" name="AnswerType">
+                                            <label for="RadioType">Radio Type</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="radio" class="custom-radio" id="CheckBoxType" value="checkbox" name="AnswerType">
+                                            <label for="CheckBoxType">CheckBox Type</label>
+                                        </div>
+                                        @*display: -webkit-box;*@
+                                        <div class="IncludeDateMain" style="display:none;width: fit-content;  float: left;margin-top: -4px; ">
+                                            <span style="margin-left: -45px;">+</span>
+                                        </div>
+                                        <div class="col-md-3 IncludeDateMain" style="display:none">
+                                            <input type="checkbox" class="custom-radio" id="date" value="checkbox" name="IncludeDateMain">
+                                            <label for="date">Incude Date</label>
+                                        </div>
+                                        <p>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="mainAnswerDiv" style="display:none">
+                                <label>Select Answes: <span>*</span></label>
+                                <div class="row">
+                                    @Html.DropDownList("Questions", new SelectList(ViewBag.Questions, "Id", "Question", ""), new { @class = "custom-form-control wizard-dd required", @id = "MainAwnser", multiple = "multiple", style = "display:none" })
+                                   
+                                </div>
+                            </div>
+                            <div class="form-group" id="subQuestionDiv" style="display:none">
+                                <label>Select Sub-Question: <span>*</span></label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.DropDownList("Questions", new SelectList(ViewBag.Questions, "Id", "Question", ""), "--Select--", new { @class = "custom-form-control wizard-dd required", @id = "SubQuestion",Style="width:92%" })
+                                        <span><input type="button" class="fa fa-refresh reset-main-question-sub" id="ResetSubQuestionBtn" value="Reset" style="width:58px"><span class="fa fa fa-sync reload-btn-sync-sub"></span></span>
+                                    </div>
+                                    <div class="col-md-1" style="margin-left: 15px">
+                                        <input type="button" class="btn btn-success" id="addNewSubQuestionBtn" disabled="disabled" value="Add new Sub-Question" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group" id="SubAnswerTypeDiv" style="display:none">
+                                        <label>Select Answer Type <span>*</span></label>
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <input type="radio" class="custom-radio" id="subTextType" value="text" name="SubAnswerType">
+                                                <label for="subTextType">Text Type</label>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="radio" class="custom-radio" id="subRadioType" value="radio" name="SubAnswerType">
+                                                <label for="subRadioType">Radio Type</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="radio" class="custom-radio" id="subCheckBoxType" value="checkbox" name="SubAnswerType">
+                                                <label for="subCheckBoxType">CheckBox Type</label>
+
+                                            </div>
+                                            <div class="IncludeDateSub" style="width: fit-content; display: none; float: left;margin-top: -4px; ">
+                                                <span style="margin-left: -45px;">+</span>
+                                            </div>
+                                            <div class="col-md-3 IncludeDateSub" style="display:none">
+                                                <input type="checkbox" class="custom-radio" id="datesub" value="checkbox" name="IncludeDatesub">
+                                                <label for="datesub">Incude Date</label>
+                                            </div>
+                                            <p>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group" id="SubAnswerDiv" style="display:none">
+                                        <label>Select Answes: <span>*</span></label>
+                                        <div class="row">
+                                            @Html.DropDownList("Questions", new SelectList(ViewBag.Questions, "Id", "Question", ""), new { @class = "custom-form-control wizard-dd required", @id = "SubAnswer", multiple = "multiple", style = "display:none" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row livePreviewRow">
+                                <div class="container">
+                                    <div class="col-md-2">
+                                        <input type="button" class="btn btn-success addLivePreviewbtn" disabled="disabled" value="Save/New Question" style="position: absolute;">
+                                    </div>
+                                    @*<div class="col-md-2">
+                                        <input type="button" class="btn btn-success " id="removeCurrentQuestion" value="Remove Current Question" style="position: absolute;">
+                                    </div>*@
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-wizard-buttons">
+                            <button type="button" class="btn btn-previous">Previous</button>
+                            @*  <button type="button" class="btn btn-Finish">Next</button>*@
+                        </div>
+                    </fieldset>
+                    <!-- Form Step 2 -->
+                    <!-- Form Step 3 -->
+                    @*<fieldset>
+
+                            <h4>Official Information: <span>Step 3 - 4</span></h4>
+                            <div class="form-group">
+                                <label>Employee ID: <span>*</span></label>
+                                <input type="text" name="Employee ID" placeholder="Employee ID" class="custom-form-control required">
+                            </div>
+                            <div class="form-group">
+                                <label>Designation: <span>*</span></label>
+                                <input type="text" name="Designation" placeholder="Designation" class="custom-form-control required">
+                            </div>
+                            <div class="form-group">
+                                <label>Department: <span>*</span></label>
+                                <input type="text" name="Department" placeholder="Department" class="custom-form-control required">
+                            </div>
+                            <div class="form-group">
+                                <label>Working Hours: <span>*</span></label>
+                                <input type="text" name="Working Hours" placeholder="Working Hours" class="custom-form-control required">
+                            </div>
+                            <div class="container-fluid">
+                                <div class="row form-inline">
+                                    <div class="form-group col-md-3 col-xs-3">
+                                        <label>Joining Date: </label>
+                                    </div>
+                                    <div class="form-group col-md-3 col-xs-3">
+                                        <label>Day: </label>
+                                        <select class="custom-form-control">
+                                            <option>01</option>
+                                            <option>02</option>
+                                            <option>03</option>
+                                            <option>04</option>
+                                            <option>05</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3 col-xs-3">
+                                        <label>Month: </label>
+                                        <select class="custom-form-control">
+                                            <option>Jan</option>
+                                            <option>Feb</option>
+                                            <option>Mar</option>
+                                            <option>Apr</option>
+                                            <option>May</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3 col-xs-3">
+                                        <label>Year: </label>
+                                        <select class="custom-form-control">
+                                            <option>2017</option>
+                                            <option>2018</option>
+                                            <option>2019</option>
+                                            <option>2020</option>
+                                            <option>2021</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="form-wizard-buttons">
+                                <button type="button" class="btn btn-previous">Previous</button>
+                                <button type="button" class="btn btn-next">Next</button>
+                            </div>
+                        </fieldset>
+                        <!-- Form Step 3 -->
+                        <!-- Form Step 4 -->
+                        <fieldset>
+
+                            <h4>Payment Information: <span>Step 4 - 4</span></h4>
+                            <div style="clear:both;"></div>
+                            <div class="form-group">
+                                <label>Bank Name: <span>*</span></label>
+                                <input type="text" name="Bank Name" placeholder="Bank Name" class="custom-form-control required">
+                            </div>
+                            <div class="form-group">
+                                <label>Payment Type : </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="Payment" value="option1" checked="checked"> Master Card
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="Payment" value="option2"> Visa Card
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>Holder Name: <span>*</span></label>
+                                <input type="text" name="Holder Name" placeholder="Holder Name" class="custom-form-control required">
+                            </div>
+                            <div class="container-fluid">
+                                <div class="row form-inline">
+                                    <div class="form-group col-md-6 col-xs-6">
+                                        <label>Card Number: <span>*</span></label>
+                                        <input type="text" name="Card Number" placeholder="Card Number" class="custom-form-control required">
+                                    </div>
+                                    <div class="form-group col-md-6 col-xs-6">
+                                        <label>CVC: <span>*</span></label>
+                                        <input type="text" name="CVC" placeholder="CVC" class="custom-form-control required">
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="container-fluid">
+                                <div class="row form-inline">
+                                    <div class="form-group col-md-3 col-xs-3">
+                                        <label>Expiry Date: </label>
+                                    </div>
+                                    <div class="form-group col-md-3 col-xs-3">
+                                        <label>Month: </label>
+                                        <select class="custom-form-control">
+                                            <option>Jan</option>
+                                            <option>Feb</option>
+                                            <option>Mar</option>
+                                            <option>Apr</option>
+                                            <option>May</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3 col-xs-3">
+                                        <label>Year: </label>
+                                        <select class="custom-form-control">
+                                            <option>2017</option>
+                                            <option>2018</option>
+                                            <option>2019</option>
+                                            <option>2020</option>
+                                            <option>2021</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="form-wizard-buttons">
+                                <button type="button" class="btn btn-previous">Previous</button>
+                                <button type="submit" class="btn btn-submit">Submit</button>
+                            </div>
+                        </fieldset>*@
+                    <!-- Form Step 4 -->
+
+                </form>
+                <!-- Form Wizard -->
+            </div>
+        </div>
+
+    </div>
+</section>
+<br />
+<br />
+<section @*id="formPreviewSection" style="display:none"*@>
+    <div class="container">
+        <div class="container-fluid" style="background:white;box-shadow: 0px 0px 6px 3px #e4e4e4;padding:25px;border-radius:4px">
+            <div class="row">
+                <h4>Form Preview</h4>
+                <button type="button" style="display:none" class="btn btn-success" id="saveFormbtn">Save Form</button>
+            </div>
+            <div class="row">
+                <form id="formPreview" class="theme-padding py-4 questions-section" style="min-height:200px;border:solid 1px black;overflow: auto;">
+                    <ul class="list-unstyled">
+                        <li>
+                            <h1 class="text-center" id="formTitle"></h1>
+                        </li>
+
+                        @*<li>
+                            <div class="form-group">
+                                <label class="mainQuestion-label">1) caretek</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                            </div>
+                            <div class="container">
+                                <label>Select Date</label>
+                                <input class="datepicker" width="270" />
+                            </div>
+                            <div class="container">
+                                <label>Select Date</label>
+                                <input class="datepicker" width="270" />
+                            </div>
+                            <div class="container">
+                                <label>Select Date</label>
+                                <input class="datepicker" width="270" />
+                            </div>
+
+                        </li>
+                        <li>
+                            <div class="form-group">
+                                <label class="mainQuestion-label">1) caretek</label>
+                            </div>
+                            <div class="form-group">
+                                <div class=" dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                                <div class="dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                                <div class="dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form-group">
+                                <label class="mainQuestion-label">1) caretek</label>
+                            </div>
+
+                            <div class="form-group subQuestion-margin">
+                                <label>a) caretek</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="form-group subQuestion-margin">
+                                <label>b) caretek</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="form-group subQuestion-margin">
+                                <label class="subQuestion-label">c) caretek</label>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                                <div class="dynamic-inputs">
+                                    <label>caretek</label>
+                                    <input type="radio" class="radio-label">
+                                </div>
+                            </div>
+                            <div class="form-group subQuestion-margin">
+                                <label class="subQuestion-label">c) caretek</label>
+                                <div class="dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                                <div class="dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                                <div class="dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                                <div class=" dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                                <div class="dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                                <div class="dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                                <div class="dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                                <div class="dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                                <div class="dynamic-inputs dynamic-inputs-checkbox">
+                                    <input type="checkbox" class="radio-label">
+                                    <label>caretek</label>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form-group">
+                                <label class="mainQuestion-label">2) caretek</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form-group">
+                                <label class="mainQuestion-label">3) caretek</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </li>*@
+                    </ul>
+
+
+                    <br>
+
+                    @*<div class="form-group">
+                            <label style="display: block;">1) caretek</label>
+                            <label>a caretek</label>
+                            <input type="text" class="form-control">
+                            <label>b fdsfds</label>
+                            <input type="text" class="form-control">
+                            <label style="display: block;">c caretek</label>
+                            <input type="radio" class="">
+                            <label>caretek</label>
+                            <input type="radio" class="">
+                            <label>caretek</label>
+                            <br>
+                        </div>*@
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<input type="hidden" id="HiddenEvaluationFormId" value="" />
+<script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+<script src="~/Content/Evaluation/EvaluationWizard.js"></script>

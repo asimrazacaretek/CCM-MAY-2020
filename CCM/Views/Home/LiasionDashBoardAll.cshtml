@@ -1,0 +1,111 @@
+﻿@model CCM.Models.DashBoardViewModel
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" type="text/css" />
+<link href="~/Content/multiselect/bootstrap-multiselect.css" rel="stylesheet" />
+
+@if (User.IsInRole("PhysiciansGroup") || User.IsInRole("Admin") || User.IsInRole("LiaisonGroup"))
+{
+    <ul class="nav nav-tabs">
+        <li>
+
+            @Html.DropDownListFor(liaison => Model.UserId,
+                new SelectList(ViewBag.Liaisons, "Value", "Text"),
+                new {@class = "form-control border-input dropdown", id = "ddlLiaisons1", @multiple="multiple" })
+        </li>
+
+        <li>
+            <input type="date" value="@DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd")" id="datefrom" class="form-control" />
+        </li>
+
+        <li>
+            <input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" id="dateto" class="form-control" />
+        </li>.
+        <li>
+            <input type="button" value="Load" id="btnload" class="form-control" />
+        </li>
+    </ul>
+}
+<style>
+    .form-control {
+        background-color: #eaeaea;
+        border: 1px solid;
+    }
+
+    .nav-tabs > li {
+        float: left;
+        margin-bottom: -1px;
+        margin-right: 10px;
+    }
+
+    .nav-tabs {
+        border-bottom: 0px solid #ddd;
+        margin-left: 0px;
+    }
+    .radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {
+        margin-left: 5px !important
+    }
+    .checkbox:hover, .radio{
+        
+    }
+    .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+        background-color: #ccc !important;
+       
+        opacity: 1;
+        text-decoration: none;
+    }
+    .multiselect-container {
+        max-height: 400px;
+        overflow: auto;
+    }
+</style>
+<br />
+<div id="dashboardPartialView1">
+
+</div>
+<br /><br /><br />
+
+
+
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+
+<script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+@section Scripts {
+    @*<script src="~/dashboard/assets/js/chartist.min.js"></script>
+        <script src="~/dashboard/assets/js/demo.js"></script>*@
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //demo.initChartist();
+            //NewStatus
+            // $('#dashboardPartialView1').load("/Home/_DashBoardLiaison?userId=" + $(this).val() + "&From=" + $("#datefrom").val() + "&To=" + $("#dateto").val());
+
+
+            $("#btnload").click(function () {
+                $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+                $('#dashboardPartialView1').load("/Home/_DashBoardLiaisonAll?userId=" + $("#ddlLiaisons1").val() + "&From=" + $("#datefrom").val() + "&To=" + $("#dateto").val());
+
+            });
+
+
+            //$("#datefrom,#dateto").change(function () {
+            //    $('#dashboardPartialView1').html('<p>Loading . . . <img src="/dashboard/assets/img/loader.gif" alt="" /></p>');
+            //    $('#dashboardPartialView1').load("/Home/_DashBoardLiaisonAll?userId=" + $("#ddlLiaisons1").val() + "&From=" + $("#datefrom").val() + "&To=" + $("#dateto").val());
+
+
+            //});
+            $('#ddlLiaisons1').multiselect({
+                includeSelectAllOption: true,
+
+                buttonWidth: 250,
+                enableCaseInsensitiveFiltering: true,
+                enableFiltering: true
+            }
+            );
+        });
+    </script>
+}
+
+
+
+
+

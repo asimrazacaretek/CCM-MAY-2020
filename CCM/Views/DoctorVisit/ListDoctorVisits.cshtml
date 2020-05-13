@@ -1,0 +1,50 @@
+﻿@model IEnumerable<CCM.Models.DoctorVisit>
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = ViewBag.PatientId })
+<div class="container">
+    <h3 class="pageTitle text-info">DOCTOR VISITS</h3>
+
+    @Html.ActionLink("Add New Visit", "Create", new { patientId = ViewBag.PatientId }, new { @class = "btn btn-success logdetails" })
+
+    <br /><br /><br />
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table">
+                <tr>
+                    <th>S. No.</th>
+                    <th>@Html.DisplayNameFor(model => model.VisitDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.VisitReason)</th>
+                    <th>@Html.DisplayNameFor(model => model.NextAppointment)</th>
+                    <th></th>
+                </tr>
+                @{
+                    var count = 0;
+                    foreach (var item in Model)
+                    {
+                        count++;
+                        <tr>
+                            <th>@count</th>
+                            <td>@item.VisitDate.ToShortDateString()</td>
+                            <td>@item.VisitReason</td>
+                            <td>
+                                @if (item.NextAppointment.ToShortDateString() != "1/1/1900")
+                                {@item.NextAppointment.ToShortDateString()}
+                            </td>
+                            <td>@Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-sm btn-danger logdetails" })</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div><br /><br /><br />
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+                
+            }
+    </SCRIPT>
+}

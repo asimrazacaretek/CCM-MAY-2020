@@ -1,0 +1,171 @@
+﻿<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/fixedcolumns/3.2.6/css/fixedColumns.dataTables.min.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "TestReport";
+}
+@*<table class="table" id="tbl">
+    <thead><tr><th>one</th><th>two</th></tr><tr><th>one</th><th>two</th></tr></thead>
+    <tbody>
+        <tr><td>1</td><td>2</td></tr>
+        <tr><td>1</td><td>1</td></tr>
+        <tr><td>2</td><td>2</td></tr>
+        <tr><td>1</td><td>2</td></tr>
+        <tr><td>1</td><td>2</td></tr>
+    </tbody>
+
+</table>*@
+<table id="ajaxtable" class="table">
+  <thead>
+      <tr>
+          <th>ID</th>
+          <th>Name</th>
+      </tr>
+  </thead>
+  <tbody>
+
+  </tbody>
+</table>
+<h2>Test Report</h2>
+<label>From</label>
+<input type="date" value="@DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")" id="datefrom" class="form-control border-input" />
+
+<label>To</label>
+<input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" id="dateto" class="form-control border-input" />
+<br />
+<input type="button" value="Load" id="btnload" class="btn btn-success border-input" />
+<br />
+<br />
+<div id="tbldiv">
+
+</div>
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript">
+
+</script>
+<script src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js" type="text/javascript"></script>
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $('#btnload').click(function () {
+            var from = $('#datefrom').val();
+            var to = $('#dateto').val();
+            //alert(from + ',' + to);
+            $('#tbldiv').empty();
+            $.ajax({
+                url: '/Home/getData',
+                data: { from: from, to: to },
+                type: 'GET',
+                dataType: 'json',
+                success: function (result) {
+                    if (result.result == true) {
+                        var data = [];
+                        var heads = [];
+                        var tablerows = [];
+                        var table = $("<table class='table tb' id='tblRecords'/>");
+                        var thead = $("<thead />");
+                        var tbody = $("<tbody/>");
+                        var row = $("<tr/>");
+                        row.append("<th>ID</th><th>Patient Name (Counsler Name)</th>");
+                        $.each(result.monthName, function (colIndex, month) {
+                            row.append("<th colspan='5'>" + month + "</th>");
+                        });
+                        var row1 = $("<tr/>");
+                        row1.append("<th class='no-sort'></th><th></th>");
+                        $.each(result.monthName, function (colIndex, month) {
+                            row1.append("<th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>");
+                        });
+                        var row2;
+                        //for (var i = 0; i < 5; i++) {
+                        //row2 = $("<tr/>");
+                        //row2.append("<td>0001</td><td>Ali (Raza)</td>");
+
+                        //$.each(result.monthName, function (colIndex, month) {
+                        //    row2.append("<td>2</td><td>1</td><td>4</td><td>6</td><td>0</td>");
+                        //});
+                        // }
+                        //var row3;
+                        ////row3.append("<td>0002</td><td>Raza (Ali)</td>");
+
+                        //$.each(result.patientsList, function (colIndex, patient) {
+                        //    row3 = $("<tr/>");
+                        //    row3.append("<td>111</td><td>" + patient+"</td><td>3</td><td>2</td><td>5</td><td>1</td><td>6</td>");
+                        //});
+                        var row3 = '';
+                        $.each(result.patientsList, function (i, item) {
+                            //$.each(result.monthName, function (colIndex, p) {
+                                row3 += "<tr><td>111</td><td>" + item + "</td><td>3</td><td>2</td><td>5</td><td>1</td><td>6</td></tr>";
+                            //})
+                        });
+                        heads.push(row, row1);
+                        data.push(row3);
+                        thead.append(heads);
+                        tbody.append(data);
+                        tablerows.push(thead, tbody);
+                        table.append(tablerows);
+
+                        $('#tbldiv').append(table);
+                        $("#tblRecords").dataTable({
+                            "order": [],
+                            columnDefs: [
+                                { targets: 'no-sort', orderable: false }
+                            ]
+                        });
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+
+                }
+                
+            });
+           
+        });
+        //$("#tbldiv").on("load","table.tb",function () {
+        //    alert('ayaz1');
+        //});
+    </script>
+    
+    <script type="text/javascript">
+        function filterColumn(i) {
+            $('#ajaxtable').DataTable().column(i).search(
+                $('#col' + i + '_filter').val(),
+                $('#col' + i + '_regex').prop('checked'),
+                $('#col' + i + '_smart').prop('checked')
+            ).draw();
+        }
+        $(document).ready(function () {
+            $("#ajaxtable").DataTable({
+                "processing": true, // for show progress bar
+                     "language": {
+            processing: '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="256px" height="32px" viewBox="0 0 128 16" xml:space="preserve"><path fill="#96a6d8" fill-opacity="0.42" d="M6.4,4.8A3.2,3.2,0,1,1,3.2,8,3.2,3.2,0,0,1,6.4,4.8Zm12.8,0A3.2,3.2,0,1,1,16,8,3.2,3.2,0,0,1,19.2,4.8ZM32,4.8A3.2,3.2,0,1,1,28.8,8,3.2,3.2,0,0,1,32,4.8Zm12.8,0A3.2,3.2,0,1,1,41.6,8,3.2,3.2,0,0,1,44.8,4.8Zm12.8,0A3.2,3.2,0,1,1,54.4,8,3.2,3.2,0,0,1,57.6,4.8Zm12.8,0A3.2,3.2,0,1,1,67.2,8,3.2,3.2,0,0,1,70.4,4.8Zm12.8,0A3.2,3.2,0,1,1,80,8,3.2,3.2,0,0,1,83.2,4.8ZM96,4.8A3.2,3.2,0,1,1,92.8,8,3.2,3.2,0,0,1,96,4.8Zm12.8,0A3.2,3.2,0,1,1,105.6,8,3.2,3.2,0,0,1,108.8,4.8Zm12.8,0A3.2,3.2,0,1,1,118.4,8,3.2,3.2,0,0,1,121.6,4.8Z"/><g transform="translate(36 0)"><path fill="#052aa3" fill-opacity="1" d="M-42.7,3.84A4.16,4.16,0,0,1-38.54,8a4.16,4.16,0,0,1-4.16,4.16A4.16,4.16,0,0,1-46.86,8,4.16,4.16,0,0,1-42.7,3.84Zm12.8-.64A4.8,4.8,0,0,1-25.1,8a4.8,4.8,0,0,1-4.8,4.8A4.8,4.8,0,0,1-34.7,8,4.8,4.8,0,0,1-29.9,3.2Zm12.8-.64A5.44,5.44,0,0,1-11.66,8a5.44,5.44,0,0,1-5.44,5.44A5.44,5.44,0,0,1-22.54,8,5.44,5.44,0,0,1-17.1,2.56Z"/><animateTransform attributeName="transform" type="translate" values="23 0;36 0;49 0;62 0;74.5 0;87.5 0;100 0;113 0;125.5 0;138.5 0;151.5 0;164.5 0;178 0" calcMode="discrete" dur="1560ms" repeatCount="indefinite"/></g></svg> '},
+ 
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "stateSave": false,
+                "pageLength": 10,
+
+                bDeferRender: true,
+                colReorder: true,
+                //"pageLength":20,
+                //ajazsync
+                "ajax": {
+                    "url": "/Home/data1",
+                    "type": "POST",
+                    "datatype": "json",
+                    //"dataSrc": "result",
+                    "data": function (d) {
+
+                    },
+                    "dataSrc": "result"
+                },
+
+                "columns": [
+                    { "data": "Id" },
+                    { "data": "LastName" },
+                   
+                ]
+            });
+        });
+    </script>
+}

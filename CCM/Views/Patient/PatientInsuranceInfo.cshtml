@@ -1,0 +1,92 @@
+﻿@model CCM.Models.PatientProfile_Insurance
+<div class="custom-title">
+    <h3>Drug Coverge Insurance (Read Only)</h3>
+    </div>
+<div class="row">
+        <div class="col-md-4">
+
+            @Html.LabelFor(model => model.PrimaryName, htmlAttributes: new { @class = "col-md-12" })
+            <label class="form-control border-input">@Model.PrimaryName</label>
+
+
+        </div>
+
+        <div class="col-md-4">
+
+            @Html.LabelFor(model => model.PrimaryPlanName, htmlAttributes: new { @class = "col-md-12" })
+            <label class="form-control border-input">@Model.PrimaryPlanCode</label>
+
+        </div>
+        <div class="col-md-4">
+            <label class="col-md-12" for="PrimaryIdNumber">Insurance ID</label>
+
+            <label class="form-control border-input">@Model.PrimaryIdNumber</label>
+
+        </div>
+    </div>
+
+    <div class="row">
+
+
+        <div class="col-md-4">
+
+            @Html.LabelFor(model => model.PrimaryGroupNumber, htmlAttributes: new { @class = "col-md-12" })
+            <label class="form-control border-input">@Model.PrimaryGroupNumber</label>
+
+        </div>
+        <div class="col-md-4">
+
+            @Html.LabelFor(model => model.PrimaryPlanCode, htmlAttributes: new { @class = "col-md-12" })
+            <label class="form-control border-input">@Model.PrimaryPlanCode</label>
+
+        </div>
+
+        <div class="col-md-4">
+
+            @Html.LabelFor(model => model.PrimaryRxBin, htmlAttributes: new { @class = "col-md-12" })
+            <label class="form-control border-input">@Model.PrimaryRxBin</label>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+
+            @Html.LabelFor(model => model.PrimaryRxPcn, htmlAttributes: new { @class = "col-md-12" })
+            <label class="form-control border-input">@Model.PrimaryRxPcn</label>
+
+        </div>
+
+        <div class="col-md-4">
+
+            @Html.LabelFor(model => model.PrimaryRxGroup, htmlAttributes: new { @class = "col-md-12" })
+            <label class="form-control border-input">@Model.PrimaryRxGroup</label>
+
+        </div>
+        <div class="col-md-4">
+
+            @Html.LabelFor(model => model.PrimaryRelation, htmlAttributes: new { @class = "col-md-12" })
+            <label class="form-control border-input">@Model.PrimaryRelation</label>
+
+        </div>
+    </div>
+    <br />
+    <div class="custom-title">
+        <h3>HMO (Read Only)</h3></div>
+        <div class="row">
+            <div class="col-md-6">
+
+                @Html.LabelFor(model => model.HMOInsuranceName, htmlAttributes: new { @class = "col-md-12" })
+                <label class="form-control border-input">@Model.HMOInsuranceName</label>
+
+            </div>
+
+            <div class="col-md-6">
+
+                @Html.LabelFor(model => model.HMOInsuranceID, htmlAttributes: new { @class = "col-md-12" })
+                <label class="form-control border-input">@Model.HMOInsuranceID</label>
+
+            </div>
+        </div>
+
+

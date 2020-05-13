@@ -1,0 +1,302 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.AspNet.Identity;
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Button used to open the chat form - fixed at the bottom of the page */
+    .open-button {
+        background-color: #555;
+        color: white;
+        padding: 16px 20px;
+        border: none;
+        cursor: pointer;
+        opacity: 0.8;
+        position: fixed;
+        bottom: 23px;
+        right: 28px;
+        width: 280px;
+    }
+
+    /* The popup chat - hidden by default */
+    .chat-popup {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        right: 15px;
+        border: 3px solid #f1f1f1;
+        z-index: 9;
+    }
+
+    /* Add styles to the form container */
+    .form-container {
+        max-width: 300px;
+        padding: 10px;
+        background-color: white;
+    }
+
+        /* Full-width textarea */
+        .form-container textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0 22px 0;
+            border: none;
+            background: #f1f1f1;
+            resize: none;
+            min-height: 200px;
+        }
+
+            /* When the textarea gets focus, do something */
+            .form-container textarea:focus {
+                background-color: #ddd;
+                outline: none;
+            }
+
+        /* Set a style for the submit/send button */
+        .form-container .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        /* Add a red background color to the cancel button */
+        .form-container .cancel {
+            background-color: red;
+        }
+
+        /* Add some hover effects to buttons */
+        .form-container .btn:hover, .open-button:hover {
+            opacity: 1;
+        }
+    #Userlist {
+        height: 60vh;
+        width: 300px;
+        border: 1px solid;
+        overflow: scroll;
+        padding-left: 10px;
+    }
+    #Userlist li{
+list-style:none;
+padding:3px 0;
+    }
+    #Userlist li a{
+        cursor:pointer;
+    }
+</style>
+
+<h2>Index</h2>
+<label>Users</label>
+<ul id="Userlist">
+    @foreach (var item in ViewBag.Users)
+    {
+        <li><span class="fa fa-user"></span><a data-id="@item.Id" onclick="openForm(this)">@item.Name</a></li>
+    }
+</ul>
+
+<div class="chat-popup" id="myForm">
+    <form action="#" class="form-container">
+        <h3 id="chatuser">Chat</h3><span id="reciverid"></span>
+        <label for="msg"><b>Message</b></label>
+        <textarea placeholder="Type message.." name="msg" required></textarea>
+
+        <button type="submit" class="btn">Send</button>
+        <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+    </form>
+</div>
+
+<div class="container">
+    @*<span class="fa fa-comment fa-fw @User.Identity.Name" aria-hidden="true"></span><span class="badge msgnotify">2</span>*@
+    @*<span class="glyphicon glyphicon-comment frnotif @User.Identity.GetUserId()"><span></span></span>
+    <ul id="msgnotiful"></ul>*@
+    <h3>Hi Welllcome <span><strong id="name"></strong></span> !</h3>
+    <input type="text" id="message" />
+    <input type="button" id="sendmessage" value="Send" />
+    <input type="hidden" id="displayname" />
+    <ul id="discussion@(User.Identity.GetUserId())"></ul>
+</div>
+
+<script>
+    function openForm(e) {
+        document.getElementById("myForm").style.display = "block";
+        $("#chatuser").text(e.text);
+        var reciverid = e.attributes["0"];
+        $("#reciverid").text(reciverid.value);
+
+        var send = '@User.Identity.GetUserId()';
+        var url = "/Chats/DisplayAllMessage";
+        $.post(url, { userId: send }, function (data) {
+            if (data.length > 0) {
+               
+            }
+
+            for (var i = 0; i < data.length; i++) {
+                var obj = data[i];
+                var date = parseJsonDate(obj.DateSent) != null ? parseJsonDate(obj.DateSent).toLocaleDateString("en-US") : '-----';
+                debugger;
+                $('#discussion' + obj.From).append('<li><strong>' + date
+                    + '</strong>: ' + obj.Message + '</li>');
+                $('#discussion' + obj.to).append('<li><strong>' + date
+                    + '</strong>: ' + obj.Message + '</li>');
+            }
+
+        }).done(function () {
+            //hub.server.notifyOfMessageOwner();
+        });
+    }
+
+    function parseJsonDate(jsonDateString) {
+        return new Date(parseInt(jsonDateString.replace('/Date(', '')));
+    }
+
+    function closeForm() {
+        document.getElementById("myForm").style.display = "none";
+    }
+</script>
+@section scripts {
+    <!--Script references. -->
+    <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <!--Reference the autogenerated SignalR hub script. -->
+    <script src="~/signalr/hubs"></script>
+    <!--SignalR script to update the chat page and send messages.-->
+    <script>
+        $(function () {
+            // Reference the auto-generated proxy for the hub.
+            var chat = $.connection.chatHub;
+            var senderId = '@User.Identity.GetUserId()'; 
+
+            chat.client.frnotify = function (f, count) {
+                $("span.frnotif." + f + "> span").text(count);
+                $("span.frnotif." + f + "> span").addClass("red");
+            }
+
+            $("body").on("click", "span.frnotif .red", function () {
+               $("ul#msgnotiful").empty();
+                //$.ajax({
+                //    type: "Post",
+                //    url: "/Chats/DisplayUnreadMessages",
+                //    success: function (data) {
+                //        debugger;
+                //        if (data.length > 0) {
+                //            $("ul#msgnotiful").append("<li class=close>x</li>");
+                //        }
+
+                //        for (var i = 0; i < data.length; i++) {
+                //            var obj = data[i];
+                //            debugger;
+                //            $("ul#msgnotiful").append('<li class=msgnotifli><a href="/' + obj.FromUsername + '"><img src="uploads/' + obj.FromId + '.jpg" /></a>' + ' ' + obj.Message + '</li>');
+                //        }
+                //    }
+                //}).done(function (response) {
+                //    debugger;
+                //    //hub.server.notifyOfMessageOwner();
+                //});
+                var url = "/Chats/DisplayUnreadMessages";
+                $.post(url, { userId: senderId }, function (data) {
+                    if (data.length > 0) {
+                        $("ul#msgnotiful").append("<li class=close>x</li>");
+                    }
+
+                    for (var i = 0; i < data.length; i++) {
+                        var obj = data[i];
+                        debugger;
+                        $("ul#msgnotiful").append('<li class=msgnotifli><a href="/' + obj.From + '"><img src="uploads/' + obj.id + '.jpg" /></a>' + ' ' + obj.Message + '</li>');
+                    }
+
+                }).done(function () {
+                    chat.server.notify(to);
+                });
+
+            });
+
+            // Create a function that the hub can call back to display messages.
+            chat.client.addNewMessageToPage = function (name, message) {                // Add the message to the page.
+                $('#discussion' + senderId).append('<li><strong>' + htmlEncode(name)
+                    + '</strong>: ' + htmlEncode(message) + '</li>');
+            };
+            // Get the user name and store it to prepend to messages.
+            //var name = prompt('Enter your name:', '');
+            var name ='@User.Identity.GetFirstName()';
+            $('#name').text(name);
+            $('#displayname').val(name);
+            // Set initial focus to message input box.
+            $('#message').focus();
+            // Start the connection.
+            $.connection.hub.start().done(function () {
+                $('#sendmessage').click(function () {
+                    // Call the Send method on the hub.
+                    $('#discussion' + senderId).append('<li><strong>' + htmlEncode(name)
+                        + '</strong>: ' + $('#message').val() + '</li>');
+
+                    chat.server.send($("#reciverid").text(), $('#displayname').val(), $('#message').val());
+                    // Clear text box and reset focus for next comment.
+
+                    debugger;
+                    var to = $("#reciverid").text();
+                    var msg = $('#message').val();
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/Chats/SendPrivateMessage?from=" + senderId + "&to=" + to + "&message=" + msg,
+
+                    }).done(function (response) {
+                        debugger;
+                        chat.server.notify(to);
+                    });
+
+                    $('#message').val('').focus();
+                });
+                $("#message").keypress(function (event) {
+                    var keycode = (event.keyCode ? event.keyCode : event.which);
+                    if (keycode == '13') {
+                        if ($("#message").val() != "") {
+
+                              // Call the Send method on the hub.
+                            $('#discussion' + senderId).append('<li><strong>' + htmlEncode(name)
+                                + '</strong>: ' + $('#message').val() + '</li>');
+
+                            chat.server.send($("#reciverid").text(), $('#displayname').val(), $('#message').val());
+                            // Clear text box and reset focus for next comment.
+
+                            debugger;
+                            var to = $("#reciverid").text();
+                            var msg = $('#message').val();
+
+                            $.ajax({
+                                type: "GET",
+                                url: "/Chats/SendPrivateMessage?from=" + senderId + "&to=" + to + "&message=" + msg,
+
+                            }).done(function (response) {
+                                debugger;
+                                chat.server.notify(to);
+                            });
+
+                            $('#message').val('').focus();
+                        }
+                    }
+                });
+            });
+        });
+
+        // This optional function html-encodes messages for display in the page.
+        function htmlEncode(value) {
+            var encodedValue = $('<div />').text(value).html();
+            return encodedValue;
+        }
+    </script>
+}

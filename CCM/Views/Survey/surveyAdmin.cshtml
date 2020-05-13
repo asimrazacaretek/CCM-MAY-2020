@@ -1,0 +1,1082 @@
+﻿@{
+    ViewBag.Title = "surveyAdmin";
+}
+<style>
+    .btn-danger {
+        margin-bottom: 5px;
+    }
+
+    #divanswercheck .col-sm-1, #divanswerradio .col-sm-1 {
+        width: 2%;
+        padding: 0px;
+    }
+
+    .checkbox {
+        margin: 7px 0 0 !important;
+    }
+
+    .radiobtn {
+        margin: 7px 0 0 0px !important;
+    }
+
+    #btndeletechk {
+        padding: 0px;
+    }
+</style>
+<div class="row">
+    <br />
+    <h3 class="greenText"><b>Create Survey</b></h3>
+    <hr id="line">
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>Survey Name</label>
+
+                <div id="divjsonsurvey">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1" style="margin-top:20px">
+            <div class="form-group">
+                <button id="btnAddSurvey" class="btn btn-success" data-toggle="modal" data-target="#survey">
+                    <i class="fa fa-plus"></i>Add
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-1" style="margin-top:20px">
+            <div class="form-group">
+                <button id="btnEditSurvey" class="btn btn-info" data-toggle="modal" data-target="#editsurvey">
+                    <i class="fa fa-edit"></i>Edit
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>
+                    Survey Type
+                </label>
+                @*<select id="ddlSurvey"></select>*@
+
+                @*@Html.DropDownList("SurveyType",
+                    new SelectList(ViewBag.SurveyType, "Value", "Text", Model),
+                    "--Survey Type--", new {@class = "form-control border-input", id = "ddlSurveryType" })*@
+                <div id="divjsontype">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1" style="margin-top:20px">
+            <div class="form-group">
+                <button id="btnAddSurveyType" class="btn btn-success" data-toggle="modal" data-target="#surveytype">
+                    <i class="fa fa-plus"></i>Add
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-1" style="margin-top:20px">
+            <div class="form-group">
+                <button id="btnEditSurveyType" class="btn btn-info" data-toggle="modal" data-target="#editsurveytype">
+                    <i class="fa fa-edit"></i>Edit
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>Sections</label>
+                @*@Html.DropDownList("SurveySections",
+                    new SelectList(ViewBag.SurveySections, "Value", "Text", Model),
+                    "--Sections--", new {@class = "form-control border-input", id = "ddlSurverySections" })*@
+                <div id="divjsonsection">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1" style="margin-top:20px">
+            <div class="form-group">
+                <button id="btnAddSurveySection" class="btn btn-success" data-toggle="modal" data-target="#surveysection">
+                    <i class="fa fa-plus"></i>Add
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-1" style="margin-top:20px">
+            <div class="form-group">
+                <button id="btnEditSurveySection" class="btn btn-info" data-toggle="modal" data-target="#editsurveysection">
+                    <i class="fa fa-edit"></i>Edit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="col-md-12">
+    <button class="btn btn-info pull-right" id="btnquestiondivload"><i class="fa fa-plus"></i> Add Survey Question</button>
+    <br />
+    <br />
+</div>
+
+<div class="row" id="divquestion">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <label id="questionNo"></label>
+            <textarea class="form-control border-input" rows="5" id="tasurveyquestion"></textarea>
+
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label>
+                Answer Type
+            </label>
+            <select class="form-control" id="ddlanswertype">
+                <option value="0">----Select----</option>
+                <option value="3">TextBox</option>
+                <option value="2">Radio Button</option>
+                <option value="1">CheckBox</option>
+            </select>
+
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label>Order By</label>
+            <input class="form-control" type="text" id="questionorderno" />
+            <br />
+            <button class="btn btn-info" id="btnaddquestionoption"><i class="fa fa-plus"></i> Add Option</button>
+        </div>
+    </div>
+
+
+</div>
+
+<br />
+<div class="row" id="showhide">
+    <div class="col-sm-12">
+        <div class="form-group">
+
+            <div id="divansweroptions">
+
+                <div id="divanswertext">
+                    @*<label>Answer</label>
+                        <input type="text" class="form-control" id="txtanswertype" />*@
+                </div>
+                <div id="divanswerradio">
+
+                    @*<div class="radio">
+                            <label><input type="radio" name="optradio" checked="checked">Option 1</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Option 2</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Option 3</label>
+                        </div>*@
+                </div>
+                <div id="divanswercheck">
+                    @*<div class="radio">
+                            <label><input type="checkbox" class="checkbox" name="optchk" checked>  Option 1</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="checkbox" class="checkbox" name="optchk">  Option 2</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="checkbox" class="checkbox" name="optchk">  Option 3</label>
+                        </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="surveytype" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add new Survey Type</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="txtSurveytype" style="border:1px solid black" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnSaveSurveyType">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="surveysection" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add new Survey Section</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="txtSurveysection" style="border:1px solid black" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnSaveSurveySection">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="survey" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add new Survey</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="txtSurvey" style="border:1px solid black" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnSaveSurvey">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="col-sm-12" id="divbtn">
+    <div class="form-group pull-right">
+        <button class="btn btn-info" id="btnsavequestion">Save</button>
+        <button class="btn btn-warning" id="btnupdatequestion" >Update</button>
+        <button class="btn btn-default" id="btncancelquestion" onclick="cancel()">Cancel</button>
+    </div>
+
+</div>
+<div id="editsurvey" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Survey</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="txtEditSurvey" style="border:1px solid black" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnESurvey">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="editsurveytype" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Survey Type</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="txtEditSurveyType" style="border:1px solid black" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnESurveyType">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="editsurveysection" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Survey Section</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="txtEditSurveySection" style="border:1px solid black" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnESurveySection">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!--Get Survey Questions in Table-->
+<div id="surveysavedquestions"></div>
+<!--Get Survey Questions in Table-->
+
+@section Scripts{
+    <script type="text/javascript">
+    $(document).ready(function () {
+            $('#divquestion').hide();
+            $('#showhide').hide();
+            $('#divanswertext').hide();
+            $('#divanswerradio').hide();
+            $('#divanswercheck').hide();
+            $('#btnaddquestionoption').hide();
+            $('#divbtn').hide();
+            //getType();
+            //getSection();
+            getSurvey();
+
+        });
+    </script>
+    <script type="text/javascript">
+        var i = 0;
+        var ar = 0;
+        var ac = 0;
+        $('#btnquestiondivload').click(function () {
+            i++;
+            $("#questionorderno").val($('#totalquestions').val());
+            $('#btnupdatequestion').hide();
+            $('#btnsavequestion').show();
+            $('#divquestion').show();
+            $('#divbtn').show();
+            $('#questionNo').empty();
+            $('#questionNo').append("Question");
+            dynamicradiobutton();
+        });
+        $('#ddlanswertype').on("change", function () {
+
+            //$('#divansweroptions').empty();
+            dynamicradiobutton();
+        });
+        function dynamicradiobutton() {
+            debugger;
+            var type = $('#ddlanswertype').val();
+            if (type == "3") {
+                $('#divanswertext').show();
+                $('#divanswertext').html("");
+                $('#divanswerradio').hide();
+                $('#divanswercheck').hide();
+                $('#btnaddquestionoption').hide();
+                
+                $('#divanswertext').append('<div class="col-sm-7"><input type="text" name="answersC" class="form-control border-input" value="" placeholder="Clinical Note"/></div>');
+            }
+            else if (type == "2") {
+                $('#divanswerradio').html("");
+                $('#divanswertext').html("");
+                $('#divanswercheck').html("");
+                $('#divanswerradio').show();
+                $('#divanswercheck').hide();
+                $('#divanswertext').hide();
+                $('#btnaddquestionoption').show();
+                for (ar = 1; ar <= 3; ar++) {
+                    $('#divanswerradio').append('<div class="row"><div id="Q' + i + 'A' + ar + '"><div class="col-sm-1"><input type="radio" value="Q' + i + 'A' + ar + '" name="optradio" class="radiobtn" /></div><div class="col-sm-7"><input type="text" name="answers" class="form-control border-input" id="Q' + i + 'A' + ar + '" value="option text"/><input type="text" name="answersC" class="form-control border-input" id="Q' + i + 'A' + ar + '" value="" placeholder="Clinical Note"/></div><div class="col-sm-4"><button id="btndeleteradio"  value="Q' + i + 'A' + ar + '" class="btn btn-danger"><i class="fa fa-trash"></i></button></div></div></div>');
+                }
+            }
+            else if (type == "1") {
+                $('#divanswercheck').html("");
+                $('#divanswerradio').html("");
+                $('#divanswertext').html("");
+                $('#divanswercheck').show();
+                $('#divanswertext').hide();
+                $('#divanswerradio').hide();
+                $('#btnaddquestionoption').show();
+                for (ac = 1; ac <= 3; ac++) {
+                    $('#divanswercheck').append('<div class="row"><div id="Q' + i + 'A' + ac + '"><div class="col-sm-1"><input type="checkbox" value="Q' + i + 'A' + ac + '" class="checkbox" name="optchk"></div><div class="col-sm-7"><input type="text" name="answers" class="form-control col-lg-6 border-input" id="Q' + i + 'A' + ac + '" value="option text"><input type="text" name="answersC" class="form-control border-input" id="Q' + i + 'A' + ac + '" value="" placeholder="Clinical Note"/></div><div class="col-sm-4"><button id="btndeletechk"  value="Q' + i + 'A' + ac + '" class="btn btn-danger"><i class="fa fa-trash"></i></button></div></div></div >');
+                }
+            }
+            $('#showhide').show();
+        }
+    $('#btnaddquestionoption').click(function () {
+
+            var type = $('#ddlanswertype').val();
+            if (type == "2") {
+                //var text = $('#newCheckText').val();
+                $('#divanswerradio').append('<div class="row"><div id="Q' + i + 'A' + ar + '"><div class="col-sm-1"><input type="radio" id="Q' + i + 'A' + ar + '" value="Q' + i + 'A' + ar + '" name="optradio" class="radiobtn"></div><div class="col-sm-7"><input type="text" name="answers" class="form-control border-input" id="Q' + i + 'A' + ar + '" value="option text"><input type="text" name="answersC" class="form-control border-input" id="Q' + i + 'A' + ar + '" value="" placeholder="Clinical Note"/></div><div class="col-sm-4"><button id="btndeleteradio"  value="Q' + i + 'A' + ar + '" class="btn btn-danger"><i class="fa fa-trash"></i></button></div></div></div >');
+                ar++;
+            }
+            else {
+                if (type == "1") {
+                    $('#divanswercheck').append('<div class="row"><div id="Q' + i + 'A' + ac + '"><div class="col-sm-1"><input type="checkbox" value="Q' + i + 'A' + ac + '" class="checkbox" name="optchk"></div><div class="col-sm-7"><input type="text" name="answers" class="form-control border-input" id="Q' + i + 'A' + ac + '" value="option text"><input type="text" name="answersC" class="form-control border-input" id="Q' + i + 'A' + ac + '" value="" placeholder="Clinical Note"/></div><div class="col-sm-4"><button id="btndeletechk"  value="Q' + i + 'A' + ac + '" class="btn btn-danger"><i class="fa fa-trash"></i></button></div></div></div >');
+                    ac++;
+                }
+            }
+        });
+        $("#divanswerradio").on("click", "button#btndeleteradio", function () {
+            var value = $(this).val();
+            var id = 'div#' + value;
+            //$(id).hide();
+            $(id).remove();
+            //ar--;
+        });
+        $("#divanswercheck").on("click", "button#btndeletechk", function () {
+            var value = $(this).val();
+            var id = 'div#' + value;
+            //$(id).hide();
+            $(id).remove();
+            //ac--;
+            //alert('delete');
+        });
+        $("#divanswerradio").on("click", "button#btneditradio", function () {
+            var value = $(this).val();
+            var id = "label#" + value;
+            //var text = $(id).val();
+            //var text=$(":radiobutton[id="+id+"]").next("label").text();
+            var text = $(id).text();
+            alert(value + " " + text);
+        });
+    </script>
+    <script type="text/javascript">
+        function getSurvey() {
+            $.ajax({
+                url: "/Survey/jsonddlbinding",
+                type: "GET",
+                datatype: "json",
+                //data: { surveyType: surveyType },
+                //ContentType: "application/json",
+                success: function (result) {
+                    var ddltype = $("<select class='form-control border-input' id='ddlSurvery' onchange='getdatabyids()'/>");
+                    $.each(result.Surveys, function (index, val) {
+                        ddltype.append($("<option></option>").val(val.Value).html(val.Text));
+                    });
+                    $('#divjsonsurvey').html(ddltype);
+                    getType();
+                },
+                error: function (err) {
+                    alert(err);
+                    console.log(err);
+                }
+            });
+        }
+        function getType() {
+            $.ajax({
+                url: "/Survey/jsonddlbinding",
+                type: "GET",
+                datatype: "json",
+                //data: { surveyType: surveyType },
+                //ContentType: "application/json",
+                success: function (result) {
+                    var ddltype = $("<select class='form-control border-input' id='ddlSurveyType' onchange='getdatabyids()'/>");
+                    $.each(result.ServeyType, function (index, val) {
+                        ddltype.append($("<option></option>").val(val.Value).html(val.Text));
+                    });
+                    $('#divjsontype').html(ddltype);
+                    getSection();
+                },
+                error: function (err) {
+                    alert(err);
+                    console.log(err);
+                }
+            });
+        }
+        function getSection() {
+            $.ajax({
+                url: "/Survey/jsonddlbinding",
+                type: "GET",
+                datatype: "json",
+                //data: { surveyType: surveyType },
+                //ContentType: "application/json",
+                success: function (result) {
+                    var ddlsection = $("<select class='form-control border-input' id='ddlSurveySection' onchange='getdatabyids()'/>");
+                    $.each(result.ServeySection, function (index, val) {
+                        ddlsection.append($("<option></option>").val(val.Value).html(val.Text));
+                    });
+                    $('#divjsonsection').html(ddlsection);
+                    getdatabyids();
+                },
+                error: function (err) {
+                    alert(err);
+                    console.log(err);
+                }
+            });
+        }
+        $('#btnSaveSurveyType').click(function () {
+            var t = $('#txtSurveytype').val();
+            if (t.trim() == "") {
+                //alert('please enter survey type');
+                swal("please enter survey type");
+            }
+            else {
+                var count = 0;
+                var textsurveytype = $('#txtSurveytype').val();
+                $.ajax({
+                    url: "/Survey/surveyTypeText",
+                    type: "GET",
+                    datatype: "json",
+                    success: function (d) {
+                        $.each(d, function (index, text) {
+                            if (textsurveytype.toLowerCase() === text.toLowerCase()) {
+                                count++;
+                            }
+                        });
+                        if (count == 0) {
+                            surveyType = {
+                                TypeName: $("#txtSurveytype").val()
+                            }
+                            $.ajax({
+                                url: "/Survey/addSurveyType",
+                                type: "POST",
+                                datatype: "json",
+                                data: { surveyType: surveyType },
+                                //ContentType: "application/json",
+                                success: function (d) {
+                                    getType();
+                                    $('#surveytype').modal('toggle');
+                                    $("#txtSurveytype").val("");
+                                },
+                                error: function (err) {
+                                    alert(err);
+                                    console.log(err);
+                                }
+                            });
+                        }
+                        else {
+                            //alert('survey type already exit');
+                            swal("survey type already exit");
+                            $("#txtSurveytype").val("");
+                        }
+                    },
+                    error: function (err) {
+                        alert(err);
+                        console.log(err);
+
+                    }
+                });
+            }
+        });
+        $('#btnSaveSurveySection').click(function () {
+            var t = $('#txtSurveysection').val();
+            if (t.trim() == "") {
+                //alert('please enter survey section');
+                swal("please enter survey section");
+            }
+            else {
+                var count = 0;
+                var textsurveysection = $('#txtSurveysection').val();
+                $.ajax({
+                    url: "/Survey/surveySectionText",
+                    type: "GET",
+                    datatype: "json",
+                    success: function (d) {
+                        $.each(d, function (index, text) {
+                            if (textsurveysection.toLowerCase() === text.toLowerCase()) {
+                                count++;
+                            }
+                        });
+                        if (count == 0) {
+                            surveySection = {
+                                SectionName: $("#txtSurveysection").val()
+                            }
+                            $.ajax({
+                                url: "/Survey/addSurveySection",
+                                type: "POST",
+                                datatype: "json",
+                                data: { surveySection: surveySection },
+                                //ContentType: "application/json",
+                                success: function (d) {
+                                    getSection();
+                                    $('#surveysection').modal('toggle');
+                                    $("#txtSurveysection").val("");
+                                },
+                                error: function (err) {
+                                    alert(err);
+                                    console.log(err);
+                                }
+                            });
+                        }
+                        else {
+                            //alert('survey section already exit');
+                            swal("survey section already exit");
+                            $("#txtSurveysection").val("");
+                        }
+                    },
+                    error: function (err) {
+                        alert(err);
+                        console.log(err);
+
+                    }
+                });
+            }
+
+        });
+        $('#btnSaveSurvey').click(function () {
+            var t = $('#txtSurvey').val();
+            if (t.trim() == "") {
+                //alert('please enter survey name');
+                swal("please enter survey name");
+            }
+            else {
+                var count = 0;
+                var textsurvey = $('#txtSurvey').val();
+                $.ajax({
+                    url: "/Survey/surveyText",
+                    type: "GET",
+                    datatype: "json",
+                    success: function (d) {
+                        debugger;
+                        $.each(d, function (index, text) {
+                            if (textsurvey.toLowerCase() === text.toLowerCase()) {
+                                count++;
+                            }
+                        });
+                        if (count == 0) {
+                            survey = {
+                                SurveyName: $("#txtSurvey").val(),
+                                SurveySectionId: $('#ddlSurveySection').val(),
+                                SurveyTypeId: $('#ddlSurveyType').val()
+                            }
+                            $.ajax({
+                                url: "/Survey/addSurvey",
+                                type: "POST",
+                                datatype: "json",
+                                data: { survey: survey },
+                                success: function (d) {
+                                    getSurvey();
+                                    $('#survey').modal('toggle');
+                                    $("#txtSurvey").val("");
+                                    //$('#sname').hide();
+                                },
+                                error: function (err) {
+                                    alert(err);
+                                    console.log(err);
+                                }
+                            });
+                        }
+                        else {
+                            //alert('survey already exit');
+                            swal("survey already exit");
+                            $("#txtSurvey").val("");
+                        }
+                    },
+                    error: function (err) {
+                        alert(err);
+                        console.log(err);
+
+                    }
+                });
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        function getQuestionText() {
+            var count = 0;
+            var bool = false;
+            var id = $('#ddlSurvery').val();
+            var tatext = $('#tasurveyquestion').val();
+            $.ajax({
+                url: "/Survey/surveyQuestionsText",
+                type: "GET",
+                datatype: "json",
+                data: { id: id },
+                //ContentType: "application/json",
+                success: function (d) {
+                    alert('success');
+                    $.each(d, function (index, text) {
+                        if (tatext === text) {
+                            count++;
+                        }
+                    });
+                    if (count == 0) {
+                        bool = true;
+                    }
+                    else {
+                        bool = false;
+                    }
+                },
+                error: function (err) {
+                    alert(err);
+                    console.log(err);
+                    bool = false;
+                }
+            });
+            return bool;
+        }
+        $('#btnsavequestion').click(function () {
+            var c = 0;
+            $("input[name=answers]").each(function () {
+                var tt = $(this).val();
+                if (tt.trim() == "") {
+                    c++;
+                }
+            });
+            var t = $('#ddlanswertype').val();
+            var q = $('#tasurveyquestion').val();
+            if (q.trim() == "") {
+                //alert('please enter question text');
+                swal("please enter question text");
+            }
+            else if (t == 0) {
+                //alert('please select answer type');
+                swal("please select answer type");
+            }
+            else if (c != 0) {
+                swal("please enter all answers");
+            }
+            else {
+                var count = 0;
+                var bool = false;
+                var id = $('#ddlSurvery').val();
+                var tatext = $('#tasurveyquestion').val();
+                $.ajax({
+                    url: "/Survey/surveyQuestionsText",
+                    type: "GET",
+                    datatype: "json",
+                    data: { id: id },
+                    success: function (d) {
+                        $(".loader").show();
+                        $.each(d, function (index, text) {
+                            if (tatext.toLowerCase() === text.toLowerCase()) {
+                                count++;
+                            }
+                        });
+                        if (count == 0) {
+                            var answers = new Array();
+                            var answersC = new Array();
+                            var type = $('#ddlanswertype').val();
+                            if (type == "3") {
+                                answers.push({ 'AnswerText': '' });
+                                $("input[name=answersC]").each(function () {
+                                    answersC.push($(this).val());
+                                });
+                            }
+                            else {
+
+                                $("input[name=answers]").each(function () {
+                                    answers.push({ 'AnswerText': $(this).val() });
+                                });
+                                $("input[name=answersC]").each(function () {
+                                    answersC.push($(this).val());
+                                });
+                            }
+                            var date = new Date;
+                            surveyQuestion = {
+                                SurveyId: $('#ddlSurvery').val(),
+                                SurveyQuestionTypeId: $('#ddlanswertype').val(),
+                                QuestionText: $('#tasurveyquestion').val(),
+                                CreatedOn: date,
+                                surveyAnswers: answers,
+                                OrderBy: $('#questionorderno').val(),
+                                SurveySectionId: $('#ddlSurveySection').val(),
+                                SurveyTypeId: $('#ddlSurveyType').val()
+                            }
+                            debugger;
+                            $.ajax({
+                                url: "/Survey/addSurveyQuestion",
+                                type: "POST",
+                                datatype: "json",
+                                data: { surveyQuestion: surveyQuestion,'ClinicalNotes':answersC },
+                                success: function (d) {
+                                    //alert('question added successfully!');
+                                    //swal("question added successfully!");
+                                    swal(
+                                        'Survey Question',
+                                        'Question added successfully',
+                                        'success'
+                                    );
+                                    $('#tasurveyquestion').val("");
+                                    $('#divanswerradio').hide();
+                                    $('#divanswercheck').hide();
+                                    $('#divanswertext').html("");
+                                    //$('#ddlanswertype').val(0);
+                                    $('#ddlanswertype').val('0').trigger('change');
+                                    $('#btnaddquestionoption').hide();
+                                    getdatabyids();
+                                    $(".loader").hide();
+
+                                },
+                                error: function (err) {
+                                    $(".loader").hide();
+                                    alert(err);
+                                    console.log(err);
+                                }
+                            });
+                        }
+                        else {
+                            $(".loader").hide();
+                            //alert('question already exit');
+                            swal("question already exit");
+                        }
+                    },
+                    error: function (err) {
+                        $(".loader").hide();
+                        alert(err);
+                        console.log(err);
+                        bool = false;
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+        //var id;
+        function getdatabyids() {
+            $(".loader").show();
+            cancel();
+            $.ajax({
+                type: "POST",
+                url: "/Survey/SurveyQAs",
+                data: {
+                    surveyId: $("#ddlSurvery").val(),
+                    SecId: $("#ddlSurveySection").val(),
+                    TypeId: $("#ddlSurveyType").val()
+                },
+
+                success: function (result) {
+                    $(".loader").hide();
+                    //swal("Sucess", "Submit", "Survey Submited Succuessfully.!");
+                    $("#surveysavedquestions").html(result);
+                },
+                error: function (result) {
+                    $(".loader").hide();
+                }
+            });
+        }
+        $(document).ready(function () {
+            $("#ddlSurvery").on("change", function () {
+
+
+                //alert("test");
+            });
+        });
+        $('#btnEditSurvey').click(function () {
+            var text = $('#ddlSurvery option:selected').html();
+            $('#txtEditSurvey').val(text);
+            var id = $('#ddlSurvery').val();
+            //alert(id);
+        });
+        $('#btnESurvey').click(function () {
+            var t = $('#txtEditSurvey').val();
+            if (t.trim() == "") {
+                //alert('survey name required');
+                swal("survey name required");
+            }
+            else {
+                var count = 0;
+                var textsurvey = $('#txtEditSurvey').val();
+                $.ajax({
+                    url: "/Survey/surveyText",
+                    type: "GET",
+                    datatype: "json",
+                    success: function (d) {
+                        $.each(d, function (index, text) {
+                            if (textsurvey.toLowerCase() === text.toLowerCase()) {
+                                count++;
+                            }
+                        });
+                        if (count == 0) {
+                            var id = $('#ddlSurvery').val();
+                            survey = {
+                                SurveyName: $("#txtEditSurvey").val(),
+                                SurveySectionId: $('#ddlSurveySection').val(),
+                                SurveyTypeId: $('#ddlSurveyType').val()
+
+                            }
+                            $.ajax({
+                                url: "/Survey/editSurvey",
+                                type: "PUT",
+                                datatype: "json",
+                                data: { id: id, survey: survey },
+                                success: function (d) {
+                                    if (d == "success") {
+                                        getSurvey();
+                                        $('#editsurvey').modal('toggle');
+                                        //$("#txtSurvey").val("");
+                                    }
+                                    else {
+                                        alert('error ');
+                                    }
+                                },
+                                error: function (err) {
+                                    alert(err);
+                                    console.log(err);
+                                }
+                            });
+                        }
+                        else {
+                            //alert('survey already exit');
+                            swal("survey already exit");
+                            //$("#txtEditSurvey").val("");
+                        }
+                    },
+                    error: function (err) {
+                        alert(err);
+                        console.log(err);
+
+                    }
+                });
+            }
+        });
+        $('#btnEditSurveyType').click(function () {
+            var text = $('#ddlSurveyType option:selected').html();
+            $('#txtEditSurveyType').val(text);
+            var id = $('#ddlSurveryType').val();
+        });
+        $('#btnESurveyType').click(function () {
+            var t = $('#txtEditSurveyType').val();
+            if (t.trim() == "") {
+                //alert('survey type required');
+                swal("survey type required");
+            }
+            else {
+                var count = 0;
+                var textsurveytype = $('#txtEditSurveyType').val();
+                $.ajax({
+                    url: "/Survey/surveyTypeText",
+                    type: "GET",
+                    datatype: "json",
+                    success: function (d) {
+                        $.each(d, function (index, text) {
+                            if (textsurveytype.toLowerCase() === text.toLowerCase()) {
+                                count++;
+                            }
+                        });
+                        if (count == 0) {
+                            var id = $('#ddlSurveyType').val();
+                            surveyType = {
+                                TypeName: $("#txtEditSurveyType").val(),
+
+                            }
+                            $.ajax({
+                                url: "/Survey/editSurveyType",
+                                type: "PUT",
+                                datatype: "json",
+                                data: { id: id, surveyType: surveyType },
+                                success: function (d) {
+                                    if (d == "success") {
+                                        getType();
+                                        $('#editsurveytype').modal('toggle');
+                                    }
+                                    else {
+                                        alert('error');
+                                    }
+                                },
+                                error: function (err) {
+                                    alert(err);
+                                    console.log(err);
+                                }
+                            });
+                        }
+                        else {
+                            //alert('survey type already exit');
+                            swal("survey type already exit");
+                            //$("#txtEditSurveyType").val("");
+                        }
+                    },
+                    error: function (err) {
+                        alert(err);
+                        console.log(err);
+
+                    }
+                });
+            }
+        });
+        $('#btnEditSurveySection').click(function () {
+            var text = $('#ddlSurveySection option:selected').html();
+            $('#txtEditSurveySection').val(text);
+            var id = $('#ddlSurveySection').val();
+        });
+        $('#btnESurveySection').click(function () {
+            var t = $('#txtEditSurveySection').val();
+            if (t.trim() == "") {
+                // alert('survey section required');
+                swal("survey section required");
+            }
+            else {
+                var count = 0;
+                var textsurveysection = $('#txtEditSurveySection').val();
+                $.ajax({
+                    url: "/Survey/surveySectionText",
+                    type: "GET",
+                    datatype: "json",
+                    success: function (d) {
+                        $.each(d, function (index, text) {
+                            if (textsurveysection.toLowerCase() === text.toLowerCase()) {
+                                count++;
+                            }
+                        });
+                        if (count == 0) {
+                            var id = $('#ddlSurveySection').val();
+                            surveySection = {
+                                SectionName: $("#txtEditSurveySection").val(),
+
+                            }
+                            $.ajax({
+                                url: "/Survey/editSurveySection",
+                                type: "PUT",
+                                datatype: "json",
+                                data: { id: id, surveySection: surveySection },
+                                success: function (d) {
+                                    if (d == "success") {
+                                        getSection();
+                                        $('#editsurveysection').modal('toggle');
+                                    }
+                                    else {
+                                        alert('error');
+                                    }
+                                },
+                                error: function (err) {
+                                    alert(err);
+                                    console.log(err);
+                                }
+                            });
+                        }
+                        else {
+                            // alert('survey section already exit');
+                            swal("survey section already exit");
+                            //$("#txtEditSurveySection").val("");
+                        }
+                    },
+                    error: function (err) {
+                        alert(err);
+                        console.log(err);
+
+                    }
+                });
+            }
+        });
+
+
+        function cancel() {
+            $('#divquestion').hide();//show();
+            $('#divbtn').hide();//show();
+            $('#questionNo').empty();
+            $('#showhide').hide();
+            $('#btnupdatequestion').hide();//Show Edit Button
+            $('#tasurveyquestion').val("");
+            $('#divanswerradio').hide();
+            $('#divanswercheck').hide();
+            $('#divanswertext').html("");
+            //$('#ddlanswertype').val(0);
+            $('#ddlanswertype').val('0').trigger('change');
+            $('#btnaddquestionoption').hide();
+        }
+
+
+    </script>
+    <script type="text/javascript">
+        $('#btnloadSurvey').click(function () {
+            var SurveryId = $('#ddlSurvery').val();
+            var SurveryTypeId = $('#ddlSurveyType').val();
+            var SectionId = $('#ddlSurveySection').val();
+
+            $.ajax({
+                url: "/Survey/loadQuestions",
+                type: "GET",
+                datatype: "json",
+                data: { SurveryId: SurveryId, SectionId: SectionId, SurveryTypeId: SurveryTypeId },
+                success: function (d) {
+                    alert('success');
+                }
+            });
+
+        });
+    </script>
+}
+

@@ -1,0 +1,352 @@
+﻿@model CCM.Models.PatientSurveyQAReviewModel
+@*<input type="hidden" id="sequencemappings123" value="@Html.Raw(Json.Encode(Model.surveyQuestionViewmodel.surveyQuestionSequenceMappings))" />*@
+
+<style>
+    .surveyquestionswrapper {
+        padding: 0;
+        float: left;
+        width: 100%;
+        box-shadow: 0 2px 13px rgb(7, 22, 74);
+        background-color: #fff;
+        border: 1px solid #0a1b2b;
+        border-radius: 0px;
+        margin-top: 15px;
+    }
+
+    .surveyquestion {
+        background-color: #0364bd;
+        border-bottom: 0px solid #d3d7dc;
+        box-shadow: 0 2px 6px 0px #02498a;
+        padding: 10px 15px;
+        color: white;
+        -webkit-box-shadow: 0px 10px 14px -7px #0363bd;
+        box-shadow: 0px 4px 13px -6px #0363bd;
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #1179db), color-stop(1, #0a2f52));
+        background: -moz-linear-gradient(top, #1179db 5%, #0a2f52 100%);
+        background: -webkit-linear-gradient(top, #1179db 5%, #0a2f52 100%);
+        background: -o-linear-gradient(top, #1179db 5%, #0a2f52 100%);
+        background: -ms-linear-gradient(top, #1179db 5%, #0a2f52 100%);
+        background: linear-gradient(to bottom, #1179db 5%, #0957a0 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1179db', endColorstr='#0a2f52',GradientType=0);
+        background-color: #1179db;
+    }
+
+    .surveyanswers {
+        padding: 15px;
+    }
+
+    .questions {
+        font-size: 19px;
+        margin-bottom: 0px;
+    }
+
+    .anslabel {
+        display: block;
+        padding-left: 15px;
+        text-indent: -15px;
+        font-size: 16px;
+    }
+
+    .anslabelradio {
+        font-size: 16px;
+    }
+
+    .surveyquestionanswer {
+        display: none;
+    }
+
+    .chkanswers {
+        width: 21px;
+        height: 21px;
+        padding: 0;
+        margin: 0;
+        vertical-align: bottom;
+        position: relative;
+        top: -1px;
+        *overflow: hidden;
+    }
+
+    .radioanswers {
+        margin: 0 !important;
+    }
+
+    .nextandpreviousbuttons {
+        padding: 0px 10px 10px 10px;
+    }
+
+    .btnques {
+        padding: 8px 8px;
+        margin-right: 6px;
+        width: 110px;
+        font-size: 17px;
+        /*-moz-box-shadow: 0px 10px 14px -7px #276873;
+            -webkit-box-shadow: 0px 10px 14px -7px #276873;
+            box-shadow: 0px 10px 14px -7px #276873;
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #599bb3), color-stop(1, #408c99));
+            background: -moz-linear-gradient(top, #599bb3 5%, #408c99 100%);
+            background: -webkit-linear-gradient(top, #599bb3 5%, #408c99 100%);
+            background: -o-linear-gradient(top, #599bb3 5%, #408c99 100%);
+            background: -ms-linear-gradient(top, #599bb3 5%, #408c99 100%);
+            background: linear-gradient(to bottom, #599bb3 5%, #408c99 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#599bb3', endColorstr='#408c99',GradientType=0);
+            background-color: #599bb3;*/
+    }
+
+    .answertxt {
+        font-size: 17px;
+        font-weight: bold;
+        color: black;
+        letter-spacing: 1px;
+        border: 3px solid;
+        border-radius: 4px;
+        box-shadow: 0px 4px 13px -6px #0363bd;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.9.1/sweetalert2.css">
+@{ 
+    try
+    {
+
+   
+    if (ViewBag.Message != null)
+    {
+        <h2>@ViewBag.Message</h2>
+    }
+    else
+    {
+        <div class="col-md-12 surveyquestionswrapper">
+            @{ int i = 0;
+
+            }
+
+
+            @foreach (var question in Model.surveyQuestionViewmodel.surveyQuestions)
+            {
+                <div class="surveyquestionanswer" id="surveyquestion@(question.Id)" data-questype="@question.SurveyQuestionType.QuestionType" data-id="@question.Id">
+                    <div class="surveyquestion">
+                        <label id="question@(question.Id)" class="control-label questions" name="questions">@question.QuestionText</label>
+                    </div>
+                    <div class="surveyanswers">
+                        <label class="answerdefaulttext">Answer(s):</label><br />
+                        @if (question.SurveyQuestionType.QuestionType == "Checkbox")
+                        {
+                            bool _next = true;
+                            var _givenAnswer = Model.patientSurveryViewModels.patientSurveryQA.Where(x => x.Question == question.QuestionText).Select(y => y.AnswerGiven).FirstOrDefault()[0];
+                            var _givenAnswerId = Model.patientSurveryViewModels.patientSurveryQA.Where(x => x.Question == question.QuestionText).Select(y => y.AnswerGivenId).FirstOrDefault();
+
+
+                            foreach (var answer in question.surveyAnswers)
+                            {
+                                var anwerids = _givenAnswerId.Split(',');
+
+                                var _givenAnswerIdFlag = "";
+                                if (string.IsNullOrEmpty(_givenAnswer) && string.IsNullOrEmpty(_givenAnswerId))
+                                {
+                                    _givenAnswer = @answer.ClinicalNotes;
+                                    _next = false;
+                                }
+                                if (anwerids.Contains(answer.Id.ToString()))
+                                {
+                                    _givenAnswerIdFlag = "checked";
+                                }
+                                //foreach (var a in _givenAnswerId)
+                                //{
+                                //    foreach (var _item in a.ToString().Split(','))
+                                //    {
+                                //        if (!string.IsNullOrEmpty(_item))
+                                //        {
+                                //            if (Convert.ToInt32(_item) == answer.Id)
+                                //            {
+                                //                _givenAnswerIdFlag = "checked";
+                                //            }
+                                //        }
+                                //    }
+                                //}
+                                <div class="surveyanswer">
+                                    <label class="anslabel"><input type="checkbox" @_givenAnswerIdFlag id="answer@(answer.Id)" value="@answer.Id" class="answers chkanswers" data-questionid="@question.Id" data-note="@answer.ClinicalNotes" onchange="assignnotestoanswertxt(@question.Id,@answer.Id)" /> @answer.AnswerText</label>
+                                </div>
+                            }
+                            <div class="surveyanswer">
+                                <textarea rows="5" id="Qanswer@(question.Id)" name="question@(question.Id)" class="answertxt form-control border-input" data-questionid="@question.Id" placeholder="Additional Comments">@_givenAnswer</textarea>
+                                @*<input type="text" id="Qanswer@(question.Id)" name="question@(question.Id)" class="answertxt form-control border-input" data-questionid="@question.Id" placeholder="Additional Comments" />*@
+                            </div>
+                            if (_next)
+                            {
+                                <script>laodnextquestion(@question.Id)</script>
+                            }
+                        }
+                        else if (question.SurveyQuestionType.QuestionType == "Radio")
+                        {
+                            bool _next = true;
+                            var _givenAnswer = Model.patientSurveryViewModels.patientSurveryQA.Where(x => x.Question == question.QuestionText).Select(y => y.AnswerGiven).FirstOrDefault()[0];
+
+                            var _givenAnswerId = Model.patientSurveryViewModels.patientSurveryQA.Where(x => x.Question == question.QuestionText).Select(y => y.AnswerGivenId).FirstOrDefault();
+
+                            var _givenAnswerIdFlag = "";
+                            foreach (var answer in question.surveyAnswers)
+                            {
+
+                                if (string.IsNullOrEmpty(_givenAnswer) && string.IsNullOrEmpty(_givenAnswerId))
+                                {
+                                    //_givenAnswer = @answer.ClinicalNotes;
+                                    _next = false;
+                                }
+                                if (answer.Id.ToString() == _givenAnswerId)
+                                {
+                                    _givenAnswerIdFlag = "checked";
+                                }
+                                else { _givenAnswerIdFlag = ""; }
+                                //foreach (var item in _givenAnswerId)
+                                //{
+                                //    if (!string.IsNullOrEmpty(item))
+                                //    {
+                                //        if (Convert.ToInt32(item) == answer.Id)
+                                //        {
+                                //            _givenAnswerIdFlag = "checked";
+                                //        }
+                                //    }
+                                //}
+
+                                <div class="surveyanswer">
+                                    <label class="anslabelradio"><input type="radio" @_givenAnswerIdFlag id="answer@(answer.Id)" value="@answer.Id" name="questionnumber@(question.Id)" class="radioanswers" data-questionid="@question.Id" data-note="@answer.ClinicalNotes" onchange="assignnotestoanswertxt(@question.Id,@answer.Id)" />@answer.AnswerText</label>@*,@Model*@
+                                </div>
+
+                            }
+                            <div class="surveyanswer">
+                                <input type="text" id="Qanswer@(question.Id)" value="@_givenAnswer" name="question@(question.Id)" class="answertxt form-control border-input" data-questionid="@question.Id" placeholder="Additional Comments" />
+                            </div>
+                            if (_next)
+                            {
+                                <script>laodnextquestion(@question.Id)</script>
+                            }
+                        }
+                        else if (question.SurveyQuestionType.QuestionType == "Dropdown")
+                        {
+
+                            <div class="surveyanswer">
+                                <select id="ddlquestion@(question.Id)">
+
+
+                                    @foreach (var answer in question.surveyAnswers)
+                                    {
+
+                                        <option id="answer@(answer.Id)" value="@answer.Id" data-questionid="@question.Id">@answer.AnswerText</option>
+
+                                    }
+                                </select>
+                            </div>
+                        }
+                        else
+                        {
+                            bool _next = true;
+                            foreach (var answer in question.surveyAnswers)
+                            {
+
+                                var _givenAnswer = Model.patientSurveryViewModels.patientSurveryQA.Where(x => x.Question == question.QuestionText).Select(y => y.AnswerGiven).FirstOrDefault()[0];
+                                var _givenAnswerId = Model.patientSurveryViewModels.patientSurveryQA.Where(x => x.Question == question.QuestionText).Select(y => y.AnswerGivenId).FirstOrDefault();
+                                if (string.IsNullOrEmpty(_givenAnswer) && string.IsNullOrEmpty(_givenAnswerId))
+                                {
+                                    _givenAnswer = @answer.ClinicalNotes;
+                                    _next = false;
+                                }
+                                <div class="surveyanswer">
+                                    <input type="text" id="Qanswer@(question.Id)" name="question@(question.Id)" class="answertxt form-control border-input" data-questionid="@question.Id" value="" data-clinicalnotes="@_givenAnswer" data-isanswered="@(_next)" />@*@answer.ClinicalNotes*@
+                                </div>
+
+
+                            }
+                            if (_next)
+                            {
+                                <script>laodnextquestion(@question.Id)</script>
+                            }
+                        }
+                    </div>
+
+                    <div class="nextandpreviousbuttons">
+
+                        @if (i > 0)
+                        {
+                            <input type="button" id="previousbtn@(question.Id)" value="Previous" class="btn btn-danger btnques" onclick="loadpreviousquestion()" />
+                        }
+
+                        @*<input type="button" id="skipbtn@(question.Id)" value="Skip" class="btn btn-danger btnques" onclick="SkipQuestion(@question.Id)" />*@
+                        <input type="button" id="nextbtn@(question.Id)" value="Next" class="btn btn-success btnques " onclick="laodnextquestion(@question.Id)" />
+
+                        <input type="button" id="submitbtn" value="Submit" class="btn btn-primary btnques" onclick="Submit()" />
+
+                    </div>
+                </div>
+
+                i += 1;
+            }
+            <input type="hidden" id="totalQ" value="@ViewBag.TotalQ" />
+            <input type="hidden" id="txtLastQ" value="@ViewBag.LastQuestionID" />
+            <input type="hidden" id="txtSurveyCompleted" />
+            <input type="hidden" id="txtPercent" />
+            <input type="hidden" id="txtPatientSurveyID" value="@ViewBag.PatientSurveyID" />
+            <input type="hidden" id="txtSurveyID" value="@ViewBag.SurveyID" />
+            <input type="hidden" id="txtPatientSurveyTypeID" value="@ViewBag.PatientSurveyTypeID" />
+            <input type="hidden" id="txtPatientSurveySectionID" value="@ViewBag.PatientSurveySectionID" />
+            @if (i > 0)
+            {
+                <div class="col-sm-6 pull-right" style="margin-top:-40px;">
+                    <div class="progress-outer">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" style="width:0%; box-shadow:-1px 10px 10px rgba(91, 192, 222, 0.7);"></div>
+                            <div class="progress-value" style="font-size: 16px;font-weight: bold;">0%</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+                    }
+                }
+                catch (Exception ex)
+                {
+<h2>@ex.Message @ex.StackTrace</h2>
+
+                }
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.9.1/sweetalert2.js"></script>
+<script type="text/javascript">
+     @*var sequencemappings = [];
+    $(document).ready(function () {
+        debugger;
+
+       sequencemappings =@Html.Raw(Json.Encode(Model.surveyQuestionViewmodel.surveyQuestionSequenceMappings));
+        $(".surveyquestionanswer").first().fadeIn(1000);
+
+    });*@
+
+    function assignnotestoanswertxt(qid, aid) {
+        debugger;
+        if ($("#surveyquestion" + qid).attr("data-questype") == "Radio") {
+            if ($("#answer" + aid).prop("checked")) {
+                $("#Qanswer" + qid).val($("#answer" + aid).attr("data-note"));
+            }
+        }
+        else {
+            if ($("#surveyquestion" + qid).attr("data-questype") == "Checkbox") {
+                if ($("#answer" + aid).prop("checked")) {
+                    var alreadyval = $("#Qanswer" + qid).val();
+                    if (alreadyval.trim() == "") {
+                        $("#Qanswer" + qid).val( $("#answer" + aid).attr("data-note"));
+                    }
+                    else {
+                        $("#Qanswer" + qid).val(alreadyval + "\n" + $("#answer" + aid).attr("data-note"));
+                    }
+
+                }
+                else {
+                    var alreadyval = $("#Qanswer" + qid).val();
+                    alreadyval = alreadyval.replace($("#answer" + aid).attr("data-note"), "");
+                    $("#Qanswer" + qid).val(alreadyval);
+                }
+            }
+        }
+
+    }
+</script>
+

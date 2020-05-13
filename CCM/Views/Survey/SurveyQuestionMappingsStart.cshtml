@@ -1,0 +1,363 @@
+﻿@model List<CCM.Models.SurveyDependent>
+@*<div class="custom-title">
+        <h3>Surveys</h3>
+    </div>*@
+
+<div class="row">
+    <br />
+    <div class="col-md-6"><h3 class="greenText"><b>Question Answer Mappings</b></h3></div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <button id="btnGetAllSurvey" class="btn btn-info pull-right">
+                <i class="fa fa-edit"></i>View All Created Surveys List
+            </button>
+        </div>
+    </div>
+    <!--Diloag For All Survey List-->
+    <div id="ListSurveyQuestions" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">All Survey List</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="surveydependentdata"></div>
+                </div>
+                <div class="modal-footer" style="margin-top: 0px;">
+                    @*<button type="button" class="btn btn-primary" id="btnESurvey">Save</button>*@
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End Diloag For All Survey List-->
+    <hr id="line">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Survey Name</label>
+                @*<select id="ddlSurvey"></select>*@
+
+                @Html.DropDownList("SurveyName",
+                  new SelectList(ViewBag.surveys, "Value", "Text", Model),
+                  "--Survey--", new { @class = "form-control border-input", id = "ddlSurveryName" })
+
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Survey Type</label>
+                <select id="ddlSurveryType" class="form-control border-input"></select>
+
+                @*@Html.DropDownList("SurveyType",
+                  new SelectList(ViewBag.SurveyType, "Value", "Text", Model),
+                  "--Survey Type--", new { @class = "form-control border-input", id = "ddlSurveryType" })*@
+
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Sections</label>
+                <select id="ddlSurverySections" class="form-control border-input"></select>
+                @*@Html.DropDownList("SurveySections",
+                    new SelectList(ViewBag.SurveySections, "Value", "Text", Model),
+                    "--Sections--", new { @class = "form-control border-input", id = "ddlSurverySections" })*@
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="form-group">
+                <br />
+                <button id="btnLoad" class="btn btn-success">
+                    <i class="fa fa-search"></i>Load
+                </button>
+                <button id="btnViewFlow" class="btn btn-secondary">
+                    <i class="fa fa-eye"></i>View Flow
+                </button>
+                <button id="btnViewFlow1" class="btn btn-warning" style="display:none">
+                    <i class="fa fa-"></i>ViewFlow
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="surveyquestionsmapping"></div>
+    <div id="surveyquestionsflow"></div>
+</div>
+<script>
+    var backquestionid = "";
+    $(document).ready(function () {
+
+        $("#btnLoad").click(function () {
+            loadquestions();
+        });
+        $("#btnViewFlow").click(function () {
+            loadFlowQuestions();
+        });
+        $("#btnViewFlow1").click(function () {
+            loadFlowQuestions1();
+        });
+        // $('.mdb-select').materialSelect();
+        $('#_allSurveyList').DataTable({
+            responsive: true
+        });
+        loadsurveytypebysurveyid();
+    });
+    function loadFlowQuestions() {
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Survey/SurveyQuestionsFlowDiagram",
+            data: {
+                'SurveryId': $("#ddlSurveryName").val(), 'SurveyTypeId': $("#ddlSurveryType").val(), 'SurveySectionId': $("#ddlSurverySections").val(), 'ChildQuestionID': '0', 'IsFirstOrLast': '1'
+            },
+            success: function (result) {
+                debugger;
+                $(".loader").hide();
+                $("#surveyquestionsmapping").hide();
+                $("#surveyquestionsflow").show();
+                $("#surveyquestionsflow").html(result);
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+    //function loadFlowQuestions() {
+    //    $(".loader").show();
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/Survey/SurveyQuestionsFlowDiagram",
+    //        data: {
+    //            'SurveryId': $("#ddlSurveryName").val(), 'SectionId': $("#ddlSurverySections").val(), 'SurveryTypeId': $("#ddlSurveryType").val()
+    //        },
+    //        success: function (result) {
+
+    //            $(".loader").hide();
+    //            $("#surveyquestionsmapping").hide();
+    //            $("#surveyquestionsflow").show();
+    //            $("#surveyquestionsflow").html(result);
+    //        }, error: function (result) {
+    //            $(".loader").hide();
+    //        }
+    //    });
+    //}
+    function loadFlowQuestions1() {
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Survey/SurveyQuestionsFlowDiagram1",
+            data: {
+                'SurveryId': $("#ddlSurveryName").val(), 'SectionId': $("#ddlSurverySections").val(), 'SurveryTypeId': $("#ddlSurveryType").val()
+            },
+            success: function (result) {
+
+                $(".loader").hide();
+                $("#surveyquestionsmapping").hide();
+                $("#surveyquestionsflow").show();
+                $("#surveyquestionsflow").html(result);
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+    function loadquestions() {
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Survey/SurveyQuestionMappings",
+            data: {
+                'SurveryId': $("#ddlSurveryName").val(), 'SectionId': $("#ddlSurverySections").val(), 'SurveryTypeId': $("#ddlSurveryType").val()
+            },
+            success: function (result) {
+
+                $(".loader").hide();
+                $("#surveyquestionsflow").hide();
+                $("#surveyquestionsmapping").show();
+                $("#surveyquestionsmapping").html(result);
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+    function laodnextquestion(questionid) {
+
+
+        debugger;
+        var listchildquestions = $("#sequencemappings").val();
+        var questype = $("#surveyquestion" + questionid).attr("data-questype");
+        var selectedanswers = [];
+        if (questype == "Checkbox") {
+            $("#surveyquestion" + questionid + " .chkanswers").each(function () {
+                if ($(this).prop("checked") == true) {
+                    selectedanswers.push($(this).val());
+                }
+
+            });
+            if (selectedanswers.length) {
+                var selectedanswerstr = selectedanswers.join(",");
+                $(sequencemappings).each(function () {
+                    debugger;
+                    var lstitem = $(this)[0];
+                    if (lstitem.AnswerIds == selectedanswerstr) {
+                        backquestionid = questionid;
+                        var nextquestionid = lstitem.ChildQuestionID;
+                        $("#surveyquestion" + questionid).hide();
+                        $("#surveyquestion" + nextquestionid).fadeIn(1000);
+                        return false;
+                    }
+                });
+
+            }
+            else {
+                swal("Please select atleast one answer");
+            }
+        }
+        else {
+            if (questype == "Radio") {
+                $("#surveyquestion" + questionid + " .radioanswers").each(function () {
+                    if ($(this).prop("checked") == true) {
+                        selectedanswers.push($(this).val());
+                    }
+
+                });
+                if (selectedanswers.length) {
+                    var selectedanswerstr = selectedanswers.join(",");
+                    $(sequencemappings).each(function () {
+                        debugger;
+                        var lstitem = $(this)[0];
+                        if (lstitem.AnswerIds == selectedanswerstr) {
+                            backquestionid = questionid;
+                            var nextquestionid = lstitem.ChildQuestionID;
+                            $("#surveyquestion" + questionid).hide();
+                            $("#surveyquestion" + nextquestionid).fadeIn(1000);
+                            return false;
+                        }
+                    });
+
+                }
+                else {
+                    swal("Please select atleast one answer");
+                }
+            }
+            else {
+                if (questype == "TextArea") {
+                    $(sequencemappings).each(function () {
+                        debugger;
+                        var lstitem = $(this)[0];
+                        if (lstitem.AnswerIds == "" && lstitem.ParentQuestionID == questionid) {
+                            backquestionid = questionid;
+                            var nextquestionid = lstitem.ChildQuestionID;
+                            $("#surveyquestion" + questionid).hide();
+                            $("#surveyquestion" + nextquestionid).fadeIn(1000);
+                            return false;
+                        }
+                    });
+                }
+                else {
+
+                }
+            }
+        }
+
+
+
+    }
+    function loadpreviousquestion() {
+        $(".surveyquestionanswer").hide();
+        $("#surveyquestion" + backquestionid).show();
+    }
+    var lsttable;
+    $('#ListSurveyQuestions').on('shown.bs.modal', function () {
+        $($.fn.dataTable.tables(true)).DataTable()
+            .columns.adjust();
+    });
+    $('#btnGetAllSurvey').click(function (e) {
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Survey/AllSurveysList",
+
+            success: function (result) {
+
+                $("#surveydependentdata").html(result).promise().done(function () {
+                    $("#ListSurveyQuestions").modal("show");
+                });
+                $(".loader").hide();
+            }
+            , error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    });
+    function loadsurveytypebysurveyid() {
+        debugger;
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Survey/GetSurveyTypeBySurveyId",
+            data: {
+                'surveyId': $("#ddlSurveryName").val()
+            },
+            success: function (result) {
+                debugger;
+                $(".loader").hide();
+                $('#ddlSurveryType')
+    .find('option')
+    .remove()
+    .end()
+    ;
+                $.each(result, function (key, value) {
+                    $('#ddlSurveryType')
+                        .append($("<option></option>")
+                            .attr("value", value.Value)
+                            .text(value.Text));
+                });
+                loadsurveysectionbysurveytypeandsurveyid();
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+    function loadsurveysectionbysurveytypeandsurveyid() {
+         $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Survey/GetSurveySectionBySurveyIdAndTypeID",
+            data: {
+                'surveyId': $("#ddlSurveryName").val(), 'surveyTypeId': $("#ddlSurveryType").val()
+            },
+            success: function (result) {
+                debugger;
+                  $(".loader").hide();
+               $('#ddlSurverySections')
+    .find('option')
+    .remove()
+    .end()
+    ;
+                $.each(result, function (key, value) {
+                    $('#ddlSurverySections')
+                        .append($("<option></option>")
+                            .attr("value", value.Value)
+                            .text(value.Text));
+                });
+
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+
+    $('#ddlSurveryName').change(function (e) {
+        loadsurveytypebysurveyid();
+    });
+
+    $('#ddlSurveryType').change(function (e) {
+        loadsurveysectionbysurveytypeandsurveyid();
+       
+    });
+
+</script>
+<!--Script for Tree View-->
+<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>

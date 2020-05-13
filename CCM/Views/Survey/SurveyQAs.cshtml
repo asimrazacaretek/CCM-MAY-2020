@@ -1,0 +1,267 @@
+﻿@model List<CCM.Models.SurveyQuestion>
+<!--Get Survey Questions in Table-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+<style>
+    .answers, .answersC {
+        float: left;
+        width: 100%;
+        border-bottom: 1px solid;
+    }
+
+    .aCursor {
+        cursor: pointer;
+    }
+</style>
+<div id="surveysavedquestions">
+    @{int i = 1;}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Sr. No.</th>
+                <th>Questions</th>
+                <th>Answers</th>
+                <th>Clinical Note</th>
+                <th>Order by</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var question in Model)
+            {
+                <tr id="question@(question.Id)" data-id="@question.Id" data-questype="@question.SurveyQuestionType.QuestionType" class="questions">
+                    <td><label>@i</label></td>
+                    <td><label id="questiontxt@(question.Id)">@question.QuestionText</label></td>
+                    <td>
+                        @foreach (var answer in question.surveyAnswers)
+                        {
+
+                            <label id="answer@(answer.Id)" data-id="@answer.Id" class="answers" data-clinicalnote="@answer.ClinicalNotes">@answer.AnswerText</label>
+
+
+
+
+
+                        }
+                    </td>
+                    <td>
+                        @foreach (var answer in question.surveyAnswers)
+                        {
+
+
+
+
+                            <label id="answer@(answer.Id)" data-id="@answer.Id" class="answersC">@answer.ClinicalNotes</label>
+
+
+                        }
+                    </td>
+                    <td>@question.OrderBy</td>
+                    <td>
+                        <a class="aCursor" onclick="editquestion(@question.Id,'@question.SurveyQuestionType.QuestionType','@question.OrderBy')">Edit</a> /
+                        <a class="aCursor" onclick="deletequestion(@question.Id)">Delete</a>
+                    </td>
+
+
+                </tr>
+                i += 1;
+            }
+
+
+
+        </tbody>
+    </table>
+    <input type="hidden" id="totalquestions" value="@i" />
+</div>
+<script type="text/javascript">
+
+    function editquestion(id, questype, orderby) {
+        //var i = 0;
+        //alert(questype + id);
+        //i++;
+        $("#questionorderno").val(orderby);
+        debugger;
+        $('#divquestion').show();
+        $('#divbtn').show();
+        $('#questionNo').empty();
+        $('#questionNo').append("Question");
+        $('#tasurveyquestion').val($("#questiontxt" + id).text());
+        $('#btnsavequestion').hide();//Hide Save Button
+        $('#btnupdatequestion').show();//Show Edit Button
+
+        ///////////////////Pass Quesrion Values, Types and Answer////////////////////////
+        if (questype == "TextBox") {
+            $('#ddlanswertype').val(3)
+        }
+        else {
+            if (questype == "Checkbox") {
+                $('#ddlanswertype').val(1)
+            }
+            else {
+                if (questype == "Radio") {
+                    $('#ddlanswertype').val(2)
+                }
+            }
+
+        }
+        dynamicradiobuttonedit(id);
+        // $('#tasurveyquestion').val(id);
+
+
+        //_________________Update Question__________________________
+        $('#btnupdatequestion').unbind().click(function () {
+
+            var answers = new Array();
+            var answersC = new Array();
+            var type = $('#ddlanswertype').val();
+            if (type == "3") {
+                answers.push({ 'AnswerText': '' });
+                $("input[name=answersC]").each(function () {
+                    answersC.push($(this).val());
+                });
+            }
+            else {
+                $("input[name=answers]").each(function () {
+                    answers.push({ 'AnswerText': $(this).val() });
+                });
+                $("input[name=answersC]").each(function () {
+                    answersC.push($(this).val());
+                });
+            }
+            //var date = new Date;
+            editquestion = {
+                id: id,
+                SurveyId: $('#ddlSurvery').val(),
+                SurveyQuestionTypeId: $('#ddlanswertype').val(),
+                QuestionText: $('#tasurveyquestion').val(),
+
+                surveyAnswers: answers,
+                OrderBy: $('#questionorderno').val(),
+                SurveySectionId: $('#ddlSurveySection').val(),
+                SurveyTypeId: $('#ddlSurveyType').val()
+            }
+
+
+            debugger;
+            $.ajax({
+                url: "/Survey/editSurveyQuestion",
+                type: "PUT",
+                datatype: "json",
+                data: { id: id, surveyQuestion: editquestion, 'ClinicalNotes': answersC },
+                success: function (d) {
+                    if (d == "success") {
+
+
+                        cancel();
+                        getdatabyids();
+
+                    }
+                    else {
+
+                        swal(d);
+                    }
+                },
+                error: function (err) {
+                    alert(err);
+                    console.log(err);
+                }
+            });
+        });
+        //_________________Update Question__________________________
+
+
+    }
+    function dynamicradiobuttonedit(id) {
+        debugger;
+        var type = $('#ddlanswertype').val();
+        if (type == "3") {
+            $('#divanswertext').show();
+            $('#divanswerradio').hide();
+            $('#divanswertext').html("");
+            $('#divanswercheck').hide();
+            $('#btnaddquestionoption').hide();
+            var clinicalnote = $("#question" + id + " .answers").attr("data-clinicalnote");
+            $('#divanswertext').append('<div class="col-sm-7"><input type="text" name="answersC" class="form-control border-input" value="' + clinicalnote + '" placeholder="Clinical Note"/></div>');
+        }
+        else if (type == "2") {
+            $('#divanswerradio').html("");
+            $('#divanswertext').html("");
+            $('#divanswercheck').html("");
+            $('#divanswerradio').show();
+            $('#divanswercheck').hide();
+            $('#divanswertext').hide();
+            $('#btnaddquestionoption').show();
+            var i = id;
+            var ar = 1;
+            $("#question" + id + " .answers").each(function () {
+                $('#divanswerradio').append('<div class="row"><div id="Q' + i + 'A' + ar + '"><div class="col-sm-1"><input type="radio" value="Q' + i + 'A' + ar + '" name="optradio" class="radiobtn" /></div><div class="col-sm-7"><input type="text" name="answers" class="form-control" id="Q' + i + 'A' + ar + '" value="' + $(this).text() + '"/><input type="text" name="answersC" class="form-control border-input" id="Q' + i + 'A' + ar + '" value="' + $(this).attr("data-clinicalnote") + '" placeholder="Clinical Note"/></div><div class="col-sm-4"><button id="btndeleteradio"  value="Q' + i + 'A' + ar + '" class="btn btn-danger"><i class="fa fa-trash"></i></button></div></div></div>');
+                i = i + 1;
+                ar = ar + 1;
+            })
+
+        }
+        else if (type == "1") {
+            $('#divanswercheck').html("");
+            $('#divanswerradio').html("");
+            $('#divanswertext').html("");
+            $('#divanswercheck').show();
+            $('#divanswertext').hide();
+            $('#divanswerradio').hide();
+            $('#btnaddquestionoption').show();
+            var i = id;
+            var ar = $("#question" + id + " .answers").length;
+            $("#question" + id + " .answers").each(function () {
+                $('#divanswercheck').append('<div class="row"><div id="Q' + i + 'A' + ac + '"><div class="col-sm-1"><input type="checkbox" value="Q' + i + 'A' + ac + '" class="checkbox" name="optchk"></div><div class="col-sm-7"><input type="text" name="answers" class="form-control col-lg-6" id="Q' + i + 'A' + ac + '" value="' + $(this).text() + '"><input type="text" name="answersC" class="form-control border-input" id="Q' + i + 'A' + ac + '" value="' + $(this).attr("data-clinicalnote") + '" placeholder="Clinical Note"/></div><div class="col-sm-4"><button id="btndeletechk"  value="Q' + i + 'A' + ac + '" class="btn btn-danger"><i class="fa fa-trash"></i></button></div></div></div >');
+                i = i + 1;
+                ar = ar + 1;
+            });
+
+        }
+        $('#showhide').show();
+    }
+
+    function deletequestion(id) {
+        //alert(id);
+        swal({
+          title: "Are you sure?",
+          text: "But you will still be able to retrieve Survey Question.",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Yes, Delete it!",
+          cancelButtonText: "No, Cancel please!",
+          closeOnConfirm: false,
+          closeOnCancel: false
+        },
+        function(isConfirm){
+            if (isConfirm) {
+
+                $.ajax({
+                        url: "/Survey/deleteSurveyQuestion",
+                        type: "PUT",
+                        datatype: "json",
+                        data: { id: id },
+                    success: function (d) {
+                           d = d.replace(/\"/g, "");
+                        if (d == "OK") {
+                            swal('Deleted!', 'Your file has been deleted.', 'success');
+                            getdatabyids();
+                              }
+                              else {
+                                   swal(d);
+                                   }
+                              },
+                        error: function (err) {
+                              alert(err);
+                                    console.log(err);
+                              }
+                        });
+          } else {
+            swal("Cancelled", "Your imaginary survey question is safe :)", "error");
+          }
+        }).catch(swal.noop);
+
+    }
+</script>
+<!--Get Survey Questions in Table-->

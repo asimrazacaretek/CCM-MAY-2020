@@ -1,0 +1,18 @@
+﻿@model CCM.Models.IndexViewModel
+
+
+<div class="container">
+    <h3>Manage your account settings</h3>
+    
+    <p>@Html.Raw(ViewBag.StatusMessage)</p>
+    <hr />
+
+    
+        <dl class="dl-horizontal" style="@ViewBag.DivStyle">
+            <dt>Password:</dt>
+            <dd>
+                [ @Html.ActionLink("Change your password", "ChangePassword") ]
+            </dd>
+        </dl>
+    
+</div>

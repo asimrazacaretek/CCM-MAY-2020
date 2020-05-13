@@ -1,0 +1,214 @@
+﻿@model CCM.Models.PatientProfile_UrgencyContact
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })
+
+<div class="container">
+    <h3 class="pageTitle text-info">MEDICAL URGENCY CONTACTS</h3>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+
+        <br/><br/>
+        <div class="form-horizontal">
+            <p style="font-size: 1.35em; font-weight: bold; padding: 10px 0; color: #74B34A">Primary Urgency Contact</p>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryName, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryName, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.PrimaryName, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryRelationship, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryRelationship, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.PrimaryRelationship, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryMobilePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryMobilePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryMobilePhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryMobilePhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryMobilePhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryMobilePhoneNumber1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryMobilePhoneNumber2, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryMobilePhoneNumber2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryMobilePhoneNumber2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryHomePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryHomePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryHomePhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryHomePhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryHomePhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryHomePhoneNumber1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PrimaryHomePhoneNumber2, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.PrimaryHomePhoneNumber2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.PrimaryHomePhoneNumber2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p style="font-size: 1.35em; font-weight: bold; padding: 25px 0 10px 0; color: #74B34A">Secondary Urgency Contact</p>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SecondaryName, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SecondaryName, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.SecondaryName, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SecondaryRelationship, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SecondaryRelationship, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.SecondaryRelationship, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SecondaryMobilePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SecondaryMobilePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.SecondaryMobilePhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SecondaryMobilePhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SecondaryMobilePhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.SecondaryMobilePhoneNumber1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SecondaryMobilePhoneNumber2, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SecondaryMobilePhoneNumber2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.SecondaryMobilePhoneNumber2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SecondaryHomePhoneNumber, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SecondaryHomePhoneNumber, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.SecondaryHomePhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SecondaryHomePhoneNumber1, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SecondaryHomePhoneNumber1, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.SecondaryHomePhoneNumber1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SecondaryHomePhoneNumber2, htmlAttributes: new { @class = "col-md-12" })
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.SecondaryHomePhoneNumber2, new { htmlAttributes = new { @class = "form-control border-input" } })
+                            @Html.ValidationMessageFor(model => model.SecondaryHomePhoneNumber2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br/>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="submit" value="Update" class="btn btn-success logdetails"/>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+      
+
+        function reviewTimePost() {
+            $.ajax({
+                url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                type: "POST",
+                async: true,
+                success: function () {
+
+
+
+                },
+                error: function (error) {
+                    Showerrormsg1(error.statusText);
+                }
+            });
+        }
+        </SCRIPT>
+    }
+}

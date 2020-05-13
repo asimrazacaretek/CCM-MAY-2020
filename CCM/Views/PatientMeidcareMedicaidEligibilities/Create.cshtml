@@ -1,0 +1,239 @@
+﻿@model CCM.Models.PatientMeidcareMedicaidEligibility
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })
+
+<style>
+    .screnshot {
+        padding: 5px;
+        max-width: 340px;
+    }
+</style>
+
+<div class="container">
+    @using (Html.BeginForm("Create", "PatientMeidcareMedicaidEligibilities", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+    {<input type="hidden" id="EnrollmentStatushiden" name="EnrollmentStatushiden" value="@ViewBag.EnrollmentStatush" />
+        <input type="hidden" id="EnrollmentSubStatushiden" name="EnrollmentSubStatushiden" value="@ViewBag.EnrollmentSubStatush" />
+        <input type="hidden" id="EnrollmentSubStatusReasonhiden" name="EnrollmentSubStatusReasonhiden" value="@ViewBag.EnrollemntStatusResonh" />
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.PatientId)
+        @Html.HiddenFor(m => m.CreatedBy)
+        @Html.HiddenFor(m => m.CreatedOn)
+        <div class="form-horizontal">
+            <h4>Patient Medicare and Medicaid Eligibility</h4>
+            <hr />
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="col-md-6">
+
+
+                <h4>Medicare Eligibility</h4>
+                <hr />
+                <div class="form-group">
+                    @Html.Label("Eligibility", htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(
+                             model => model.MedicareEligibilty,
+                             new SelectList(
+                                 new[]
+                                 {
+                                     new {Value = "Yes",  Text = "Yes"},
+                                     new {Value = "No",  Text = "No"},
+
+                                 },
+                                 "Value", "Text", Model.MedicareEligibilty == null?"":Model.MedicareEligibilty),
+                              new { @class = "form-control border-input", id = "MedicareEligibilty" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Notes", htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        @Html.TextAreaFor(model => model.MedicareEligibiltyNotes, new { @class = "form-control border-input", rows = "5" })
+                        @Html.ValidationMessageFor(model => model.MedicareEligibiltyNotes, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                @{
+                    if (Model.MedicareEligibiltySceenshot != null)
+                    {
+                        var base64 = Convert.ToBase64String(Model.MedicareEligibiltySceenshot);
+                        var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                        <label class="col-md-3"></label>
+                        <img src="@imgSrc" class="screnshot" />
+                    }
+
+                }
+                <div class="form-group">
+                    @Html.Label("Screenshot", htmlAttributes: new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        <input type="file" name="MedicareEligibiltySceenshot" id="fileUpload" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+
+
+                <h4>Medicaid Eligibility</h4>
+                <hr />
+                <div class="form-group">
+                    @Html.Label("Eligibility", htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(
+                            model => model.MedicaidEligibilty,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "Yes",  Text = "Yes"},
+                                    new {Value = "No",  Text = "No"},
+
+                                },
+                                "Value", "Text", Model.MedicaidEligibilty==null?"":Model.MedicaidEligibilty),
+                             new { @class = "form-control border-input", id = "MedicaidEligibilty" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Notes", htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        @Html.TextAreaFor(model => model.MedicaidEligibiltyNotes, new { @class = "form-control border-input", rows = "5" })
+                        @Html.ValidationMessageFor(model => model.MedicaidEligibiltyNotes, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                @{
+                    if (Model.MedicaidEligibiltySceenshot != null)
+                    {
+                        var base64 = Convert.ToBase64String(Model.MedicaidEligibiltySceenshot);
+                        var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                        <label class="col-md-3"></label>
+                        <img src="@imgSrc" class="screnshot" />
+                    }
+
+                }
+
+
+
+                <div class="form-group">
+                    @Html.Label("Screenshot", htmlAttributes: new { @class = "col-md-3" })
+                    <div class="col-md-9">
+                        <input type="file" name="MedicaidEligibiltySceenshot" id="fileUpload1" class="form-control border-input" accept=".png,.jpg,.jpeg,.gif,.tif" />
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="enrollmentStatus">
+                    <div class="col-md-4">
+                        <label>Enrollment Status</label>
+                        @Html.DropDownList("EnrollmentStatus", (IEnumerable<SelectListItem>)ViewBag.EnrollmentStatus, null, new { @class = "form-control border-input" })
+                    </div>
+                    <div class="col-md-4">
+                        <label>SubStatus</label>
+                        @Html.DropDownList("EnrollmentSubStatus", (IEnumerable<SelectListItem>)ViewBag.EnrollmentSubStatus, null, new { @class = "form-control border-input" })
+                    </div>
+                    <div class="col-md-4">
+                        <div id="EnrollemntStatusResondiv">
+
+
+                            <label>Reason <span style="color:red">*</span></label>
+                            @Html.DropDownList("EnrollemntStatusReson", (IEnumerable<SelectListItem>)ViewBag.EnrollemntStatusReson, null, new { @class = "form-control border-input" })
+                        </div>
+                    </div>
+
+
+
+
+
+
+                </div>
+
+            </div>
+            <br />
+            <div class="row">
+
+                <div class="col-md-12">
+                    <label>Enrollment Status Notes</label>
+                    <textarea class="form-control border-input" cols="20" id="EnrollmentStatusNotes" name="EnrollmentStatusNotes" rows="5">@ViewBag.EnrollReason</textarea>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create/Update" class="btn btn-default logdetails" />
+                </div>
+            </div>
+        </div>
+    }
+
+
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#EnrollmentSubStatus").children('option').hide();
+
+        $("#EnrollmentStatus option").filter(function () {
+            return $(this).text() == $("#EnrollmentStatushiden").val();
+        }).prop("selected", true);
+
+        $("#EnrollmentSubStatus").children("option[value='" + $('#EnrollmentStatus').get(0).value + "']").show();
+        $("#EnrollmentSubStatus option").filter(function () {
+            return $(this).text() == $("#EnrollmentSubStatushiden").val();
+        }).prop("selected", true);
+
+        $("#EnrollemntStatusReson option:contains(" + $("#EnrollmentSubStatusReasonhiden").val() + ")").attr('selected', 'selected');
+        $("#EnrollemntStatusResondiv").hide();
+        if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+            $("#EnrollemntStatusResondiv").show();
+        }
+
+        $(document).on('change', '#EnrollmentStatus', function () {
+
+            $("#EnrollmentSubStatus").children('option').hide();
+            $("#EnrollmentSubStatus").children("option[value='" + $(this).val() + "']").show();
+            $("#EnrollmentSubStatus").val($("#EnrollmentStatus").val());
+
+            $("#EnrollmentStatushiden").val($("#EnrollmentStatus option:selected").text());
+            $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+            $("#EnrollemntStatusResondiv").hide();
+        });
+        $(document).on('change', '#EnrollmentSubStatus', function () {
+
+            $("#EnrollmentSubStatushiden").val($("#EnrollmentSubStatus option:selected").text());
+
+            if ($("#EnrollmentSubStatus option:selected").text() == "In-Active Enrolled") {
+
+                $("#EnrollemntStatusResondiv").show();
+            }
+            else {
+                $("#EnrollemntStatusResondiv").hide();
+            }
+        });
+        $(document).on('change', '#EnrollemntStatusReson', function () {
+            $("#EnrollmentSubStatusReasonhiden").val($("#EnrollemntStatusReson option:selected").text());
+        });
+    });
+</script>
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+             async: true,
+                    success: function () {
+
+                        
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+    </SCRIPT>
+}

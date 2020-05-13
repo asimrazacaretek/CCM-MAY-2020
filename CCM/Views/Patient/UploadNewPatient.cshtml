@@ -1,0 +1,245 @@
+﻿<style type="text/css">
+    #fileUpload, #upload {
+        display: inline;
+        margin:  5px;
+    }
+
+    textarea {
+        width:  50%;
+        height: 250px;
+    }
+</style>
+
+<h2 class="pageTitle">Upload New Patient</h2>
+
+<br /><br /><br />
+<div class="row">
+    <div class="col-md-1"><h5>Step 1:</h5></div>
+    <div class="col-md-4">
+        @Html.DropDownList("physiciansDdl", ViewBag.Physicians as SelectList, "Select Patient's Physician", new { id = "physiciansDdl", @class = "form-control border-input" })
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-1"><h5>Step 2:</h5></div>
+    <div class="col-md-4">
+        <input type="file" id="fileUpload" class="btn btn-success" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-1"><h5>Step 3:</h5></div>
+    <div class="col-md-4">
+        <input type="button" id="upload" class="btn btn-success" value="Load File To Source Data" disabled="disabled" />
+    </div>
+</div>
+
+<h3>Source Data</h3>
+<textarea id="xml" readonly="readonly"></textarea>
+
+<br /><br />
+<div class="row">
+    <div class="col-md-1"><h5>Step 4:</h5></div>
+    <div class="col-md-6">
+        <button onclick="convert()" class="btn btn-success" disabled="disabled" id="convertBtn">Upload New Patient</button>
+        <button onclick="clearAll()" class="btn btn-info">Clear Source Data</button>
+    </div>
+</div>
+<br /><br />
+
+
+@section Scripts {
+    <script src="~/Scripts/bluebutton.min.js"></script>
+    <script src="http://blue-button.github.io/bluebutton.js/assets/template/fastclick.js"></script>
+    <script src="http://blue-button.github.io/bluebutton.js/assets/template/template.js"></script>
+
+    <script type="text/javascript">
+        var physicianId;
+
+        $(function () {
+            $('#physiciansDdl').change(function () {
+                physicianId = $(this).val();
+
+                if (physicianId > 0) {
+                    $("#upload").prop("disabled", false);
+                } else {
+                    $("#upload").prop("disabled", true);
+                }
+            });
+
+            $("#upload").bind("click", function () {
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xml)$/;
+                if (regex.test($("#fileUpload").val().toLowerCase())) {
+                    if (typeof (FileReader) != "undefined") {
+                        $("#xml").val("Please wait. Loading file...");
+
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $("#xml").val(e.target.result);
+                            $("#convertBtn").prop("disabled", false);
+                        }
+                        reader.readAsText($("#fileUpload")[0].files[0]);
+                    } else {
+                        alert("This browser does not support HTML5.");
+                    }
+                } else {
+                    alert("Please upload a valid XML file.");
+                }
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        var xml, bb;
+
+        function clearAll() {
+            clearXML();
+            document.getElementById("convertBtn").disabled = true;
+        }
+
+        function clearXML() { document.getElementById('xml').value = ''; }
+
+        function convert() {
+            if (!$("#xml").val()) {
+                alert("No Patient Info Found! Please Upload a File, First.");
+            }
+
+            else {
+                xml = document.getElementById('xml').value;
+                bb  = BlueButton(xml);
+
+                var patient       = JSON.parse(bb.data.demographics.json());
+                var medications   = JSON.parse(bb.data.medications.json());
+                var allergies     = JSON.parse(bb.data.allergies.json());
+                var problems      = JSON.parse(bb.data.problems.json());
+                var labResults    = JSON.parse(bb.data.results.json());
+                var procedures    = JSON.parse(bb.data.procedures.json());
+                var smokingStatus = JSON.parse(bb.data.smoking_status.json());
+                var vitals        = JSON.parse(bb.data.vitals.json());
+
+                var patientName = {
+                    "Prefix": patient.name.prefix,
+                    "Given": [patient.name.given[0], patient.name.given[1]],
+                    "Family": patient.name.family
+                };
+
+                var patientAddress = {
+                    "Street": [patient.address.street[0], patient.address.street[1]],
+                    "City":    patient.address.city,
+                    "State":   patient.address.state,
+                    "Zip":     patient.address.zip
+                };
+
+                var homeNumber = patient.phone.home != null ? patient.phone.home.replace(/\D/g, '') : null;
+                var workNumber = patient.phone.work != null ? patient.phone.work.replace(/\D/g, '') : null;
+                var cellNumber = patient.phone.mobile != null ? patient.phone.mobile.replace(/\D/g, '') : null;
+
+                var patientPhoneNumbers = {
+                    "Home":   homeNumber,
+                    "Work":   workNumber,
+                    "Mobile": cellNumber
+                };
+
+                var patientAllergies = [];
+                for (var i in allergies)
+                    if (allergies.hasOwnProperty(i))
+                        patientAllergies.push(
+                            {
+                                "StartDate": allergies[i].date_range.start,
+                                "Name":      allergies[i].name,
+                                "Severity":  allergies[i].severity
+                            });
+
+                var patientMedications = [];
+                for (var j in medications)
+                    if (medications.hasOwnProperty(j))
+                        patientMedications.push(
+                            {
+                                "StartDate": medications[j].date_range.start,
+                                "EndDate":   medications[j].date_range.end,
+                                "Name":      medications[j].product.name,
+                                "DoseValue": medications[j].dose_quantity.value,
+                                "DoseUnit":  medications[j].dose_quantity.unit,
+                                "RxCuis":    medications[j].RxCuis,
+                                "RateValue": medications[j].rate_quantity.value,
+                                "RateUnit":  medications[j].rate_quantity.unit,
+                                "Route":     medications[j].route.name,
+                                "Reason":    medications[j].reason.name
+                            });
+
+                var patientLabResults = [];
+                for (var lr in labResults)
+                    if (labResults.hasOwnProperty(lr))
+                        for (var t in labResults[lr].tests)
+                            if (labResults[lr].tests.hasOwnProperty(t))
+                                patientLabResults.push(
+                                    {
+                                        "Date":      labResults[lr].tests[t].date,
+                                        "Name":      labResults[lr].tests[t].name,
+                                        "TestValue": labResults[lr].tests[t].value
+                                    });
+
+                var patientProblems = [];
+                for (var p in problems)
+                    if (problems.hasOwnProperty(p))
+                        patientProblems.push(
+                            {
+                                "Name":   problems[p].translation.name,
+                                "Status": problems[p].status
+                            });
+
+                var patientProcedures = [];
+                for (var x in procedures)
+                    if (procedures.hasOwnProperty(x))
+                        patientProcedures.push(
+                            {
+                                "Name": procedures[x].name,
+                                "Date": procedures[x].date
+                            });
+
+                var patientVitals = [];
+                for (var y in vitals)
+                    if (vitals.hasOwnProperty(y))
+                        patientVitals.push(
+                            {
+                                "Name":  vitals[y].name,
+                                "Value": vitals[y].value,
+                                "Unit":  vitals[y].unit
+                            });
+
+                var patientData = {
+                    Name:          patientName,
+                    Dob:           patient.dob,
+                    Gender:        patient.gender,
+                    Email:         patient.email,
+                    Language:      patient.language,
+                    Address:       patientAddress,
+                    Phone:         patientPhoneNumbers,
+                    PhysicianId:   physicianId,
+                    Allergies:     patientAllergies,
+                    Medications:   patientMedications,
+                    LabResults:    patientLabResults,
+                    Problems:      patientProblems,
+                    Procedures:    patientProcedures,
+                    SmokingStatus: smokingStatus.name,
+                    Vitals:        patientVitals
+                };
+
+                $.ajax({
+                    url: "@Url.Action("AddPatient", "Patient")",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ ccdaPatient: patientData }),
+                    success: function (response) {
+                        alert(response);
+                        $("#xml").val("");
+                    },
+                    error: function (error) {
+                        alert(error.responseText);
+                    },
+                    failure: function () { alert("Upload Failed!"); }
+                });
+            }
+        }
+    </script>
+}

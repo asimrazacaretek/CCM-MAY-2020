@@ -1,0 +1,289 @@
+﻿@model List<CCM.Models.PatientSurvey>
+<link href="~/Content/multiselect/bootstrap-multiselect.css" rel="stylesheet" />
+<input type="hidden" id="patientidsurvey" value="@ViewBag.PatientId" />
+<style>
+    .radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {
+        margin-left: 5px !important
+    }
+
+    .checkbox:hover, .radio {
+    }
+
+    .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+        background-color: #ccc !important;
+        opacity: 1;
+        text-decoration: none;
+    }
+
+    .dropdown label {
+        display: block;
+    }
+    h4{
+        white-space:pre;
+    }
+</style>
+<div class="row">
+
+    <div class="card">
+        <div class="col-md-12">
+            <p>
+                <b>Name: </b>@ViewBag.PatientName
+                <br />
+                <b>DOB: </b>@ViewBag.DOB
+                <br />
+                <b>Diagnosis: </b>
+                @ViewBag.Diagnosis
+            </p>
+
+        </div>
+
+    </div>
+    <hr id="line">
+    <div class="tablefixwidth">
+        <table id="Patientsurveytable" class="display nowrap" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Survey Type</th>
+                    <th>Section</th>
+                    <th>Date created</th>
+                    <th>Taken by</th>
+                    <th>Completed %</th>
+                    <th>Details</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>@item.SurveyType.TypeName</td>
+                    <td>@item.SurveySection.SectionName</td>
+                    <td>
+                        @Convert.ToDateTime(item.CreatedOn).ToString("g")
+                    </td>
+                    <td>
+                        @HelperExtensions.GetUserNamebyID(item.CreatedBy)
+                    </td>
+                    <td>@item.IsCompleted %</td>
+                    <td>
+                        @if (item.IsCompleted != 100)
+                        {
+                            <a onclick="loadsurveyForEdit(@item.PatientId,@item.Id,@item.SurveyId,@item.SurveyTypeId,@item.SurveySectionId)">Continue |</a>
+                        }
+                        <a onclick="loadsurvey(@item.PatientId,@item.Id)">Details</a>
+                    </td>
+
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div id="surveyquestions">
+
+    </div>
+</div>
+<script src="~/Content/multiselect/bootstrap-multiselect.js"></script>
+<script>
+    var backquestionid = [];
+    $(document).ready(function () {
+        $('#Patientsurveytable').DataTable({
+            pageLength: 10,
+            
+            "ordering": false,
+            "sScrollX": "100%",
+            "scrollX": true
+        });
+        //$("#btnLoad").click(function () {
+        //    loadquestions();
+        //});
+        //$('#ddlSurverySections, #ddlSurveryName , #ddlSurveryType').multiselect({
+        //    includeSelectAllOption: true,
+
+        //    buttonWidth: 250,
+
+        //    enableFiltering: true
+        //});
+        // $('.mdb-select').materialSelect();
+    });
+    function loadsurvey(patientid, id) {
+     
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Patient/SurveyResultAsyncID",
+            data: {
+              'Id':id, 'PatientId': patientid
+            },
+            success: function (result) {
+                debugger;
+                $(".loader").hide();
+                $("#surveyquestions").html(result).promise().done(function () {
+                    $('html, body').animate({
+                        scrollTop: $("#surveyquestions").offset().top
+                    }, 2000);
+                });
+            }, error: function (result) {
+                $(".loader").hide();
+            }
+        });
+    }
+    function laodnextquestion(questionid) {
+        debugger;
+        var listchildquestions = $("#sequencemappings").val();
+        var questype = $("#surveyquestion" + questionid).attr("data-questype");
+        var selectedanswers = [];
+        if (questype == "Checkbox") {
+            $("#surveyquestion" + questionid + " .chkanswers").each(function () {
+                if ($(this).prop("checked") == true) {
+                    selectedanswers.push($(this).val());
+                }
+            });
+            if (selectedanswers.length) {
+                var selectedanswerstr = selectedanswers.join(",");
+                $(sequencemappings).each(function () {
+                    var lstitem = $(this)[0];
+                    if (lstitem.AnswerIds == selectedanswerstr) {
+
+                        debugger;
+                        backquestionid.push(questionid);
+                        //backquestionid = questionid;
+                        var nextquestionid = lstitem.ChildQuestionID;
+                        $("#surveyquestion" + questionid).hide();
+                        $("#surveyquestion" + nextquestionid).fadeIn(1000);
+
+                        if (lstitem.ChildQuestionID == 0)
+                            $("#btnSubmit").show();
+                        return false;
+                    }
+                });
+            }
+            else {
+                swal("Please select atleast one answer");
+            }
+        }
+        else
+        {
+            if (questype == "Radio") {
+                $("#surveyquestion" + questionid + " .radioanswers").each(function () {
+                    if ($(this).prop("checked") == true) {
+                        selectedanswers.push($(this).val());
+                    }
+                });
+                if (selectedanswers.length) {
+                    var selectedanswerstr = selectedanswers.join(",");
+                    $(sequencemappings).each(function () {
+                        debugger;
+                        var lstitem = $(this)[0];
+                        if (lstitem.AnswerIds == selectedanswerstr) {
+                            //backquestionid = questionid;
+                            backquestionid.push(questionid);
+                            var nextquestionid = lstitem.ChildQuestionID;
+                            $("#surveyquestion" + questionid).hide();
+                            $("#surveyquestion" + nextquestionid).fadeIn(1000);
+
+                            if (lstitem.ChildQuestionID == 0)
+                                $("#btnSubmit").show();
+                            return false;
+                        }
+                    });
+                }
+                else {
+                    swal("Please select atleast one answer");
+                }
+            }
+            else {
+                if (questype == "TextBox" || questype == "TextArea" ) {
+                    $(sequencemappings).each(function () {
+                        var lstitem = $(this)[0];
+                        if (lstitem.AnswerIds == "" && lstitem.ParentQuestionID == questionid) {
+                            debugger;
+                            backquestionid.push(questionid);
+                            var nextquestionid = lstitem.ChildQuestionID;
+                            $("#surveyquestion" + questionid).hide();
+                            $("#surveyquestion" + nextquestionid).fadeIn(1000);
+
+                            if (lstitem.ChildQuestionID == 0)
+                                $("#btnSubmit").show();
+                            return false;
+                        }
+                    });
+                }
+                else {
+
+                }
+            }
+        }
+    }
+    function loadpreviousquestion() {
+        debugger;
+       $("#btnSubmit").hide();
+
+        var previous=backquestionid.pop();
+        //var back = backquestionid.last()
+
+        $(".surveyquestionanswer").hide();
+        $("#surveyquestion" + previous).show();
+    }
+    function Submit() {
+        var selectedanswers = []; var QuestionArray = []; var txtans =[];
+        $(".surveyquestionswrapper").each(function () {
+            $(".surveyquestionanswer").each(function () {
+
+                var qId = $(this).attr("data-id");
+                QuestionArray.push(qId);
+                var questype = $(this).attr("data-questype");
+                var ans = [];
+                if (questype == "Checkbox") {
+                    $("#surveyquestion" + qId + " .chkanswers").each(function () {
+                        if ($(this).prop("checked") == true) {
+                            ans.push($(this).val());
+                        }
+                    });
+                    txtans.push("");
+                }
+                if (questype == "Radio") {
+                    $("#surveyquestion" + qId + " .radioanswers").each(function () {
+                        if ($(this).prop("checked") == true) {
+                            ans.push($(this).val());
+                        }
+                    });
+                    txtans.push("");
+                }
+                if (questype == "TextBox" || questype=="TextArea") {
+                    ans.push("");
+                    txtans.push($("#surveyquestion" + qId + " .answertxt").val());
+                }
+                var answersList = ans.join(",");
+                selectedanswers.push(answersList);
+            });
+        });
+
+        debugger;
+        //var questions = QuestionArray.join(",");
+      //  var answers = selectedanswers.join("|");
+        var patientid = $("#patientidsurvey").val();
+        var Surveyid = $("#ddlSurveryName").val();
+        var Sectionid = $("#ddlSurverySections").val();
+        var SurveyTypeid = $("#ddlSurveryType").val();
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/Survey/SurveySubmitAsync",
+            data: {
+                PatientID: patientid, SurveyId: Surveyid, SectionID: Sectionid,
+                SurveyTypeId: SurveyTypeid,
+                Questions: QuestionArray,
+                Answers: selectedanswers,
+                AnswerTxt:txtans
+            },
+            success: function (result) {
+                $(".loader").hide();
+                swal("Sucess", "Submit", "Survey Submited Succuessfully.!");
+                $("#surveyquestions").empty();
+            },
+            failure: function () { alert("not working..."); }
+        });
+
+        //swal("Sucess","Saved","Survey Submit");
+    }
+</script>

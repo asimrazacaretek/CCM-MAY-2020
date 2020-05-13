@@ -1,0 +1,112 @@
+﻿@model IEnumerable<CCM.Models.ViewModels.RpmPatientsViewModel>
+@using CCM.Helpers;
+@using CCM.Models.DataModels;
+
+@{
+    ViewBag.Title = "RpmPatientsList";
+    Layout = null;
+    var AvailableDevices = ViewBag.AvalilabeDevices as List<Device>;
+}
+
+
+
+
+
+@functions {
+    string GetTime(DateTime? Date)
+    {
+        var date = Convert.ToDateTime(Date);
+        var day = date.Day;
+        var month = date.Month;
+        var year = date.Year;
+        string datestr = date.ToString("mm/dd/yyyy");
+        if (datestr == "00/01/0001")
+        {
+            return "";
+        }
+        datestr = month + "/" + day + "/" + year;
+        return datestr;
+    }
+}
+
+@{ try
+
+    {
+      
+            foreach (var service in Model)
+            {
+
+                string classstr = service.IsAssigned ==(int) IsActiveStatus.DeActive ? "isNotActive" : "";
+                var isAssigned = service.IsAssigned == (int)IsActiveStatus.Active ? true : false;
+                var CurrentAvalableDevices = AvailableDevices.Where(x => x.RPMServiceId == service.RPMServiceId).ToList();
+
+                <tr class="@classstr">
+                    <td hidden>@service.EnrolledIn</td>
+                    <td>@service.PatientId</td>
+                    <td>@service.PatientName</td>
+                    <td>@service.Gender</td>
+                    <td>@GetTime(service.BirthDate)</td>
+                    <td>@service.Address1</td>
+                    <td>@service.Address2</td>
+                    <td>@service.City</td>
+                    <td>@service.State</td>
+                    <td>@service.Zipcode</td>
+                    <td>@service.ServiceName</td>
+                    <td>@GetTime(service.EnrolledIn)</td>
+                    <td  style="width: 160px;">
+                        @if (!isAssigned)
+                        {
+
+                            <select id="@("AttactDevice_"+service.PatientId+"_"+service.RPMServiceId)" data-patientid="@service.PatientId" data-serviceid="@service.RPMServiceId" class="form-control AttachDeviceDD   FilterElement">
+                                <option value="" style="display:none">Needs to Map the Device</option>
+                                @foreach (var device in CurrentAvalableDevices)
+                                {
+                                    <option value="@device.Id">@device.Devices_Brand.Name @device.Device_BrandModel.Name</option>
+                                }
+                            </select>
+
+                            <button class="btn btn-success add-btn-round AttachDevicetoPatient" style="margin-left: -3px;" data-patientid="@service.PatientId" data-serviceid="@service.RPMServiceId">+</button>
+                        }
+                        else
+                        {
+                            <div>@service.BrandName @service.BrandModel</div>
+                            <button class="btn btn-success add-btn-round DeAttachDevicetoPatient" style="margin-top: -20px;" data-patientid="@service.PatientId" data-serviceid="@service.RPMServiceId" data-deviceid="@service.DeviceId" data-devicename="@service.BrandName @service.BrandModel">-</button>
+                        }
+                    </td>
+                    <td>
+                        @if (!isAssigned)
+                        {
+                            <text>Needs to Map the Device</text>
+                        }
+                        else
+                        {
+
+                            int statusid = Convert.ToInt32(service.DeviceStatusId==null?0: service.DeviceStatusId);
+                            @Enum.GetValues(typeof(DeviceStatus)).GetValue(statusid)
+                        }
+                    </td>
+                    <td>
+                        @if (!isAssigned)
+                        {
+                            <text>Needs to Map the Device</text>
+                        }
+                        else
+                        {
+                            @service.SerialNumber
+                        }
+                    </td>
+
+                    <td>
+                        <button class="btn btn-success" onclick="LoadPatientDetails('@service.PatientId','@service.RPMServiceId')"> <i class="fa fa-eye"></i> Details</button>
+                    </td>
+
+                </tr>
+            }
+
+
+
+    }
+    catch (Exception ex) { }
+}
+
+

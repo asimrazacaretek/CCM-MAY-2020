@@ -1,0 +1,285 @@
+﻿@model CCM.Models.Icd10Codes
+
+
+<style>
+    .form-horizontal .control-label {
+        text-align: left;
+    }
+
+    #frmDiagnosis .col-md-12 {
+        padding: 5px !important;
+    }
+</style>
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.14/jquery.datetimepicker.min.css">*@
+@using (Html.BeginForm("_Create", "Icd", FormMethod.Post,
+  new { id = "frmDiagnosis", @class = "frmStyle" }))
+{
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.PatientId)
+
+    <div class="form-horizontal col-md-12 nopadding">
+        <div class="custom-title">
+            <h3>Icd10Codes</h3>
+        </div>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="col-md-3 nopadding">
+            @Html.Label("Diagnosis Search", htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-12">
+                @Html.Editor("ICD10codesforsearch", new { htmlAttributes = new { @class = "form-control border-input validaterefillinfo", id = "icd10" } })
+                @Html.ValidationMessageFor(model => model.Code10, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="col-md-3 nopadding">
+            @Html.Label("ICD-9 Code Search", htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-12">
+                @Html.Editor("ICD9Code", new { htmlAttributes = new { @class = "form-control border-input", id = "icd9dx" } })
+                @Html.ValidationMessageFor(model => model.Code9, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-2 nopadding">
+            <label class="control-label col-md-12">Disease State</label>
+            <div class="col-md-12">
+                <select class="form-control border-input" id="DiseaseState">
+                    <option value="High Blood Presure">High Blood Presure</option>
+                    <option value="Sugar">Sugar</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 nopadding">
+            <label class="control-label col-md-12">Disease Type</label>
+            <div class="col-md-12">
+                <select class="form-control border-input" id="DiseaseType">
+                    <option value="Accute">Accute</option>
+                    <option value="Reoccuring">Reoccuring</option>
+                    <option value="Chronic">Chronic</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 nopadding">
+            @Html.Label("Date", htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-12">
+                @Html.Editor("DateCreatedID", new { htmlAttributes = new { @class = "form-control border-input validaterefillinfo", id = "datepicker" } })
+                @Html.ValidationMessageFor(model => model.DateCreated, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group col-md-12 pull-left">
+        <div class="col-md-12">
+            <label class="control-label col-md-12">Disease History</label>
+            @Html.TextArea("DiseaseHistory1", new { @class = "form-control border-input", rows = "5" })
+        </div>
+    </div>
+
+    <div class="form-group col-md-1">
+        <div class="col-md-12">
+            <button class="btn btn-success " type="button" onclick="addtoicd10data()">
+                Add to List
+            </button>
+        </div>
+
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover" id="tblICD10data">
+            <thead>
+                <tr>
+                    <th>ICD10Code</th>
+                    <th>ICD9Code</th>
+                    <th>Disease State</th>
+                    <th>Disease Type</th>
+                    <th>Disease History</th>
+                    <th>Date Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" value="Create" class="btn btn-default logdetails" onclick="SubmitForm('frmDiagnosis','Save')" />
+            <a class="btn btn-success logdetails" onclick="AjaxRefresh('Icd','_Index',@Model.PatientId)"> Back to List</a>
+        </div>
+    </div>
+}
+
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.14/jquery.datetimepicker.full.min.js"></script>*@
+
+<script>
+    new Def.Autocompleter.Search('icd10', 'https://clinicaltables.nlm.nih.gov/api/icd10cm/v3/search?sf=code,name',
+        { tableFormat: true, valueCols: [0, 1], colHeaders: ['Code', 'Name'] });
+
+
+    new Def.Autocompleter.Search('icd9dx', 'https://clinicaltables.nlm.nih.gov/api/icd9cm_dx/v3/search',
+        { tableFormat: true, valueCols: [0, 1], colHeaders: ['Code', 'Name'] });
+</script>
+
+
+<script type="text/javascript">
+    function addtoicd10data() {
+        if (1 == 1) {
+            var isvalidated = true; debugger;
+            $(".validaterefillinfo").each(function () {
+                if (isvalidated == false) {
+                    return false;
+                }
+
+                if ($(this).val().length == 0) {
+                    swal("Enter all the fields");
+                    isvalidated = false;
+                    return false;
+                }
+            });
+            if (isvalidated == false) {
+                return false;
+            }
+            $("#tblICD10data tbody tr .icd10code").each(function () {
+                if ($(this).text() == $("#icd10").val()) {
+                    $("#icd10").val('');
+                    $("#icd9dx").val('');
+
+                    swal("ICD10 Code already exists.");
+                    isvalidated = false;
+                    return false;
+                }
+            });
+            if (isvalidated == false) {
+                return false;
+            }
+            // $("#tblRefills tbody tr").remove();
+
+            var rowcount = ($("#tblICD10data tbody tr").length) + 1;
+
+            $("#tblICD10data").find('tbody').append($('<tr id="icd10row' + rowcount + '">')
+                .append($('<td>')
+                    .append($('<input type="hidden" name="ICD10Codes"  value="' + $("#icd10").val() + '"><label class="icd10code">' + $("#icd10").val() + '</label>')
+                    )
+                )
+                .append($('<td>')
+                    .append($('<input type="hidden" name="ICD9Codes" value="' + $("#icd9dx").val() + '"><label>' + $("#icd9dx").val() + '</label>')
+                    )
+                )
+
+
+
+                .append($('<td>')
+                    .append($('<input type="hidden" name="DiseaseState" value="' + $("#DiseaseState").val() + '"><label>' + $("#DiseaseState").find(":selected").text() + '</label>')
+                    )
+                ).append($('<td>')
+                    .append($('<input type="hidden" name="DiseaseType" value="' + $("#DiseaseType").val() + '"><label>' + $("#DiseaseType").find(":selected").text() + '</label>')
+                    )
+                ).append($('<td>')
+                    .append($('<input type="hidden" name="DiseaseHistory" value="' + $("#DiseaseHistory1").val() + '"><label>' + $("#DiseaseHistory1").val() + '</label>')
+                    )
+                )
+                .append($('<td>')
+                    .append($('<input type="hidden" name="DateCreated" value="' + $("#datepicker").val() + '"><label>' + $("#datepicker").val() + '</label>')
+                    ))
+                .append($('<td>')
+                    .append($('<i class="fa fa-trash text-warning" onclick="deleteicd10row(' + rowcount + ')">')
+                    )
+                )
+
+            );
+            $("#icd10").val('');
+            $("#icd9dx").val('');
+            $("#DiseaseHistory1").val('');
+        }
+    }
+    function deleteicd10row(id) {
+        $("#icd10row" + id).remove();
+    }
+    $(document).ready(function () {
+        $("#datepicker").datepicker({
+            //format: "mm-dd-yy",
+            //autoclose: true,
+            //todayBtn: true,
+            //defaultDate: new Date()
+        });
+        //$("form").submit(function () {
+        //    debugger;
+        //    if ($("#tblICD10data tbody tr").length == 0) {
+        //        swal("Add atleast one ICD10 Code in the list.");
+        //        return false;
+        //    }
+        //    //var condition = $('#icd10')[0];
+        //    //var autocomp = condition.autocomp;
+        //    //var itemData = autocomp.getSelectedItemData();
+        //    //var icd10codes = "";
+        //    //for (i = 0; i <= itemData.length - 1; i++) {
+        //    //    if (i == 0) {
+        //    //        icd10codes = itemData[i].text;
+        //    //    }
+        //    //    else {
+        //    //        icd10codes = icd10codes + ";;" + itemData[i].text;
+        //    //    }
+
+        //    //}
+        //    //$("#Code10").val(icd10codes);
+        //    debugger;
+        //    var form = $(this);
+        //    var formdata = false;
+        //    if (window.FormData) {
+        //        formdata = new FormData(form[0]);
+        //    }
+        //    var urltosend = $("#frmDiagnosis").attr('action');
+        //    //var datatosend = $("#createform").serialize();
+        //    var datatosend = formdata ? formdata : form.serialize();
+        //    $(".loader").show();
+        //    $.ajax({
+        //        type: 'POST',
+        //        url: urltosend,
+        //        data: datatosend,
+        //        cache: false,
+        //        contentType: false,
+        //        processData: false,
+        //        success: function (json) {
+        //            $(".loader").hide();
+        //            if (json == "True") {
+        //                swal({
+        //                    title: "Saved!",
+        //                    text: json,
+        //                    icon: "success",
+        //                    button: "Ok",
+        //                    confirmButtonColor: "#1ab394",
+        //                });
+        //                $("input:text").val("");
+        //            }
+        //            else { swal("Error!", "Error Accured :" + json, "error"); }
+        //        },
+        //        error: function (xhr, status, error) {
+        //            $(".loader").hide();
+        //            var err = eval("(" + xhr.responseText + ")");
+        //            //;
+        //            swal("Error!", "Error Accured :" + err.Message, "error");
+        //        }
+        //    });
+
+        //    return false;
+        //});
+    });
+</script>
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+           async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+    </SCRIPT>
+}

@@ -1,0 +1,1019 @@
+﻿@model CCM.Models.ContactPatientViewModel
+
+@{
+    var phone = string.IsNullOrEmpty(Model.MobilePhoneNumber) ? Model.HomePhoneNumber : Model.MobilePhoneNumber;
+    var cell = string.IsNullOrEmpty(Model.MobilePhoneNumber) ? "N/A" : Model.MobilePhoneNumber;
+    var home = string.IsNullOrEmpty(Model.HomePhoneNumber) ? "N/A" : Model.HomePhoneNumber;
+    var work = string.IsNullOrEmpty(Model.WorkPhoneNumber) ? "N/A" : Model.WorkPhoneNumber;
+    var emrg = string.IsNullOrEmpty(Model.EmergencyPhoneNumber) ? "N/A" : Model.EmergencyPhoneNumber;
+    var email = string.IsNullOrEmpty(Model.EmailTo) ? "N/A" : Model.EmailTo;
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" type="text/css" />
+
+<style>
+    .note {
+        background-color: antiquewhite;
+        color: salmon;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .card {
+        padding: 0 15px;
+    }
+
+    .hLine {
+        margin-top: -10px;
+    }
+
+    body {
+        margin-left: -125px;
+    }
+
+    #dialpad li {
+        background-color: rgba(34,57,78,1);
+        border: none;
+        color: white;
+        padding: 15px 23px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 23px;
+        height: 62px;
+        margin: 4px 2px;
+        border-radius: 49%;
+    }
+
+    #button-call {
+        width: 100%;
+    }
+
+    .navbar-fixed-top {
+        display: none;
+    }
+
+    .body-content {
+        margin-top: 0px !important;
+    }
+
+    #dialpad ul {
+        padding: 0px;
+    }
+
+    #dialpad, #actions, #numberDisplay {
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+        float: left;
+    }
+
+    .textboxandlog {
+        float: left;
+        width: 40%;
+    }
+
+    #phone-number {
+        font-size: 17px;
+        color: black;
+        font-weight: bold;
+        margin-bottom: 10px;
+        width: 216px;
+    }
+
+    .buttondial {
+        cursor: pointer;
+    }
+
+    .text-info {
+        color: rgba(34,57,78,1) !important;
+        margin-left: 13px;
+        font-weight: bold;
+        font-size: 39px;
+        text-align: center;
+        display: inherit;
+        margin: 0px;
+    }
+
+    .makeaphonecall {
+        width: 100%;
+    }
+
+    .hangupphonecall, .mute, .unmute {
+        width: 32%;
+        padding: 6px 0px;
+    }
+
+    .nopadding {
+        padding-left: 1px !important;
+        padding-right: 1px !important;
+        min-height: 0px;
+    }
+
+    .rightside {
+        width: 48%;
+        margin-left: 5px;
+    }
+
+    .tab-content {
+        border: 1px solid #ccc;
+        padding: 5px;
+    }
+
+    .nopadding label {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+        text-align: center;
+        margin-top: 0px;
+    }
+
+    .fa {
+        width: auto !important;
+        cursor: pointer;
+    }
+
+    .btnfixwidth {
+        width: 32%;
+        padding: 6px 0px;
+    }
+    .msg {
+        width: 100%;
+        font-size: 20px;
+        text-align: center;
+        color: red;
+        font-family: monospace;
+        letter-spacing: 1.5px;
+    }
+    div#log{
+        color:red !important;
+        font-size:15px;
+    }
+    .patientnumber,.secondarydoctors,.urgencycontacts{
+       
+    }
+</style>
+
+<div class="container">
+    <label class="msg">Don't close this window by cross button if you are in a call with a patient. Hold on for 5 to 7 seconds after the call otherwise you will lose the call log.</label>
+    <h3 class="pageTitle text-info">Contact @Model.FullName</h3>
+    <input type="hidden" id="callerid" value="@ViewBag.CallerId" />
+    <div class="col-md-12 pull-left">
+        <input type="button" class="acceptcall btn btn-success" value="Accept Call" style="display:none" />
+        <input type="button" class="hangupincomming btn btn-danger" value="Hangup Call" style="display:none" />
+        <input type="button" class="rejectcall btn btn-danger" value="Reject Call" style="display:none" />
+    </div>
+    <div class="col-md-12 nopadding">
+        <div class="col-md-6 nopadding">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#patientcontactown">Patient Own Contact</a></li>
+                <li><a data-toggle="tab" href="#urgencycontact">Urgency Contacts</a></li>
+                <li><a data-toggle="tab" href="#secondarycontact">Secondary Doctors</a></li>
+            </ul>
+            <div class="tab-content">
+
+
+                <div class="patientnumber tab-pane fade in active" id="patientcontactown">
+
+
+                    <div class="col-md-12 nopadding">
+                        <div class="col-md-12 nopadding">
+                            <div class="col-md-12 nopadding">
+                                @if (!string.IsNullOrEmpty(Model.MobilePhoneNumber))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Cell Phone Number 1", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                @*<i class="fa fa-phone-square fa-3x makeaphonecall" data-number="@Model.MobilePhoneNumber" data-id="cellphone1" id="cellphone1call" title="Call"></i>
+
+                                        <i class="fa fa-phone-square fa-3x hangupphonecall red" data-number="@Model.MobilePhoneNumber" data-id="cellphone1" id="cellphone1hang" title="Hang Up" style="display:none"></i>
+                                        <i class="fa fa-envelope fa-3x textthisnumber" data-number="@Model.MobilePhoneNumber" data-id="cellphone1" id="cellphone1call" title="Message"></i>*@
+
+
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.MobilePhoneNumber" data-number="@Model.MobilePhoneNumber" data-id="cellphone1" id="cellphone1call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.MobilePhoneNumber" data-id="cellphone1" id="cellphone1hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.MobilePhoneNumber" data-id="cellphone1" id="cellphone1mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.MobilePhoneNumber" data-id="cellphone1" id="cellphone1unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model?.PatientProfile_Contact?.CellPhoneNumber1))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Cell Phone Number 2", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.PatientProfile_Contact.CellPhoneNumber1" data-number="@Model.PatientProfile_Contact.CellPhoneNumber1" data-id="cellphone2" id="cellphone2call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.PatientProfile_Contact.CellPhoneNumber1" data-id="cellphone2" id="cellphone2hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.PatientProfile_Contact.CellPhoneNumber1" data-id="cellphone2" id="cellphone2mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.PatientProfile_Contact.CellPhoneNumber1" data-id="cellphone2" id="cellphone2unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>}
+                                @if (!string.IsNullOrEmpty(Model?.PatientProfile_Contact?.CellPhoneNumber2))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Cell Phone Number 3", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.PatientProfile_Contact.CellPhoneNumber2" data-number="@Model.PatientProfile_Contact.CellPhoneNumber2" data-id="cellphone3" id="cellphone3call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.PatientProfile_Contact.CellPhoneNumber2" data-id="cellphone3" id="cellphone3hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.PatientProfile_Contact.CellPhoneNumber2" data-id="cellphone3" id="cellphone3mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.PatientProfile_Contact.CellPhoneNumber2" data-id="cellphone3" id="cellphone3unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-12 nopadding">
+                            <div class="col-md-12 nopadding">
+                                @if (!string.IsNullOrEmpty(Model?.PatientProfile_Contact?.EmergencyNumber))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Emergency Number 1", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.PatientProfile_Contact.EmergencyNumber" data-number="@Model.PatientProfile_Contact.EmergencyNumber" data-id="EmergencyNumber1" id="EmergencyNumber1call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.PatientProfile_Contact.EmergencyNumber" data-id="EmergencyNumber1" id="EmergencyNumber1hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.PatientProfile_Contact.EmergencyNumber" data-id="EmergencyNumber1" id="EmergencyNumber1mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.PatientProfile_Contact.EmergencyNumber" data-id="EmergencyNumber1" id="EmergencyNumber1unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>}
+                                @if (!string.IsNullOrEmpty(Model?.PatientProfile_Contact?.EmergencyNumber1))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Emergency Number 2", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.PatientProfile_Contact.EmergencyNumber1" data-number="@Model.PatientProfile_Contact.EmergencyNumber1" data-id="EmergencyNumber2" id="EmergencyNumber2call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.PatientProfile_Contact.EmergencyNumber1" data-id="EmergencyNumber2" id="EmergencyNumber2hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.PatientProfile_Contact.EmergencyNumber1" data-id="EmergencyNumber2" id="EmergencyNumber2mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.PatientProfile_Contact.EmergencyNumber1" data-id="EmergencyNumber2" id="EmergencyNumber2unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>}
+                                @if (!string.IsNullOrEmpty(Model?.PatientProfile_Contact?.EmergencyNumber2))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Emergency Number 3", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.PatientProfile_Contact.EmergencyNumber2" data-number="@Model.PatientProfile_Contact.EmergencyNumber2" data-id="EmergencyNumber3" id="EmergencyNumber3call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.PatientProfile_Contact.EmergencyNumber2" data-id="EmergencyNumber3" id="EmergencyNumber3hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.PatientProfile_Contact.EmergencyNumber2" data-id="EmergencyNumber3" id="EmergencyNumber3mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.PatientProfile_Contact.EmergencyNumber2" data-id="EmergencyNumber3" id="EmergencyNumber3unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 nopadding">
+                        <div class="col-md-12 nopadding">
+                            <div class="col-md-12 nopadding">
+                                @if (!string.IsNullOrEmpty(Model.HomePhoneNumber))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Home Phone Number 1", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.HomePhoneNumber" data-number="@Model.HomePhoneNumber" data-id="HomePhoneNumber1" id="HomePhoneNumber1call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.HomePhoneNumber" data-id="HomePhoneNumber1" id="HomePhoneNumber1hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.HomePhoneNumber" data-id="HomePhoneNumber1" id="HomePhoneNumber1mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.HomePhoneNumber" data-id="HomePhoneNumber1" id="HomePhoneNumber1unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>}
+                                @if (!string.IsNullOrEmpty(Model?.PatientProfile_Contact?.HomePhoneNumber1))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Home Phone Number 2", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.PatientProfile_Contact.HomePhoneNumber1" data-number="@Model.PatientProfile_Contact.HomePhoneNumber1" data-id="HomePhoneNumber2" id="HomePhoneNumber2call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.PatientProfile_Contact.HomePhoneNumber1" data-id="HomePhoneNumber2" id="HomePhoneNumber2hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.PatientProfile_Contact.HomePhoneNumber1" data-id="HomePhoneNumber2" id="HomePhoneNumber2mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.PatientProfile_Contact.HomePhoneNumber1" data-id="HomePhoneNumber2" id="HomePhoneNumber2unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>}
+                                @if (!string.IsNullOrEmpty(Model?.PatientProfile_Contact?.HomePhoneNumber2))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Home Phone Number 3", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.PatientProfile_Contact.HomePhoneNumber2" data-number="@Model.PatientProfile_Contact.HomePhoneNumber2" data-id="HomePhoneNumber3" id="HomePhoneNumber3call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.PatientProfile_Contact.HomePhoneNumber2" data-id="HomePhoneNumber3" id="HomePhoneNumber3hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.PatientProfile_Contact.HomePhoneNumber2" data-id="HomePhoneNumber3" id="HomePhoneNumber3mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.PatientProfile_Contact.HomePhoneNumber2" data-id="HomePhoneNumber3" id="HomePhoneNumber3unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-12 nopadding">
+                            <div class="col-md-12 nopadding">
+                                @if (!string.IsNullOrEmpty(Model.WorkPhoneNumber))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Work Phone Number 1", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.WorkPhoneNumber" data-number="@Model.WorkPhoneNumber" data-id="WorkPhoneNumber1" id="WorkPhoneNumber1call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.WorkPhoneNumber" data-id="WorkPhoneNumber1" id="WorkPhoneNumber1hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.WorkPhoneNumber" data-id="WorkPhoneNumber1" id="WorkPhoneNumber1mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.WorkPhoneNumber" data-id="WorkPhoneNumber1" id="WorkPhoneNumber1unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>}
+                                @if (!string.IsNullOrEmpty(Model?.PatientProfile_Contact?.WorkPhoneNumber1))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Work Phone Number 2", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.PatientProfile_Contact.WorkPhoneNumber1" data-number="@Model.PatientProfile_Contact.WorkPhoneNumber1" data-id="WorkPhoneNumber2" id="WorkPhoneNumber2call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.PatientProfile_Contact.WorkPhoneNumber1" data-id="WorkPhoneNumber2" id="WorkPhoneNumber2hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.PatientProfile_Contact.WorkPhoneNumber1" data-id="WorkPhoneNumber2" id="WorkPhoneNumber2mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value=" Un Mute" data-number="@Model.PatientProfile_Contact.WorkPhoneNumber1" data-id="WorkPhoneNumber2" id="WorkPhoneNumber2unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>}
+                                @if (!string.IsNullOrEmpty(Model?.PatientProfile_Contact?.WorkPhoneNumber2))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Work Phone Number 3", htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@Model.PatientProfile_Contact.WorkPhoneNumber2" data-number="@Model.PatientProfile_Contact.WorkPhoneNumber2" data-id="WorkPhoneNumber3" id="WorkPhoneNumber3call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@Model.PatientProfile_Contact.WorkPhoneNumber2" data-id="WorkPhoneNumber3" id="WorkPhoneNumber3hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@Model.PatientProfile_Contact.WorkPhoneNumber2" data-id="WorkPhoneNumber3" id="WorkPhoneNumber3mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@Model.PatientProfile_Contact.WorkPhoneNumber2" data-id="WorkPhoneNumber3" id="WorkPhoneNumber3unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="urgencycontacts tab-pane fade" id="urgencycontact">
+
+
+                    <div class="col-md-12 nopadding">
+                        <div class="col-md-12 nopadding">
+                            <div class="col-md-12 nopadding">
+                                @{
+                                    int i = 1;
+                                    foreach (var urgencycontact in Model.PatientProfile_UrgencyContacts)
+                                    {
+                                        if (!string.IsNullOrEmpty(urgencycontact.PrimaryMobilePhoneNumber))
+                                        {
+                                            <div class="col-md-4 nopadding">
+                                                <div class="form-group">
+                                                    @Html.Label(urgencycontact.PrimaryName + " Cell Phone 1", htmlAttributes: new { @class = "col-md-12" })
+                                                    <div class="col-md-12 nopadding">
+                                                        <input type="button" class="makeaphonecall btn btn-success" value="@urgencycontact.PrimaryMobilePhoneNumber" data-number="@urgencycontact.PrimaryMobilePhoneNumber" data-id="PrimaryMobilePhoneNumber1@(i.ToString())" id="PrimaryMobilePhoneNumber1@(i.ToString())call" />
+                                                        <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@urgencycontact.PrimaryMobilePhoneNumber" data-id="PrimaryMobilePhoneNumber1@(i.ToString())" id="PrimaryMobilePhoneNumber1@(i.ToString())hang" style="display:none" />
+                                                        <input type="button" class="mute btn btn-danger" value="Mute" data-number="@urgencycontact.PrimaryMobilePhoneNumber" data-id="PrimaryMobilePhoneNumber1@(i.ToString())" id="PrimaryMobilePhoneNumber1@(i.ToString())mute" style="display:none" />
+                                                        <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@urgencycontact.PrimaryMobilePhoneNumber" data-id="PrimaryMobilePhoneNumber1@(i.ToString())" id="PrimaryMobilePhoneNumber1@(i.ToString())unmute" style="display:none" />
+                                                    </div>
+                                                </div>
+                                            </div>}
+                                        if (!string.IsNullOrEmpty(urgencycontact.PrimaryMobilePhoneNumber1))
+                                        {
+                                            <div class="col-md-4 nopadding">
+                                                <div class="form-group">
+                                                    @Html.Label(urgencycontact.PrimaryName + " Cell Phone 2", htmlAttributes: new { @class = "col-md-12" })
+                                                    <div class="col-md-12 nopadding">
+                                                        <input type="button" class="makeaphonecall btn btn-success" value="@urgencycontact.PrimaryMobilePhoneNumber1" data-number="@urgencycontact.PrimaryMobilePhoneNumber1" data-id="PrimaryMobilePhoneNumber2@(i.ToString())" id="PrimaryMobilePhoneNumber2@(i.ToString())call" />
+                                                        <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@urgencycontact.PrimaryMobilePhoneNumber1" data-id="PrimaryMobilePhoneNumber2@(i.ToString())" id="PrimaryMobilePhoneNumber2@(i.ToString())hang" style="display:none" />
+                                                        <input type="button" class="mute btn btn-danger" value="Mute" data-number="@urgencycontact.PrimaryMobilePhoneNumber1" data-id="PrimaryMobilePhoneNumber2@(i.ToString())" id="PrimaryMobilePhoneNumber2@(i)mute" style="display:none" />
+                                                        <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@urgencycontact.PrimaryMobilePhoneNumber1" data-id="PrimaryMobilePhoneNumber2@(i.ToString())" id="PrimaryMobilePhoneNumber2@(i.ToString())unmute" style="display:none" />
+                                                    </div>
+                                                </div>
+                                            </div>}
+                                        if (!string.IsNullOrEmpty(urgencycontact.PrimaryHomePhoneNumber))
+                                        {
+                                            <div class="col-md-4 nopadding">
+                                                <div class="form-group">
+                                                    @Html.Label(urgencycontact.PrimaryName + " Home Phone", htmlAttributes: new { @class = "col-md-12" })
+                                                    <div class="col-md-12 nopadding">
+                                                        <input type="button" class="makeaphonecall btn btn-success" value="@urgencycontact.PrimaryHomePhoneNumber" data-number="@urgencycontact.PrimaryHomePhoneNumber" data-id="PrimaryHomePhoneNumber1@(i.ToString())" id="PrimaryHomePhoneNumber1@(i.ToString())call" />
+                                                        <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@urgencycontact.PrimaryHomePhoneNumber" data-id="PrimaryHomePhoneNumber1@(i.ToString())" id="PrimaryHomePhoneNumber1@(i.ToString())hang" style="display:none" />
+                                                        <input type="button" class="mute btn btn-danger" value="Mute" data-number="@urgencycontact.PrimaryHomePhoneNumber" data-id="PrimaryHomePhoneNumber1@(i.ToString())" id="PrimaryHomePhoneNumber1@(i.ToString())mute" style="display:none" />
+                                                        <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@urgencycontact.PrimaryHomePhoneNumber" data-id="PrimaryHomePhoneNumber1@(i.ToString())" id="PrimaryHomePhoneNumber1@(i.ToString())unmute" style="display:none" />
+                                                    </div>
+                                                </div>
+                                            </div>}
+                                        if (!string.IsNullOrEmpty(urgencycontact.PrimaryHomePhoneNumber1))
+                                        {
+                                            <div class="col-md-4 nopadding">
+                                                <div class="form-group">
+                                                    @Html.Label(urgencycontact.PrimaryName + " Work Phone", htmlAttributes: new { @class = "col-md-12" })
+                                                    <div class="col-md-12 nopadding">
+                                                        <input type="button" class="makeaphonecall btn btn-success" value="@urgencycontact.PrimaryHomePhoneNumber1" data-number="@urgencycontact.PrimaryHomePhoneNumber1" data-id="PrimaryHomePhoneNumber2@(i.ToString())" id="PrimaryHomePhoneNumber2@(i.ToString())call" />
+                                                        <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@urgencycontact.PrimaryHomePhoneNumber1" data-id="PrimaryHomePhoneNumber2@(i.ToString())" id="PrimaryHomePhoneNumber2@(i.ToString())hang" style="display:none" />
+                                                        <input type="button" class="mute btn btn-danger" value="Mute" data-number="@urgencycontact.PrimaryHomePhoneNumber1" data-id="PrimaryHomePhoneNumber2@(i.ToString())" id="PrimaryHomePhoneNumber2@(i.ToString())mute" style="display:none" />
+                                                        <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@urgencycontact.PrimaryHomePhoneNumber1" data-id="PrimaryHomePhoneNumber2@(i.ToString())" id="PrimaryHomePhoneNumber2@(i.ToString())unmute" style="display:none" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        i += 1;
+
+                                    }
+                                }
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="secondarydoctors tab-pane fade" id="secondarycontact">
+
+
+                    <div class="col-md-12 nopadding">
+                        @{
+                            int ii = 1;
+                            foreach (var secondarydoctor in Model.secondaryDoctors)
+                            {
+                                if (!string.IsNullOrEmpty(secondarydoctor?.MobilePhoneNumber))
+                                {
+                                    <div class="col-md-4 nopadding">
+                                        <div class="form-group">
+                                            @Html.Label("Secondary Doctor Number " + ii.ToString(), htmlAttributes: new { @class = "col-md-12" })
+                                            <div class="col-md-12 nopadding">
+                                                <input type="button" class="makeaphonecall btn btn-success" value="@secondarydoctor.MobilePhoneNumber" data-number="@secondarydoctor.MobilePhoneNumber" data-id="secondarydoctor@(ii.ToString())" id="secondarydoctor@(ii.ToString())call" />
+                                                <input type="button" class="hangupphonecall btn btn-danger" value="Hang Up" data-number="@secondarydoctor.MobilePhoneNumber" data-id="secondarydoctor@(ii.ToString())" id="secondarydoctor@(ii.ToString())hang" style="display:none" />
+                                                <input type="button" class="mute btn btn-danger" value="Mute" data-number="@secondarydoctor.MobilePhoneNumber" data-id="secondarydoctor@(ii.ToString())" id="secondarydoctor@(ii.ToString())mute" style="display:none" />
+                                                <input type="button" class="unmute btn btn-danger" value="Un Mute" data-number="@secondarydoctor.MobilePhoneNumber" data-id="secondarydoctor@(ii.ToString())" id="secondarydoctor@(ii.ToString())unmute" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    ii += 1;
+                                }
+
+
+                            }
+                        }
+
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </div>
+        <div class="col-md-6 nopadding rightside ">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#call">CALL</a></li>
+                <li><a data-toggle="tab" href="#text">TEXT</a></li>
+                <li><a data-toggle="tab" href="#email">EMAIL</a></li>
+            </ul>
+
+            <div class="tab-content">
+                @* Call Tab *@
+                <div id="call" class="tab-pane fade in active">
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <label>Calling Notes</label>
+                            @Html.TextArea("CallingNotes", new { @class = "form-control border-input", rows = "5" })
+                            <br />
+
+                            <button id="btnSaveNotes" class="btn btn-info">Save Notes</button>
+
+                        </div>
+                    </div>
+                    <br />
+                    <div id="controls">
+
+                        <div class="textboxandlog">
+                            <div id="call-controls">
+                                <input id="phone-number" class="text-center form-control border-input" placeholder="Enter a phone number" Value="" />
+                                <button id="button-call" class="btn btn-success">Call @Model.FullName</button>
+                                <button id="button-hangup" class="btn btn-danger btnfixwidth">Hang Up</button>
+                                <button id="button-mute" class="btn btn-danger btnfixwidth" style="display:none">Mute</button>
+                                <button id="button-unmute" class="btn btn-danger btnfixwidth" style="display:none">Un Mute</button>
+                            </div>
+                            <div id="dialpad">
+                                <ul>
+                                    <li class="buttondial" data-value="1">1</li>
+                                    <li data-value="2" class="buttondial">2</li>
+                                    <li class=" buttondial" data-value="3">3</li>
+                                    <li class=" buttondial " data-value="4">4</li>
+                                    <li data-value="5" class="buttondial">5</li>
+                                    <li data-value="6" class=" buttondial">6</li>
+                                    <li data-value="7" class=" buttondial">7</li>
+                                    <li data-value="8" class="buttondial">8</li>
+                                    <li data-value="9" class=" buttondial">9</li>
+                                    <li class=" buttondial" data-value="+">+</li>
+                                    <li data-value="0" class=" buttondial">0</li>
+                                    <li class="buttondial" data-value="*">*</li>
+                                    <li class="buttondial" data-value="clear">Clear</li>
+
+                                    <li class=" buttondial" data-value="back">Back</li>
+
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div id="log">
+
+                        </div>
+                    </div>
+
+                    <br />
+                    <div class="col-md-12">
+                        <div class="col-md-12 card">
+                            <h3>Call History</h3>
+                            <hr class="hLine" />
+
+                            <div id="callHistoryPartialView">
+                                Call History Loading . . .
+                            </div><br />
+                        </div>
+                    </div>
+                </div>
+
+                @* Text Tab *@
+                <div id="text" class="tab-pane fade">
+                    @if (string.IsNullOrEmpty(Model.MobilePhoneNumber))
+                    {
+                        <div class="row">
+                            <div class="col-sm-10 col-md-12 text-warning note">
+                                <strong>Note:</strong> @Model.FullName does not have a Cell Phone Number on file.
+                            </div>
+                        </div>
+                    }
+                    else
+                    { <br />}
+
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-2 col-md-2">
+                            @Html.LabelFor(m => m.MobilePhoneNumber, "Message:", new { @class = "control-label" })
+                        </div>
+                        <div class="col-sm-8 col-md-10">
+                            <textarea id="txtMessageBody" class="form-control border-input" placeholder="Required*"></textarea>
+                        </div>
+                    </div>
+
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-2 col-md-2">
+                            @Html.LabelFor(m => m.MobilePhoneNumber, "To #:", new { @class = "control-label" })
+                        </div>
+                        <div class="col-sm-4 col-md-6">
+                            <input id="txtPhoneNumber" placeholder="Required*" Value="@Model.MobilePhoneNumber" class="form-control border-input" />
+                        </div>
+                        <div class="col-sm-3 col-md-2">
+                            <button id="btnSendTextMessage" class="btn btn-info">Send Text Message</button>
+                            @*<button id="btnMakeTestCall" class="btn btn-info" onclick="makeacall()">Make Test Call</button>*@
+                        </div>
+                    </div>
+
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12 card">
+                            <h3>Text History</h3>
+                            <hr class="hLine" />
+
+                            <div id="textHistoryPartialView">
+                                Text History Loading . . .
+                            </div><br />
+                        </div>
+                    </div>
+                </div>
+
+                @* Email Tab *@
+                <div id="email" class="tab-pane fade">
+
+                    @using (Html.BeginForm("SendEmail", "ContactPatient", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.PatientId)
+
+                        if (string.IsNullOrEmpty(Model.EmailTo))
+                        {
+                            <div class="row">
+                                <div class="col-sm-10 col-md-12 text-warning note">
+                                    <strong>Note:</strong> @Model.FullName does not have an Email Address on file.
+                                </div>
+                            </div>
+                        }
+                        else
+                        { <br /> }
+
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-2 col-md-2">
+                                @Html.LabelFor(m => m.EmailTo, "Email To:", new { @class = "control-label" })
+                            </div>
+                            <div class="col-sm-8 col-md-10">
+                                @Html.TextBoxFor(m => m.EmailTo, new { type = "email", @class = "form-control border-input", id = "txtEmailId", placeholder = "Required*" })
+                                @Html.ValidationMessageFor(m => m.EmailTo, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-2 col-md-2">
+                                @Html.LabelFor(m => m.EmailTo, "Message:", new { @class = "control-label" })
+                            </div>
+                            <div class="col-sm-8 col-md-10">
+                                @Html.TextAreaFor(m => m.EmailMessage, new { @class = "form-control border-input", id = "txtEmailBody", placeholder = "Required*" })
+                                @Html.ValidationMessageFor(m => m.EmailMessage, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-2 col-md-2">
+                                @Html.LabelFor(m => m.Attachments, "Attachment(s):", new { @class = "control-label" })
+                            </div>
+                            <div class="col-sm-6 col-md-6">
+                                <input type="file" name="Attachments" id="attachments" class="form-control border-input" multiple="multiple" />
+                            </div>
+                            <div class="col-sm-2 col-md-2">
+                                <button id="btnSendEmail" class="btn btn-info">Send Email</button>
+                            </div>
+                        </div>
+                    }
+
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12 card">
+                            <h3>Email History</h3>
+                            <hr class="hLine" />
+
+                            <div id="emailHistoryPartialView">
+                                Email History Loading . . .
+                            </div><br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <br />
+
+</div>
+<br /><br />
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript" src="//media.twiliocdn.com/sdk/js/client/v1.3/twilio.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    @Scripts.Render("~/Scripts/quickstart.js")
+
+    @* Load Partial Views *@
+    <script type="text/javascript">
+
+        function makeacall() {
+             $.ajax({
+                 url: "/ContactPatient/TestCall",
+                        type: "POST",
+                        data: JSON.stringify({
+
+                            'To': '7182557234',
+                            'From': '+18622596920'
+                           
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                success: function (result) {
+                      $("#callHistoryPartialView").load('@Url.Action("_CallHistoryPartial", "ContactPatient", new {patientId = Model.PatientId})');
+
+                        },
+                        error: function(result) {
+
+                        }
+                    });
+        }
+        function savecall(callsid,to) {
+            $.ajax({
+                url: "/ContactPatient/SaveCallRecordings",
+                        type: "POST",
+                        data: JSON.stringify({
+
+                            'callSid': callsid,
+                            'To': to,
+                            'PatientID':@Model.PatientId
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                success: function (result) {
+                      $("#callHistoryPartialView").load('@Url.Action("_CallHistoryPartial", "ContactPatient", new {patientId = Model.PatientId})');
+
+                        },
+                        error: function(result) {
+
+                        }
+                    });
+        }
+        $(document).ready(function () {
+           //
+            var selectedbuttonid = "";
+            var incommingSid = "";
+            $(function () {
+                debugger;
+                log('Requesting Capability Token...');
+              
+                $.getJSON('/token?CallerName=@ViewBag.LiasionName' )
+                    .done(function (data) {
+                        debugger;
+                        log('Got a token.');
+                        console.log('Token: ' + data.token);
+                        //document.getElementById('call-controls').style.display = 'block';
+                        // Setup Twilio.Device
+                        Twilio.Device.setup(data.token, { closeProtection: true, allowIncomingWhileBusy:false });
+
+                        Twilio.Device.ready(function (device) {
+                            log('Twilio.Device Ready!');
+                            document.getElementById('call-controls').style.display = 'block';
+                        });
+
+                        Twilio.Device.error(function (error) {
+                            log('Twilio.Device Error: ' + error.message);
+                        });
+
+                        Twilio.Device.connect(function (conn) {
+                            log('Successfully established call!');
+                            if (selectedbuttonid != "") {
+                                $("#" + selectedbuttonid + "call").hide();
+                                $("#" + selectedbuttonid + "hang").show();
+                                $("#" + selectedbuttonid + "mute").show();
+                                $("#" + selectedbuttonid + "unmute").show();
+                            }
+
+
+                            //document.getElementById('button-call').style.display = 'none';
+                            //document.getElementById('button-hangup').style.display = 'inline';
+                        });
+
+                        Twilio.Device.disconnect(function (conn) {
+                           
+                            $(".loader").show();
+                            log('Please wait Your call is saving now.');
+                            var callid = conn.mediaStream.callSid;
+                            var callto = conn.message.To;
+                            setTimeout(function () {
+                               // savecall(callid, callto);
+                                log('Call ended.');
+                                //$("#" + selectedbuttonid + "call").show();
+                                //$("#" + selectedbuttonid + "hang").hide();
+                                //$("#" + selectedbuttonid + "mute").hide();
+                                //$("#" + selectedbuttonid + "unmute").hide();
+                                //document.getElementById('button-call').style.display = 'inline';
+                                //document.getElementById('button-hangup').style.display = 'none';
+                                //document.getElementById('button-mute').style.display = 'none';
+                                //document.getElementById('button-unmute').style.display = 'none';
+                                location.reload();
+                            }, 3000);
+
+
+
+
+                        });
+                        
+                    })
+
+                    .fail(function (data) {
+                        log('Could not get a token from server!'+data);
+                    });
+                $(".makeaphonecall").click(function () {
+                    var tonumber = $(this).attr("data-number");
+                    $("#txtPhoneNumber").val(tonumber);
+                    var id = $(this).attr("data-id");
+                    selectedbuttonid = id;
+                    var params = {
+                        To: tonumber,
+                        From: $("#callerid").val(),
+                        PatientID: '@Model.PatientId',
+                        LiaisonID:'@ViewBag.LiasionID'
+
+                    };
+
+                    console.log('Calling ' + params.To + '...');
+                    Twilio.Device.connect(params);
+                });
+                $(".textthisnumber").click(function () {
+                    var tonumber = $(this).attr("data-number");
+                    $("#txtPhoneNumber").val(tonumber);
+
+                });
+                $(".hangupincomming").click(function () {
+                    log('Hanging up...');
+                    $(".acceptcall").hide();
+                    $(".rejectcall").hide();
+                    $(".hangupincomming").hide();
+                    Twilio.Device.disconnectAll();
+
+                })
+                $(".hangupphonecall").click(function () {
+                    var tonumber = $(this).attr("data-number");
+                    var id = $(this).attr("data-id");
+                    selectedbuttonid = id;
+                    log('Hanging up...');
+                    Twilio.Device.disconnectAll();
+
+                });
+                $(".mute").click(function () {
+                    var tonumber = $(this).attr("data-number");
+                    var id = $(this).attr("data-id");
+                    selectedbuttonid = id;
+                    log('Call Muted...');
+                    Twilio.Device.activeConnection().mute(true);
+
+                });
+                $(".unmute").click(function () {
+                    var tonumber = $(this).attr("data-number");
+                    var id = $(this).attr("data-id");
+                    selectedbuttonid = id;
+                    log('Call Un Muted...');
+                    Twilio.Device.activeConnection().mute(false);
+
+                });
+
+                // Bind button to make call
+                document.getElementById('button-call').onclick = function () {
+                    var params = {
+                        To: document.getElementById('phone-number').value,
+                        From: $("#callerid").val(),
+                        PatientID: '@Model.PatientId',
+                          LiaisonID:'@ViewBag.LiasionID'
+                    };
+
+                    console.log('Calling ' + params.To + '...');
+                    debugger;
+                    Twilio.Device.connect(params);
+                    document.getElementById('button-call').style.display = 'none';
+                    document.getElementById('button-hangup').style.display = 'inline';
+                    document.getElementById('button-mute').style.display = 'inline';
+                    document.getElementById('button-unmute').style.display = 'inline';
+                };
+
+                // Bind button to hangup call
+                document.getElementById('button-hangup').onclick = function () {
+                    log('Hanging up...');
+                    Twilio.Device.disconnectAll();
+                    document.getElementById('button-call').style.display = 'inline';
+                    document.getElementById('button-hangup').style.display = 'none';
+                    document.getElementById('button-mute').style.display = 'none';
+                    document.getElementById('button-unmute').style.display = 'none';
+
+                };
+                document.getElementById('button-mute').onclick = function () {
+                    log('Call Muted...');
+                    Twilio.Device.activeConnection().mute(true);
+
+                };
+                document.getElementById('button-unmute').onclick = function () {
+                    log('Call Un Muted...');
+                    Twilio.Device.activeConnection().mute(false);
+
+                };
+                $(".buttondial").click(function () {
+                    var btnvalue = $(this).attr("data-value");
+                    if (btnvalue == "back") {
+                        $("#phone-number").val($("#phone-number").val().slice(0, -1));
+                    }
+                    else {
+                        if (btnvalue == "clear") {
+                            $("#phone-number").val("");
+                        }
+                        else {
+
+                            var connection = Twilio.Device.activeConnection();
+                            if (connection != undefined) {
+
+                                connection.sendDigits(btnvalue.toString());
+                            }
+                            else {
+                                $("#phone-number").val($("#phone-number").val() + btnvalue);
+                            }
+
+
+                        }
+                    }
+                });
+            });
+           
+            // Activity log
+            function log(message) {
+                var logDiv = document.getElementById('log');
+                logDiv.innerHTML += '<p>&gt;&nbsp;' + message + '</p>';
+                logDiv.scrollTop = logDiv.scrollHeight;
+            }
+            //
+            $("#callHistoryPartialView").load('@Url.Action("_CallHistoryPartial", "ContactPatient", new {patientId = Model.PatientId})');
+            $("#textHistoryPartialView").load('@Url.Action("_TextHistoryPartial", "ContactPatient", new {patientId = Model.PatientId})');
+            $("#emailHistoryPartialView").load('@Url.Action("_EmailHistoryPartial", "ContactPatient", new {patientId = Model.PatientId})');
+           
+        });
+    </script>
+
+    @* Send Text Message *@
+    <script>
+        $(document).ready(function() {
+            $("#btnSendTextMessage").click(function() {
+                
+                if (!$("#txtMessageBody").val())
+                    alert("Error: Message body is required.");
+                else {
+                    $(this).html('Message Sending...');
+                    
+                    $.ajax({
+                        url: "/ContactPatient/SendTextMessage",
+                        type: "POST",
+                        data: JSON.stringify({
+                            'patientId': @Model.PatientId,
+                            'phoneNumber': $("#txtPhoneNumber").val(),
+                            'messageBody': $("#txtMessageBody").val()
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            debugger;
+                            alert(result);
+                            $("#btnSendTextMessage").html('Send Text Message');
+                            loadTextHistory(@Model.PatientId);
+                        },
+                        error: function(result) {
+                            alert(result.responseText);
+                        }
+                        
+                    });
+                }
+            });
+
+            function loadTextHistory(patientId) {
+                $.ajax({
+                        url: "/ContactPatient/_TextHistoryPartial",
+                        type: "POST",
+                        data: JSON.stringify({
+                            'patientId': patientId
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $("#textHistoryPartialView").html(result)
+                        $("#txtMessageBody").val('');
+                        $("#txtPhoneNumber").val('');
+                    },
+                    error: function (result) {
+                        $("#txtMessageBody").val('');
+                        $("#txtPhoneNumber").val('');
+                    }
+                });
+            }
+
+            $("#btnSaveNotes").click(function() {
+
+                if (!$("#CallingNotes").val())
+                    alert("Error: Notes cannot be empty.");
+                else {
+
+
+                    $.ajax({
+                        url: "/ContactPatient/SaveCallNotes",
+                        type: "POST",
+                        data: JSON.stringify({
+                            'PatientID': @Model.PatientId,
+                            'Notes': $("#CallingNotes").val(),
+
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (result) {
+                            alert(result.responseText);
+
+
+                        },
+                        error: function(result) {
+                            alert(result.responseText);
+
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+    @if (!string.IsNullOrEmpty(ViewBag.eMessage))
+    {
+        <script type="text/javascript">
+            alert('@ViewBag.eMessage');
+        </script>
+    }
+}

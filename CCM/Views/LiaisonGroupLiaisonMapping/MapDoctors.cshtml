@@ -1,0 +1,138 @@
+﻿@model CCM.Models.PhysicianGroup_Physician_Mapping
+@{
+    ViewData["Title"] = "Map Doctors";
+}
+
+<h2>MapDoctors</h2>
+
+<div class="wrapper wrapper-content animated fadeIn">
+    <div class="row">
+        <div class="col-lg-10 col-sm-offset-1 gen-form-bg">
+            <form>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label class="control-label">Physician Group</label>
+                        @*<select class="form-control"></select>*@
+                        @Html.DropDownList("ClinicID", new SelectList(ViewBag.AllClinics as List<CCM.Models.PhysiciansGroup>, "Id", "GroupName"), new { @class = "form-control selectpicker", role = "menu", @autofocus = "true" })
+                    </div>
+                    <div id="FetchPhysicians" class="clearfix">
+                        <div class="col-sm-12"><label class="control-label">Physician</label></div>
+                        @*<div id="dvCheckBoxListControl" class="col-sm-6" style="text-align:left;padding-top:10px;">
+                            <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="all" /></th>
+                                        <th><label class="control-label">First Name</label></th>
+                                        <th><label class="control-label">Last Name</label></th>
+                                        <th><label class="control-label">NPI</label></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ICD10CodeTable"></tbody>
+                            </table>
+                        </div>*@
+                        <div id="SelectedCodeListControl" class="col-sm-6" style="text-align:left;padding-top:10px;">
+                            <input type="text" id="searchInput" placeholder="Search for names.." class="form-control">
+                            <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th width="50px"></th>
+                                        <th><label class="control-label">Name</label></th>
+                                        @*<th><label class="control-label">Last Name</label></th>*@
+                                        <th><label class="control-label">NPI</label></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="PhysiciansSelectedTable">
+
+                                    @foreach (var item in Model.Doctors)
+                                    {
+                                        <tr class="row-select">
+                                            <td class="id" hidden>@item.ID</td>
+                                            <td class="check"><label class="custom-checkbox"><input type="checkbox" /><span></span></label></td>
+                                            <td>@item.FirstName &nbsp; @item.LastName</td>
+                                            <td>@item.NPI</td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <a asp-action="ViewDoctorMapping" id="back-to-list" class="btn btn-default">Back to List</a>
+
+                        <input type="button" value="Create" id="btnSubmit" class="btn btn-default" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+    <script>
+        //function SearchDoctor() {
+        //    var input, filter, table, tr, td, i;
+        //    input = document.getElementById("searchInput");
+        //    filter = input.value.toUpperCase();
+        //    table = document.getElementById("SelectedCodeListControl");
+        //    tr = table.getElementsByTagName("tr");
+        //    for (i = 0; i < tr.length; i++) {
+        //        td = tr[i].getElementsByTagName("td")[2];
+        //        if (td) {
+        //            if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+        //                tr[i].style.display = "";
+        //            } else {
+        //                tr[i].style.display = "none";
+        //            }
+        //        }
+        //    }
+        //}
+        
+            $("#searchInput").on("keyup", function () {
+                var value = $(this).val();
+                $("table tr").each(function (index) {
+                    if (index !== 0) {
+                        var $row = $(this);
+                        //Filter down tds that match indexOf check
+                        var matches = $row.find('td').filter(function (ix, item) {
+                            return $(item).text().toUpperCase().indexOf(value.toUpperCase()) > -1;
+                        });
+
+                        //if matches exist then show else hide
+                        if (matches.length != 0) {
+                            $row.show();
+                        }
+                        else {
+                            $row.hide();
+                        }
+                    }
+                });
+            })
+        $(document).ready(function () {
+            var Doctors = []
+            $('#btnSubmit').click(function () {
+                
+                $('.row-select input:checked').each(function () {
+                    var id, name;
+                    id = $(this).closest('tr').find('.id').html();                    
+                    Doctors.push(id);                    
+                })
+                $.ajax({
+                    type: "POST",
+                    url: '/DoctorClinicMapping/SaveDoctorClinicMapping',
+                    data: {
+                        "ClinicID": $("#ClinicID").val(), 'DoctorID': Doctors
+                    },
+                    success: function (data) {
+                        location.href = '/DoctorClinicMapping/ViewDoctorMapping'
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            });
+        });
+    </script>
+}

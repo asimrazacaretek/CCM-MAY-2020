@@ -1,0 +1,115 @@
+﻿@model IEnumerable<CCM.Models.Patient>
+
+<link href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet" />
+
+
+@Html.Partial("_EnrollmentStatusLinks")
+
+<table id="table" class="display">
+    <thead>
+        <tr>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Counselor</th>
+            }
+            <th>Patient Name</th>
+            <th>Gender</th>
+            <th>Date of Birth</th>
+            <th>Preferred Language</th>
+            <th>Appointment Date</th>
+            <th>Enrollment Notes</th>
+            <th>Physician</th>
+            <th>Enrollment Status</th>
+            <th>CCM Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Liaison?.FirstName))
+                        {
+                            <span>@item.Liaison.FirstName @item.Liaison.LastName</span>
+                        }
+                        else
+                        { <span>Not Assigned</span> }
+                    </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName),
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @{
+                        var age       = (int.Parse(DateTime.Today.ToString("yyyyMMdd")) - int.Parse(item.BirthDate.ToString("yyyyMMdd"))) / 10000;
+                        var ageStatus = item.EnrollmentStatus == "Deceased" ? "Deceased" : age + " Years";
+                        var color     = ageStatus == "Deceased" ? "text-danger" : "";
+                    }
+                    @item.BirthDate.ToShortDateString() <span class="@color">(@ageStatus)</span>
+                </td>
+                <td>
+                    @{
+                        var language = item.OtherLanguage ?? item.PreferredLanguage;
+                    }@language
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AppointmentDate)
+                </td>
+                <td>
+                    @{
+                        var note = string.IsNullOrEmpty(item.EnrollmentNotes) ? item.Notes : item.EnrollmentNotes;
+                    } @note
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Physician.FirstName)
+                    @Html.DisplayFor(modelItem => item.Physician.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EnrollmentStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CcmStatus)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", "Patient", new { id = item.Id }, new { @class = "btn btn-sm btn-info" })
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <span>@Html.ActionLink("Delete", "Delete", "Patient", new { id = item.Id }, new { @class = "btn btn-sm btn-danger" })</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js" type="text/javascript"></script>
+
+    @* DataTable *@
+    <script>
+        $(document).ready(function () {
+            $('#table').DataTable({
+                responsive: true,
+                pageLength: 100,
+                scrollY: "62vh",
+
+                dom: 'Bfrtip',
+                buttons: ['print', 'excelHtml5', 'pdfHtml5']
+            });
+        });
+    </script>
+}

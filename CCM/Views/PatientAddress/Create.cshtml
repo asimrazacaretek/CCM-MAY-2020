@@ -1,0 +1,159 @@
+﻿@model CCM.Models.PatientProfile_Address
+
+
+@Html.Action("_CcmActivityLinks", "CcmStatus", new { patientId = Model.PatientId })
+
+
+<div class="container">
+    <h3 class="pageTitle text-info">ADDRESS</h3>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientId)
+        @Html.HiddenFor(model => model.Id)
+
+        <br/><br/>
+        <div class="form-horizontal">
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Address1, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Address1, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.Address1, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Address2, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Address2, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.Address2, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.City, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.City, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.City, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.State, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.State, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.State, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Zip, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Zip, new {htmlAttributes = new {@class = "form-control border-input"}})
+                            @Html.ValidationMessageFor(model => model.Zip, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(item => item.BuildingType, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                                item => item.BuildingType,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "Apartment", Text = "Apartment"},
+                                        new {Value = "Single-Family Home", Text = "Single-Family Home"},
+                                        new {Value = "Multi-Family Home", Text = "Multi-Family Home"}
+                                    },
+                                    "Value", "Text", Model),
+                                "Select Building Type", new {@class = "form-control border-input"})
+                            @Html.ValidationMessageFor(model => model.BuildingType, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(item => item.DeliveryPermisison, htmlAttributes: new {@class = "col-md-12"})
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(
+                                item => item.DeliveryPermisison,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "true", Text = "Permitted"},
+                                        new {Value = "false", Text = "Not Permitted"},
+                                        new {Value = "", Text = ""}
+                                    },
+                                    "Value", "Text", Model),
+                                "Select Delivery Permission", new {@class = "form-control border-input"})
+                            @Html.ValidationMessageFor(model => model.DeliveryPermisison, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Special Instructions For Delivery Person", htmlAttributes: new {@class = "col-md-12"})
+                <div class="col-md-12">
+                    @Html.TextAreaFor(model => model.DeliveryInstruction, new {@class = "form-control border-input", rows = "5"})
+                    @Html.ValidationMessageFor(model => model.DeliveryInstruction, "", new {@class = "text-danger"})
+                </div>
+            </div>
+
+            <br/>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Update" class="btn btn-success logdetails"/>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    
+    @if (User.IsInRole("Liaison"))
+    {
+        <SCRIPT type="text/javascript">
+           
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+                    async: true,
+                    success: function () {
+
+
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+        </SCRIPT>
+    }
+}

@@ -1,0 +1,100 @@
+﻿@model CCM.Models.Icd10Codes
+
+<link href='https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/15.1.1/autocomplete-lhc_jQueryUI.min.css' rel="stylesheet">
+<script src='https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/15.1.1/autocomplete-lhc_jQuery.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.14/jquery.datetimepicker.min.css">
+<h2>Create</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.PatientId)
+
+    <div class="form-horizontal">
+        <h4>Icd10Codes</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.Label("Diagnosis Search", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Code10, new { htmlAttributes = new { @class = "form-control", id = "icd10" } })
+                @Html.ValidationMessageFor(model => model.Code10, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("ICD-9 Code Search", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Code9, new { htmlAttributes = new { @class = "form-control", id = "icd9dx" } })
+                @Html.ValidationMessageFor(model => model.Code9, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateCreated, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DateCreated, new { htmlAttributes = new { @class = "form-control border-input", id = "datepicker" } })
+                @Html.ValidationMessageFor(model => model.DateCreated, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default logdetails" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index", new { patientId = Model.PatientId })
+</div>
+
+<script>
+    new Def.Autocompleter.Search('icd10', 'https://clinicaltables.nlm.nih.gov/api/icd10cm/v3/search?sf=code,name',
+        { tableFormat: true, valueCols: [0, 1], colHeaders: ['Code', 'Name'] });
+</script>
+
+
+<script>
+    new Def.Autocompleter.Search('icd9dx', 'https://clinicaltables.nlm.nih.gov/api/icd9cm_dx/v3/search',
+        { tableFormat: true, valueCols: [0, 1], colHeaders: ['Code', 'Name'] });
+
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.14/jquery.datetimepicker.full.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#datepicker").datetimepicker({
+            dateFormat: "mm/dd/yy",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "-0:+2"
+        });
+    });
+</script>
+@if (User.IsInRole("Liaison"))
+{
+    <SCRIPT type="text/javascript">
+            
+
+            function reviewTimePost() {
+                $.ajax({
+                    url: "/PatientProfile/ReviewTimePost?reviewId=@ViewBag.ReviewId&activity=" + $("#activityperformed").val(),
+                    type: "POST",
+           async: true,
+                    success: function () {
+
+                        
+
+                    },
+                    error: function (error) {
+                        Showerrormsg1(error.statusText);
+                    }
+                });
+            }
+    </SCRIPT>
+}

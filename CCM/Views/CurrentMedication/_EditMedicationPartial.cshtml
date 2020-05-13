@@ -1,0 +1,450 @@
+﻿@model CCM.Models.PatientMedicalHistory_MedicationRx
+
+<link href="https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions/15.1.0/autocomplete-lhc_jQueryUI.min.css" rel="stylesheet">
+<style>
+    #divAddNew {
+        margin-top: -15px;
+    }
+
+    #line {
+        margin-top: -10px;
+    }
+
+    .lblinline {
+        padding-left: 13px;
+    }
+
+    .lblmedicn {
+        padding-left: 5px;
+    }
+
+    .lbldrug {
+        padding: 0px;
+        padding-left: 12px;
+    }
+
+    .lblpermanent {
+        padding: 0;
+        padding-left: 15px;
+    }
+
+    .lblmedicn {
+        padding: 0;
+        padding-left: 7px;
+    }
+
+    input#IsTakenMedicineProperly {
+        min-height: 16px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .close-btn {
+        color: #3c4e5e;
+        font-size: 20px;
+        position: absolute;
+        bottom: 20px;
+    }
+
+    #hide-Drug:hover {
+        cursor: pointer;
+        color: #0b64b5;
+    }
+
+    .error {
+        color: red;
+    }
+</style>
+
+@*@using (Html.BeginForm("_AddMedication", "CurrentMedication"))*@
+@using (Html.BeginForm("_EditMedication", "CurrentMedication", FormMethod.Post, new { id = "form_EditMedication" }))
+{
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.PatientId)
+    @Html.HiddenFor(model => model.EndDate)
+
+
+    <div id="divDrugInteractionEdit" style="max-height: 650px; overflow-y: auto"></div>
+    <span id="btnDrugCancel" style="display:none;position:relative"><i class="fas fa-window-close close-btn" id="hide-Drug"></i></span>
+
+    <div class="form-horizontal" id="divMedicationUpdate">
+        @*<h4>Edit Medication</h4>
+            <hr id="line" />*@
+        <div class="row">
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DrugName, "Prescription/Drug Name", htmlAttributes: new { @class = "col-md-12 lbldrug" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.DrugName, new { htmlAttributes = new { @class = "form-control border-input", id = "DrugName", required = "required" } })
+                        @*<input type="text" class="form-control border-input" id="DrugName" name="DrugName">*@
+                        @Html.ValidationMessageFor(model => model.DrugName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DailyDose, "Strength", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.DailyDose, new { htmlAttributes = new { @class = "form-control border-input", id = "drug_strengths" } })
+                        @*<input type="text" class="form-control border-input" id="drug_strengths" name="DailyDose">*@
+                        @Html.ValidationMessageFor(model => model.DailyDose, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RxCuis, "RxCUIS", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.RxCuis, new { htmlAttributes = new { @class = "form-control border-input", id = "rxcuis" } })
+                        @*     <input type="text" class="form-control border-input" id="rxcuis" name="RxCuis">*@
+                        @Html.ValidationMessageFor(model => model.RxCuis, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            </div>
+
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RateQuantity, "Direction/Rate", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.RateQuantity, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.RateQuantity, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Route, "Route", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.Route,
+                            new SelectList(ViewBag.MedicationRoute, "Value", "Text", Model),
+                            "---Select Route---", new { @class = "form-control border-input" })
+                        @Html.ValidationMessageFor(model => model.Route, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group ">
+                    @Html.LabelFor(model => model.UseReason, "Notes", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.UseReason, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.UseReason, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control border-input DatePicker" } })
+                        @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+
+                    @*<label>Dose Repetition Time</label>*@
+                    @Html.LabelFor(model => model.DoseRepetitionTime, htmlAttributes: new { @class = "col-md-12 lblinline" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.DoseRepetitionTime,
+                            new SelectList(ViewBag.MedicineRepitinDose, "Value", "Text", Model),
+                            "Dose Repetition Time", new { id = "DoseRepetitionTime", @class = "form-control border-input" })
+                        @Html.ValidationMessageFor(model => model.DoseRepetitionTime, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IssuesIdentified, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(item => item.IssuesIdentified,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "true",  Text = "Yes"},
+                                    new {Value = "false", Text = "No"}
+                                },
+                                "Value", "Text", Model),
+                            "Select One", new { @class = "form-control border-input", id = "issues" })
+                        @Html.ValidationMessageFor(model => model.IssuesIdentified, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @*<label>Prescribe by</label>*@
+                    @Html.LabelFor(model => model.PrescribeBy, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.PrescribeBy, new SelectList(ViewBag.Physicians, "Value", "Text", Model), "DOCTOR", new { @class = "form-control border-input" })
+                        @Html.ValidationMessageFor(model => model.PrescribeBy, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-6 col-lg-6">
+                <div class="form-group" id="comment">
+                    @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ForHowLong, htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.ForHowLong, new { htmlAttributes = new { @class = "form-control border-input" } })
+                        @Html.ValidationMessageFor(model => model.ForHowLong, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class=" col-md-3 col-lg-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsTakenMedicineProperly, htmlAttributes: new { @class = "col-md-12" })@*.IsEnabled*@
+                    <div class="col-md-12">
+                        @Html.CheckBoxFor(model => model.IsTakenMedicineProperly, new { id = "IsTakenMedicineProperly", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-4 col-lg-4">
+                <div class="form-group" id="TakenMedicinesShowHide">
+                    @Html.LabelFor(model => model.TakenMedicineProperly, htmlAttributes: new { @class = "col-md-12 lblmedicn" })
+                    @*@Html.EditorFor(model => model.TakenMedicineProperly, new { htmlAttributes = new { @class = "form-control border-input" } })*@
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.TakenMedicineProperly, new SelectList(ViewBag.MedicineRepitinDose, "Value", "Text", Model), "Dose Repetition Time", new { id = "TakenMedicineProperly", @class = "form-control border-input" })
+                        @Html.ValidationMessageFor(model => model.TakenMedicineProperly, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-2 col-lg-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TakenMedicineProperly, "% Usage", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        <input type="text" id="txtPercentage" class="form-control border-input" value="0" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group ">
+                    @Html.LabelFor(model => model.IsPermanentMedicine, htmlAttributes: new { @class = "col-md-12 lblpermanent" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(item => item.IsPermanentMedicine,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "true",  Text = "Yes"},
+                                    new {Value = "false", Text = "No"}
+                                },
+                                "Value", "Text", Model), new { @class = "form-control border-input", id = "issues" })
+                        @Html.ValidationMessageFor(model => model.IsPermanentMedicine, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3">
+                <div class="form-group ">
+                    @Html.LabelFor(model => model.IsMedicineDiscontinued, htmlAttributes: new { @class = "col-md-12 lblmedicn" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(item => item.IsMedicineDiscontinued,
+                            new SelectList(
+                                new[]
+                                {
+                                    new {Value = "true",  Text = "Yes"},
+                                    new {Value = "false", Text = "No"}
+                                },
+                                "Value", "Text", Model), new { @class = "form-control border-input", id = "issues" })
+                        @Html.ValidationMessageFor(model => model.IsMedicineDiscontinued, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6">
+                <div class="form-group" style="margin-top:25px;margin-left:0">
+                    <input type="button" value="Update Medication" id="EditBtn" class="btn btn-success logdetails" onclick="SubmitForm('form_EditMedication','Update')" />
+                    <input type="button" value="Cancel" id="btnCancel" class="btn btn-danger logdetails" />
+                    @*<input type="button" value="Cancel" class="btn btn-danger logdetails" onclick="GetAjaxView('/CurrentMedication/_AddMedicationPartial', @Model.PatientId, 'divAddMedication')" />*@
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <hr id="line">
+}
+
+<script type="text/javascript">
+    $("#TakenMedicineProperly").change(function () {
+        debugger;
+        var takemedicn = $(this).val();
+        takemedicn = takemedicn.match(/\d+/);
+        var totlmedicn = $("#DoseRepetitionTime").val();
+        totlmedicn = totlmedicn.match(/\d+/);
+        var percent = 0;
+        percent = (takemedicn / totlmedicn) * 100;
+        $("#txtPercentage").val(percent);
+    });
+
+    $(document).ready(function () {
+        if ($("#IsTakenMedicineProperly").is(":checked")) {
+            $("#TakenMedicinesShowHide").hide();
+            $("#txtPercentage").val("100");
+        }
+        else {
+            $("#TakenMedicinesShowHide").show();
+            var takemedicn = $("#TakenMedicineProperly").val();
+            var totlmedicn = $("#DoseRepetitionTime").val();
+            var percent = 0;
+
+            takemedicn = takemedicn.match(/\d+/);
+            totlmedicn = totlmedicn.match(/\d+/);
+            percent = (takemedicn / totlmedicn) * 100;
+            $("#txtPercentage").val(percent);
+        }
+
+    });
+    $("#btnCancel").on("click", function () {
+        $("#divAddMedication").css("display", "none");
+        $("#btnAddMedication").show();
+    });
+
+    $("#IsTakenMedicineProperly").change(function () {
+        if ($(this).is(":checked")) {
+            $("#TakenMedicinesShowHide").hide();
+            $("#txtPercentage").val("100");
+        }
+        else {
+            $("#TakenMedicinesShowHide").show();
+            var takemedicn = $("#TakenMedicineProperly").val();
+            var totlmedicn = $("#DoseRepetitionTime").val();
+            var percent = 0;
+            percent = (takemedicn / totlmedicn) * 100;
+            $("#txtPercentage").val(percent);
+        }
+    });
+
+</script>
+
+
+@* Show/Hide Comment TextBox *@
+<script type="text/javascript">
+    $(function () {
+        $(".DatePicker").datepicker({ format: 'mm/dd/yyyy' });
+        $("#issues").change(function () {
+            if ($(this).val() === "true") {
+                $("#comment").show();
+            } else {
+                $("#comment").hide();
+            }
+        });
+
+        $("#btnDrugCancel").on("click", function () {
+            debugger;
+            $("#divDrugInteractionEdit").hide().text('');
+            $(this).css("display", "none");
+            $('#divMedicationUpdate input[type=text]').val('');
+            $("#EditBtn").attr("disabled", false);
+            return false;
+        });
+    });
+</script>
+
+@* Drug lookup - Auto Fill *@
+<script>
+    new Def.Autocompleter.Prefetch('rxcuis', []);
+    new Def.Autocompleter.Prefetch('drug_strengths', []);
+
+    new Def.Autocompleter.Search('DrugName', 'https://clin-table-search.lhc.nlm.nih.gov/api/rxterms/v3/search?ef=STRENGTHS_AND_FORMS,RXCUIS',
+        {
+            tableFormat: true, valueCols: [0], colHeaders: ['DrugName']
+        });
+
+    Def.Autocompleter.Event.observeListSelections('DrugName', function () {
+        debugger;
+        var drugField = $('#DrugName')[0];
+        var drugFieldVal = drugField.value;
+        var autocomp = drugField.autocomp;
+        var strengths =
+            autocomp.getItemExtraData(drugFieldVal)['STRENGTHS_AND_FORMS'];
+        if (strengths)
+            $('#drug_strengths')[0].autocomp.setListAndField(strengths, '');
+        var rxcuis =
+            autocomp.getItemExtraData(drugFieldVal)['RXCUIS'];
+        if (rxcuis)
+            $('#rxcuis')[0].autocomp.setListAndField(rxcuis, '');
+        CheckDrugInteraction();
+    });
+
+    debugger;
+
+    var _DrugName = '@Model.DrugName';
+    var strengthalready = '@Model.DailyDose';
+    var rxcuis = '@Model.RxCuis';
+    $("#DrugName").val('@Model.DrugName');
+    $("#drug_strengths").val('@Model.DailyDose');
+    $("#rxcuis").val('@Model.RxCuis');
+
+    //$('#drug_strengths').click
+      $( document ).ready(function () {
+        debugger;
+        $.get('https://clin-table-search.lhc.nlm.nih.gov/api/rxterms/v3/search?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&terms='+_DrugName, function (data, textStatus, jqXHR) {
+            debugger;
+            var RXCUIS1 = data[2]['RXCUIS'][0];
+            var STRENGTHS_AND_FORMS1 = data[2]['STRENGTHS_AND_FORMS'][0];
+
+            new Def.Autocompleter.Prefetch('rxcuis', RXCUIS1);
+            new Def.Autocompleter.Prefetch('drug_strengths', STRENGTHS_AND_FORMS1);
+			});
+		});
+
+
+
+    // Get Drug Interaction
+    function CheckDrugInteraction() {
+        debugger;
+        //$("#rxcuis").change(function () {
+        $("#divDrugInteractionEdit").show().text('');
+
+
+        var rxcuis = $('#ListRxCuis').val();
+        rxcuis += $("#rxcuis").val() + '+'
+        debugger;
+
+        $.getJSON("https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=" + rxcuis.substring(0, rxcuis.length - 1), function (result) {
+
+            $("#divDrugInteractionEdit").css("padding", "15px").css("color", "navy").css("margin-bottom", "15px")
+                .css("background", "lightgreen").css("border-radius", "15px");
+
+            if (result.fullInteractionTypeGroup != null) {
+                for (var i = 0; i < result.fullInteractionTypeGroup.length; i++) {
+                    for (var j = 0; j < result.fullInteractionTypeGroup[i].fullInteractionType.length; j++) {
+                        var counter = 0;
+                        for (var k = 0; k < result.fullInteractionTypeGroup[i].fullInteractionType[j].minConcept.length; k++)
+                            $("#divDrugInteractionEdit").append("<b>Drug " + ++counter + ":</b> " + result.fullInteractionTypeGroup[i].fullInteractionType[j].minConcept[k].name + "<br />");
+
+                        $("#divDrugInteractionEdit").append("<b>Severity:</b>    " + result.fullInteractionTypeGroup[i].fullInteractionType[j].interactionPair[0].severity + "<br />");
+                        $("#divDrugInteractionEdit").append("<b>Description:</b> " + result.fullInteractionTypeGroup[i].fullInteractionType[j].interactionPair[0].description);
+
+                        if (j !== result.fullInteractionTypeGroup[i].fullInteractionType.length - 1)
+                            $("#divDrugInteractionEdit").append("<hr />");
+                    }
+                }
+                $("#btnDrugCancel").css("display", "block");
+                $("#EditBtn").attr("disabled", true);
+            } else {
+                $("#divDrugInteractionEdit").append("- No Drug Interaction.");
+                $("#EditBtn").attr("disabled", false);
+            }
+
+        });
+        //});
+    }
+</script>
